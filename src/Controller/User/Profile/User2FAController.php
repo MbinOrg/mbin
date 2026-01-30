@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
+use App\DTO\Temp2FADto;
 use App\DTO\UserDto;
 use App\Entity\User;
+use App\Form\UserDisable2FAType;
+use App\Form\UserRegenerate2FABackupType;
 use App\Form\UserTwoFactorType;
 use App\Service\TwoFactorManager;
 use App\Service\UserManager;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
@@ -25,6 +28,7 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException as CoreAccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,6 +45,7 @@ class User2FAController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
         private readonly LoggerInterface $logger,
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
     ) {
     }
 
@@ -73,11 +78,8 @@ class User2FAController extends AbstractController
         $dto = $this->manager->createDto($user);
         $dto->totpSecret = $totpSecret;
 
-        // QR code generation needs a user with a code. Add one for that then immediately remove
-        // to stop side effects when persisting.
-        $user->setTotpSecret($totpSecret);
-        $qrCodeContent = $this->totpAuthenticator->getQRContent($user);
-        $user->setTotpSecret(null);
+        $temp2fa = new Temp2FADto($user->username, $totpSecret);
+        $qrCodeContent = $this->totpAuthenticator->getQRContent($temp2fa);
 
         $form = $this->handleForm($this->createForm(UserTwoFactorType::class, $dto), $dto, $request);
         if (!$form instanceof FormInterface) {
@@ -90,6 +92,7 @@ class User2FAController extends AbstractController
                 'form' => $form->createView(),
                 'two_fa_url' => $qrCodeContent,
                 'codes' => $backupCodes,
+                'secret' => $totpSecret,
             ],
             new Response(
                 null,
@@ -101,14 +104,27 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function disable(Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
-
         $user = $this->getUserOrThrow();
         if (!$user->isTotpAuthenticationEnabled()) {
             throw new SuspiciousOperationException('User accessed 2fa disable path without existing 2fa in place');
         }
 
-        $this->twoFactorManager->remove2FA($user);
+        $dto = $this->manager->createDto($user);
+        $dto->totpSecret = $user->getTotpSecret();
+        $form = $this->createForm(UserDisable2FAType::class, $dto);
+        $form->handleRequest($request);
+        $this->handleCurrentPassword($form);
+        $this->handleTotpCode($form, $dto);
+
+        if ($form->isValid()) {
+            $this->twoFactorManager->remove2FA($user);
+        } else {
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                /** @var FormError $error */
+                $this->addFlash('error', $error->getMessage());
+            }
+        }
 
         return $this->redirectToRefererOrHome($request);
     }
@@ -123,18 +139,21 @@ class User2FAController extends AbstractController
         if (null === $totpSecret) {
             throw new AccessDeniedException('/settings/2fa/qrcode');
         }
-        $user->setTotpSecret($totpSecret);
+        $temp2fa = new Temp2FADto($user->username, $totpSecret);
 
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data($this->totpAuthenticator->getQRContent($user))
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size(250)
-            ->margin(0)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->build();
+        $builder = new Builder(
+            writer: new PngWriter(),
+            writerOptions: [],
+            data: $this->totpAuthenticator->getQRContent($temp2fa),
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            size: 250,
+            margin: 0,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            logoPath: $this->getParameter('kernel.project_dir').'/public/logo.png',
+            logoResizeToWidth: 60,
+        );
+        $result = $builder->build();
 
         return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
     }
@@ -142,7 +161,7 @@ class User2FAController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function remove(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_2fa_remove', $request->request->get('token'));
+        $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 
         $this->twoFactorManager->remove2FA($user);
 
@@ -158,13 +177,30 @@ class User2FAController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function backup(): Response
+    public function backup(Request $request): Response
     {
         $user = $this->getUserOrThrow();
         $this->denyAccessUnlessGranted('edit_profile', $user);
 
         if (!$user->isTotpAuthenticationEnabled()) {
             throw new SuspiciousOperationException('User accessed 2fa backup path without existing 2fa');
+        }
+
+        $dto = $this->manager->createDto($user);
+        $dto->totpSecret = $user->getTotpSecret();
+        $form = $this->createForm(UserRegenerate2FABackupType::class, $dto);
+        $form->handleRequest($request);
+        $this->handleCurrentPassword($form);
+        $this->handleTotpCode($form, $dto);
+
+        if (!$form->isValid()) {
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                /** @var FormError $error */
+                $this->addFlash('error', $error->getMessage());
+            }
+
+            return $this->redirectToRefererOrHome($request);
         }
 
         return $this->render(
@@ -178,7 +214,7 @@ class User2FAController extends AbstractController
     private function handleForm(
         FormInterface $form,
         UserDto $dto,
-        Request $request
+        Request $request,
     ): FormInterface|Response {
         $form->handleRequest($request);
 
@@ -186,12 +222,7 @@ class User2FAController extends AbstractController
             return $form;
         }
 
-        if ($form->has('totpCode')
-                && !$this->setupHasValidCode($dto->totpSecret, $form->get('totpCode')->getData())) {
-            $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.code_invalid')));
-
-            return $form;
-        }
+        $this->handleTotpCode($form, $dto);
 
         if (!$form->isValid()) {
             $this->logger->warning('2fa error occurred user "{username}" submitting the form "{errors}"', [
@@ -200,6 +231,11 @@ class User2FAController extends AbstractController
             ]);
             $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.setup_error')));
 
+            return $form;
+        }
+
+        $this->handleCurrentPassword($form);
+        if (!$form->isValid()) {
             return $form;
         }
 
@@ -216,19 +252,35 @@ class User2FAController extends AbstractController
         return $this->redirectToRoute('app_login');
     }
 
+    private function handleTotpCode(FormInterface $form, UserDto $dto): void
+    {
+        if ($form->has('totpCode')
+            && !$this->setupHasValidCode($dto->totpSecret, $form->get('totpCode')->getData())) {
+            $form->get('totpCode')->addError(new FormError($this->translator->trans('2fa.code_invalid')));
+        }
+    }
+
+    private function handleCurrentPassword(FormInterface $form): void
+    {
+        if ($form->has('currentPassword')) {
+            if (!$this->userPasswordHasher->isPasswordValid(
+                $this->getUser(),
+                $form->get('currentPassword')->getData()
+            )) {
+                $form->get('currentPassword')->addError(new FormError($this->translator->trans('Password is invalid')));
+            }
+        }
+    }
+
     private function setupHasValidCode(string $totpSecret, string $submittedCode): bool
     {
-        $user = $this->getUser();
-        $user->setTotpSecret($totpSecret);
+        $user = $this->getUserOrThrow();
+        $temp = new Temp2FADto($user->username, $totpSecret);
 
         $isValid = false;
-        if ($this->totpAuthenticator->checkCode($user, $submittedCode)) {
+        if ($this->totpAuthenticator->checkCode($temp, $submittedCode)) {
             $isValid = true;
         }
-
-        // the totpAuthenticator checkCode method requires the secret to be present in the user, but we
-        // don't want it there right now, so we remove it after we check.
-        $user->setTotpSecret(null);
 
         return $isValid;
     }

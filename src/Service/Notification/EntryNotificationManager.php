@@ -17,11 +17,15 @@ use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationSettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
+use App\Service\UserManager;
 use App\Utils\IriGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -45,17 +49,23 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly UserManager $userManager,
+        private readonly SettingsManager $settingsManager,
+        private readonly NotificationSettingsRepository $notificationSettingsRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
+        }
+
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
         }
 
         /*
@@ -64,9 +74,9 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         $this->notifyMagazine(new EntryCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
-        $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
+        $mentions = $this->mentionManager->clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            if (!$user->apId) {
+            if (!$user->apId && !$user->isBlocked($subject->user)) {
                 $notification = new EntryMentionedNotification($user, $subject);
                 $this->entityManager->persist($notification);
                 $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
@@ -74,12 +84,12 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         }
 
         // Notify subscribers
-        $subscribers = $this->merge(
-            $this->getUsersToNotify($this->magazineRepository->findNewEntrySubscribers($subject)),
-            [] // @todo user followers
-        );
+        $subscriberIds = $this->notificationSettingsRepository->findNotificationSubscribersByTarget($subject);
+        $subscribers = $this->userRepository->findBy(['id' => $subscriberIds]);
 
-        $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        if (\count($mentions)) {
+            $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        }
 
         foreach ($subscribers as $subscriber) {
             $notification = new EntryCreatedNotification($subscriber, $subject);
@@ -144,17 +154,17 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new EntryEditedNotification($subject->user, $subject));
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var Entry $subject
-         */
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine($notification = new EntryDeletedNotification($subject->user, $subject));
     }
 

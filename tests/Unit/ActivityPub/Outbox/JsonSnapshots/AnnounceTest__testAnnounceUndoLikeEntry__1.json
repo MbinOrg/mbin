@@ -1,0 +1,45 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Announce",
+    "actor": "https://kbin.test/m/test",
+    "object": {
+        "id": "SCRUBBED_ID",
+        "type": "Undo",
+        "actor": "https://kbin.test/u/user2",
+        "object": {
+            "id": "SCRUBBED_ID",
+            "type": "Like",
+            "actor": "https://kbin.test/u/user2",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc": [
+                "https://kbin.test/u/user2/followers",
+                "https://kbin.test/m/test"
+            ],
+            "object": "SCRUBBED_ID",
+            "audience": "https://kbin.test/m/test"
+        },
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "cc": [
+            "https://kbin.test/u/user2/followers",
+            "https://kbin.test/m/test"
+        ],
+        "audience": "https://kbin.test/m/test"
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/m/test/followers",
+        "https://kbin.test/u/user2/followers"
+    ],
+    "published": "SCRUBBED_DATE",
+    "audience": "https://kbin.test/m/test"
+}

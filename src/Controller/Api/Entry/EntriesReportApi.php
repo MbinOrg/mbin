@@ -7,8 +7,8 @@ namespace App\Controller\Api\Entry;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ReportRequestDto;
 use App\Entity\Entry;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,7 +67,7 @@ class EntriesReportApi extends EntriesBaseApi
     public function __invoke(
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        RateLimiterFactory $apiReportLimiter
+        RateLimiterFactory $apiReportLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReportLimiter);
 

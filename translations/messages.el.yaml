@@ -19,7 +19,7 @@ oldest: Παλαιότερα
 commented: Με σχόλια
 filter_by_time: Φιλτράρισμα βάσει χρόνου
 filter_by_type: φιλτράρισμα βάσει τύπου
-favourites: Αγαπημένα
+favourites: Θετικοί ψήφοι
 favourite: Αγαπημένο
 avatar: Άβαταρ
 added: Προστέθηκε
@@ -68,7 +68,8 @@ change_theme: Αλλαγή θέματος
 useful: Χρήσιμα
 help: Βοήθεια
 check_email: "'Ελεγξε το email σου"
-reset_check_email_desc2: Αν δεν έλαβες το email παρακαλώ κοίτα το φάκελο με τα ανεπιθύμητα.
+reset_check_email_desc2: Αν δεν έλαβες το email παρακαλώ κοίτα το φάκελο με τα 
+  ανεπιθύμητα.
 try_again: Προσπάθησε ξανά
 email_confirm_header: Γεια! Επιβεβαίωσε την διεύθυνση email σου.
 email_verify: Επιβεβαίωσε την διεύθυνση email
@@ -97,21 +98,22 @@ dont_have_account: Δεν έχεις λογαριασμό;
 change_view: Αλλαγή όψης
 username: Όνομα χρήστη
 more: Περισσότερα
-agree_terms: Δέχομαι τους %terms_link_start%Όρους και Προϋποθέσεις%terms_link_end%
-  και την %policy_link_start%Πολιτική Απορρήτου%policy_link_end%
+agree_terms: Δέχομαι τους %terms_link_start%Όρους και 
+  Προϋποθέσεις%terms_link_end% και την %policy_link_start%Πολιτική 
+  Απορρήτου%policy_link_end%
 owner: Ιδιοκτήτης
 create_new_magazine: Δημιουργία νέου περιοδικού
 mod_log: Καταγραφές συντονισμού
 faq: Συχνές ερωτήσεις (FAQ)
 add_comment: Προσθήκη σχολίου
-reset_check_email_desc: Αν υπάρχει ήδη λογαριασμός με το email σου, σύντομα θα λάβεις
-  ένα email που θα περιέχει σύνδεσμο ώστε να επαναφέρεις τον κωδικό σου. Ο σύνδεσμος
-  θα λήξει σε %expire%.
+reset_check_email_desc: Αν υπάρχει ήδη λογαριασμός με το email σου, σύντομα θα 
+  λάβεις ένα email που θα περιέχει σύνδεσμο ώστε να επαναφέρεις τον κωδικό σου. 
+  Ο σύνδεσμος θα λήξει σε %expire%.
 random_posts: Τυχαίες αναρτήσεις
 email_confirm_content: 'Θες να ενεργοποιήσεις τον λογαριασμό σου στο Μbin; Πάτα στον
   παρακάτω σύνδεσμο:'
-federated_user_info: Αυτό το προφίλ είναι από έναν συνενωμένο διακομιστή και μπορεί
-  να είναι ελλιπές.
+federated_user_info: Αυτό το προφίλ είναι από έναν συνενωμένο διακομιστή και 
+  μπορεί να είναι ελλιπές.
 email_confirm_expire: Λάβετε υπόψη ότι ο σύνδεσμος θα λήξει σε μία ώρα.
 description: Περιγραφή
 people: Άτομα
@@ -160,9 +162,10 @@ hide_adult: Απόκρυψη περιεχομένου NSFW
 privacy: Ιδιωτικότητα
 show_profile_subscriptions: Εμφάνιση εγγραφών σε περιοδικά
 notify_on_new_entry_comment_reply: Απαντήσεις στα σχόλια μου σε οποιοδήποτε νήμα
-notify_on_new_post_reply: Απαντήσεις οποιοδήποτε επιπέδου σε αναρτήσεις που εξουσιοδότησα
-notify_on_new_entry: Νέα νήματα (σύνδεσμοι ή άρθρα) σε οποιοδήποτε περιοδικό στο οποίο
-  έχω εγγραφεί
+notify_on_new_post_reply: Απαντήσεις οποιοδήποτε επιπέδου σε αναρτήσεις που 
+  εξουσιοδότησα
+notify_on_new_entry: Νέα νήματα (σύνδεσμοι ή άρθρα) σε οποιοδήποτε περιοδικό στο
+  οποίο έχω εγγραφεί
 save: Αποθήκευση
 about: Σχετικά
 old_email: Τρέχον email
@@ -284,23 +287,27 @@ return: Επιστροφή
 boost: Ενίσχυση
 1d: 1η
 edit: Επεξεργασία
-notify_on_new_entry_reply: Σχόλια οποιουδήποτε επιπέδου σε νήματα που εξουσιοδότησα
+notify_on_new_entry_reply: Σχόλια οποιουδήποτε επιπέδου σε νήματα που 
+  εξουσιοδότησα
 1y: 1χρ
 general: Γενικά
 solarized_dark: Solarized Σκοτεινό
 share: Κοινοποίηση
 homepage: Αρχική
-notify_on_new_post_comment_reply: Απαντήσεις στα σχόλια μου σε οποιεσδήποτε αναρτήσεις
+notify_on_new_post_comment_reply: Απαντήσεις στα σχόλια μου σε οποιεσδήποτε 
+  αναρτήσεις
 featured_magazines: Παρεχόμενα περιοδικά
-notify_on_new_posts: Νέες αναρτήσεις σε οποιοδήποτε περιοδικό στο οποίο έχω εγγραφεί
+notify_on_new_posts: Νέες αναρτήσεις σε οποιοδήποτε περιοδικό στο οποίο έχω 
+  εγγραφεί
 show_magazines_icons: Εμφάνιση εικονιδίων περιοδικών
 restored_thread_by: έχει επαναφέρει ένα νήμα από
 new_password_repeat: Επιβεβαίωση νέου κωδικού πρόσβασης
 removed_post_by: έχει αφαιρέσει την ανάρτηση από
-flash_thread_new_success: Το νήμα δημιουργήθηκε επιτυχημένα και είναι ορατό σε άλλους
-  χρήστες.
-flash_magazine_new_success: Το περιοδικό δημιουργήθηκε επιτυχώς. Τώρα μπορείς να προσθέσεις
-  νέο περιεχόμενο ή να εξερευνήσεις τον πίνακα διαχείρισης του περιοδικού.
+flash_thread_new_success: Το νήμα δημιουργήθηκε επιτυχημένα και είναι ορατό σε 
+  άλλους χρήστες.
+flash_magazine_new_success: Το περιοδικό δημιουργήθηκε επιτυχώς. Τώρα μπορείς να
+  προσθέσεις νέο περιεχόμενο ή να εξερευνήσεις τον πίνακα διαχείρισης του 
+  περιοδικού.
 replied_to_your_comment: Απάντησε στο σχόλιό σου
 purge: Eκκαθάριση
 show_top_bar: Εμφάνιση μπάρας κορυφής
@@ -312,22 +319,22 @@ local: Τοπικά
 FAQ: Συχνές ερωτήσεις (FAQ)
 related_entries: Σχετικά νήματα
 header_logo: Λογότυπο κεφαλίδας
-set_magazines_bar_empty_desc: εάν το πεδίο είναι κενό, τα ενεργά περιοδικά εμφανίζονται
-  στη γραμμή.
+set_magazines_bar_empty_desc: εάν το πεδίο είναι κενό, τα ενεργά περιοδικά 
+  εμφανίζονται στη γραμμή.
 edited_post: Επεξεργάστηκε μια ανάρτηση
 sidebar_position: Θέση πλευρικής γραμμής
 add_badge: Προσθήκη σήματος
 add_mentions_entries: Προσθήκη ετικετών αναφοράς σε νήματα
 unban_account: Άρση αποκλεισμού λογαριασμού
-browsing_one_thread: Περιηγήσαι σε μόνο ένα νήμα στη συζήτηση! Όλα τα σχόλια είναι
-  διαθέσιμα στη σελίδα ανάρτησης.
+browsing_one_thread: Περιηγήσαι σε μόνο ένα νήμα στη συζήτηση! Όλα τα σχόλια 
+  είναι διαθέσιμα στη σελίδα ανάρτησης.
 Your account is not active: Ο λογαριασμός σου δεν είναι ενεργός.
 random_magazines: Τυχαία περιοδικά
 removed: Αφαιρέθηκε από συντονιστή
 deleted: Διαγράφηκε από τον συντάκτη
-mod_log_alert: ΠΡΟΕΙΔΟΠΟΙΗΣΗ - Το αρχείο καταγραφής του συντονιστή μπορεί να περιέχει
-  δυσάρεστο ή ενοχλητικό περιεχόμενο που έχει αφαιρεθεί από τους συντονιστές. Παρακαλούμε
-  δώσε προσοχή.
+mod_log_alert: ΠΡΟΕΙΔΟΠΟΙΗΣΗ - Το αρχείο καταγραφής του συντονιστή μπορεί να 
+  περιέχει δυσάρεστο ή ενοχλητικό περιεχόμενο που έχει αφαιρεθεί από τους 
+  συντονιστές. Παρακαλούμε δώσε προσοχή.
 type.smart_contract: Έξυπνο συμβόλαιο
 up_votes: Ενισχύσεις
 enter_your_comment: Εισήγαγε το σχόλιό σου
@@ -336,8 +343,8 @@ comments_count: '{0}Σχόλια|{1}Σχόλιο|]1,Inf[ Σχόλια'
 empty: Κενό
 unfollow: Κατάργηση ακολούθησης
 down_votes: Μειώσεις
-federated_magazine_info: Αυτό το περιοδικό είναι από έναν συνενωμένο διακομιστή και
-  ενδέχεται να είναι ελλιπές.
+federated_magazine_info: Αυτό το περιοδικό είναι από έναν συνενωμένο διακομιστή 
+  και ενδέχεται να είναι ελλιπές.
 go_to_original_instance: Προβολή σε απομακρυσμένη οντότητα
 login_or_email: Σύνδεση ή email
 in: στο
@@ -350,9 +357,9 @@ following: Ακολουθεί
 people_federated: Federated
 moderate: Συντόνισε
 show_profile_followings: Εμφάνιση χρηστών που ακολουθούνται
-flash_register_success: Καλώς ήρθες, ο λογαριασμός σου είναι πλέον εγγεγραμμένος.
-  Ένα τελευταίο βήμα! - Στα εισερχόμενά σου θα βρεις έναν σύνδεσμο ενεργοποίησης ώστε
-  να δώσεις ζωή στον λογαριασμό σου.
+flash_register_success: Καλώς ήρθες, ο λογαριασμός σου είναι πλέον 
+  εγγεγραμμένος. Ένα τελευταίο βήμα! - Στα εισερχόμενά σου θα βρεις έναν 
+  σύνδεσμο ενεργοποίησης ώστε να δώσεις ζωή στον λογαριασμό σου.
 set_magazines_bar: Μπάρα περιοδικών
 banned: Σε απέκλεισε
 ban_expired: Ο αποκλεισμός έληξε
@@ -365,12 +372,12 @@ meta: Meta
 federated: Ομοσπονδιακός
 instance: Οντότητα
 federation_enabled: Ενεργοποιήθηκε η ομοσπονδία
-magazine_panel_tags_info: Παροχή μόνο εάν θες περιεχόμενο από το fediverse να περιλαμβάνεται
-  σε αυτό το περιοδικό με βάση ετικέτες
+magazine_panel_tags_info: Παροχή μόνο εάν θες περιεχόμενο από το fediverse να 
+  περιλαμβάνεται σε αυτό το περιοδικό με βάση ετικέτες
 banned_instances: Οντότητες σε αποκλεισμό
 kbin_intro_title: Εξερεύνησε το Fediverse
-kbin_intro_desc: είναι μια αποκεντρωμένη πλατφόρμα για συγκέντρωση περιεχομένου και
-  μικροϊστολόγια που λειτουργεί εντός του δικτύου Fediverse.
+kbin_intro_desc: είναι μια αποκεντρωμένη πλατφόρμα για συγκέντρωση περιεχομένου 
+  και μικροϊστολόγια που λειτουργεί εντός του δικτύου Fediverse.
 kbin_promo_title: Δημιούργησε τη δική σου οντότητα
 kbin_promo_desc: '%link_start%Κλωνοποίηση αποθετηρίου%link_end% και ανάπτυξη fediverse'
 to: σε
@@ -378,11 +385,12 @@ report_issue: Αναφορά προβλήματος
 tokyo_night: Τόκυο Νύχτα
 mercure_enabled: Το Mercure είναι ενεργό
 preferred_languages: Φιλτράρισμα γλωσσών των νημάτων και των αναρτήσεων
-infinite_scroll_help: Φόρτωσε αυτόματα περισσότερο περιεχόμενο όταν φτάσεις το τέλος
-  της σελίδας.
-sticky_navbar_help: Η γραμμή πλοήγησης θα καρφιτσωθεί στην κορυφή της σελίδας όταν
-  κάνεις κύλιση προς τα κάτω.
-auto_preview_help: Αυτόματη επέκταση των προεπισκοπήσεων πολυμέσων.
+infinite_scroll_help: Φόρτωσε αυτόματα περισσότερο περιεχόμενο όταν φτάσεις το 
+  τέλος της σελίδας.
+sticky_navbar_help: Η γραμμή πλοήγησης θα καρφιτσωθεί στην κορυφή της σελίδας 
+  όταν κάνεις κύλιση προς τα κάτω.
+auto_preview_help: Εμφάνιση των προεπισκοπήσεων πολυμέσων (φωτό, βίντεο) σε 
+  μεγαλύτερο μέγεθος κάτω απ' το περιεχόμενο.
 reload_to_apply: Ανανέωση σελίδας για να εφαρμοστούν οι αλλαγές
 filter.fields.label: Επιλογή πεδίων για αναζήτηση
 filter.fields.only_names: Μόνο ονόματα
@@ -392,9 +400,9 @@ filter.adult.show: Εμφάνιση NSFW
 filter.adult.label: Επιλογή εμφάνισης περιεχομένου NSFW
 filter.adult.only: Μόνο NSFW
 toolbar.bold: Έντονα
-your_account_is_not_active: Ο λογαριασμός σου δεν έχει ενεργοποιηθεί. Παρακαλώ έλεγξε
-  το email σου για οδηγίες περί ενεργοποίησης λογαριασμού ή <a href="%link_target%">
-  αιτήσου ένα νέο email ενεργοποιήσης λογαριασμού.</a>
+your_account_is_not_active: Ο λογαριασμός σου δεν έχει ενεργοποιηθεί. Παρακαλώ 
+  έλεγξε το email σου για οδηγίες περί ενεργοποίησης λογαριασμού ή <a 
+  href="%link_target%"> αιτήσου ένα νέο email ενεργοποιήσης λογαριασμού.</a>
 your_account_has_been_banned: Ο λογαριασμός σου έχει αποκλειστεί
 filter.origin.label: Επιλογή προέλευσης
 kbin_bot: Πράκτορας Mbin
@@ -417,11 +425,12 @@ edit_entry: Επεξεργασία νήματος
 default_theme_auto: Ανοιχτό/Σκοτεινό (Αυτόματος Εντοπισμός)
 unban: Άρση αποκλεισμού
 ban_hashtag_btn: Αποκλεισμός Ετικέτας
-ban_hashtag_description: Αποκλείοντας μία ετικέτα θα αποτρέπει τη δημιουργία αναρτήσεων
-  μ' αυτή την ετικέτα, αλλά και θα αποκρύπτει υπάρχουσες μ' αυτή την ετικέτα.
-unban_hashtag_description: Αφαιρόντας τον αποκλεισμό μιας ετικέτας θα επιτρέπεται
-  η δημιουργία αναρτήσεων μ' αυτή την ετικέτα ξανά. Υπάρχουσες αναρτήσεις μ' αυτή
-  δεν θα κρύβονται.
+ban_hashtag_description: Αποκλείοντας μία ετικέτα θα αποτρέπει τη δημιουργία 
+  αναρτήσεων μ' αυτή την ετικέτα, αλλά και θα αποκρύπτει υπάρχουσες μ' αυτή την 
+  ετικέτα.
+unban_hashtag_description: Αφαιρόντας τον αποκλεισμό μιας ετικέτας θα 
+  επιτρέπεται η δημιουργία αναρτήσεων μ' αυτή την ετικέτα ξανά. Υπάρχουσες 
+  αναρτήσεις μ' αυτή δεν θα κρύβονται.
 mark_as_adult: Επισήμανση ως NSFW
 unmark_as_adult: Άρση επισήμανσης ως NSFW
 tag: Ετικέτα
@@ -431,32 +440,32 @@ solarized_auto: Solarized (Αυτόματος Εντοπισμός)
 local_and_federated: Τοπική και σε ομοσπονδία
 menu: Μενού
 flash_mark_as_adult_success: Αυτή η ανάρτηση έχει επισημανθεί επιτυχώς ως NSFW.
-flash_unmark_as_adult_success: Αυτή η ανάρτηση δεν είναι πλέον επισημασμένη ως NSFW.
-disconnected_magazine_info: Αυτό το περιοδικό δεν λαμβάνει ενημερώσεις (τελευταία
-  δραστηριότητα %days% ημέρα/-ες πριν).
+flash_unmark_as_adult_success: Αυτή η ανάρτηση δεν είναι πλέον επισημασμένη ως 
+  NSFW.
+disconnected_magazine_info: Αυτό το περιοδικό δεν λαμβάνει ενημερώσεις 
+  (τελευταία δραστηριότητα %days% ημέρα/-ες πριν).
 always_disconnected_magazine_info: Αυτό το περιοδικό δεν λαμβάνει ενημερώσεις.
 subscribe_for_updates: Κάνε εγγραφή για να λαμβάνεις ενημερώσεις.
 unban_hashtag_btn: Άρση αποκλεισμού Ετικέτας
 resend_account_activation_email_question: Ανενεργός λογαριασμός;
-federated_search_only_loggedin: Η αναζήτηση σε οποσπονδία είναι περιορισμένη αν δεν
-  έχεις συνδεθεί
-oauth.consent.to_allow_access: Για να επιτρεπεί αυτή η πρόσβαση, κάνε κλικ στο κουμπί
-  "Επιτρέπεται" παρακάτω
+federated_search_only_loggedin: Η αναζήτηση σε οποσπονδία είναι περιορισμένη αν 
+  δεν έχεις συνδεθεί
+oauth.consent.to_allow_access: Για να επιτρεπεί αυτή η πρόσβαση, κάνε κλικ στο 
+  κουμπί "Επιτρέπεται" παρακάτω
 toolbar.unordered_list: Μη τακτοποιημένη λίστα
-federation_page_allowed_description: Γνωστές οντότητες με τις οποίες έχουμε συνενωθεί
+federation_page_allowed_description: Γνωστές οντότητες με τις οποίες έχουμε 
+  συνενωθεί
 federation_page_disallowed_description: Οντότητες με τις οποίες δε συνενωνόμαστε
 account_deletion_title: Διαγραφή λογαριασμού
 account_deletion_button: Διαγραφή Λογαριασμού
 errors.server404.title: 404 Δε βρέθηκε
-sidebar_sections_local_only: Περιορισμός των κατηγοριών "Τυχαίο Χ" και "Ενεργά Άτομα"
-  σε μόνο για τοπική
 errors.server500.title: 500 Εσωτερικό Σφάλμα Διακομιστή
-email_confirm_link_help: Εναλλακτικά μπορείς να κάνεις αντιγραφή επικόλληση στον περιηγητή
-  σου το ακόλουθο
+email_confirm_link_help: Εναλλακτικά μπορείς να κάνεις αντιγραφή επικόλληση στον
+  περιηγητή σου το ακόλουθο
 bot_body_content: "Καλώς ήρθατε στον Πράκτορα του Mbin! Αυτός ο πράπτορας έχει καθοριστικό
   ρόλο στην διατήρηση της λειτουργικότητας του ActivityPub εντός του Mbin. Εξασφαλίζει
-  ότι το Mbin μπορεί να επικοινωνεί και να συνενώνεται με άλλες οντότητες στο fediverse.\n
-  \nΤο ActivityPub είναι ένα ανοιχτό πρωτόκολλο που επιτρέπει στις αποκεντρωμένες
+  ότι το Mbin μπορεί να επικοινωνεί και να συνενώνεται με άλλες οντότητες στο fediverse.\n\
+  \ \nΤο ActivityPub είναι ένα ανοιχτό πρωτόκολλο που επιτρέπει στις αποκεντρωμένες
   πλατφόρμες κοινωνικής δικτύωσης να επικοινωνούν και να αλληλεπιδρούν μεταξύ τους.
   Επιτρέπει στους χρήστες σε διαφορετικές οντότητες (διακομιστές) να ακολουθούν, να
   αλληλεπιδρούν και να μοιράζονται περιεχόμενο μέσω του ομοσπονδιακού κοινωνικού δικτύου
@@ -466,45 +475,433 @@ bot_body_content: "Καλώς ήρθατε στον Πράκτορα του Mbin
 toolbar.strikethrough: Γραμμή διαγραφής
 toolbar.ordered_list: Τακτοποιημένη Λίστα
 federation_page_enabled: Σελίδα ομοσπονδίας ενεργή
-resend_account_activation_email_error: Υπήρξε ένα ζήτημα κατοχύρωσης αυτού του αιτήματος.
-  Μπορεί να μην υπάρχει λογαριασμός που να σχετίζεται μ' αυτό το email ή ίσως έχει
-  ήδη ενεργοποιηθεί.
+resend_account_activation_email_error: Υπήρξε ένα ζήτημα κατοχύρωσης αυτού του 
+  αιτήματος. Μπορεί να μην υπάρχει λογαριασμός που να σχετίζεται μ' αυτό το 
+  email ή ίσως έχει ήδη ενεργοποιηθεί.
 block: Αποκλεισμός
 toolbar.italic: Πλάγια
 federation_page_dead_title: Νεκρές οντότητες
 errors.server429.title: 429 Υπερβολικά Πολλές Αιτήσεις
-account_deletion_description: Ο λογαριασμός σου θα διαγραφεί σε 30 ημέρες εκτός αν
-  επιλέξεις να τον διαγράψεις αμέσως. Για να τον επαναφέρεις εντός 30 ημέρων, συνδέσου
-  με τα ίδια στοιχεία σύνδεσης χρήστη ή επικοινώνησε με έναν διαχειριστή.
+account_deletion_description: Ο λογαριασμός σου θα διαγραφεί σε 30 ημέρες εκτός 
+  αν επιλέξεις να τον διαγράψεις αμέσως. Για να τον επαναφέρεις εντός 30 ημέρων,
+  συνδέσου με τα ίδια στοιχεία σύνδεσης χρήστη ή επικοινώνησε με έναν 
+  διαχειριστή.
 account_deletion_immediate: Άμεση διαγραφή
 more_from_domain: Περισσότερα απ' τον τομέα
-oauth.consent.app_requesting_permissions: θα 'θελε να πραγματοποιήσει τις ακόλουθες
-  ενέργειες εκ μέρους σου
+oauth.consent.app_requesting_permissions: θα 'θελε να πραγματοποιήσει τις 
+  ακόλουθες ενέργειες εκ μέρους σου
 oauth.consent.allow: Επιτρέπεται
-resend_account_activation_email_description: Εισήγαγε τη διεύθυνση email που σχετίζεται
-  με τον λογαριασμό σου. Θα σου στείλουμε άλλο ένα email ενεργοποίησης.
-oauth.consent.app_has_permissions: μπορεί ήδη να πραγματοποιήσει τις ακόλουθες ενέργειες
+resend_account_activation_email_description: Εισήγαγε τη διεύθυνση email που 
+  σχετίζεται με τον λογαριασμό σου. Θα σου στείλουμε άλλο ένα email 
+  ενεργοποίησης.
+oauth.consent.app_has_permissions: μπορεί ήδη να πραγματοποιήσει τις ακόλουθες 
+  ενέργειες
 custom_css: Προσαρμοσμένη CSS
-federation_page_dead_description: Οντότητες στις οποίες δε μπορούσαμε να παραδώσουμε
-  10 δραστηριότητες στη σειρά και όπου η τελευταία παράδοση ήταν μια εβδομάδα πριν
-errors.server500.description: Συγγνώμη, κάτι πήγε στραβά από τη πλευρά μας. Αν συνεχίζεις
-  να βλέπεις αυτό το σφάλμα, δοκίμασε να επικοινωνήσεις με τον ιδιοκτήτη της οντότητας.
-  Αν η οντότητα δε δουλεύει καθόλου, ρίξε μια ματιά εντωμεταξύ, σε %link_start%άλλες
-  οντότητες του Mbin%link_end% μέχρι να επιλυθεί το πρόβλημα.
+federation_page_dead_description: Οντότητες στις οποίες δε μπορέσαμε να 
+  παραδώσουμε 10 δραστηριότητες στη σειρά και όπου η τελευταία παράδοση και 
+  παραλαβή ήταν μια εβδομάδα πριν
+errors.server500.description: Συγγνώμη, κάτι πήγε στραβά από τη πλευρά μας. Αν 
+  συνεχίζεις να βλέπεις αυτό το σφάλμα, δοκίμασε να επικοινωνήσεις με τον 
+  ιδιοκτήτη της οντότητας. Αν η οντότητα δε δουλεύει καθόλου, ρίξε μια ματιά 
+  εντωμεταξύ, σε %link_start%άλλες οντότητες του Mbin%link_end% μέχρι να 
+  επιλυθεί το πρόβλημα.
 errors.server403.title: 403 Απαγορευμένο
 email_confirm_button_text: Επιβεβαίωσε την αίτηση για αλλαγή κωδικού
 email.delete.title: Αίτημα διαγραφής λογαριασμού χρήστη
-email.delete.description: Ο ακόλουθος χρήστης αιτήθηκε διαγραφής του λογαριασμού του
+email.delete.description: Ο ακόλουθος χρήστης αιτήθηκε διαγραφής του λογαριασμού
+  του
 resend_account_activation_email: Επαναποστολή email ενεργοποίησης λογαριασμού
-resend_account_activation_email_success: Αν υπάρχει λογαριασμός που συσχετίζεται μ'
-  αυτό το email, θα στείλουμε νέο email ενεργοποίησης.
+resend_account_activation_email_success: Αν υπάρχει λογαριασμός που συσχετίζεται
+  μ' αυτό το email, θα στείλουμε νέο email ενεργοποίησης.
 ignore_magazines_custom_css: Αγνόηση προσαρμοσμένης CSS περιοδικών
 oauth.consent.title: Φόρμα Συναίνεσης OAuth2
 oauth.consent.grant_permissions: Αποδοχή Δικαιωμάτων
 oauth.consent.deny: Απόρριψη
 oauth.client_identifier.invalid: Μη Έγκυρο ID Πελάτη OAuth!
-oauth.client_not_granted_message_read_permission: Αυτή η εφαρμογή δεν έχει το δικαίωμα
-  να διαβάζει τα μηνύματά σου.
-restrict_oauth_clients: Περιορισμός δημιουργίας Πελάτη OAuth2 για τους Διαχειριστές
-private_instance: Υποχρέωσε τους χρήστες να συνδεθούν πριν μπορούν να έχουν πρόσβαση
-  σε περιεχόμενο
+oauth.client_not_granted_message_read_permission: Αυτή η εφαρμογή δεν έχει το 
+  δικαίωμα να διαβάζει τα μηνύματά σου.
+restrict_oauth_clients: Περιορισμός δημιουργίας Πελάτη OAuth2 για τους 
+  Διαχειριστές
+private_instance: Υποχρέωσε τους χρήστες να συνδεθούν πριν μπορούν να έχουν 
+  πρόσβαση σε περιεχόμενο
+oauth2.grant.entry.vote: Ψήφισε θετικά ή αρνητικά, ενίσχυσε οποιοδήποτε νήμα.
+oauth2.grant.entry.report: Ανέφερε οποιοδήποτε νήμα.
+oauth2.grant.entry_comment.create: Δημιούργησε νέα σχόλια σε νήματα.
+oauth2.grant.domain.block: Απέκλεισε τομείς ή αίρε τον αποκλεισμό και δες τους 
+  τομείς που έχεις αποκλείσει.
+oauth2.grant.subscribe.general: Κάνε εγγραφή ή ακολούθησε οποιοδήποτε περιοδικό,
+  τομέα ή χρήστη και δες τα περιοδικά, τους τομείς και τους χρήστες που 
+  εγγράφεσαι.
+oauth2.grant.moderate.magazine.reports.all: Διαχειρίσου αναφορές στα περιοδικά 
+  που συντονίζεις.
+oauth2.grant.domain.all: Εγγράψου σε τομείς ή απέκλεισέ τους και δες τους τομείς
+  στους οποίους έχεις εγγραφεί ή αποκλείσει.
+oauth2.grant.domain.subscribe: Εγγράψου ή κάνε απεγγραφή σε τομείς και δες τους 
+  τομείς στους οποίους έχεις εγγραφεί.
+oauth2.grant.entry.edit: Επεξεργάσου τα υπάρχοντα σου νήματα.
+oauth2.grant.moderate.magazine_admin.stats: Δες το περιεχόμενο, τις ψήφους και 
+  τα στατιστικά προβολής των ιδιόκτητων περιοδικών σου.
+oauth2.grant.entry_comment.edit: Επεξεργάσου τα υπάρχοντα σχόλιά σου σε νήματα.
+oauth2.grant.moderate.magazine_admin.delete: Διέγραψε κάποιο απ' τα ιδιότητα 
+  περιοδικά σου.
+oauth2.grant.moderate.magazine.trash.read: Προβολή περιεχομένου απορριμάτων στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine_admin.edit_theme: Επεξεργάσου την προσαρμοσμένη 
+  CSS οποιωνδήποτε από τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.moderators: Πρόσθεσε ή αφαίρεσε συντονιστές
+  από οποιοδήποτε από τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.entry_comment.delete: Διέγραψε τα υπάρχοντα σχόλιά σου σε νήματα.
+oauth2.grant.entry.create: Δημιούργησε νέα νήματα.
+unblock: Άρση αποκλεισμού
+oauth2.grant.moderate.magazine.ban.delete: Άρση αποκλεισμού χρηστών σε περιοδικά
+  που συντονίζεις.
+oauth2.grant.moderate.magazine.list: Διάβασε μια λίστα με τα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.magazine.reports.read: Διάβασε αναφορές στα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.magazine.reports.action: Αποδέξου ή απέρριψε αναφορές στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine_admin.create: Δημιούργησε νέα περιοδικά.
+oauth2.grant.moderate.magazine_admin.update: Επεξεργάσου οποιονδήποτε από τους 
+  κανόνες, την περιγραφή, τη κατάσταση NSFW ή το εικονίδιο των ιδιόκτητων 
+  περιοδικών σου.
+oauth2.grant.moderate.magazine_admin.all: Δημιούργησε, επεξεργάσου ή διέγραψε τα
+  ιδιόκτητα περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.badges: Δημιούργησε ή αφαίρεσε τα σήματα 
+  από τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.moderate.magazine_admin.tags: Δημιούργησε ή αφαίρεσε ετικέτες από 
+  τα ιδιόκτητα περιοδικά σου.
+oauth2.grant.admin.all: Εκτέλεσε οποιαδήποτε ενέργεια διαχειριστή στην οντότητά 
+  σου.
+oauth2.grant.admin.entry.purge: Διέγραψε πλήρως οποιοδήποτε νήμα από την 
+  οντότητά σου.
+oauth2.grant.read.general: Διάβασε όλο το περιεχόμενο στο οποίο έχεις πρόσβαση.
+oauth2.grant.write.general: Δημιούργησε ή επεξεργάσου οποιοδήποτε από τα νήματα,
+  αναρτήσεις ή σχόλια σου.
+oauth2.grant.delete.general: Διάγραψε οποιοδήποτε από τα νήματα, αναρτήσεις ή 
+  σχόλια σου.
+oauth2.grant.report.general: Ανάφερε νήματα, αναρτήσεις ή σχόλια.
+oauth2.grant.vote.general: Δώσε θετική, αρνητική ψήφο ή ενίσχυσε νήματα, 
+  αναρτήσεις ή σχόλια.
+oauth2.grant.block.general: Απέκλεισε ή αίρε τον αποκλεισμό οποιουδήποτε 
+  περιοδικού, τομέα ή χρήστη και δες τα περιοδικά, τους τομείς και τους χρήστες 
+  που έχεις αποκλείσει.
+oauth2.grant.entry.all: Δημιούργησε, επεξεργάσου ή διάγραψε τα νήματα σου και 
+  ψήφισε, ενίσχυσε ή ανέφερε οποιοδήποτε νήμα.
+oauth2.grant.entry.delete: Διάγραψε τα υπάρχοντα σου νήματα.
+oauth2.grant.entry_comment.all: Δημιούργησε, επεξεργάσου ή διάγραψε τα σχόλιά 
+  σου σε νήματα και ψήφισε, ενίσχυσε ή ανέφερε οποιοδήποτε σχόλιο σε ένα νήμα.
+downvotes_mode: Λειτουργία αρνητικών ψήφων
+change_downvotes_mode: Αλλαγή λειτουργίας αρνητικών ψήφων
+hidden: Κρυφό
+enabled: Ενεργό
+disabled: Ανενεργό
+oauth2.grant.magazine.block: Απέκλεισε ή κατάργησε τον αποκλεισμό περιοδικών και
+  προβολή των περιοδικών που έχεις αποκλείσει.
+oauth2.grant.post.edit: Επεξεργάσου υπάρχουσες αναρτήσεις.
+oauth2.grant.post.delete: Διέγραψε τις υπάρχουσες αναρτήσεις σου.
+oauth2.grant.magazine.subscribe: Εγγράψου ή κατάργησε την εγγραφή σου σε 
+  περιοδικά και δες τα περιοδικά στα οποία έχεις εγγραφεί.
+oauth2.grant.entry_comment.vote: Δώσε θετική ή αρνητική ψήφο ή ενίσχυσε 
+  οποιοδήποτε σχόλιο σ' ένα νήμα.
+oauth2.grant.entry_comment.report: Ανέφερε οποιοδήποτε σχόλιο σ' ένα νήμα.
+oauth2.grant.magazine.all: Κάνε εγγραφή ή απέκλεισε περιοδικά και δες τα 
+  περιοδικά στα οποία έχεις εγγραφεί ή απέκλεισέ τα.
+oauth2.grant.post.create: Δημιούργησε νέες αναρτήσεις.
+oauth2.grant.post.all: Δημιούργησε, επεξεργάσου ή διέγραψε τα μικροϊστολόγιά σου
+  και ψήφισε, ενίσχυσε ή ανέφερε οποιοδήποτε μικροϊστολόγιο.
+oauth2.grant.post.vote: Ψήφισε θετικά ή αρνητικά, ενίσχυσε οποιαδήποτε ανάρτηση.
+oauth2.grant.post.report: Ανέφερε οποιαδήποτε ανάρτηση.
+oauth2.grant.post_comment.edit: Επεξεργάσου τα υπάρχοντα σχόλιά σου σε 
+  αναρτήσεις.
+oauth2.grant.post_comment.delete: Διέγραψε τα υπάρχοντα σχόλιά σου σε 
+  αναρτήσεις.
+oauth2.grant.post_comment.all: Δημιούργησε, επεξεργάσου ή διέγραψε τα σχόλιά σου
+  σε αναρτήσεις και ψήφισε, ενίσχυσε ή να ανέφερε οποιοδήποτε σχόλιο σε με μια 
+  ανάρτηση.
+oauth2.grant.post_comment.create: Δημιούργησε νέα σχόλια σε αναρτήσεις.
+oauth2.grant.user.message.create: Στείλε μηνύματα σε άλλους χρήστες.
+oauth2.grant.user.notification.all: Διάβασε και καθάρισε τις ειδοποιήσεις σου.
+oauth2.grant.user.notification.read: Διάβασε τις ειδοποιήσεις σου, 
+  συμπεριλαμβανομένων αυτών για μηνύματα.
+oauth2.grant.user.notification.delete: Καθάρισε τις ειδοποιήσεις σου.
+toolbar.spoiler: Σπόιλερ
+oauth2.grant.user.profile.all: Διάβασε και επεξεργάσου το προφίλ σου.
+oauth2.grant.user.message.all: Διάβασε τα μηνύματά σου και στείλε μηνύματα σε 
+  άλλους χρήστες.
+oauth2.grant.user.profile.read: Διάβασε το προφίλ σου.
+oauth2.grant.post_comment.vote: Ψήφισε θετικά ή αρητικά, ενίσχυσε οποιοδήποτε 
+  σχόλιο σε μια ανάρτηση.
+oauth2.grant.post_comment.report: Ανέφερε οποιοδήποτε σχόλιο σε μια ανάρτηση.
+oauth2.grant.user.profile.edit: Επεξεργάσου το προφίλ σου.
+oauth2.grant.user.message.read: Διάβασε τα μηνύματά σου.
+oauth2.grant.user.oauth_clients.all: Διάβασε και επεξεργάσου τα δικαιώματα που 
+  έχεις χορηγήσει σε άλλες εφαρμογές OAuth2.
+oauth2.grant.user.oauth_clients.read: Διάβασε τα δικαιώματα που έχεις χορηγήσει 
+  σε άλλες εφαρμογές OAuth2.
+oauth2.grant.user.all: Διάβασε και επεξεργάσου το προφίλ, τα μηνύματα ή τις 
+  ειδοποιήσεις σου· διάβασε και επεξεργάσου δικαιώματα που έχεις δώσει σε άλλες 
+  εφαρμογές, ακολούθησε ή μπλόκαρε άλλους χρήστες· δες λίστες των χρηστών που 
+  ακολουθείς ή έχεις αποκλείσει.
+oauth2.grant.user.oauth_clients.edit: Επεξεργάσου τα δικαιώματα που έχεις 
+  χορηγήσει σε άλλες εφαρμογές OAuth2.
+oauth2.grant.user.follow: Ακολούθησε ή αφαίρεσε από ακόλουθο χρήστες και διάβασε
+  μια λίστα χρηστών που ακολουθείς.
+oauth2.grant.moderate.entry.all: Συντόνισε τα νήματα στα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.entry.change_language: Άλλαξε τη γλώσσα των νημάτων στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.all: Εκτέλεσε οποιαδήποτε ενέργεια συντονισμού που έχετε 
+  την άδεια να εκτελέσετε στα περιοδικά που συντονίζεις.
+oauth2.grant.user.block: Αποκλεισμός ή άρση αποκλεισμού χρήστη και δες την λίστα
+  χρηστών που έχεις αποκλείσει.
+oauth2.grant.moderate.entry.pin: Καρφίτσωσε νήματα στην κορυφή των περιοδικών 
+  που συντονίζεις.
+oauth2.grant.moderate.entry.set_adult: Επισήμανση νημάτων ως NSFW στα περιοδικά 
+  που συντονίζεις.
+oauth2.grant.moderate.entry.trash: Απόρριψε ή ανάκτησε νήματα στα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.entry_comment.all: Συντόνισε τα σχόλια σε νήματα στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.entry_comment.change_language: Άλλαξε τη γλώσσα των 
+  σχολίων σε νήματα στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.entry_comment.set_adult: Επισημάνετε τα σχόλια στα νήματα 
+  ως NSFW στα περιοδικά που συντονίζετε.
+oauth2.grant.admin.post_comment.purge: Διέγραψε εντελώς οποιοδήποτε σχόλιο σε 
+  μια ανάρτηση από την οντότητα σου.
+oauth2.grant.admin.entry_comment.purge: Διέγραψε εντελώς οποιοδήποτε σχόλιο σε 
+  ένα νήμα από την οντότητα σου.
+oauth2.grant.admin.post.purge: Διέγραψε εντελώς οποιαδήποτε ανάρτηση από την 
+  οντότητα σου.
+oauth2.grant.moderate.entry_comment.trash: Πέταξε ή επανέφερε σχολίων σε νήματα 
+  στα περιοδικά που διαχειρίζεσαι.
+oauth2.grant.moderate.post.set_adult: Επισήμανε τις αναρτήσεις ως NSFW στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post_comment.set_adult: Επισήμανε τα σχόλια σε αναρτήσεις 
+  ως NSFW στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post_comment.all: Συντόνισε σχόλια σε αναρτήσεις στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post_comment.change_language: Άλλαξε τη γλώσσα των σχολίων
+  σε αναρτήσεις στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.ban.all: Διαχειρίσου τους αποκλεισμένους χρήστες 
+  στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post.all: Συντόνισε αναρτήσεις στα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.post.change_language: Άλλαξε τη γλώσσα των αναρτήσεων στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post.trash: Πέταξε ή επανέφερε τις αναρτήσεις στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.post_comment.trash: Πέταξε ή επανέφερε τα σχόλια σε 
+  αναρτήσεις στα περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.all: Διαχειρίσου τους αποκλεισμούς, τις αναφορές 
+  και την προβολή αντικειμένων στον κάδο απορριμμάτων στα περιοδικά που 
+  συντονίζεις.
+oauth2.grant.moderate.magazine.ban.read: Δες τους αποκλεισμένους χρήστες στα 
+  περιοδικά που συντονίζεις.
+oauth2.grant.moderate.magazine.ban.create: Απέκλεισε τους χρήστες στα περιοδικά 
+  που συντονίζεις.
+comment_reply_position_help: Εμφανίζει τη φόρμα απάντησης σχολίων είτε στην 
+  κορυφή ή στο κάτω μέρος της σελίδας. Όταν η "Άπειρη κύλιση" είναι ενεργή η 
+  θέση θα είναι πάντα στην κορυφή.
+flash_post_pin_success: Η ανάρτηση έχει καρφιτσωθεί επιτυχώς.
+oauth2.grant.admin.magazine.purge: Πλήρης διαγραφή περιοδικών στην οντότητα σου.
+oauth2.grant.admin.user.ban: Αποκλεισμός ή άρση αποκλεισμού χρηστών από την 
+  οντότητά σου.
+oauth2.grant.admin.user.verify: Επαλήθευσε τους χρήστες στην οντότητά σου.
+oauth2.grant.admin.federation.update: Πρόσθεσε ή αφαίρεσε οντότητες στον ή από 
+  τον κατάλογο των οντοτήτων εκτός ομοσπονδίας.
+oauth2.grant.admin.oauth_clients.all: Δες ή ανακάλεσε τους πελάτες OAuth2 που 
+  υπάρχουν στην οντότητα σου.
+oauth2.grant.admin.user.all: Αποκλεισμός, επαλήθευση ή πλήρης διαγραφή των 
+  χρηστών στην οντότητά σου.
+flash_post_unpin_success: Η ανάρτηση έχει ξεκαρφιτσωθεί επιτυχώς.
+show_avatars_on_comments: Εμφάνιση Άβαταρ Σχολίων
+oauth2.grant.admin.magazine.move_entry: Μετακίνησε τα νήματα μεταξύ των 
+  περιοδικών της οντότητας σου.
+oauth2.grant.admin.instance.settings.read: Δες τις ρυθμίσεις στην οντότητά σου.
+oauth2.grant.admin.oauth_clients.read: Δες τους πελάτες OAuth2 που υπάρχουν στην
+  οντότητα σου και τα στατιστικά χρήσης τους.
+single_settings: Απλό
+update_comment: Ενημέρωση σχολίου
+oauth2.grant.admin.oauth_clients.revoke: Ανακάλεσε την πρόσβαση στους πελάτες 
+  OAuth2 στην οντότητα σου.
+last_active: Τελευταία Ενεργό
+oauth2.grant.admin.instance.settings.edit: Ενημέρωσε τις ρυθμίσεις στην οντότητα
+  σου.
+oauth2.grant.admin.instance.information.edit: Ενημέρωσε τα Σχετικά, FAQ, 
+  Συμβόλαιο, Όρους Της Υπηρεσίας και τις σελίδες Πολιτικής Απορρήτου στην 
+  οντότητά σου.
+oauth2.grant.admin.magazine.all: Μετακίνησε νήματα μεταξύ ή διέγραψε εντελώς τα 
+  περιοδικά στην οντότητα σου.
+oauth2.grant.admin.user.delete: Διέγραψε χρήστες από την οντότητά σου.
+oauth2.grant.admin.user.purge: Διέγραψε πλήρως τους χρήστες από την οντότητά 
+  σου.
+oauth2.grant.admin.instance.all: Δες και ενημέρωσε τις ρυθμίσεις οντότητας ή τις
+  πληροφορίες.
+oauth2.grant.admin.instance.stats: Δες τα στατιστικά στοιχεία της οντότητας σου.
+oauth2.grant.admin.instance.settings.all: Δες ή ενημέρωσε τις ρυθμίσεις στην 
+  οντότητά σου.
+oauth2.grant.admin.federation.all: Δες και ενημέρωσε τις τρέχουσες - εκτός 
+  ομοσπονδίας, οντότητες.
+oauth2.grant.admin.federation.read: Δες τη λίστα των οντοτήτων εκτός 
+  ομοσπονδίας.
+moderation.report.ban_user_description: Θες να αποκλείσεις τον χρήστη 
+  (%username%) που δημιούργησε αυτό το περιεχόμενο από αυτό το περιοδικό;
+subject_reported_exists: Το περιεχόμενο αυτό έχει ήδη αναφερθεί.
+moderation.report.ban_user_title: Αποκλεισμός Χρήστη
+magazine_theme_appearance_custom_css: Το Custom CSS που θα ισχύει κατά την 
+  προβολή περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_title: Έγκριση Αναφοράς
+moderation.report.reject_report_title: Απόρριψη Αναφοράς
+purge_content: Εκκαθάριση περιεχομένου
+delete_content: Διαγραφή περιεχομένου
+show_avatars_on_comments_help: Εμφάνιση/απόκρυψη άβαταρ χρήστη κατά την προβολή 
+  σχολίων σε ένα ενιαίο νήμα ή ανάρτηση.
+comment_reply_position: Θέση απάντησης σχολίου
+magazine_theme_appearance_icon: Προσαρμοσμένο εικονίδιο για το περιοδικό. Αν δεν
+  επιλεχθεί κανένα, θα χρησιμοποιηθεί το προεπιλεγμένο.
+magazine_theme_appearance_background_image: Προσαρμοσμένη εικόνα παρασκηνίου που
+  θα εφαρμοστεί κατά την προβολή περιεχομένου εντός του περιοδικού σου.
+moderation.report.approve_report_confirmation: Σίγουρα θες να εγκρίνεις αυτή την
+  αναφορά;
+moderation.report.reject_report_confirmation: Σίγουρα θες να απορρίψεις αυτή την
+  αναφορά;
+oauth2.grant.moderate.post.pin: Καρφίτσωσε στην κορυφή των περιοδικών που 
+  συντονίζεις.
+cancel: Ακύρωση
+subscription_sort: Ταξινόμηση
+2fa.qr_code_img.alt: Ένας κωδικός QR που επιτρέπει τη ρύθμιση ταυτότητας δύο 
+  παραγόντων για τον λογαριασμό σου
+two_factor_backup: Εφεδρικό κωδικοί ταυτοποίησης δύο παραγόντων
+2fa.authentication_code.label: Κωδικός Ταυτοποίησης
+2fa.remove: Αφαίρεση 2FA
+2fa.disable: Απενεργοποίηση ταυτοποίησης δύο παραγόντων
+2fa.backup: Οι εφεδρικό κωδικοί ταυτοποίησης δύο παραγόντων σου
+2fa.backup_codes.recommendation: Συνιστάται να κρατήσεις ένα αντίγραφο αυτών σε 
+  ασφαλή θέση.
+flash_account_settings_changed: Οι ρυθμίσεις λογαριασμού σου έχουν αλλάξει με 
+  επιτυχία. Θα χρειαστεί να συνδεθείς ξανά.
+show_subscriptions: Εμφάνιση εγγραφών
+subscription_panel_large: Μεγάλο πάνελ
+delete_account_desc: Διέγραψε το λογαριασμό, συμπεριλαμβανομένων των απαντήσεων 
+  άλλων χρηστών σε δημιουργημένα νήματα, αναρτήσεις και σχόλια.
+2fa.code_invalid: Ο κωδικός ταυτοποίησης δεν είναι έγκυρος
+2fa.enable: Ρύθμιση ταυτοποίησης δύο παραγόντων
+subscription_sidebar_pop_out_left: Μετακίνηση σε ξεχωριστή sidebar στα αριστερά
+2fa.setup_error: Σφάλμα ενεργοποίησης 2FA για λογαριασμό
+purge_content_desc: Πλήρης εκκαθάριση του περιεχομένου του χρήστη, 
+  συμπεριλαμβανομένης της διαγραφής των απαντήσεων άλλων χρηστών σε 
+  δημιουργημένα νήματα, αναρτήσεις και σχόλια.
+delete_content_desc: Διέγραψε το περιεχόμενο του χρήστη, αφήνοντας τις 
+  απαντήσεις άλλων χρηστών στα δημιουργημένα νήματα, αναρτήσεις και σχόλια.
+schedule_delete_account: Προγραμματισμός Διαγραφής
+schedule_delete_account_desc: Προγραμμάτισε τη διαγραφή αυτού του λογαριασμού σε
+  30 ημέρες. Αυτό θα αποκρύψει τον χρήστη και το περιεχόμενό του, καθώς και θα 
+  εμποδίσει τον χρήστη να συνδεθεί.
+remove_schedule_delete_account: Αφαίρεση Προγραμματισμένης Διαγραφής
+remove_schedule_delete_account_desc: Αφαίρεσε την προγραμματισμένη διαγραφή. Όλο
+  το περιεχόμενο θα είναι διαθέσιμο ξανά και ο χρήστης θα είναι σε θέση να 
+  συνδεθεί.
+two_factor_authentication: Έλεγχος ταυτότητας δύο παραγόντων
+2fa.verify: Επαλήθευση
+2fa.backup-create.help: Μπορείτε να δημιουργήσεις νέους εφεδρικούς κωδικούς 
+  αυθεντικοποίησης· αυτό θα ακυρώσει τους υφιστάμενους κωδικούς.
+2fa.add: Προσθήκη στον λογαριασμό μου
+2fa.backup-create.label: Δημιουργία νέων εφεδρικών κωδικών ταυτοποίησης
+2fa.qr_code_link.title: Η επίσκεψη σε αυτόν τον σύνδεσμο μπορεί να επιτρέψει 
+  στην πλατφόρμα σου να καταχωρήσει αυτή την επαλήθευση δύο παραγόντων
+2fa.user_active_tfa.title: Ο χρήστης έχει ενεργό 2FA
+2fa.backup_codes.help: Μπορείς να χρησιμοποιήσεις αυτούς τους κωδικούς όταν δεν 
+  έχεις τη συσκευή επαλήθευσης δύο παραγόντων ή εφαρμογή σου. <strong>Δεν θα 
+  τους δείξεις ξανά </strong> και θα μπορείς να χρησιμοποιήσεις τον καθένα τους 
+  <strong> μόνο μία φορά </strong>.
+password_and_2fa: Κωδικός & 2FA
+alphabetically: Αλφαβητικά
+subscriptions_in_own_sidebar: Σε ξεχωριστή sidebar
+sidebars_same_side: Sidebars στην ίδια πλευρά
+subscription_sidebar_pop_out_right: Μετακίνηση σε ξεχωριστή sidebar στα δεξιά
+subscription_sidebar_pop_in: Μετακίνηση συνδρομών στο inline πάνελ
+2fa.available_apps: Χρησιμοποίησε μια εφαρμογή επαλήθευσης δύο παραγόντων, όπως 
+  το %google_authenticator%, %aegis% (Android) ή το %raivo% (iOS) για να 
+  σαρώσεις τον κωδικό QR.
+your_account_is_not_yet_approved: Ο λογαριασμός σου δεν έχει εγκριθεί ακόμα. Θα 
+  σου στείλουμε ένα email μόλις οι διαχειριστές έχουν επεξεργαστεί το αίτημα 
+  εγγραφής σου.
+subscription_header: Εγγεγραμμένα Περιοδικά
+close: Κλείσιμο
+notify_on_user_signup: Νέες εγγραφές
+2fa.verify_authentication_code.label: Εισήγαγε έναν κωδικό δύο παραγόντων για να
+  επαληθεύσεις τη ρύθμιση
+position_bottom: Κάτω μέρος
+position_top: Επάνω
+pending: Σε αναμονή
+flash_thread_new_error: Δεν μπόρεσε να δημιουργηθεί νήμα. Κάτι πήγε στραβά.
+remove_user_avatar: Αφαίρεση άβαταρ
+remove_user_cover: Αφαίρεση εξωφύλλου
+oauth2.grant.user.bookmark_list: Διάβασε, επεξεργάσου και διέγραψε τις λίστες 
+  σελιδοδεικτών σου
+oauth2.grant.user.bookmark_list.read: Διάβασε τις λίστες σελιδοδεικτών σου
+oauth2.grant.user.bookmark_list.delete: Διέγραψε τις λίστες σελιδοδεικτών σου
+flash_image_download_too_large_error: Η εικόνα δεν ήταν δυνατό να δημιουργηθεί, 
+  είναι πολύ μεγάλη (μέγιστο μέγεθος %bytes%)
+flash_email_was_sent: Το email εστάλη με επιτυχία.
+flash_email_failed_to_sent: Το email δεν μπόρεσε να αποσταλεί.
+viewing_one_signup_request: Βλέπεις μόνο ένα αίτημα εγγραφής από %username%
+flash_post_new_success: Η ανάρτηση δημιουργήθηκε με επιτυχία.
+oauth2.grant.user.bookmark: Προσθήκη και αφαίρεση σελιδοδεικτών
+oauth2.grant.user.bookmark.remove: Αφαίρεση σελιδοδεικτών
+oauth2.grant.user.bookmark.add: Προσθήκη σελιδοδεικτών
+oauth2.grant.user.bookmark_list.edit: Επεξεργάσου τις λίστες σελιδοδεικτών σου
+flash_magazine_theme_changed_success: Η εμφάνιση του περιοδικού ενημερώθηκε με 
+  επιτυχία.
+flash_post_new_error: Η ανάρτηση δεν μπόρεσε να δημιουργηθεί. Κάτι πήγε στραβά.
+flash_thread_tag_banned_error: Δε μπόρεσε να δημιουργηθεί νήμα. Το περιεχόμενο 
+  δεν επιτρέπεται.
+page_width_auto: Αυτόματο
+filter_labels: Φιλτράρισμα Ετικετών
+2fa.manual_code_hint: Εάν δεν μπορείς να σαρώσεις τον κωδικό QR, εισήγαγε το 
+  μυστικό χειροκίνητα
+flash_magazine_theme_changed_error: Αποτυχία ενημέρωσης εμφάνισης του 
+  περιοδικού.
+flash_comment_new_success: Το σχόλιο δημιουργήθηκε επιτυχώς.
+flash_user_settings_general_success: Οι ρυθμίσεις χρήστη αποθηκεύτηκαν με 
+  επιτυχία.
+flash_user_settings_general_error: Αποτυχία αποθήκευσης ρυθμίσεων χρήστη.
+flash_user_edit_profile_success: Οι ρυθμίσεις προφίλ χρήστη αποθηκεύτηκαν με 
+  επιτυχία.
+flash_comment_edit_success: Το σχόλιο ενημερώθηκε επιτυχώς.
+flash_comment_new_error: Αποτυχία δημιουργίας σχολίου. Κάτι πήγε στραβά.
+flash_user_edit_email_error: Αποτυχία αλλαγής email.
+flash_user_edit_password_error: Αποτυχία αλλαγής κωδικού πρόσβασης.
+flash_thread_edit_error: Αποτυχία επεξεργασίας νήματος. Κάτι πήγε στραβά.
+flash_post_edit_error: Αποτυχία επεξεργασίας ανάρτησης. Κάτι πήγε στραβά.
+flash_post_edit_success: Η ανάρτηση επεξεργάστηκε με επιτυχία.
+page_width: Πλάτος σελίδας
+page_width_fixed: Σταθερό
+auto: Αυτόματο
+open_url_to_fediverse: Άνοιγμα πρωτότυπου URL
+page_width_max: Μεγ
+flash_comment_edit_error: Αποτυχία επεξεργασίας σχολίου. Κάτι πήγε στραβά.
+flash_user_edit_profile_error: Αποτυχία αποθήκευσης ρυθμίσεων προφίλ.
+change_my_cover: Άλλαξε το εξώφυλλό μου
+change_my_avatar: Άλλαξε το άβατάρ μου
+account_settings_changed: Οι ρυθμίσεις λογαριασμού σου έχουν αλλάξει με 
+  επιτυχία. Θα χρειαστεί να συνδεθείς ξανά.
+magazine_deletion: Διαγραφή περιοδικού
+toolbar.emoji: Εμότζι
+edit_my_profile: Επεξεργασία του προφίλ μου
+type_search_term_url_handle: Τύπος αναζήτησης, διεύθυνση ή handle
+delete_magazine: Διαγραφή περιοδικού
+restore_magazine: Επαναφορά περιοδικού
+purge_magazine: Εκκαθάριση περιοδικού
+magazine_is_deleted: Το περιοδικό διαγράφεται. Μπορείς να κάνεις <a 
+  href="%link_target%">επαναφορά</a> μέσα σε 30 ημέρες.
+suspend_account: Αναστολή λογαριασμού
+unsuspend_account: Άρση αναστολής λογαριασμού
+account_suspended: Ο λογαριασμός έχει ανασταλεί.
+account_unsuspended: Ο λογαριασμός δεν είναι πλέον σε αναστολή.
+deletion: Διαγραφή
+user_suspend_desc: Η αναστολή του λογαριασμού σου κρύβει το περιεχόμενό σου από 
+  την οντότητα, αλλά δεν τον αφαιρεί μόνιμα και μπορείς να το επαναφέρεις ανά 
+  πάσα στιγμή.
+account_banned: Ο λογαριασμός έχει αποκλειστεί.

@@ -12,6 +12,7 @@ use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
+use App\Utils\RegPatterns;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
@@ -31,7 +32,7 @@ class MentionLinkParser implements InlineParserInterface
     public function getMatchDefinition(): InlineParserMatch
     {
         // support for unicode international domains
-        return InlineParserMatch::regex('\B@([a-zA-Z0-9\-\_]{1,30})(?:@)?((?:[\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)?');
+        return InlineParserMatch::regex(RegPatterns::MENTION_REGEX);
     }
 
     public function parse(InlineParserContext $ctx): bool
@@ -44,6 +45,8 @@ class MentionLinkParser implements InlineParserInterface
         $domain = $matches['1'] ?? $this->settingsManager->get('KBIN_DOMAIN');
 
         $fullUsername = $username.'@'.$domain;
+
+        CommunityLinkParser::removeSurroundingLink($ctx, $username, $domain);
 
         [$type, $data] = $this->resolveType($username, $domain);
 
@@ -66,7 +69,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::RemoteMagazine => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
             MentionType::Magazine => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$username, $username],
             MentionType::Search => [$this->resolveRouteDetails($type), $fullUsername, '@'.$username, '@'.$fullUsername, $fullUsername],
-            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '', ''],
+            MentionType::Unresolvable => [['route' => '', 'param' => ''], '', '@'.$username, '@'.$fullUsername, ''],
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
         };
 
@@ -148,7 +151,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::Magazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteMagazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
-            MentionType::Search => ['route' => 'search',         'param' => 'q'],
+            MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
             MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
         };
     }

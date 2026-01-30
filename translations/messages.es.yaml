@@ -11,9 +11,9 @@ people: Gente
 events: Eventos
 magazine: Revista
 magazines: Revistas
-search: Búsqueda
+search: Buscar
 add: Añadir
-select_channel: Elegir un canal
+select_channel: Elige un canal
 login: Iniciar sesión
 top: Destacado
 hot: Popular
@@ -25,16 +25,16 @@ change_view: Cambiar vista
 filter_by_time: Ordenar por orden cronológico
 filter_by_type: Ordenar por tipo
 comments_count: '{0}Comentarios|{1}Comentario|]1,Inf[ Comentarios'
-favourites: Favoritos
+favourites: Votos a favor
 favourite: Favorito
-more: Otros
+more: Más
 avatar: Avatar
 added: Añadido
 general: General
 created_at: Creado
 owner: Propietario/a
-subscribers: Suscriptores
-down_votes: Votos negativos
+subscribers: Suscriptores/as
+down_votes: Votos en contra
 no_comments: No hay comentarios
 online: En línea
 comments: Comentarios
@@ -42,28 +42,30 @@ posts: Publicaciones
 replies: Respuestas
 moderators: Moderadores/as
 mod_log: Registro de moderación
-add_comment: Añadir un comentario
-add_post: Añadir una publicación
-add_media: Añadir contenido multimedia
+add_comment: Añadir comentario
+add_post: Añadir publicación
+add_media: Añadir medio
 markdown_howto: ¿Cómo se utiliza el editor?
-enter_your_comment: Introduce tu comentario
+enter_your_comment: Escribe tu comentario
 enter_your_post: Introduce tu publicación
 activity: Actividad
 cover: Portada
-related_posts: Entradas relacionadas
+related_posts: Publicaciones relacionadas
 random_posts: Publicaciones al azar
-federated_magazine_info: Esta revista es de un servidor federado y podría estar incompleta.
-federated_user_info: Este perfil es de un servidor federado y podría estar incompleto.
-go_to_original_instance: Ver en una instancia remota
+federated_magazine_info: Esta revista es de un servidor federado y podría estar 
+  incompleta.
+federated_user_info: Este perfil es de un servidor federado y podría estar 
+  incompleto.
+go_to_original_instance: Ver en instancia remota
 empty: Vacío
 subscribe: Suscribirse
 unsubscribe: Cancelar suscripción
 follow: Seguir
 unfollow: Dejar de seguir
 reply: Responder
-login_or_email: Iniciar sesión o correo electrónico
+login_or_email: Identificador o correo electrónico
 password: Contraseña
-remember_me: Recordar mi sesión
+remember_me: Recordarme
 dont_have_account: ¿No tienes una cuenta?
 you_cant_login: ¿Has olvidado tu contraseña?
 register: Registrarse
@@ -71,13 +73,13 @@ reset_password: Restablecer la contraseña
 show_more: Mostrar más
 to: a
 in: en
-username: Nombre del usuario
+username: Nombre de usuario/a
 email: Correo electrónico
 repeat_password: Repetir la contraseña
 terms: Condiciones de uso
 privacy_policy: Política de privacidad
 about_instance: Acerca de
-all_magazines: Todos las revistas
+all_magazines: Todas las revistas
 stats: Estadísticas
 fediverse: Fediverso
 create_new_magazine: Crear una nueva revista
@@ -93,14 +95,14 @@ change_theme: Cambiar estilo
 useful: Útil
 help: Ayuda
 check_email: Verifica tu correo electrónico
-reset_check_email_desc: Si ya existe una cuenta asociada con tu correo electrónico,
-  recibirás un correo electrónico a la brevedad que contiene un enlace que puedes
-  usar para restablecer tu contraseña. Este enlace expirará en %expire%.
-reset_check_email_desc2: Si no has recibido un correo electrónico, por favor verifica
-  tu carpeta de spam.
+reset_check_email_desc: Si ya existe una cuenta asociada con tu correo 
+  electrónico, recibirás un mensaje a la brevedad que contiene un enlace que 
+  puedes usar para restablecer tu contraseña. Este enlace expirará en %expire%.
+reset_check_email_desc2: Si no has recibido un correo electrónico, por favor 
+  verifica tu carpeta de spam.
 try_again: Intentar de nuevo
 email_confirm_header: ¡Hola! Confirma tu dirección de correo electrónico.
-email_confirm_content: '¿Listo para activar tu cuenta de Mbin? Haga clic en el siguiente
+email_confirm_content: '¿Listo para activar tu cuenta de Mbin? Haz clic en el siguiente
   enlace:'
 email_verify: Confirma la dirección de correo electrónico
 email_confirm_expire: Ten en cuenta que el enlace caducará en una hora.
@@ -108,33 +110,34 @@ select_magazine: Selecciona una revista
 add_new: Añadir nuevo
 url: URL
 title: Título
-already_have_account: ¿Tienes una cuenta?
-agree_terms: Consentimiento para %terms_link_start%Terms and Conditions%terms_link_end%
-  and %policy_link_start%Privacy Policy%policy_link_end%
+already_have_account: ¿Ya tienes una cuenta?
+agree_terms: Consentimiento a los %terms_link_start%Términos y 
+  Condiciones%terms_link_end% y a la %policy_link_start%Política de 
+  Privacidad%policy_link_end%
 email_confirm_title: Confirma tu dirección de correo electrónico.
-1w: 1 semana
-down_vote: Votos negativos
+1w: 1 sem.
+down_vote: Votar en contra
 body: Cuerpo
 tags: Etiquetas
 badges: Distintivos
-is_adult: 18+ / NSFW
+is_adult: 18+ / Explícito
 eng: ENG
-oc: OC
+oc: Cont. Orig.
 image: Imagen
 image_alt: Texto alternativo para la imagen
 name: Nombre
 description: Descripción
-rules: Reglas
+rules: Normas
 domain: Dominio
 followers: Seguidores
 following: Siguiendo
 subscriptions: Suscripciones
 overview: Vista general
-cards: Cartas
+cards: Tarjetas
 columns: Columnas
 user: Usuario/a
-joined: Inscrito
-moderated: Moderado
+joined: Inscrito/a
+moderated: Moderado/a
 people_local: Local
 people_federated: Federado
 reputation_points: Puntos de reputación
@@ -163,11 +166,11 @@ photos: Fotos
 videos: Vídeos
 report: Reportar
 share: Compartir
-copy_url: Copiar la dirección url de Mbin
-copy_url_to_fediverse: Copia la URL original
+copy_url: Copiar URL de Mbin
+copy_url_to_fediverse: Copiar URL original
 share_on_fediverse: Compartir en el Fediverso
 edit: Editar
-are_you_sure: ¿Estás segura/o?
+are_you_sure: ¿Estás seguro/a?
 moderate: Moderar
 reason: Motivo
 delete: Borrar
@@ -184,28 +187,28 @@ restored_thread_by: ha restaurado el hilo de
 removed_comment_by: ha borrado el comentario de
 removed_post_by: ha borrado la publicación de
 restored_post_by: ha restaurado la publicación de
-he_banned: suspender
-he_unbanned: cancelar la suspensión
+he_banned: banear
+he_unbanned: desbanear
 read_all: Leer todo
 show_all: Mostrar todo
-flash_register_success: ¡Bienvenida/o a bordo! Su cuenta ya está registrada. Un último
-  paso - consulte su bandeja de entrada para recibir un enlace de activación que dará
-  vida a su cuenta.
-flash_thread_new_success: El hilo ha sido creado con éxito y ahora es visible para
-  otras/os usuarias/os.
+flash_register_success: ¡Bienvenida/o a bordo! Tu cuenta ya está registrada. Un 
+  último paso - consulta tu bandeja de entrada para recibir un enlace de 
+  activación que dará vida a tu cuenta.
+flash_thread_new_success: El hilo ha sido creado con éxito y ahora es visible 
+  para otras/os usuarias/os.
 flash_thread_edit_success: El hilo ha sido editado con éxito.
 flash_thread_delete_success: El hilo ha sido borrado con éxito.
 flash_thread_pin_success: El hilo ha sido anclado con éxito.
 flash_thread_unpin_success: El hilo ha sido desanclado con éxito.
-flash_magazine_new_success: La revista ha sido creado con éxito. Ahora puedes añadir
-  nuevo contenido o explorar el panel de administración.
+flash_magazine_new_success: La revista ha sido creado con éxito. Ahora puedes 
+  añadir nuevo contenido o explorar el panel de administración.
 flash_magazine_edit_success: La revista ha sido editado con éxito.
 too_many_requests: Límite excedido, por favor, inténtalo de nuevo más tarde.
 set_magazines_bar: Barra de revistas
 set_magazines_bar_desc: añade el nombre de la revista tras la coma
-set_magazines_bar_empty_desc: si el campo está vacío, las revistas activas se mostrarán
-  en la barra.
-up_votes: Votos positivos
+set_magazines_bar_empty_desc: si el campo está vacío, las revistas activas se 
+  mostrarán en la barra.
+up_votes: Impulsos
 edit_comment: Guardar cambios
 settings: Configuración
 profile: Perfil
@@ -215,19 +218,23 @@ notifications: Notificaciones
 messages: Mensajes
 appearance: Apariencia
 homepage: Página de inicio
-hide_adult: Ocultar contenido para adultos (NSFW)
+hide_adult: Ocultar contenido explícito
 featured_magazines: Revistas destacadas
 privacy: Privacidad
 show_profile_subscriptions: Mostrar suscripciones a revistas
 show_profile_followings: Mostrar usuarios/as seguidos/as
-notify_on_new_entry_reply: Cualquier nivel de comentarios en los hilos que he creado
-notify_on_new_entry_comment_reply: Respuestas a mis comentarios en cualquier hilo
-notify_on_new_post_reply: Cualquier nivel de respuestas a las publicaciones que he
+notify_on_new_entry_reply: Cualquier nivel de comentarios en los hilos que he 
   creado
-notify_on_new_post_comment_reply: Respuestas a mis comentarios en cualquier publicación
-notify_on_new_entry: Nuevos hilos (enlaces o artículos) en cualquier revista a la
-  que me haya suscripto
-notify_on_new_posts: Nuevas publicaciones en cualquier revista a la que me haya suscripto
+notify_on_new_entry_comment_reply: Respuestas a mis comentarios en cualquier 
+  hilo
+notify_on_new_post_reply: Cualquier nivel de respuestas a las publicaciones que 
+  he creado
+notify_on_new_post_comment_reply: Respuestas a mis comentarios en cualquier 
+  publicación
+notify_on_new_entry: Nuevos hilos (enlaces o artículos) en cualquier revista a 
+  la que me haya suscrito
+notify_on_new_posts: Nuevas publicaciones en cualquier revista a la que me haya 
+  suscrito
 save: Guardar
 about: Acerca de
 old_email: Correo electrónico actual
@@ -251,30 +258,30 @@ solarized_dark: Oscuro Solarizado
 font_size: Tamaño de la fuente
 size: Tamaño
 up_vote: Impulsar
-mod_log_alert: En el registro de moderación podrás encontrar contenido desagradable
-  u ofensivo eliminado por los/as moderadores/as. Asegúrate de saber lo que estás
-  haciendo.
+mod_log_alert: En el registro de moderación podrás encontrar contenido 
+  desagradable u ofensivo eliminado por los/as moderadores/as. Asegúrate de 
+  saber lo que estás haciendo.
 added_new_thread: Agregado un nuevo hilo
 edited_thread: Editado un hilo
 mod_remove_your_thread: Un/a moderador/a ha borrado tu hilo
 added_new_comment: Agregado nuevo comentario
 edited_comment: Editado un comentario
-replied_to_your_comment: Ha respuesto a tu comentario
+replied_to_your_comment: Ha respondido a tu comentario
 mod_deleted_your_comment: Un/a moderador/a ha borrado tu comentario
 added_new_post: Agregada una nueva publicación
 edited_post: Editada una publicación
 mod_remove_your_post: Un/a moderador/a ha borrado tu publicación
 added_new_reply: Agregada una nueva respuesta
 wrote_message: Ha escrito un mensaje
-banned: Te ha suspendido
+banned: Te ha baneado
 removed: Borrado por un/a moderador/a
 deleted: Borrado por el/la autor/a
-mentioned_you: Te ha menciionado
+mentioned_you: Te ha mencionado
 comment: Comentario
 post: Publicación
-ban_expired: Suspensión expirada
-purge: Eliminar
-send_message: Enviar un mensaje
+ban_expired: Baneo expirado
+purge: Purgar
+send_message: Enviar un mensaje directo
 message: Mensaje
 infinite_scroll: Desplazamiento infinito
 show_top_bar: Mostrar la barra superior
@@ -284,34 +291,34 @@ sidebar_position: Posición de la barra lateral
 left: Izquierda
 right: Derecha
 federation: Federación
-status: Status
+status: Estado
 on: Encendido
 off: Apagado
 instances: Instancias
 upload_file: Cargar archivo
-from_url: de una URL
+from_url: De una URL
 magazine_panel: Panel de la revista
 reject: Rechazar
-approve: Aprovar
-ban: Suspender
+approve: Aprobar
+ban: Banear
 filters: Filtros
 approved: Aprobado
 rejected: Rechazado
 add_moderator: Añadir un/a moderador/a
 add_badge: Añadir un distintivo
-bans: Suspensiones
+bans: Baneos
 created: Creado
 expires: Expira
 perm: Permanente
 expired_at: Expiró el
-add_ban: Añadir una suspensión
+add_ban: Añadir baneo
 trash: Papelera
 icon: Icono
 done: Hecho
 unpin: Desanclar
 pin: Anclar
 change_magazine: Cambiar de revista
-change_language: Cambiar de lenguaje
+change_language: Cambiar idioma
 change: Cambio
 pinned: Anclado
 preview: Vista previa
@@ -344,36 +351,36 @@ add_mentions_entries: Añadir etiquetas de mención en los hilos
 add_mentions_posts: Añadir etiquetas de mención en las publicaciones
 Password is invalid: La contraseña no es válida.
 Your account is not active: Tu cuenta no es activa.
-Your account has been banned: Tu cuenta ha sido suspendida.
+Your account has been banned: Tu cuenta ha sido baneada.
 firstname: Primer nombre
 send: Enviar
 active_users: Personas activas
 random_entries: Hilos al azar
 related_entries: Hilos relacionados
 delete_account: Eliminar la cuenta
-purge_account: Borrar la cuenta
-ban_account: Suspender la cuenta
-unban_account: Desbloquear la cuenta
-related_magazines: Magazines relacionados
-random_magazines: Magazines al azar
-magazine_panel_tags_info: Indícalo sólo si deseas que el contenido del Fediverso se
-  incluya en esta revista en función de las etiquetas
+purge_account: Purgar la cuenta
+ban_account: Banear la cuenta
+unban_account: Desbanear la cuenta
+related_magazines: Revistas relacionadas
+random_magazines: Revistas al azar
+magazine_panel_tags_info: Indícalo sólo si deseas que el contenido del fediverso
+  se incluya en esta revista en función de las etiquetas
 sidebar: Barra lateral
-auto_preview: Vista previa de contenido multimedia
+auto_preview: Vista previa de medios
 dynamic_lists: Listas dinámicas
 banned_instances: Instancias bloqueadas
-kbin_intro_title: Explora el Fediverso
-kbin_intro_desc: es una plataforma descentralizada de agregación de contenidos y microblogging
-  que opera dentro de la red Fediverse.
+kbin_intro_title: Explorar el Fediverso
+kbin_intro_desc: es una plataforma descentralizada de agregación de contenidos y
+  microblogging que opera dentro de la red Fediverso.
 kbin_promo_title: Crea tu propia instancia
 captcha_enabled: Captcha activado
 header_logo: Logo del encabezado
-browsing_one_thread: Estás viendo solo un hilo de la discusión! En la página de la
-  publicación puedes encontrar todos los comentarios.
-return: Ir atrás
+browsing_one_thread: Estás viendo solo un hilo de la discusión! En la página de 
+  la publicación puedes encontrar todos los comentarios.
+return: Volver
 kbin_promo_desc: '%link_start%Clona el repositorio%link_end% y desarrolla el Fediverso'
-boosts: Reposts
-boost: Repostear
+boosts: Impulsos
+boost: Impulsar
 mercure_enabled: Mercure habilitado
 report_issue: Informar de un problema
 tokyo_night: Noche de Tokio
@@ -400,16 +407,18 @@ bot_body_content: "¡Bienvenido al Agente Mbin! Este agente juega un papel cruci
   federada conocida como fediverse. Proporciona una forma estandarizada para que los
   usuarios publiquen contenido, sigan a otros usuarios y participen en interacciones
   sociales como dar me gusta, compartir y comentar en hilos o publicaciones."
-your_account_is_not_active: Su cuenta no ha sido activada. Consulte su correo electrónico
-  para obtener instrucciones sobre la activación de la cuenta o <a href="%link_target%">solicite
-  un nuevo correo electrónico de activación de la cuenta.</a>
+your_account_is_not_active: Su cuenta no ha sido activada. Consulte su correo 
+  electrónico para obtener instrucciones sobre la activación de la cuenta o <a 
+  href="%link_target%">solicite un nuevo correo electrónico de activación de la 
+  cuenta.</a>
 more_from_domain: Más del dominio
-your_account_has_been_banned: Tu cuenta ha sido bloqueada
-infinite_scroll_help: Cargue automáticamente más contenido cuando llegue al final
-  de la página.
-sticky_navbar_help: La barra de navegación se pegará a la parte superior de la página
-  cuando se desplace hacia abajo.
-auto_preview_help: Ampliar automáticamente las previsualizaciones multimedia.
+your_account_has_been_banned: Tu cuenta ha sido baneada
+infinite_scroll_help: Cargar automáticamente más contenido cuando llegue al 
+  final de la página.
+sticky_navbar_help: La barra de navegación se pegará a la parte superior de la 
+  página cuando se desplace hacia abajo.
+auto_preview_help: Muestra la previsualización (foto, video) en tamaño grande 
+  bajo el contenido.
 filter.origin.label: Elegir origen
 filter.fields.label: Elija los campos que desea buscar
 filter.adult.label: Elija si desea mostrar NSFW
@@ -421,114 +430,682 @@ filter.fields.names_and_descriptions: Nombres y descripciones
 kbin_bot: Agente Mbin
 password_confirm_header: Confirme su solicitud de cambio de contraseña.
 federation_page_enabled: Página de la Federación activada
-federation_page_allowed_description: Instancias conocidas con las que nos federamos
+federation_page_allowed_description: Instancias conocidas con las que nos 
+  federamos
 federation_page_disallowed_description: Instancias con las que no nos federamos
-federated_search_only_loggedin: Búsqueda federada limitada si no se ha iniciado sesión
-email_confirm_button_text: Confirme su solicitud de cambio de la contraseña
-errors.server429.title: Error 429 Demasiadas solicitudes
-errors.server404.title: Error 404 No encontrado
-errors.server403.title: Error 403 Prohibido
-errors.server500.title: Error interno de servidor 500
-errors.server500.description: ¡Lo siento! Algo salió mal de nuestra parte. Si continúa
-  viendo este error, intente comunicarse con el propietario de la instancia. Si esta
-  instancia no funciona en absoluto, consulte %link_start%otras instancias de Mbin%link_end%
-  mientras tanto hasta que se resuelva el problema.
-email_confirm_link_help: También puede copiar y pegar lo siguiente en su navegador
-resend_account_activation_email_error: Se ha producido un problema al enviar esta
-  solicitud. Es posible que no haya ninguna cuenta asociada a ese correo electrónico
-  o que ya esté activada.
-email.delete.description: El siguiente usuario ha solicitado que se elimine su cuenta
-custom_css: CSS personalizado
-resend_account_activation_email_success: Si existe una cuenta asociada a ese correo
-  electrónico, le enviaremos un nuevo correo electrónico de activación.
-ignore_magazines_custom_css: Ignorar las revistas CSS personalizadas
-oauth.consent.title: Formulario de consentimiento OAuth2
-resend_account_activation_email: Volver a enviar el correo para la activación de la
+federated_search_only_loggedin: Búsqueda federada limitada si no se ha iniciado 
+  sesión
+email_confirm_button_text: Confirma tu solicitud de cambio de la contraseña
+errors.server429.title: 429 Demasiadas solicitudes
+errors.server404.title: 404 No encontrado
+errors.server403.title: 403 Prohibido
+errors.server500.title: 500 Error interno de servidor
+errors.server500.description: Algo salió mal de nuestra parte. Si continúas 
+  viendo este error, intenta comunicarse con el/a propietario/a de la instancia.
+  Si esta instancia no funciona en absoluto, ve a %link_start%otras instancias 
+  de Mbin%link_end% mientras tanto hasta que se resuelva el problema.
+email_confirm_link_help: También puedes copiar y pegar lo siguiente en el 
+  navegador
+resend_account_activation_email_error: Se ha producido un problema al enviar 
+  esta solicitud. Es posible que no haya ninguna cuenta asociada a ese correo 
+  electrónico o que ya esté activada.
+email.delete.description: El siguiente usuario ha solicitado que se elimine su 
   cuenta
+custom_css: CSS personalizado
+resend_account_activation_email_success: Si existe una cuenta asociada a ese 
+  correo electrónico, enviaremos un nuevo mensaje de activación.
+ignore_magazines_custom_css: Ignorar CSS personalizado de las revistas
+oauth.consent.title: Formulario de consentimiento OAuth2
+resend_account_activation_email: Volver a enviar el correo para la activación de
+  la cuenta
 resend_account_activation_email_question: ¿Cuenta inactiva?
-resend_account_activation_email_description: Introduzca la dirección de correo electrónico
-  asociada a su cuenta. Le enviaremos otro correo electrónico de activación.
+resend_account_activation_email_description: Introduce la dirección de correo 
+  electrónico asociada a tu cuenta. Te enviaremos otro mensaje de activación.
 oauth.consent.grant_permissions: Conceder los permisos
 email.delete.title: Solicitud de eliminación de la cuenta de usuario
-oauth2.grant.moderate.magazine.reports.all: Gestione los informes en las revistas
-  bajo su moderación.
-oauth.consent.to_allow_access: Para permitir este acceso, haga clic en el botón "Permitir"
-oauth.consent.app_requesting_permissions: Me gustaría realizar las siguientes acciones
-  en su nombre
-oauth2.grant.moderate.magazine.reports.action: Acepte o rechace informes en las revistas
-  bajo su moderación.
+oauth2.grant.moderate.magazine.reports.all: Gestionar los informes en las 
+  revistas bajo tu moderación.
+oauth.consent.to_allow_access: Para permitir este acceso, haga clic en el botón 
+  "Permitir"
+oauth.consent.app_requesting_permissions: querría realizar las siguientes 
+  acciones en tu nombre
+oauth2.grant.moderate.magazine.reports.action: Aceptar o rechazar informes en 
+  las revistas bajo tu moderación.
 oauth.consent.allow: Permitir
 block: Bloquear
-oauth2.grant.moderate.magazine.list: Lea una lista de las revistas bajo su moderación.
-oauth2.grant.moderate.magazine.reports.read: Lea informes en las revistas bajo su
+oauth2.grant.moderate.magazine.list: Mostrar una lista de las revistas bajo tu 
   moderación.
+oauth2.grant.moderate.magazine.reports.read: Mostrar informes en las revistas 
+  bajo tu moderación.
 oauth.consent.deny: Denegar
-oauth.client_not_granted_message_read_permission: Esta aplicación no tiene permiso
-  para leer tus mensajes.
-restrict_oauth_clients: Restringir la creación de clientes OAuth2 a los administradores
+oauth.client_not_granted_message_read_permission: Esta aplicación no tiene 
+  permiso para leer tus mensajes.
+restrict_oauth_clients: Restringir la creación de clientes OAuth2 a 
+  administradores/as
 unblock: Desbloquear
-oauth2.grant.moderate.magazine.ban.delete: Desbanea a los usuarios en las revistas
-  bajo su moderación.
+oauth2.grant.moderate.magazine.ban.delete: Desbanear usuarios/as en las revistas
+  que moderas.
 oauth.client_identifier.invalid: ¡ID para el cliente de OAuth no válido!
 oauth.consent.app_has_permissions: ya puede realizar las siguientes acciones
-mark_as_adult: Marcar como NSFW
+mark_as_adult: Marcar como explícito
 subscribers_count: '{0}Suscriptores|{1}Suscriptor|]1,Inf[ Suscriptores'
 followers_count: '{0}Seguidores|{1}Seguidor|]1,Inf[ Seguidores'
 remove_media: Eliminar medio
 menu: Menú
-flash_mark_as_adult_success: La publicación se ha marcado correctamente como NSFW.
-unmark_as_adult: Desmarcar como NSFW
-flash_unmark_as_adult_success: La publicación se ha desmarcado correctamente como
-  NSFW.
+flash_mark_as_adult_success: La publicación se ha marcado correctamente como 
+  explícita.
+unmark_as_adult: Desmarcar como explícito
+flash_unmark_as_adult_success: La publicación se ha desmarcado correctamente 
+  como explícita.
 default_theme: Tema por defecto
-oauth2.grant.moderate.magazine_admin.delete: Elimina todas tus propias revistas.
-oauth2.grant.moderate.magazine_admin.all: Crea, edita o elimina tus propias revistas.
-oauth2.grant.moderate.magazine_admin.create: Crea nuevas revistas.
-oauth2.grant.moderate.magazine_admin.update: Edite las reglas, la descripción, el
-  estado NSFW o el ícono de cualquiera de sus revistas.
-oauth2.grant.admin.all: Realice acciones administrativas en su instancia.
-oauth2.grant.moderate.magazine_admin.badges: Crea o elimina insignias de tus revistas.
-oauth2.grant.moderate.magazine_admin.tags: Crea o elimina etiquetas en tus revistas.
-oauth2.grant.moderate.magazine_admin.stats: Muestra el contenido, las votaciones y
-  el estado de visualización de tus revistas.
-oauth2.grant.domain.all: Suscríbase o bloquee dominios y vea los dominios a los que
-  se suscribe o bloquea.
-oauth2.grant.block.general: Bloquee o desbloquee cualquier revista, dominio o usuario,
-  y vea las revistas, dominios y usuarios que ha bloqueado.
-oauth2.grant.domain.subscribe: Suscríbase o cancele la suscripción a dominios y vea
-  los dominios a los que está suscrito.
-oauth2.grant.domain.block: Bloquee o desbloquee dominios y vea los dominios que ha
-  bloqueado.
-oauth2.grant.subscribe.general: Suscríbase o siga cualquier revista, dominio o usuario,
-  y vea las revistas, dominios y usuarios a los que se suscribe.
-disconnected_magazine_info: Esta revista no recibe actualizaciones (última actividad
-  hace %days% día(s)).
+oauth2.grant.moderate.magazine_admin.delete: Eliminar todas las revistas de tu 
+  propiedad.
+oauth2.grant.moderate.magazine_admin.all: Crear, editar o eliminar las revistas 
+  de tu propiedad.
+oauth2.grant.moderate.magazine_admin.create: Crear nuevas revistas.
+oauth2.grant.moderate.magazine_admin.update: Editar las reglas, la descripción, 
+  el modo explícito o el ícono de cualquiera de tus revistas.
+oauth2.grant.admin.all: Realizar cualquier acción administrativas en tu 
+  instancia.
+oauth2.grant.moderate.magazine_admin.badges: Crear o eliminar distintivos de las
+  revistas de tu propiedad.
+oauth2.grant.moderate.magazine_admin.tags: Crear o eliminar etiquetas en las 
+  revistas de tu propiedad.
+oauth2.grant.moderate.magazine_admin.stats: Mostrar el contenido, las votaciones
+  y el estado de visualización de las revistas de tu propiedad.
+oauth2.grant.domain.all: Suscríbirse o bloquear dominios y ver los dominios a 
+  los que se suscribe o bloquea.
+oauth2.grant.block.general: Bloquear o desbloquear cualquier revista, dominio o 
+  usuario/a, y ver las revistas, dominios y usuarios/as que ha bloqueado.
+oauth2.grant.domain.subscribe: Suscríbirse o cancelar la suscripción a dominios 
+  y ver los dominios a los que está suscrito.
+oauth2.grant.domain.block: Bloquear o desbloquear dominios y ver los dominios 
+  que ha bloqueado.
+oauth2.grant.subscribe.general: Suscríbirse o seguir cualquier revista, dominio 
+  o usuario, y ver las revistas, dominios y usuarios a los que se suscribe.
+disconnected_magazine_info: Esta revista no recibe actualizaciones (última 
+  actividad hace %days% día(s)).
 always_disconnected_magazine_info: Esta revista no recibe actualizaciones.
 subscribe_for_updates: Suscríbete para comenzar a recibir actualizaciones.
 default_theme_auto: Claro/Oscuro (detección automática)
 solarized_auto: Solarizado (Detección automática)
-sidebar_sections_local_only: Restringir las secciones "X aleatorio" y "Personas activas"
-  solo a nivel local
-oauth2.grant.moderate.magazine.trash.read: Mostrar el contenido basura en sus revistas
-  moderadas.
-oauth2.grant.moderate.magazine_admin.edit_theme: Edita el CSS personalizado de tus
-  revistas.
-oauth2.grant.moderate.magazine_admin.moderators: Añade o elimina moderadores a tus
-  revistas.
-oauth2.grant.admin.entry.purge: Elimina completamente cualquier hilo de tu instancia.
-oauth2.grant.read.general: Lee todo el contenido al que tienes acceso.
-oauth2.grant.write.general: Cree o edite cualquiera de sus hilos, publicaciones o
+oauth2.grant.moderate.magazine.trash.read: Mostrar el contenido de la papelera 
+  en tus revistas moderadas.
+oauth2.grant.moderate.magazine_admin.edit_theme: Editar el CSS personalizado de 
+  tus revistas.
+oauth2.grant.moderate.magazine_admin.moderators: Añadir o eliminar 
+  moderadores/as a las revistas de tu propiedad.
+oauth2.grant.admin.entry.purge: Eliminar completamente cualquier hilo de tu 
+  instancia.
+oauth2.grant.read.general: Leer todo el contenido al que tienes acceso.
+oauth2.grant.write.general: Crear o editar cualquiera de tus hilos, 
+  publicaciones o comentarios.
+oauth2.grant.delete.general: Eliminar cualquiera de tus hilos, publicaciones o 
   comentarios.
-oauth2.grant.delete.general: Elimina cualquiera de tus hilos, publicaciones o comentarios.
 oauth2.grant.report.general: Reportar hilos, publicaciones o comentarios.
-oauth2.grant.vote.general: Votar a favor, en contra o impulsar hilos, publicaciones
-  o comentarios.
+oauth2.grant.vote.general: Votar a favor, en contra o impulsar hilos, 
+  publicaciones o comentarios.
 marked_for_deletion: Marcado para eliminar
-from: de
+from: desde
 tag: Etiqueta
 unban: Desbanear
 ban_hashtag_btn: Prohibir hashtag
 marked_for_deletion_at: Marcado para eliminar el %date%
 sort_by: Ordenar por
 filter_by_subscription: Filtrar por suscripción
-filter_by_federation: Filtrar por estado de la federación
+filter_by_federation: Filtrar por estado de federación
+hidden: Oculto
+disabled: Desactivado
+edit_entry: Editar hilo
+oauth2.grant.entry_comment.create: Crear nuevos comentarios en hilos.
+oauth2.grant.entry_comment.delete: Eliminar todos tus comentarios existentes en 
+  los hilos.
+enabled: Activado
+downvotes_mode: Modo de votos negativos
+unban_hashtag_description: Si retiras la prohibición de un hashtag, se podrán 
+  volver a crear publicaciones con este hashtag. Las publicaciones existentes 
+  con este hashtag ya no estarán ocultas.
+change_downvotes_mode: Cambiar el modo de votos negativos
+oauth2.grant.magazine.all: Suscríbirse o bloquear revistas y visualizar las 
+  revistas a las que estás suscrito o has bloqueado.
+oauth2.grant.magazine.subscribe: Suscríbirse o cancelar tu suscripción a 
+  revistas y consultar las revistas a las que te suscribes.
+oauth2.grant.post.report: Reportar cualquier publicación.
+unban_hashtag_btn: Retirar la prohibición de hashtag
+ban_hashtag_description: Prohibir un hashtag impedirá que se creen publicaciones
+  con ese hashtag, además de ocultar las publicaciones existentes con ese 
+  hashtag.
+account_deletion_immediate: Eliminar inmediatamente
+account_deletion_button: Eliminar cuenta
+private_instance: Obligar a los/as usuarios/as a iniciar sesión antes de poder 
+  acceder a cualquier contenido
+oauth2.grant.entry.edit: Editar tus hilos existentes.
+oauth2.grant.entry.report: Reportar cualquier hilo.
+oauth2.grant.entry_comment.all: Crear, editar o eliminar tus comentarios en 
+  hilos, y votar, impulsar o denunciar cualquier comentario en un hilo.
+oauth2.grant.entry_comment.vote: Votar a favor, impulsar o rechazar cualquier 
+  comentario en un hilo.
+oauth2.grant.magazine.block: Bloquear o desbloquear revistas y visualizar las 
+  revistas que has bloqueado.
+oauth2.grant.post.all: Crear, editar o eliminar tus microblogs y votar, impulsar
+  o reportar cualquier microblog.
+oauth2.grant.post.create: Crear nuevas publicaciones.
+oauth2.grant.post_comment.create: Crear nuevos comentarios en las publicaciones.
+oauth2.grant.post_comment.delete: Eliminar todos tus comentarios en las 
+  publicaciones.
+oauth2.grant.post_comment.edit: Editar todos tus comentarios en las 
+  publicaciones.
+oauth2.grant.entry.create: Crear nuevos hilos.
+oauth2.grant.entry.vote: Votar a favor, impulsar o rechazar cualquier hilo.
+oauth2.grant.entry.delete: Eliminar tus hilos.
+oauth2.grant.entry_comment.edit: Editar tus comentarios existentes en los hilos.
+oauth2.grant.post.vote: Votar a favor o en contra, o impulsar cualquier 
+  publicación.
+oauth2.grant.entry.all: Crear, editar o eliminar tus hilos y votar, impulsar o 
+  reportar cualquier hilo.
+account_deletion_title: Borrado de cuenta
+oauth2.grant.post.edit: Editar todas tus publicaciones.
+oauth2.grant.post.delete: Eliminar todas tus publicaciones.
+oauth2.grant.post_comment.all: Crear, editar o eliminar tus comentarios en las 
+  publicaciones y votar, impulsar o reportar cualquier comentario en una 
+  publicación.
+oauth2.grant.entry_comment.report: Reportar cualquier comentario en un hilo.
+federation_page_dead_description: Casos en los que no pudimos realizar al menos 
+  10 actividades seguidas y donde la última entrega y recepción exitosas fueron 
+  hace más de una semana
+account_deletion_description: Tu cuenta se eliminará en 30 días a menos que 
+  elijas eliminarla inmediatamente. Para recuperar tu cuenta en un plazo de 30 
+  días, inicia sesión con las mismas credenciales de usuario o comunícate con 
+  un/a administrador/a.
+oauth2.grant.user.oauth_clients.read: Leer los permisos que ha concedido a otras
+  aplicaciones OAuth2.
+oauth2.grant.moderate.post.trash: Eliminar o restaurar publicaciones en las 
+  revistas que moderas.
+moderation.report.ban_user_title: Banear cuenta
+oauth2.grant.user.oauth_clients.all: Leer y editar los permisos que has 
+  concedido a otras aplicaciones OAuth2.
+oauth2.grant.moderate.entry.change_language: Cambiar el idioma de los hilos en 
+  las revistas que moderas.
+oauth2.grant.moderate.entry.pin: Fijar hilos en la parte superior de las 
+  revistas que moderas.
+oauth2.grant.moderate.entry.set_adult: Marcar los hilos como explícitos en las 
+  revistas que moderas.
+oauth2.grant.admin.oauth_clients.read: Vernlos clientes OAuth2 que existen en tu
+  instancia y sus estadísticas de uso.
+last_active: Última actividad
+oauth2.grant.admin.federation.update: Añadir o eliminar instancias de la lista 
+  de instancias desfederadas.
+oauth2.grant.moderate.entry.all: Moderar los hilos en las revistas que moderas.
+oauth2.grant.admin.magazine.purge: Borrar completamente las revistas de tu 
+  instancia.
+oauth2.grant.post_comment.vote: Votar a favor, en contra o impulsar cualquier 
+  comentario de una publicación .
+oauth2.grant.user.profile.all: Leer y modificar tu perfil.
+oauth2.grant.user.profile.read: Leer tu perfil.
+oauth2.grant.moderate.post_comment.all: Moderar los comentarios en las 
+  publicaciones de las revistas que moderas.
+oauth2.grant.admin.magazine.move_entry: Mover los hilos entre las revistas de tu
+  instancia.
+oauth2.grant.admin.user.ban: Banear o desbanear cuentas de tu instancia.
+oauth2.grant.admin.user.delete: Eliminar cuentas de tu instancia.
+oauth2.grant.admin.instance.settings.read: Ver la configuración de tu instancia.
+oauth2.grant.admin.instance.settings.edit: Actualizar la configuración de tu 
+  instancia.
+show_avatars_on_comments_help: Mostrar u ocultar los avatares de los usuarios al
+  ver comentarios en un solo hilo o publicación .
+comment_reply_position: Posición del comentario de respuesta
+magazine_theme_appearance_icon: Icono personalizado para la revista. Si no se 
+  selecciona ninguno, se utilizará el icono predeterminado.
+moderation.report.approve_report_title: Aprobar informe
+moderation.report.ban_user_description: ¿Quieres banear al usuario (%username%) 
+  que creó este contenido de esta revista?
+moderation.report.approve_report_confirmation: ¿De verdad quieres aprobar este 
+  informe?
+subject_reported_exists: Este contenido ya ha sido reportado.
+oauth2.grant.admin.federation.read: Ver la lista de instancias desfederadas.
+oauth2.grant.user.block: Bloquear o desbloquear cuentas, y leer una lista de las
+  que bloqueas.
+oauth2.grant.moderate.all: Realizar cualquier acción de moderación que tengas 
+  permiso para hacer en las revistas que moderas.
+oauth2.grant.admin.instance.all: Ver y actualizar la configuración o la 
+  información de la instancia.
+single_settings: Único
+moderation.report.reject_report_title: Rechazar informe
+oauth2.grant.moderate.magazine.ban.create: Banear cuentas en las revistas que 
+  moderas.
+oauth2.grant.admin.user.purge: Eliminar completamente cuentas de tu instancia.
+oauth2.grant.admin.oauth_clients.all: Ver o revocar clientes OAuth2 que existen 
+  en tu instancia.
+flash_post_pin_success: La publicación se ha anclado correctamente.
+flash_post_unpin_success: La publicación se ha desanclado correctamente.
+oauth2.grant.user.profile.edit: Modificar tu perfil.
+oauth2.grant.moderate.entry_comment.all: Moderar los comentarios en los hilos de
+  las revistas que moderas.
+oauth2.grant.moderate.entry.trash: Eliminar o restaurar hilos en las revistas 
+  que moderas.
+oauth2.grant.admin.instance.information.edit: Actualizar las páginas Acerca de, 
+  Preguntas frecuentes, Contacto, Condiciones del servicio y Política de 
+  privacidad de tu instancia.
+update_comment: Actualizar comentario
+oauth2.grant.admin.post.purge: Borrar completamente cualquier mensaje de tu 
+  instancia.
+oauth2.grant.admin.post_comment.purge: Eliminar completamente cualquier 
+  comentario de una entrada de tu instancia.
+oauth2.grant.user.all: Leer y editar tu perfil, mensajes o notificaciones; leer 
+  y editar los permisos que has concedido a otras apps; seguir o bloquear a 
+  usuarios/as; ver listas de usuarios/as que sigues o bloqueas.
+oauth2.grant.user.follow: Seguir o dejar de seguir cuentas, y leer la lista de 
+  las que sigues.
+oauth2.grant.moderate.post_comment.change_language: Cambiar el idioma de los 
+  comentarios en las publicaciones de las revistas que moderas.
+magazine_theme_appearance_custom_css: CSS personalizado que se aplicará al 
+  visualizar el contenido dentro de su revista.
+oauth2.grant.admin.entry_comment.purge: Eliminar por completo cualquier 
+  comentario en un hilo de tu instancia.
+oauth2.grant.moderate.magazine.ban.all: Gestionar cuentas baneadas en las 
+  revistas que moderas.
+oauth2.grant.moderate.magazine.ban.read: Ver cuentas baneadas en las revistas 
+  que moderas.
+oauth2.grant.admin.federation.all: Ver y actualizar las instancias actualmente 
+  desfederadas.
+oauth2.grant.admin.instance.settings.all: Ver o actualizar la configuración de 
+  tu instancia.
+oauth2.grant.moderate.post.change_language: Cambiar el idioma de las 
+  publicaciones en las revistas que moderas.
+oauth2.grant.admin.instance.stats: Consultar las estadísticas de tu instancia.
+oauth2.grant.admin.user.all: Banear, verificar o eliminar completamente usuarios
+  de tu instancia.
+oauth2.grant.post_comment.report: Reportar cualquier comentario en una 
+  publicación .
+magazine_theme_appearance_background_image: Imagen de fondo personalizada que se
+  aplicará al visualizar el contenido dentro de su revista.
+oauth2.grant.moderate.post_comment.set_adult: Marcar como explícitos los 
+  comentarios en las publicaciones en las revistas que moderas.
+oauth2.grant.user.notification.delete: Borrar tus notificaciones.
+oauth2.grant.moderate.magazine.all: Administrar prohibiciones, informes y 
+  visualizar elementos eliminados en las revistas que moderas.
+oauth2.grant.admin.magazine.all: Mover hilos entre o eliminar completamente 
+  revistas en tu instancia.
+oauth2.grant.user.oauth_clients.edit: Editar los permisos que has concedido a 
+  otras aplicaciones OAuth2.
+oauth2.grant.moderate.post.set_adult: Marca como explícitas las publicaciones en
+  las revistas que moderas.
+oauth2.grant.admin.oauth_clients.revoke: Revocar el acceso a clientes OAuth2 en 
+  tu instancia.
+comment_reply_position_help: Mostrar el formulario de respuesta a los 
+  comentarios en la parte superior o inferior de la página. Cuando está 
+  habilitado el "desplazamiento infinito", la posición siempre aparecerá en la 
+  parte superior.
+oauth2.grant.moderate.entry_comment.set_adult: Marcar como explícitos los 
+  comentarios en los hilos en las revistas que moderas.
+oauth2.grant.moderate.entry_comment.trash: Eliminar o restaurar comentarios en 
+  hilos de las revistas que moderas.
+oauth2.grant.moderate.post.all: Moderar las publicaciones en las revistas que 
+  moderas.
+oauth2.grant.moderate.entry_comment.change_language: Cambiar el idioma de los 
+  comentarios en los hilos de las revistas que moderas.
+oauth2.grant.moderate.post_comment.trash: Eliminar o restaurar comentarios en 
+  publicaciones de las revistas que moderas.
+oauth2.grant.admin.user.verify: Verificar usuarios/as en tu instancia.
+oauth2.grant.user.notification.all: Leer y borrar tus notificaciones.
+oauth2.grant.user.notification.read: Leer tus notificaciones, incluidas las de 
+  mensajes.
+oauth2.grant.user.message.all: Leer tus mensajes y enviar mensajes a otros/as 
+  usuarios/as.
+oauth2.grant.user.message.read: Leer tus mensajes.
+oauth2.grant.user.message.create: Enviar mensajes a usuarios/as.
+flash_image_download_too_large_error: No se ha podido crear la imagen, es 
+  demasiado grande (tamaño máximo %bytes%)
+pending: Pendiente
+announcement: Anuncio
+2fa.backup_codes.recommendation: Guarda una copia de los mismos en un lugar 
+  seguro.
+2fa.available_apps: Usar una aplicación para la autenticación de dos factores 
+  como %google_authenticator%, %aegis% (Android) o %raivo% (iOS) para escanear 
+  el código QR.
+2fa.backup_codes.help: Puedes usar estos códigos cuando no tengas tu dispositivo
+  o aplicación de autenticación de dos factores. No se <strong>volverán a 
+  mostrar</strong> y podrás utilizar cada uno de ellos <strong>solo una 
+  vez</strong>.
+show_subscriptions: Mostrar suscripciones
+subscription_sidebar_pop_out_right: Mover a una barra lateral separada a la 
+  derecha
+subscription_sidebar_pop_out_left: Mover a la barra lateral separada a la 
+  izquierda
+subscription_sidebar_pop_in: Mover suscripciones al panel emergente
+subscriptions_in_own_sidebar: En una barra lateral separada
+flash_thread_tag_banned_error: No se pudo crear el hilo. El contenido no está 
+  permitido.
+flash_email_failed_to_sent: No se ha podido enviar el correo electrónico.
+flash_post_new_success: La publicación se ha creado correctamente.
+flash_post_new_error: No se pudo crear la publicación. Algo salió mal.
+flash_magazine_theme_changed_success: Se ha actualizado la apariencia de la 
+  revista.
+flash_user_edit_password_error: Error al cambiar la contraseña.
+ownership_requests: Solicitudes de titularidad
+flash_email_was_sent: El correo electrónico se ha enviado correctamente.
+purge_content: Purgar contenido
+purge_content_desc: Purgar completamente el contenido del/a usuario/a, incluidas
+  las respuestas de otros/as usuarios/as en conversaciones, publicaciones y 
+  comentarios que has creado.
+delete_account_desc: Eliminar la cuenta, incluidas las respuestas de otros/as 
+  usuarios/as en hilos, publicaciones y comentarios que has creado.
+schedule_delete_account: Programar eliminación
+remove_schedule_delete_account: Cancelar la eliminación programada
+remove_schedule_delete_account_desc: Cancelar la eliminación programada. Todo el
+  contenido volverá a estar disponible y el/a usuario/a podrá iniciar sesión.
+two_factor_authentication: Autenticación de dos factores
+2fa.setup_error: Error al habilitar la autenticación de dos factores para la 
+  cuenta
+2fa.enable: Configurar la autenticación de dos factores
+2fa.code_invalid: El código de autenticación no es válido
+2fa.disable: Desactivar la autenticación de dos factores
+2fa.backup: Tus códigos de respaldo para la autenticación de dos factores
+2fa.backup-create.help: Puedes crear nuevos códigos de autenticación de 
+  respaldo; al hacerlo, se invalidarán los códigos existentes.
+2fa.add: Añadir a mi cuenta
+2fa.qr_code_img.alt: Un código QR que permite configurar la autenticación de dos
+  factores para tu cuenta
+sidebars_same_side: Barras laterales en el mismo lado
+flash_user_settings_general_success: La configuración de usuario se guardó 
+  correctamente.
+account_is_suspended: Cuenta suspendida.
+account_unbanned: Se ha desbaneado la cuenta.
+apply_for_moderator: Solicitar ser moderador/a
+cancel_request: Cancelar solicitud
+remove_subscriptions: Eliminar suscripciones
+abandoned: Abandonado
+moderator_requests: Solicitudes de moderación
+user_badge_global_moderator: Moderador global
+user_badge_admin: Administrador/a
+user_badge_moderator: Moderador/a
+user_badge_bot: Bot
+keywords: Palabras clave
+sensitive_warning: Contenido sensible
+sensitive_toggle: Alternar la visibilidad del contenido sensible
+deleted_by_author: El hilo, mensaje o comentario ha sido eliminado por su 
+  autor/a
+all_time: Todo el tiempo
+toolbar.spoiler: Spoiler
+alphabetically: Alfabéticamente
+subscription_panel_large: Panel grande
+close: Cerrar
+flash_magazine_theme_changed_error: No se pudo actualizar la apariencia de la 
+  revista.
+flash_comment_new_success: El comentario ha sido creado correctamente.
+flash_comment_new_error: No se pudo crear el comentario. Algo salió mal.
+flash_user_settings_general_error: No se pudo guardar la configuración de 
+  usuario/a.
+details: Detalles
+flash_user_edit_profile_error: No se pudo guardar la configuración del perfil.
+flash_thread_edit_error: No se pudo editar el hilo. Algo ha salido mal.
+2fa.remove: Eliminar la autenticación de dos factores
+2fa.backup-create.label: Crear nuevos códigos de autenticación de respaldo
+2fa.verify_authentication_code.label: Ingresa un código del doble factor para 
+  verificar la configuración
+subscription_sort: Ordenar
+subscription_header: Revistas suscritas
+sensitive_hide: Pulse para ocultar
+2fa.verify: Verificar
+2fa.user_active_tfa.title: El/a usuario/a tiene activa la autenticación de dos 
+  factores
+cancel: Cancelar
+oauth2.grant.moderate.post.pin: Fijar publicaciones en la parte superior de las 
+  revistas que moderas.
+moderation.report.reject_report_confirmation: ¿De verdad quiere rechazar este 
+  informe?
+show_avatars_on_comments: Mostrar avatares en los comentarios
+2fa.qr_code_link.title: Vsitar este enlace permite a tu plataforma registrar 
+  esta autenticación de dos factores
+delete_content_desc: Eliminar el contenido del usuario pero dejar las respuestas
+  de otros usuarios en las conversaciones, publicaciones y comentarios.
+schedule_delete_account_desc: Programar la eliminación de esta cuenta en 30 
+  días. Esto ocultará al/a usuario/a y su contenido, e impedirá que inicie 
+  sesión.
+password_and_2fa: Contraseña y A2F
+sensitive_show: Pulse para ver
+action: Acción
+user_badge_op: OP
+deleted_by_moderator: Tema, mensaje o comentario eliminado por la moderación
+spoiler: Spoiler
+show: Mostrar
+delete_content: Eliminar contenido
+flash_comment_edit_error: No se pudo editar el comentario. Algo salió mal.
+request_magazine_ownership: Pedir titularidad de revista
+two_factor_backup: Códigos de respaldo de la autenticación de dos factores
+flash_account_settings_changed: La configuración de tu cuenta se ha cambiado 
+  correctamente. Tendrás que volver a iniciar sesión.
+position_bottom: Inferior
+position_top: Superior
+flash_thread_new_error: No se pudo crear el hilo. Algo salió mal.
+2fa.authentication_code.label: Código de autenticación
+flash_comment_edit_success: El comentario se ha actualizado correctamente.
+flash_user_edit_profile_success: La configuración del perfil de usuario se 
+  guardó correctamente.
+flash_user_edit_email_error: Error al cambiar el correo electrónico.
+hide: Ocultar
+edited: editado
+sso_registrations_enabled: Registros SSO habilitados
+sso_registrations_enabled.error: Los registros de nuevas cuentas con 
+  administradores de identidad de terceros están actualmente deshabilitados.
+accept: Aceptar
+oauth2.grant.user.bookmark_list.delete: Borrar tus listas de marcadores
+page_width_auto: Automático
+auto: Automático
+open_url_to_fediverse: Abrir URL original
+change_my_avatar: Cambiar mi avatar
+change_my_cover: Cambiar mi portada
+account_settings_changed: Los ajustes de tu cuenta se han cambiado 
+  correctamente. Necesitarás conectarte de nuevo.
+magazine_deletion: Borrado de revista
+suspend_account: Suspender cuenta
+viewing_one_signup_request: Sólo estás viendo una solicitud de registro de 
+  %username%
+account_suspended: La cuenta ha sido suspendida.
+oauth2.grant.user.bookmark.add: Añadir marcadores
+oauth2.grant.user.bookmark: Añadir y eliminar marcadores
+oauth2.grant.user.bookmark_list: Leer, editar y borrar tus listas de marcadores
+oauth2.grant.user.bookmark_list.edit: Editar tus listas de marcadores
+restore_magazine: Recuperar revista
+unsuspend_account: Reactivar cuenta
+deletion: Borrado
+user_suspend_desc: Suspender tu cuenta oculta tu contenido en la instancia, pero
+  no lo borra permanentemente, y puedes restaurarlo en cualquier momento.
+notify_on_user_signup: Nuevos registros
+your_account_is_not_yet_approved: Tu cuenta no ha sido aprobada todavía. Te 
+  enviaremos un email tan pronto como los administradores hayan procesado tu 
+  solicitud de registro.
+account_unsuspended: La cuenta ha sido reactivada.
+edit_my_profile: Editar mi perfil
+page_width_max: Máximo
+page_width: Ancho de página
+page_width_fixed: Fijo
+flash_post_edit_error: Error al editar el post. Algo ha salido mal.
+oauth2.grant.user.bookmark.remove: Eliminar marcadores
+oauth2.grant.user.bookmark_list.read: Leer tus listas de marcadores
+delete_magazine: Borrar revista
+magazine_is_deleted: La revista ha sido borrada. Puedes <a 
+  href="%link_target%">restaurarla</a> durante los próximos 30 días.
+federation_page_dead_title: Instancias muertas
+flash_post_edit_success: El post se ha editado correctamente.
+filter_labels: Filtrar etiquetas
+notification_title_new_post: Nueva publicación
+notification_title_new_report: Se creó un nuevo informe
+version: Versión
+new_user_description: Esta cuenta es nueva (activa durante menos de %days% días)
+new_magazine_description: Esta revista es nueva (activa durante menos de %days% 
+  días)
+admin_users_inactive: Inactivos/as
+admin_users_active: Activos/as
+remove_user_avatar: Eliminar avatar
+account_banned: Se ha baneado la cuenta.
+sso_only_mode: Restringir el inicio de sesión y el registro únicamente a métodos
+  SSO
+related_entry: Relacionado
+reporting_user: Denunciante
+reported: denunciado
+own_content_reported_accepted: Se aceptó un informe de tu contenido.
+report_accepted: Se ha aceptado un informe
+cake_day: Desde el día
+magazine_log_entry_unpinned: se eliminó la entrada fijada
+unregister_push_notifications_button: Eliminar registro "push"
+test_push_notifications_button: Probar notificaciones "push"
+notification_title_new_comment: Nuevo comentario
+notification_title_removed_comment: Se eliminó un comentario
+notification_title_edited_comment: Se editó un comentario
+notification_title_message: Nuevo mensaje directo
+notification_title_edited_post: Se editó una publicación
+notification_title_new_signup: Se ha registrado una nueva cuenta
+notification_body_new_signup: Se ha registrado la cuenta %u%.
+last_successful_receive: Última recepción correcta
+magazine_posting_restricted_to_mods: Restringir la creación de hilos a la 
+  moderación
+max_image_size: Tamaño máximo del archivo
+bookmark_add_to_list: Añadir marcador a %list%
+bookmark_remove_from_list: Eliminar el marcador de %list%
+bookmark_list_create_placeholder: escribe el nombre...
+table_of_contents: Tabla de contenido
+search_type_all: Todo
+search_type_entry: Hilos
+application_text: Explica por qué quieres unirte
+signup_requests_header: Solicitudes de registro
+signup_requests_paragraph: Estos/as usuarios/as desean unirse a tu servidor. No 
+  podrán iniciar sesión hasta que apruebes su solicitud de registro.
+email_application_approved_title: Tu solicitud de registro ha sido aprobada
+email_application_approved_body: La administración del servidor ha aprobado su 
+  solicitud de registro. Ahora puede iniciar sesión en el servidor en <a 
+  href="%link%">%siteName%</a>.
+email_application_rejected_body: Gracias por su interés, pero lamentamos 
+  informarle que su solicitud de registro ha sido rechazada.
+show_user_domains: Mostrar dominios de usuario
+answered: contestado/a
+by: por
+front_default_sort: Orden predeterminado de la portada
+comment_default_sort: Orden predeterminado de los comentarios
+open_signup_request: Abrir solicitud de registro
+show_thumbnails_help: Mostrar las miniaturas de las imágenes.
+image_lightbox_in_list_help: Cuando está marcado, al hacer clic en la miniatura 
+  se muestra una ventana modal con la imagen. Cuando no esté marcado, hacer clic
+  en la miniatura abrirá el hilo.
+show_new_icons: Mostrar nuevos iconos
+show_new_icons_help: Mostrar icono para nueva revista o cuenta (de 30 días de 
+  antigüedad o más reciente)
+user_verify: Activar cuenta
+show_users_avatars_help: Mostrar la imagen del avatar del/a usuario/a.
+show_magazines_icons_help: Mostrar el icono de la revista.
+test_push_message: ¡Hola mundo!
+show_related_entries: Mostrar hilos al azar
+search_type_post: Microblogs
+select_user: Elige un/a usuario/a
+signup_requests: Solicitudes de registro
+direct_message: Mensaje directo
+remove_following: Eliminar el seguimiento
+restrict_magazine_creation: Restringir la creación de revistas locales a 
+  administradores y moderadores globales
+reported_user: Cuenta reportada
+own_report_rejected: Tu informe ha sido rechazado
+back: Atrás
+magazine_log_mod_added: Ha añadido un/a moderador/a
+magazine_log_mod_removed: ha eliminado un/a moderador/a
+magazine_log_entry_pinned: entrada fijada
+someone: Alguien
+notification_title_mention: Te mencionaron
+notification_title_new_reply: Nueva respuesta
+notification_title_new_thread: Nuevo hilo
+notification_title_ban: Te banearon
+notification_title_removed_thread: Se eliminó un hilo
+notification_title_edited_thread: Se editó un hilo
+notification_body2_new_signup_approval: Debes aprobar la solicitud antes de que 
+  puedan iniciar sesión
+show_related_posts: Mostrar publicaciones al azar
+show_active_users: Mostrar cuentas activas
+server_software: Software del servidor
+last_successful_deliver: Última entrega correcta
+bookmark_add_to_default_list: Añadir marcador a la lista predeterminada
+bookmark_lists: Listas de marcadores
+bookmark_remove_all: Eliminar todos los marcadores
+bookmarks: Marcadores
+is_default: Es predeterminada
+bookmark_list_is_default: Es la lista predeterminada
+bookmark_list_make_default: Hacer predeterminada
+bookmark_list_create: Crear
+bookmark_list_edit: Editar
+bookmark_list_selected_list: Lista seleccionada
+show_magazine_domains: Mostrar dominios de revistas
+flash_application_info: La administración debe aprobar su cuenta antes de poder 
+  iniciar sesión. Recibirá un correo electrónico una vez procesada su solicitud 
+  de registro.
+own_report_accepted: Tu informe ha sido aceptado
+and: Y
+last_updated: Última actualización
+report_subject: Asunto
+count: Recuento
+bookmarks_list: Marcadores en %list%
+email_application_rejected_title: Tu solicitud de registro ha sido rechazada
+email_verification_pending: Debes verificar tu correo electrónico antes de poder
+  iniciar sesión.
+comment_not_found: Comentario no encontrado
+flash_posting_restricted_error: La creación de hilos está restringida a la 
+  moderación de esta revista y no es parte de ella
+last_failed_contact: Último contacto fallido
+remove_user_cover: Eliminar portada
+bookmarks_list_edit: Editar la lista de marcadores
+manually_approves_followers: Aprueba seguidores manualmente
+new_users_need_approval: Las nuevas cuentas deben ser aprobadas antes de poder 
+  iniciar sesión.
+register_push_notifications_button: Regístrese para recibir notificaciones 
+  "push"
+email_application_pending: Su cuenta requiere la aprobación de la administración
+  antes de poder iniciar sesión.
+magazine_posting_restricted_to_mods_warning: Sólo la moderación puede crear 
+  hilos en esta revista
+compact_view_help: Una vista compacta con márgenes menores, donde la miniatura 
+  pasa al lado derecho.
+bookmark_list_create_label: Nombre de la lista
+purge_magazine: Purgar revista
+image_lightbox_in_list: Las miniaturas de los hilos abren pantalla completa
+sso_show_first: Mostrar SSO primero en las páginas de inicio de sesión y 
+  registro
+continue_with: Continuar con
+notification_title_removed_post: Se eliminó una publicación
+show_related_magazines: Mostrar revistas al azar
+admin_users_suspended: Suspendidos/as
+admin_users_banned: Baneados/as
+open_report: Abrir informe
+toolbar.emoji: Emoji
+2fa.manual_code_hint: Si no puedes escanear el código QR escribe el secreto 
+  manualmente
+magazine_instance_defederated_info: La instancia de esta revista está 
+  desfederada. Por lo tanto, no recibirá actualizaciones.
+user_instance_defederated_info: La instancia de esta cuenta está defederada.
+flash_thread_instance_banned: La instancia de esta revista está baneada.
+show_rich_mention: Menciones enriquecidas
+show_rich_mention_help: Mostrar un componente de cuenta al mencionar a una 
+  cuenta. Este incluirá su nombre para mostrar y su foto de perfil.
+show_rich_mention_magazine: Menciones enriquecidas de revistas
+show_rich_mention_magazine_help: Mostrar un componente de revista al mencionar 
+  una revista. Esto incluirá su nombre para mostrar y su icono.
+show_rich_ap_link: Enlaces AP enriquecidos
+show_rich_ap_link_help: Mostrar un componente en línea cuando otro contenido de 
+  ActivityPub está vinculado a él.
+type_search_term_url_handle: Escribe el término de búsqueda, URL o identificador
+search_type_magazine: Revistas
+search_type_user: Cuentas
+search_type_actors: Revistas + Cuentas
+search_type_content: Temas + Microblogs
+attitude: Actitud
+type_search_magazine: Limitar la búsqueda a la revista...
+type_search_user: Limitar búsqueda a la autoría...
+modlog_type_entry_deleted: Hilo eliminado
+modlog_type_entry_restored: Hilo restaurado
+modlog_type_entry_comment_deleted: Comentario del hilo eliminado
+modlog_type_entry_comment_restored: Comentario del hilo restaurado
+modlog_type_entry_pinned: Hilo fijado
+modlog_type_entry_unpinned: Hilo desfijado
+modlog_type_post_deleted: Microblog eliminado
+modlog_type_post_restored: Microblog restaurado
+modlog_type_post_comment_deleted: Respuesta de microblog eliminada
+modlog_type_post_comment_restored: Respuesta del microblog restaurada
+modlog_type_ban: Cuenta baneada de la revista
+modlog_type_moderator_add: Se agregó un/a moderador/a de la revista
+modlog_type_moderator_remove: Moderador/a de la revista eliminado/a

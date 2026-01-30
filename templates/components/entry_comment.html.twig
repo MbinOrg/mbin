@@ -5,6 +5,8 @@
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set DYNAMIC_LISTS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_DYNAMIC_LISTS'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::ENTRY_COMMENTS_VIEW'), V_TREE) -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE)  -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE)  -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
@@ -19,13 +21,13 @@
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
                 id="entry-comment-{{ comment.id }}"
-                data-controller="comment subject mentions comment-collapse"
+                data-controller="comment subject mentions comment-collapse html-refresh"
                 data-comment-collapse-depth-value="{{ level }}"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
                 data-action="{{- DYNAMIC_LISTS is same as V_TRUE ? 'notifications:Notification@window->subject#notification' : '' -}}">
             <header>
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: comment.user, showAvatar: false}) }}
+                {{ component('user_inline', {user: comment.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if comment.entry.user.id() is same as comment.user.id() %}
                     <span class="user-badge">{{ 'user_badge_op'|trans }}</span>
@@ -51,7 +53,7 @@
                     {{ component('date', {date: comment.createdAt}) }}
                 {% endif %}
                 {{ component('date_edited', {createdAt: comment.createdAt, editedAt: comment.editedAt}) }}
-                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: comment.magazine}) }}{% endif %}
+                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: comment.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}{% endif %}
                 {% if showEntryTitle %}{{ 'in'|trans }} {{ component('entry_inline', {entry: comment.entry}) }}{% endif %}
                 {% if comment.lang is not same as app.request.locale and comment.lang is not same as kbin_default_lang() %}
                     <small hidden class="badge-lang">{{ comment.lang|language_name }}</small>
@@ -65,14 +67,17 @@
                 asLink: true
             }) }}
 
-            <div class="content">
-                {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    {{ comment.body|markdown|raw }}
-                {% elseif(comment.visibility is same as 'trashed') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                {% elseif(comment.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
-                {% endif %}
+            <div data-controller="collapsable">
+                <div data-collapsable-target="content" class="content">
+                    {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                        {{ comment.body|markdown("entry")|raw }}
+                    {% elseif(comment.visibility is same as 'trashed') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(comment.visibility is same as 'soft_deleted') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
+                    {% endif %}
+                </div>
+                <div data-collapsable-target="button"></div>
             </div>
             <div class="aside">
                 {% if comment.visibility in ['visible', 'private'] %}
@@ -89,7 +94,8 @@
                         image: comment.image,
                         parent_id: comment.id,
                         is_adult: comment.isAdult,
-                        thumb_filter: 'post_thumb'
+                        thumb_filter: 'post_thumb',
+                        gallery_name: 'ec-%d'|format(comment.id),
                     }) }}
                 {% endif %}
                 {% if comment.visibility in ['visible', 'private'] %}
@@ -102,6 +108,9 @@
                         <li>
                             {{ component('boost', {subject: comment}) }}
                         </li>
+                        {% if app.user is defined and app.user is not same as null %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
                         {% include 'entry/comment/_menu.html.twig' %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
@@ -119,6 +128,9 @@
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -127,6 +139,9 @@
                     </menu>
                 {% else %}
                     <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -144,7 +159,8 @@
             comment: comment,
             level: level,
             showNested: true,
-            view: VIEW_STYLE
+            view: VIEW_STYLE,
+            criteria: criteria,
         }) }}
     {% endif %}
 {% endif %}

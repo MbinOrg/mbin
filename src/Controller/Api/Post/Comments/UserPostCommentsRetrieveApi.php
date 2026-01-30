@@ -13,9 +13,10 @@ use App\PageView\PostCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\PostCommentRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
@@ -126,11 +127,12 @@ class UserPostCommentsRetrieveApi extends PostsBaseApi
         PostCommentRepository $repository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $security);
         $criteria->user = $user;
         $criteria->sortOption = $criteria->resolveSort($request->get('sort', Criteria::SORT_HOT));
         $criteria->time = $criteria->resolveTime($request->get('time', Criteria::TIME_ALL));
@@ -146,7 +148,7 @@ class UserPostCommentsRetrieveApi extends PostsBaseApi
             \assert($value instanceof PostComment);
             try {
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePostCommentTree($value));
+                $dtos[] = $this->serializePostCommentTree($value, $criteria);
             } catch (\Exception $e) {
                 continue;
             }

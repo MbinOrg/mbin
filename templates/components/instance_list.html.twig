@@ -1,0 +1,77 @@
+<table>
+    <thead>
+    <tr>
+        <th>{{ 'domain'|trans }}</th>
+        <th>{{ 'server_software'|trans }}</th>
+        <th>{{ 'version'|trans }}</th>
+        {% if app.user is defined and app.user is not same as null and app.user.admin %}
+            <th>{{ 'last_successful_deliver'|trans }}</th>
+            <th>{{ 'last_successful_receive'|trans }}</th>
+            {% if showUnBanButton or showBanButton or showDenyButton or showAllowButton %}
+                <th></th>
+            {% endif %}
+        {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for instance in instances %}
+        <tr>
+            <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
+            <td>{{ instance.software ?? '' }}</td>
+            <td>{{ instance.version ?? '' }}</td>
+            {% if app.user is defined and app.user is not same as null and app.user.admin %}
+                <td>
+                    {% if instance.lastSuccessfulDeliver is not same as null %}
+                        {{ component('date', { date: instance.lastSuccessfulDeliver }) }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if instance.lastSuccessfulReceive is not same as null %}
+                        {{ component('date', { date: instance.lastSuccessfulReceive }) }}
+                    {% endif %}
+                </td>
+                {% if showUnBanButton or showBanButton or showDenyButton or showAllowButton %}
+                    <td>
+                        <div class="actions row" style="width: max-content" data-controller="">
+                            {% if showUnBanButton and instance.isBanned %}
+                                <form action="{{ url('admin_federation_unban_instance') }}">
+                                    <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                    <button data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}"
+                                        class="btn btn__primary" type="submit">
+                                        {{ 'unban'|trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% if showBanButton and not instance.isBanned %}
+                                <form action="{{ url('admin_federation_ban_instance') }}">
+                                    <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                    <button class="btn btn__primary" type="submit">
+                                        {{ 'ban'|trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% if showDenyButton and instance.isExplicitlyAllowed %}
+                                <form action="{{ url('admin_federation_deny_instance') }}">
+                                    <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                    <button class="btn btn__primary" type="submit">
+                                        {{ 'btn_deny'|trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                            {% if showAllowButton and not instance.isExplicitlyAllowed %}
+                                <form action="{{ url('admin_federation_allow_instance') }}">
+                                    <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                    <button data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}"
+                                        class="btn btn__primary" type="submit">
+                                        {{ 'btn_allow'|trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                {% endif %}
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

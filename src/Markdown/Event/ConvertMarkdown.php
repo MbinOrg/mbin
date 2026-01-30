@@ -14,13 +14,18 @@ class ConvertMarkdown extends Event
     private RenderedContentInterface $renderedContent;
     private array $attributes = [];
 
-    public function __construct(private string $markdown)
+    public function __construct(private string $markdown, private string $sourceType)
     {
     }
 
     public function getMarkdown(): string
     {
         return $this->markdown;
+    }
+
+    public function getSourceType(): string
+    {
+        return $this->sourceType;
     }
 
     public function getRenderedContent(): RenderedContentInterface
@@ -49,6 +54,20 @@ class ConvertMarkdown extends Event
     public function addAttribute(string $key, $data): void
     {
         $this->attributes[$key] = $data;
+    }
+
+    public function addTag(string $tag): void
+    {
+        $this->attributes['tags'] ??= [];
+        $this->attributes['tags'][] = $tag;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        return $this->attributes['tags'] ?? [];
     }
 
     public function mergeAttributes(array $attributes): void

@@ -1,3 +1,5 @@
+@use 'breakpoints' as b;
+
 .options {
   background: var(--kbin-options-bg);
   border: var(--kbin-options-border);
@@ -18,7 +20,7 @@
   .dropdown:focus-within{
 
     .dropdown__menu {
-      @include media-breakpoint-down(lg){
+      @include b.media-breakpoint-down(lg){
         left: auto;
         top: 100%;
         transform: none;
@@ -186,7 +188,7 @@
       font-size: .85rem;
       margin-left: 0.5rem;
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
           display: none;
       }
     }

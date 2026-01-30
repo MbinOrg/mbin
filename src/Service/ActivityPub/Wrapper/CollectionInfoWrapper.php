@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Service\ActivityPub\ContextsProvider;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CollectionInfoWrapper
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextsProvider,
+    ) {
     }
 
     #[ArrayShape([
@@ -21,10 +23,10 @@ class CollectionInfoWrapper
         'first' => 'string',
         'totalItems' => 'int',
     ])]
-    public function build(string $routeName, array $routeParams, int $count): array
+    public function build(string $routeName, array $routeParams, int $count, bool $includeContext = true): array
     {
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
+        $result = [
+            '@context' => $this->contextsProvider->referencedContexts(),
             'type' => 'OrderedCollection',
             'id' => $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_URL),
             'first' => $this->urlGenerator->generate(
@@ -34,5 +36,11 @@ class CollectionInfoWrapper
             ),
             'totalItems' => $count,
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
+
+        return $result;
     }
 }

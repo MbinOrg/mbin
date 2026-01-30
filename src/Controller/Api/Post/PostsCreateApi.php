@@ -10,10 +10,9 @@ use App\DTO\PostDto;
 use App\DTO\PostRequestDto;
 use App\DTO\PostResponseDto;
 use App\Entity\Magazine;
-use App\Service\ImageManager;
 use App\Service\PostManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -63,6 +62,12 @@ class PostsCreateApi extends PostsBaseApi
             new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
         ]
     )]
+    #[OA\Parameter(
+        name: 'magazine_id',
+        description: 'The magazine to create the post in. Use the id of the "random" magazine to submit posts which should not be posted to a specific magazine.',
+        in: 'path',
+        schema: new OA\Schema(type: 'integer'),
+    )]
     #[OA\RequestBody(content: new Model(
         type: PostRequestDto::class,
         groups: [
@@ -79,7 +84,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiPostLimiter
+        RateLimiterFactory $apiPostLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiPostLimiter);
 
@@ -105,7 +110,7 @@ class PostsCreateApi extends PostsBaseApi
         $post = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             status: 201,
             headers: $headers
         );
@@ -146,6 +151,12 @@ class PostsCreateApi extends PostsBaseApi
             new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
         ]
     )]
+    #[OA\Parameter(
+        name: 'magazine_id',
+        description: 'The magazine to create the post in. Use the id of the "random" magazine to submit posts which should not be posted to a specific magazine.',
+        in: 'path',
+        schema: new OA\Schema(type: 'integer'),
+    )]
     #[OA\RequestBody(content: new OA\MediaType(
         'multipart/form-data',
         schema: new OA\Schema(
@@ -157,12 +168,7 @@ class PostsCreateApi extends PostsBaseApi
                     ImageUploadDto::IMAGE_UPLOAD,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['post:create'])]
@@ -172,7 +178,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -201,7 +207,7 @@ class PostsCreateApi extends PostsBaseApi
         $post = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($manager->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             status: 201,
             headers: $headers
         );

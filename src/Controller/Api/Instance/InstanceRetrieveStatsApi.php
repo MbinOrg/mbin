@@ -8,7 +8,7 @@ use App\DTO\ContentStatsResponseDto;
 use App\DTO\VoteStatsResponseDto;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsVotesRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -229,14 +229,14 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
             if (null === $startString) {
                 $start = null;
             } else {
-                $start = new \DateTime($startString);
+                $start = new \DateTimeImmutable($startString);
             }
 
             $endString = $request->get('end');
             if (null === $endString) {
                 $end = null;
             } else {
-                $end = new \DateTime($endString);
+                $end = new \DateTimeImmutable($endString);
             }
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Failed to parse start or end time');

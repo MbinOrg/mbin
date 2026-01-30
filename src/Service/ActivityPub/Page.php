@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
-use App\DTO\EntryCommentDto;
 use App\DTO\EntryDto;
-use App\DTO\PostCommentDto;
-use App\DTO\PostDto;
-use App\Entity\Contracts\ActivityPubActivityInterface;
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
@@ -20,13 +15,14 @@ use App\Exception\UserBannedException;
 use App\Exception\UserDeletedException;
 use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
+use App\Repository\InstanceRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
-class Page
+class Page extends ActivityPubContent
 {
     public function __construct(
         private readonly ApActivityRepository $repository,
@@ -37,6 +33,7 @@ class Page
         private readonly ImageFactory $imageFactory,
         private readonly ApObjectExtractor $objectExtractor,
         private readonly LoggerInterface $logger,
+        private readonly InstanceRepository $instanceRepository,
     ) {
     }
 
@@ -51,6 +48,11 @@ class Page
      */
     public function create(array $object, bool $stickyIt = false): Entry
     {
+        // First try to find the activity object in the database
+        $current = $this->repository->findByObjectId($object['id']);
+        if ($current) {
+            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+        }
         $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
             throw new InstanceBannedException();
@@ -96,7 +98,7 @@ class Page
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
             $dto->visibility = $this->getVisibility($object, $actor);
-            $this->handleUrl($dto, $object);
+            $this->extractUrlIntoDto($dto, $object, $actor);
             $this->handleDate($dto, $object['published']);
             if (isset($object['sensitive'])) {
                 $this->handleSensitiveMedia($dto, $object['sensitive']);
@@ -117,6 +119,10 @@ class Page
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
+            if (isset($object['commentsEnabled']) && \is_bool($object['commentsEnabled'])) {
+                $dto->isLocked = !$object['commentsEnabled'];
+            }
+
             $this->logger->debug('creating page');
 
             return $this->entryManager->create($dto, $actor, false, $stickyIt);
@@ -125,68 +131,22 @@ class Page
         }
     }
 
-    /**
-     * @throws \LogicException
-     */
-    private function getVisibility(array $object, User $actor): string
-    {
-        if (!\in_array(
-            ActivityPubActivityInterface::PUBLIC_URL,
-            array_merge($object['to'] ?? [], $object['cc'] ?? [])
-        )) {
-            if (
-                !\in_array(
-                    $actor->apFollowersUrl,
-                    array_merge($object['to'] ?? [], $object['cc'] ?? [])
-                )
-            ) {
-                throw new \LogicException('PM: not implemented.');
-            }
-
-            return VisibilityInterface::VISIBILITY_PRIVATE;
-        }
-
-        return VisibilityInterface::VISIBILITY_VISIBLE;
-    }
-
-    private function handleUrl(EntryDto $dto, ?array $object): void
+    private function extractUrlIntoDto(EntryDto $dto, ?array $object, User $actor): void
     {
         $attachment = \array_key_exists('attachment', $object) ? $object['attachment'] : null;
 
-        try {
-            if (\is_array($attachment)) {
-                $link = array_filter(
-                    $attachment,
-                    fn ($val) => \in_array($val['type'], ['Link'])
-                );
-
-                if (\is_array($link) && !empty($link[0]) && isset($link[0]['href'])) {
-                    $dto->url = $link[0]['href'];
-                } elseif (\is_array($link) && isset($link['href'])) {
-                    $dto->url = $link['href'];
-                }
+        $dto->url = ActivityPubManager::extractUrlFromAttachment($attachment);
+        if (null === $dto->url) {
+            $instance = $this->instanceRepository->findOneBy(['domain' => $actor->apDomain]);
+            if ($instance && 'peertube' === $instance->software) {
+                // we make an exception for PeerTube as we need their embed viewer.
+                // Normally the URL field only links to a user-friendly UI if that differs from the AP id,
+                // which we do not want to have as a URL, but without the embed from PeerTube
+                // a video is only viewable by clicking more -> open original URL
+                // which is not very user-friendly.
+                $url = \array_key_exists('url', $object) ? $object['url'] : null;
+                $dto->url = ActivityPubManager::extractUrlFromAttachment($url);
             }
-        } catch (\Exception $e) {
-        }
-
-        if (!$dto->url && isset($object['url'])) {
-            $dto->url = $this->activityPubManager->extractUrl($object['url']);
-        }
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function handleDate(EntryDto $dto, string $date): void
-    {
-        $dto->createdAt = new \DateTimeImmutable($date);
-        $dto->lastActive = new \DateTime($date);
-    }
-
-    private function handleSensitiveMedia(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string|bool $sensitive): void
-    {
-        if (true === filter_var($sensitive, FILTER_VALIDATE_BOOLEAN)) {
-            $dto->isAdult = true;
         }
     }
 }

@@ -2,7 +2,7 @@ type.link: Ссылка
 type.article: Ветка
 type.photo: Фото
 type.video: Видео
-type.smart_contract: Смарт контракт
+type.smart_contract: Умный контракт
 type.magazine: Журнал
 thread: Ветка
 threads: Ветки
@@ -25,7 +25,7 @@ change_view: Изменить вид
 filter_by_time: Сортировка по времени
 filter_by_type: Сортировка по типу
 comments_count: '{0}Комментариев|{1}Комментарий|]1,Inf[ Комментариев'
-favourites: Понравившееся
+favourites: Положительные оценки
 favourite: Нравиться
 more: Больше
 avatar: Аватар
@@ -52,10 +52,11 @@ activity: Активность
 cover: Обложка
 related_posts: Связанные посты
 random_posts: Случайный пост
-federated_magazine_info: Данный журнал из другого инстанса и информация может быть
+federated_magazine_info: Данный журнал из другого инстанса и информация может 
+  быть неполной.
+federated_user_info: Данный профиль из другого инстанса и информация может быть 
   неполной.
-federated_user_info: Данный профиль из другого инстанса и информация может быть неполной.
-go_to_original_instance: Перейти на оригинальный инстанс.
+go_to_original_instance: Открыть на удалённом сервере
 empty: Здесь ничего нет
 subscribe: Подписка
 unsubscribe: Отписки
@@ -76,8 +77,8 @@ in: в
 username: Имя пользователя
 email: Почта
 repeat_password: Повторить пароль
-agree_terms: Принять %terms_link_start%Условия использования%terms_link_end% и %policy_link_start%Политику
-  конфиденциальности%policy_link_end%
+agree_terms: Принять %terms_link_start%Условия использования%terms_link_end% и 
+  %policy_link_start%Политику конфиденциальности%policy_link_end%
 terms: Условия использования
 privacy_policy: Политика конфиденциальности
 about_instance: Об инстансе
@@ -97,8 +98,8 @@ change_theme: Изменить тему
 useful: Полезное
 help: Помощь
 check_email: Проверьте свою почту
-reset_check_email_desc: Если мы нашли аккаунт связанный с вашей почтой, То вы должны
-  получить ссылку для сброса пароля. Ссылка доступна до %expire%.
+reset_check_email_desc: Если мы нашли аккаунт связанный с вашей почтой, То вы 
+  должны получить ссылку для сброса пароля. Ссылка доступна до %expire%.
 reset_check_email_desc2: Если вы не получили письмо проверьте папку со спамом
 try_again: Попробовать еще раз
 up_vote: Продвинуть
@@ -224,8 +225,8 @@ no: Нет
 show_magazines_icons: Показать иконки журналов
 show_thumbnails: Показать миниатюры
 rounded_edges: Скруглить края
-removed_thread_by: Ветка удалена
-restored_thread_by: Ветка восстановлена
+removed_thread_by: удалил ветвь, созданную
+restored_thread_by: восстановил ветвь, созданную
 removed_comment_by: Комментарий удалён
 restored_comment_by: Комментарий восстановлен
 removed_post_by: Пост удалён
@@ -234,26 +235,28 @@ he_banned: Бан
 he_unbanned: Разбан
 read_all: Прочитать всё
 show_all: Показать всё
-flash_register_success: Добро пожаловать! Ваша учетная запись зарегистрирована. Последний
-  шаг - Проверьте свою электронную почту и перейдите по ссылке для активации Вашей
-  учётной записи.
-flash_thread_new_success: Ветка успешно создана и теперь видна другим пользователям.
+flash_register_success: Добро пожаловать! Ваша учетная запись зарегистрирована. 
+  Последний шаг - Проверьте свою электронную почту и перейдите по ссылке для 
+  активации Вашей учётной записи.
+flash_thread_new_success: Ветка успешно создана и теперь видна другим 
+  пользователям.
 flash_thread_edit_success: Ветка успешно отредактирована.
 flash_thread_delete_success: Ветка была успешно удалёна.
 flash_thread_pin_success: Ветка успешно закреплена.
 flash_thread_unpin_success: Ветка успешно откреплёна.
-flash_magazine_new_success: Журнал успешно создан. Сейчас можно изучить панель администратора
-  и добавить новый контент.
+flash_magazine_new_success: Журнал успешно создан. Сейчас можно изучить панель 
+  администратора и добавить новый контент.
 flash_magazine_edit_success: Журнал успешно изменён.
 flash_mark_as_adult_success: Пост отмечен как NSFW.
 flash_unmark_as_adult_success: Пост больше не имеет отметки NSFW.
 too_many_requests: Лимит запросов превышен, попробуйте ещё раз позднее.
 set_magazines_bar: Активная панель журнала
 set_magazines_bar_desc: Добавить названия журналов после запятой
-set_magazines_bar_empty_desc: Если поле пустое, активные журналы отображаются на активной
-  панели.
-mod_log_alert: ВНИМАНИЕ! - Данный материал может содержать неприятный или опасный
-  контент! Это было удалено модераторами. Пожалуйста, будьте внимательны.
+set_magazines_bar_empty_desc: Если поле пустое, активные журналы отображаются на
+  активной панели.
+mod_log_alert: ВНИМАНИЕ! - Данный материал может содержать неприятный или 
+  опасный контент! Это было удалено модераторами. Пожалуйста, будьте 
+  внимательны.
 added_new_thread: Добавлен в новую ветку
 edited_thread: Отредактированная ветка
 mod_remove_your_thread: Модератор удалил вашу ветку
@@ -274,7 +277,7 @@ comment: Комментарий
 post: Пост
 ban_expired: Бан окончен
 purge: Очистить
-send_message: Написать сообщение
+send_message: Написать личное сообщение
 message: Сообщение
 infinite_scroll: Бесконечная прокрутка
 show_top_bar: Показать активную панель
@@ -352,37 +355,37 @@ send: Отправить
 active_users: Активные пользователи
 random_entries: Случайные ветки
 related_entries: Связанные ветки
-delete_account: Удалить Аккаунт
+delete_account: Удалить учётную запись
 purge_account: Очистить аккаунт
 ban_account: Забанить аккаунт
 unban_account: Разбанить аккаунт
 related_magazines: Связанные журналы
 random_magazines: Случайные журналы
-magazine_panel_tags_info: Предоставить, только если вы хотите, чтобы контент из Федиверса
-  был включен в этот журнал на основе тегов
+magazine_panel_tags_info: Предоставить, только если вы хотите, чтобы контент из 
+  Федиверса был включен в этот журнал на основе тегов
 sidebar: Боковая панель
 auto_preview: Авто предпросмотр
 dynamic_lists: Динамические списки
 banned_instances: Забаненные инстансы
 kbin_intro_title: Посмотреть Федиверс
-kbin_intro_desc: является децентрализованной платформой для агрегирования контента
-  и микроблогинга, которая работает в сети Fediverse.
+kbin_intro_desc: является децентрализованной платформой для агрегирования 
+  контента и микроблогинга, которая работает в сети Fediverse.
 kbin_promo_title: Создайте ваш инстанс
 kbin_promo_desc: '%link_start%перейдите по ссылке%link_end% и начните свой проект'
 captcha_enabled: Капча включена
 header_logo: Логотип заголовка
-browsing_one_thread: Вы просматриваете только одну ветку обсуждения! Все комментарии
-  доступны на странице поста.
+browsing_one_thread: Вы просматриваете только одну ветку обсуждения! Все 
+  комментарии доступны на странице поста.
 return: Вернуться
 boost: Продвигать
 mercure_enabled: Включено
 report_issue: Описание релиза
 tokyo_night: Ночной Токио
 preferred_languages: Языковая фильтрация в ветках и постах
-infinite_scroll_help: Автоматически загружать контент, когда вы дочитаете страницу
-  до конца.
-sticky_navbar_help: Навигационная панель будет находиться вверху, пока вы прокручиваете
-  вниз.
+infinite_scroll_help: Автоматически загружать контент, когда вы дочитаете 
+  страницу до конца.
+sticky_navbar_help: Навигационная панель будет находиться вверху, пока вы 
+  прокручиваете вниз.
 auto_preview_help: Автоматически увеличить поле просмотра медиа.
 reload_to_apply: Перезагрузить страницу для принятия изменений
 filter.origin.label: Выбрать оригинал
@@ -403,9 +406,9 @@ bot_body_content: "Добро поажловать в Mbin Бот! Этот бо
   (серверы) взаимодействовать и делиться контентом в федеративной социальной сети,
   известной как Fediverse."
 password_confirm_header: Подтвердите запрос на изменение пароля.
-your_account_is_not_active: Ваш аккаунт не может быть активирован. Пожалуйста, проверьте
-  инструкцию для активации в вашей электронной почте <a href="%link_target%">Сделать
-  новый запрос для активации аккаунта.</a>
+your_account_is_not_active: Ваш аккаунт не может быть активирован. Пожалуйста, 
+  проверьте инструкцию для активации в вашей электронной почте <a 
+  href="%link_target%">Сделать новый запрос для активации аккаунта.</a>
 your_account_has_been_banned: Баш аккаунт был забанен
 toolbar.bold: Жирный шрифт
 toolbar.italic: Италик
@@ -421,255 +424,282 @@ toolbar.mention: Упомянуть
 federation_page_enabled: Страница федерации включена
 federation_page_allowed_description: Известные инстансы Федерации
 federation_page_disallowed_description: Инстансы не подключенные к Федерации
-federated_search_only_loggedin: Ограниченный поиск в Федерации, если нет регистрации
+federated_search_only_loggedin: Ограниченный поиск в Федерации, если нет 
+  регистрации
 more_from_domain: Больше о домене
 errors.server500.title: 500 - внутренняя ошибка сервера
-errors.server500.description: Что-то пошло не так с нашей стороны. Если вы продолжите
-  видеть эту ошибку, попробуйте связаться с владельцем инстанса.
+errors.server500.description: Что-то пошло не так с нашей стороны. Если вы 
+  продолжите видеть эту ошибку, попробуйте связаться с владельцем инстанса.
 errors.server429.title: 429 - много запросов
 errors.server404.title: 404 - страница не найдена
 errors.server403.title: 403 - недоступно
 email_confirm_button_text: Подтвердите ваш запрос на изменение пароля
-email_confirm_link_help: Если не смогли перейти автоматически, скопируйте ссылку и
-  откройте в вашем барузере
-email.delete.title: Запрос на удаление аккаунта
-email.delete.description: Запрос на удаление аккаунта подписчика
+email_confirm_link_help: Если не смогли перейти автоматически, скопируйте ссылку
+  и откройте в вашем барузере
+email.delete.title: Запрос на удаление учётной записи
+email.delete.description: Запрос на удаление учётной записи подписчика
 resend_account_activation_email_question: Неактивный аккаунт?
 resend_account_activation_email: Ещё раз отправить запрос на активацию аккаунта
-resend_account_activation_email_error: Ошибка при отправке запроса. Запрос отправлен
-  ошибочно или аккаунт уже активирован.
-resend_account_activation_email_success: Если учетная запись, связанная с этим электронным
-  письмом существует, мы отправим новое электронное письмо с активацией.
-resend_account_activation_email_description: Введите адрес электронной почты, связанный
-  с вашим аккаунтом. Мы отправим вам еще одно электронное письмо с активацией.
+resend_account_activation_email_error: Ошибка при отправке запроса. Запрос 
+  отправлен ошибочно или аккаунт уже активирован.
+resend_account_activation_email_success: Если учетная запись, связанная с этим 
+  электронным письмом существует, мы отправим новое электронное письмо с 
+  активацией.
+resend_account_activation_email_description: Введите адрес электронной почты, 
+  связанный с вашим аккаунтом. Мы отправим вам еще одно электронное письмо с 
+  активацией.
 custom_css: Пользовательский CSS
 ignore_magazines_custom_css: Игнориовать журналы с пользовательстким CSS
 oauth.consent.title: OAuth2 форма согласия
 oauth.consent.grant_permissions: Предоставление разрешеий
-oauth.consent.app_requesting_permissions: Разрешение выполнить дейтсвия от вашего
-  имени
+oauth.consent.app_requesting_permissions: Разрешение выполнить дейтсвия от 
+  вашего имени
 oauth.consent.app_has_permissions: Можете выполнить следующие действия
-oauth.consent.to_allow_access: Чтобы разрешить этот доступ, нажмите РАЗРЕШИТЬ ниже
+oauth.consent.to_allow_access: Чтобы разрешить этот доступ, нажмите РАЗРЕШИТЬ 
+  ниже
 oauth.consent.allow: Разрешить
 oauth.consent.deny: Запретить
 oauth.client_identifier.invalid: Не верный ID OAuth!
-oauth.client_not_granted_message_read_permission: У этого приложения нет разрешения
-  читать ваши сообщения.
+oauth.client_not_granted_message_read_permission: У этого приложения нет 
+  разрешения читать ваши сообщения.
 restrict_oauth_clients: Ограничить создание OAuth2 Администарторами
 block: Заблокировано
 unblock: Разблокировано
-oauth2.grant.moderate.magazine.ban.delete: Разбанить пользователей в модерируемых
+oauth2.grant.moderate.magazine.ban.delete: Разбанить пользователей в 
+  модерируемых журналах.
+oauth2.grant.moderate.magazine.list: Прочитать список ваших модерируемых 
+  журналов.
+oauth2.grant.moderate.magazine.reports.all: Управлять отчётом в модерируемых 
   журналах.
-oauth2.grant.moderate.magazine.list: Прочитать список ваших модерируемых журналов.
-oauth2.grant.moderate.magazine.reports.all: Управлять отчётом в модерируемых журналах.
-oauth2.grant.moderate.magazine.reports.read: Читать отчёты в модерируемых журналах.
-oauth2.grant.moderate.magazine.reports.action: Принять или отклонить отчёты в модерируемых
+oauth2.grant.moderate.magazine.reports.read: Читать отчёты в модерируемых 
   журналах.
-oauth2.grant.moderate.magazine.trash.read: Просмотреть удалённый контент в модерируемых
-  журналах.
-oauth2.grant.moderate.magazine_admin.all: Создать, изменить или удалить собственный
-  журнал.
+oauth2.grant.moderate.magazine.reports.action: Принять или отклонить отчёты в 
+  модерируемых журналах.
+oauth2.grant.moderate.magazine.trash.read: Просмотреть удалённый контент в 
+  модерируемых журналах.
+oauth2.grant.moderate.magazine_admin.all: Создать, изменить или удалить 
+  собственный журнал.
 oauth2.grant.moderate.magazine_admin.create: Создать новый журнал.
 oauth2.grant.moderate.magazine_admin.delete: удалить любой ваш журнал.
-oauth2.grant.moderate.magazine_admin.update: Редактировать описание правил любого
-  из ваших журналов, статус или знак NSFW.
-oauth2.grant.moderate.magazine_admin.edit_theme: Изменить пользовательский CSS в вашем
+oauth2.grant.moderate.magazine_admin.update: Редактировать описание правил 
+  любого из ваших журналов, статус или знак NSFW.
+oauth2.grant.moderate.magazine_admin.edit_theme: Изменить пользовательский CSS в
+  вашем журнале.
+oauth2.grant.moderate.magazine_admin.moderators: Добавить или удалить 
+  модераторов в вашем журнале.
+oauth2.grant.moderate.magazine_admin.badges: Создать или удалить значки в своём 
   журнале.
-oauth2.grant.moderate.magazine_admin.moderators: Добавить или удалить модераторов
-  в вашем журнале.
-oauth2.grant.moderate.magazine_admin.badges: Создать или удалить значки в своём журнале.
-oauth2.grant.moderate.magazine_admin.tags: Создать или удалить тэги в своём журнале.
-oauth2.grant.moderate.magazine_admin.stats: Просмотреть контент, голоса и статусы
-  в своём журнале.
-oauth2.grant.admin.all: Выполнять любые административные действия в отношени вашего
-  журнала.
-oauth2.grant.admin.entry.purge: Полностью удалите любую ветку из вашего инстанса.
+oauth2.grant.moderate.magazine_admin.tags: Создать или удалить тэги в своём 
+  журнале.
+oauth2.grant.moderate.magazine_admin.stats: Просмотреть контент, голоса и 
+  статусы в своём журнале.
+oauth2.grant.admin.all: Выполнять любые административные действия в отношени 
+  вашего журнала.
+oauth2.grant.admin.entry.purge: Полностью удалите любую ветку из вашего 
+  инстанса.
 oauth2.grant.read.general: Читать весь контент, к которому у вас есть доступ.
-oauth2.grant.write.general: Создать или изменить любую вашу ветку, пост или комментарий.
+oauth2.grant.write.general: Создать или изменить любую вашу ветку, пост или 
+  комментарий.
 oauth2.grant.delete.general: Удалить любую вашу ветку, пост или комментарий.
 oauth2.grant.report.general: Сообщить о ветках, постах или комментариях.
-oauth2.grant.vote.general: Проголосовать за, проголосовать против или поддержать ветку,
-  пост или комментарий.
-oauth2.grant.subscribe.general: Подпишитесь или подписывайтесь на любой журнал. домен
-  или пользователей и просматривайте журналы, домены и пользователей на которых вы
-  подписаны.
-oauth2.grant.block.general: Блокируйте или разброкируйте любой журнал, домен или пользователя
-  и просматривайте журналы, домены и пользователей, которых вы заблокировали.
-oauth2.grant.domain.all: Подписывайтесь на домены или заблокируйте их, а также просматривайте
-  домены на которые вы подписаны или заблокровали.
-oauth2.grant.domain.subscribe: Подписывайтесь или отписывайтель на домены, и просматривайте
-  домены на которые вы подписаны.
-oauth2.grant.domain.block: Блокируйте или разблокируйте домены, и просмтривате домены
-  которые вы заблокировали.
-oauth2.grant.entry.all: Создайте, редактируйте или удалте ваши ветки, и голоса, продвижения,
-  или сообщите о любых ветках.
+oauth2.grant.vote.general: Оценивать положительно, отрицательно или продвигать 
+  ветки, записи и комментарии.
+oauth2.grant.subscribe.general: Подпишитесь или подписывайтесь на любой журнал. 
+  домен или пользователей и просматривайте журналы, домены и пользователей на 
+  которых вы подписаны.
+oauth2.grant.block.general: Блокируйте или разброкируйте любой журнал, домен или
+  пользователя и просматривайте журналы, домены и пользователей, которых вы 
+  заблокировали.
+oauth2.grant.domain.all: Подписывайтесь на домены или заблокируйте их, а также 
+  просматривайте домены на которые вы подписаны или заблокровали.
+oauth2.grant.domain.subscribe: Подписывайтесь или отписывайтель на домены, и 
+  просматривайте домены на которые вы подписаны.
+oauth2.grant.domain.block: Блокируйте или разблокируйте домены, и просмтривате 
+  домены которые вы заблокировали.
+oauth2.grant.entry.all: Создайте, редактируйте или удалте ваши ветки, и голоса, 
+  продвижения, или сообщите о любых ветках.
 oauth2.grant.entry.create: Создайте новую ветку.
 oauth2.grant.entry.edit: Отредактируйте существующие ветки.
 oauth2.grant.entry.delete: Удалите существующие ветки.
-oauth2.grant.entry.vote: Голосовать за, продвинуть или голосовать против любой ветки.
+oauth2.grant.entry.vote: Оценивать положительно, отрицательно и продвигать 
+  ветки.
 oauth2.grant.entry.report: Сообщить о любых темах.
-oauth2.grant.entry_comment.all: Создать, отредактировать или удалить любой комментраий
-  в ветке, проголосовавть, продвинуть или сообщить о любом комментариив ветке.
+oauth2.grant.entry_comment.all: Создать, отредактировать или удалить любой 
+  комментраий в ветке, проголосовавть, продвинуть или сообщить о любом 
+  комментариив ветке.
 oauth2.grant.entry_comment.create: Создать новый комментарий в ветке.
 oauth2.grant.entry_comment.edit: Редактировать существующий комментарий в ветке.
 oauth2.grant.entry_comment.delete: Удалить существующие комментарии в ветке.
-oauth2.grant.entry_comment.vote: Голосовать за, продвинуть или голосовать против,
-  за комментарий в ветке.
+oauth2.grant.entry_comment.vote: Оценивать положительно, отрицательно и 
+  продвигать любые комментарии в ветках.
 oauth2.grant.entry_comment.report: Сообщить о комментарии в ветке.
-oauth2.grant.magazine.all: Подписаться на или заблокировать журнал, и просматривать
-  журналы на которые вы подписаны или заблокировали.
-oauth2.grant.magazine.subscribe: Подписаться или отписаться от журнала, и посмотреть
-  журнал на который вы подписаны.
-oauth2.grant.magazine.block: Блокировать или разблокировать журнал и посмотреть жарнал,
-  который вы блокируете.
-oauth2.grant.post.all: Создать, редактировать или удалить ваш микроблог, головать,
-  продвинуть или сообщить о микроблоге.
+oauth2.grant.magazine.all: Подписаться на или заблокировать журнал, и 
+  просматривать журналы на которые вы подписаны или заблокировали.
+oauth2.grant.magazine.subscribe: Подписаться или отписаться от журнала, и 
+  посмотреть журнал на который вы подписаны.
+oauth2.grant.magazine.block: Блокировать или разблокировать журнал и посмотреть 
+  жарнал, который вы блокируете.
+oauth2.grant.post.all: Создать, редактировать или удалить ваш микроблог, 
+  головать, продвинуть или сообщить о микроблоге.
 oauth2.grant.post.create: Создать новый пост.
 oauth2.grant.post.edit: Редактировать существующий пост.
 oauth2.grant.post.delete: Удалить ваши существующие посты.
-oauth2.grant.post.vote: Голосовать за, продвинуть или голосовать против любого поста.
+oauth2.grant.post.vote: Оценивать положительно, отрицательно и продвигать 
+  записи.
 oauth2.grant.post.report: Сщщбщить о любом посте.
-oauth2.grant.post_comment.all: Сздать, редактировать или удалить ваши комментарии
-  к посту, и голосовать, продвигать или сообщить о комментраии к посту.
+oauth2.grant.post_comment.all: Сздать, редактировать или удалить ваши 
+  комментарии к посту, и голосовать, продвигать или сообщить о комментраии к 
+  посту.
 oauth2.grant.post_comment.create: Создать новые комментарии к посту.
-oauth2.grant.post_comment.edit: Редактировать ваши существующие комментарии к посту.
+oauth2.grant.post_comment.edit: Редактировать ваши существующие комментарии к 
+  посту.
 oauth2.grant.post_comment.delete: Удалить ваши существующие комментарии к посту.
-oauth2.grant.post_comment.vote: Голосавть за, продвинуть, или голосовать против комментария
-  к посту.
+oauth2.grant.post_comment.vote: Оценивать положительно, отрицательно и 
+  продвигать комментарии записей.
 oauth2.grant.post_comment.report: Сообщить о комментарии к посту.
-oauth2.grant.user.all: Просмотреть и изменить ваш профиль, сообщения, уведомления;
-  просмотреть и изменить ваши права доступа в приложениях; подписываться или блокировать
-  других пользователей; просмотреть списки пользователей на которых вы подписались,
-  или блокировали.
-oauth2.grant.user.profile.all: Просмотреть и редактировать ваш профиль.
-oauth2.grant.user.profile.read: Просмотреть ваш профиль.
+oauth2.grant.user.all: Просмотреть и изменить ваш профиль, сообщения, 
+  уведомления; просмотреть и изменить ваши права доступа в приложениях; 
+  подписываться или блокировать других пользователей; просмотреть списки 
+  пользователей на которых вы подписались, или блокировали.
+oauth2.grant.user.profile.all: Просматривать и редактировать ваш профиль.
+oauth2.grant.user.profile.read: Просматривать ваш профиль.
 oauth2.grant.user.profile.edit: Редактировать ваш профиль.
-oauth2.grant.user.message.all: Прочитать ваши сообщения и написать сообщения другим
-  пользователям.
-oauth2.grant.user.message.read: Прочитать ваши сообщения.
-oauth2.grant.user.message.create: Написать сообщения другим пользователям.
-oauth2.grant.user.notification.all: Просмотреть и очистить ваши уведомления.
-oauth2.grant.user.notification.read: Просмотреть ваши уведомления, включая уведомления
-  о сообщении.
-oauth2.grant.user.notification.delete: Очистить ваши уведомления.
-oauth2.grant.user.oauth_clients.all: Просмотр и редактирование разрешений, которые
-  вы предоставили другим приложениям OAuth2.
-oauth2.grant.user.oauth_clients.read: Разрешение на чтение, которые вы предлоставили
+oauth2.grant.user.message.all: Просматривать ваши сообщения и отправлять 
+  сообщения другим пользователям.
+oauth2.grant.user.message.read: Просматривать ваши сообщения.
+oauth2.grant.user.message.create: Отправлять сообщения другим пользователям.
+oauth2.grant.user.notification.all: Просматривать и очистить ваши уведомления.
+oauth2.grant.user.notification.read: Просматривать ваши уведомления, включая 
+  уведомления о сообщениях.
+oauth2.grant.user.notification.delete: Очищать ваши уведомления.
+oauth2.grant.user.oauth_clients.all: Просматривать и изменять разрешения, 
+  которые вы предоставили другим приложениям OAuth2.
+oauth2.grant.user.oauth_clients.read: Просматривать разрешения, предоставленные 
   другим приложениям OAuth2.
-oauth2.grant.user.oauth_clients.edit: Разрешение на редактирование, которое вы предоставили
+oauth2.grant.user.oauth_clients.edit: Изменять разрешения, предоставленные 
   другим приложениям OAuth2.
-oauth2.grant.user.follow: Подписывайтесь на пользователей или отписывайтесь от них,
-  а также просматривайте список пользователей на которых вы подписаны.
-oauth2.grant.user.block: Блокируйте или разблокируйте пользователей, а также просматривайте
-  список пользователей которых вы заблокировали.
-oauth2.grant.moderate.all: Выполнить любое действие модерации, на которые у вас есть
-  разрешения, в модерируемом журнале.
-oauth2.grant.moderate.entry.all: Модкрируйте ветки в вашем модерируемом журнале.
-oauth2.grant.moderate.entry.change_language: Измените язык в ветке в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.entry.pin: Закрепите ветку в топе важего модерируемого журнала.
-oauth2.grant.moderate.entry.set_adult: Отметьте ветку как NSFW в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.entry.trash: Удалите или восстановите ветку в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.entry_comment.all: Модерируйте комментарии в ветке вашего модерируемого
-  журнала.
-oauth2.grant.moderate.entry_comment.change_language: Измените язык коментария в ветке
-  вашего модерируемого журнала.
-oauth2.grant.moderate.entry_comment.set_adult: Отметьте комментарий в ветке как NSFW
-  в вашем модерируемом журнале.
-oauth2.grant.moderate.entry_comment.trash: Удалите или восстановите комментарии в
-  ветке вашего модерируемого журнала.
-oauth2.grant.moderate.post.all: Модерирурйте посты в вашем модерируемом журнале.
-oauth2.grant.moderate.post.change_language: Измените язык постов в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.post.set_adult: Отметьте пост как NSFW в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.post.trash: Удалите или восстановите посты в вашем модерируемом
-  журнале.
-oauth2.grant.moderate.post_comment.all: Модерируйте комментарии в постах вашего модерируемого
-  журнала.
-oauth2.grant.moderate.post_comment.change_language: Измените язык в комментариях в
-  постах, в вашем модерируемом журнале.
-oauth2.grant.moderate.post_comment.set_adult: Отметьте комментарий в посте как NSFW
-  в вашем модерируемом журнале.
-oauth2.grant.moderate.post_comment.trash: Удалите или восстановите комментарии в постах
-  в вашем модерируемом журнале.
-oauth2.grant.moderate.magazine.all: Управлять банами, отчётами и просматривать удалённые
-  элементы в вашем модерируемом журнале.
-oauth2.grant.moderate.magazine.ban.all: Управлять забаненными полльзователями в вашем
+oauth2.grant.user.follow: Подписываться на пользователей и отписываться от них, 
+  просматривать список пользователей, на которых вы подписаны.
+oauth2.grant.user.block: Блокировать и разблокировать пользователей, 
+  просматривать ваш список заблокированных пользователей.
+oauth2.grant.moderate.all: Выполнить любое действие модерации, на которые у вас 
+  есть разрешения, в модерируемом журнале.
+oauth2.grant.moderate.entry.all: Модерировать ветви в журналах, которые вы 
+  модерируете.
+oauth2.grant.moderate.entry.change_language: Изменять языки веток в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.entry.pin: Закреплять ветви наверху журналов, которые вы 
+  модерируете.
+oauth2.grant.moderate.entry.set_adult: Помечать ветви как NSFW в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.entry.trash: Удалять и восстанавливать ветви в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.entry_comment.all: Модерировать комментарии в ветвях 
+  журналов, которые вы модерируете.
+oauth2.grant.moderate.entry_comment.change_language: Изменять язык комментариев 
+  в ветвях журналов, которые вы модерируете.
+oauth2.grant.moderate.entry_comment.set_adult: Помечать комментарии NSFW в 
+  ветвях журналов, которые вы модерируете.
+oauth2.grant.moderate.entry_comment.trash: Удалять и восстанавливать комментарии
+  в ветвях журналов, которые вы модерируете.
+oauth2.grant.moderate.post.all: Модерировать записи в журналах, которые вы 
+  модерируете.
+oauth2.grant.moderate.post.change_language: Изменять язык записей в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.post.set_adult: Помечать записи как NSFW в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.post.trash: Удалять и восстанавливать записи в журналах, 
+  которые вы модерируете.
+oauth2.grant.moderate.post_comment.all: Модерировать комментарии под записями 
+  журналов, которые вы модерируете.
+oauth2.grant.moderate.post_comment.change_language: Изменять язык комментариев 
+  под записями в журналах, которые вы модерируете.
+oauth2.grant.moderate.post_comment.set_adult: Помечать как NSFW комментарии под 
+  записями в журналах, которые вы модерируете.
+oauth2.grant.moderate.post_comment.trash: Удалять и восстанавливать комментарии 
+  под записями в журналах, которые вы модерируете.
+oauth2.grant.moderate.magazine.all: Управлять банами, отчётами и просматривать 
+  удалённые элементы в вашем модерируемом журнале.
+oauth2.grant.moderate.magazine.ban.all: Управлять забаненными полльзователями в 
+  вашем модерируемом журнале.
+oauth2.grant.moderate.magazine.ban.read: просмотреть забанненых полльзователей в
+  вашем модерируемом журнале.
+oauth2.grant.moderate.magazine.ban.create: Банить пользователей в вашем 
   модерируемом журнале.
-oauth2.grant.moderate.magazine.ban.read: просмотреть забанненых полльзователей в вашем
-  модерируемом журнале.
-oauth2.grant.moderate.magazine.ban.create: Банить пользователей в вашем модерируемом
-  журнале.
-oauth2.grant.admin.entry_comment.purge: полностью удалить любой комментарий в ветке
-  вашего инстанса.
+oauth2.grant.admin.entry_comment.purge: полностью удалить любой комментарий в 
+  ветке вашего инстанса.
 oauth2.grant.admin.post.purge: Полностью удалить любой пост в вашем инстансе.
-oauth2.grant.admin.post_comment.purge: Полностью удалить любой комментарий к посту
-  в вашем инстансе.
-oauth2.grant.admin.magazine.all: Перемещать ветки между журналами или полностью удалять
-  их в вашем инстансе.
-oauth2.grant.admin.magazine.move_entry: Перемещать ветки между журналами вашего инстанса.
-oauth2.grant.admin.magazine.purge: Полностью удалить журнал в вашем инстансе.
-oauth2.grant.admin.user.all: Банить, проверить, полностью удалить пользователей вашего
+oauth2.grant.admin.post_comment.purge: Полностью удалить любой комментарий к 
+  посту в вашем инстансе.
+oauth2.grant.admin.magazine.all: Перемещать ветки между журналами или полностью 
+  удалять их в вашем инстансе.
+oauth2.grant.admin.magazine.move_entry: Перемещать ветки между журналами вашего 
   инстанса.
+oauth2.grant.admin.magazine.purge: Полностью удалить журнал в вашем инстансе.
+oauth2.grant.admin.user.all: Банить, проверить, полностью удалить пользователей 
+  вашего инстанса.
 oauth2.grant.admin.user.ban: Банить или разбанить пользователей вашего инстанса.
 oauth2.grant.admin.user.verify: Проверить пользователей вашего инстанса.
 oauth2.grant.admin.user.delete: Удалить пользователей вашего инстанса.
 oauth2.grant.admin.user.purge: Полностью удалить пользователей вашего инстанса.
-oauth2.grant.admin.instance.all: Посмотеть и обновить настройки или инфрмацию инстанса.
+oauth2.grant.admin.instance.all: Посмотеть и обновить настройки или инфрмацию 
+  инстанса.
 oauth2.grant.admin.instance.stats: Посмотреть статус вашего инстанса.
-oauth2.grant.admin.instance.settings.all: Посмотреть и обновить настройки вашего инстанса.
+oauth2.grant.admin.instance.settings.all: Посмотреть и обновить настройки вашего
+  инстанса.
 oauth2.grant.admin.instance.settings.read: Посмотреть настройки вашего инстанса.
 oauth2.grant.admin.instance.settings.edit: Обновить настройки вашего инстанса.
-oauth2.grant.admin.instance.information.edit: Обновите О, ЧаВо, Контакты, Сервис и
-  поддержка, А также старницу Политики Конфиденциальности в вашем инстансе.
-oauth2.grant.admin.federation.all: Посмотреть и обновить текущую дефедерацию инстанса.
+oauth2.grant.admin.instance.information.edit: Обновите О, ЧаВо, Контакты, Сервис
+  и поддержка, А также старницу Политики Конфиденциальности в вашем инстансе.
+oauth2.grant.admin.federation.all: Посмотреть и обновить текущую дефедерацию 
+  инстанса.
 oauth2.grant.admin.federation.read: Посмотреть список федерации инстанса.
-oauth2.grant.admin.federation.update: Добавить или удалить инстанс в списке дефедерации
-  инстансов.
-oauth2.grant.admin.oauth_clients.all: Посмотреть или отозвать существующих клиентов
-  OAuth2 в вашем инстансе.
-oauth2.grant.admin.oauth_clients.read: Посмотреть существующих клиентов OAuth2 в вашем
-  инстасне и статистику их использования.
-oauth2.grant.admin.oauth_clients.revoke: Отозвать доступ клиентов OAuth2 в вашем инстансе.
+oauth2.grant.admin.federation.update: Добавить или удалить инстанс в списке 
+  дефедерации инстансов.
+oauth2.grant.admin.oauth_clients.all: Посмотреть или отозвать существующих 
+  клиентов OAuth2 в вашем инстансе.
+oauth2.grant.admin.oauth_clients.read: Посмотреть существующих клиентов OAuth2 в
+  вашем инстасне и статистику их использования.
+oauth2.grant.admin.oauth_clients.revoke: Отозвать доступ клиентов OAuth2 в вашем
+  инстансе.
 last_active: Последняя активность
 flash_post_pin_success: Пост успешно закреплён.
 flash_post_unpin_success: Пост успешно откреплён.
-comment_reply_position_help: Отображать ответ на комментарий вверху или внизу страницы.
-  Когда включена бесконечная прокрутка, позиция всегда будет отображаться вверху.
+comment_reply_position_help: Отображать ответ на комментарий вверху или внизу 
+  страницы. Когда включена бесконечная прокрутка, позиция всегда будет 
+  отображаться вверху.
 show_avatars_on_comments: Показать аватары комментаторов
 single_settings: Отдельные настройки
 update_comment: Обновить комментарий
-show_avatars_on_comments_help: Показать или скрыть автары пользователя во время просмотра
-  отдельных веток или постов.
+show_avatars_on_comments_help: Показать или скрыть автары пользователя во время 
+  просмотра отдельных веток или постов.
 comment_reply_position: Позиция ответа на комментарий
-magazine_theme_appearance_custom_css: Пользовательский CSS будет использоваться при
-  просмотре контента в вашем журнале.
-magazine_theme_appearance_icon: Пользовательская иконка журнала не выбрана. Будет
-  выбрана и использована стандартная иконка.
-magazine_theme_appearance_background_image: Пользовательское фоновое изображение будет
-  использовано при просмотре контента вашего журнала.
+magazine_theme_appearance_custom_css: Пользовательский CSS будет использоваться 
+  при просмотре контента в вашем журнале.
+magazine_theme_appearance_icon: Пользовательская иконка журнала не выбрана. 
+  Будет выбрана и использована стандартная иконка.
+magazine_theme_appearance_background_image: Пользовательское фоновое изображение
+  будет использовано при просмотре контента вашего журнала.
 moderation.report.approve_report_title: Утвердить отчёт
 moderation.report.reject_report_title: Отклонитьотчёт
-moderation.report.ban_user_description: Вы хотите забанить полльзователя (%username%)
-  который создаёт контент в этом журнале??
-moderation.report.approve_report_confirmation: Вы уверены, что хотите подтвердить
-  этот отчёт?
+moderation.report.ban_user_description: Вы хотите забанить полльзователя 
+  (%username%) который создаёт контент в этом журнале??
+moderation.report.approve_report_confirmation: Вы уверены, что хотите 
+  подтвердить этот отчёт?
 subject_reported_exists: Об этом контенте уже сообщалось..
 moderation.report.ban_user_title: Заблокировать пользователя
-moderation.report.reject_report_confirmation: Вы уверены, что хотите отозвать этот
-  отчёт?
-oauth2.grant.moderate.post.pin: Закрепить пост в топе вашего модерируемого журнала.
+moderation.report.reject_report_confirmation: Вы уверены, что хотите отозвать 
+  этот отчёт?
+oauth2.grant.moderate.post.pin: Закрепить пост в топе вашего модерируемого 
+  журнала.
 delete_content: Удалить контент
 purge_content: Очистить контент
-delete_content_desc: Удалить контент полльзователся, оставив при этом ответы других
-  полльзователей в созданных ветках,сообщениях и комментариях.
-purge_content_desc: Полная очистка контента полльзователя, включая удаление ответов
-  других пользователей в созданных ветках, постах и комментариях.
-delete_account_desc: Удалить аккаунт полльзователся, оставив при этом ответы других
-  полльзователей в созданных ветках,сообщениях и комментариях.
+delete_content_desc: Удалить контент полльзователся, оставив при этом ответы 
+  других полльзователей в созданных ветках,сообщениях и комментариях.
+purge_content_desc: Полная очистка контента полльзователя, включая удаление 
+  ответов других пользователей в созданных ветках, постах и комментариях.
+delete_account_desc: Удалить учётную запись, включая ответы других пользователей
+  в созданных темах, сообщениях и комментариях.
 two_factor_authentication: Двухфакторная аутентификация
 two_factor_backup: Коды восстановления двухфакторной аутентификации
 2fa.authentication_code.label: Код аутентификации
@@ -679,27 +709,30 @@ two_factor_backup: Коды восстановления двухфакторн�
 2fa.enable: Установка двухфакторной аутентификации
 2fa.disable: Отключение двухфакторной аутентификации
 2fa.backup: Ваши коды восстановления 2FA
-2fa.backup-create.help: Вы можете создать новые коды восстановления аутентификации;
-  это приведёт к отмене существующего кода.
+2fa.backup-create.help: Вы можете создать новые коды восстановления 
+  аутентификации; это приведёт к отмене существующего кода.
 2fa.backup-create.label: Создать новый код восстановления аутентификации
 2fa.remove: Удалить 2FA
 2fa.add: Добавить мой аккаунт
-2fa.verify_authentication_code.label: Введите двухфакторный код для проверки настройки
-2fa.qr_code_img.alt: QR-код позволяющий настроить двухфакторную аутентификацию для
-  вашего аккаунта
-2fa.qr_code_link.title: Переход по этой ссылке может позволить вашей платформе заригистрировать
-  этк двухфакторную аутентификацию
-2fa.user_active_tfa.title: Пользователь активировал 2fa
-2fa.available_apps: Используйте приложение для двухфакторной аутентификации, например
-  %google_authenticator%, %aegis% (Android) или %raivo% (iOS) для сканирования QR-кода.
-2fa.backup_codes.help: вы можете использовать эти коды. если у вас нет вашего устройства
-  или приложения. <strong>Коды будут показаны снова</strong>, вы сможете использовать
-  каждый из них только один<strong> раз</strong>.
-2fa.backup_codes.recommendation: Рекомендуем сохранить эту заметку в безопасное место.
+2fa.verify_authentication_code.label: Введите двухфакторный код для проверки 
+  настройки
+2fa.qr_code_img.alt: QR-код позволяющий настроить двухфакторную аутентификацию 
+  для вашего аккаунта
+2fa.qr_code_link.title: Переход по этой ссылке может позволить вашей платформе 
+  заригистрировать этк двухфакторную аутентификацию
+2fa.user_active_tfa.title: 2ФА активна
+2fa.available_apps: Используйте приложение для двухфакторной аутентификации, 
+  например %google_authenticator%, %aegis% (Android) или %raivo% (iOS) для 
+  сканирования QR-кода.
+2fa.backup_codes.help: вы можете использовать эти коды. если у вас нет вашего 
+  устройства или приложения. <strong>Коды будут показаны снова</strong>, вы 
+  сможете использовать каждый из них только один<strong> раз</strong>.
+2fa.backup_codes.recommendation: Рекомендуем сохранить эту заметку в безопасное 
+  место.
 cancel: Отмена
-password_and_2fa: Пароль и 2fa
-flash_account_settings_changed: Настройки вашего аккаунта успешно изменены. Вам нужно
-  войти ещё раз.
+password_and_2fa: Пароль и 2ФА
+flash_account_settings_changed: Настройки вашего аккаунта успешно изменены. Вам 
+  нужно войти ещё раз.
 show_subscriptions: Показать подписки
 subscription_sort: Сортировать.
 alphabetically: По алфавиту
@@ -724,11 +757,13 @@ flash_magazine_theme_changed_error: Неудачное обновление вн
 flash_comment_new_success: Комментарий успешно создан.
 flash_comment_edit_success: Комментарий успешно обновлён.
 flash_comment_new_error: Комментарий не создан. Что-то пошло не так.
-flash_comment_edit_error: Неудачное редактироване комментария. Что-то пошло не так.
+flash_comment_edit_error: Неудачное редактироване комментария. Что-то пошло не 
+  так.
 flash_user_settings_general_success: Настройки пользователя успешно сохранены.
 flash_user_settings_general_error: ошибка сохранения настроек пользователя.
 flash_user_edit_profile_error: ошибка сохранения настроек профиля.
-flash_user_edit_profile_success: Настройки профиля пользователя успешно сохранены.
+flash_user_edit_profile_success: Настройки профиля пользователя успешно 
+  сохранены.
 flash_user_edit_email_error: Ошибка изменения адреса электронной почты.
 flash_user_edit_password_error: Ошибка изменения пароля.
 flash_thread_edit_error: Ошибка изменения ветки. Что-то пошло не так.
@@ -742,21 +777,21 @@ open_url_to_fediverse: Открыть оригинальный URL
 change_my_avatar: Изменить мой аватар
 change_my_cover: Изменить мою обложку
 edit_my_profile: Редактировать мой профиль
-account_settings_changed: Настройки вашего аккаунта успешно изменены. Вам нужно войти
-  ещё раз.
+account_settings_changed: Настройки вашего аккаунта успешно изменены. Вам нужно 
+  войти ещё раз.
 magazine_deletion: Удалённый журнала
 delete_magazine: Удаление журнала
 restore_magazine: Восстановление журнала
 purge_magazine: Очистить журнал
-magazine_is_deleted: Журнал удалёен. Вы можете <a href="%link_target%"> восстановить</a>
-  егов течениие 30 дней.
+magazine_is_deleted: Журнал удалёен. Вы можете <a href="%link_target%"> 
+  восстановить</a> егов течениие 30 дней.
 suspend_account: Заблокировать аккаунт
 unsuspend_account: Разблокировать account
 account_suspended: Аккаунт был заблокирован.
 account_unsuspended: Аккаунт был разблокирован.
 deletion: Удаление
-user_suspend_desc: Приостановить ваш аккаунт и скрыть контент в инстансе не удаляя
-  навсегда, вы сможете восстановить его через какое то время.
+user_suspend_desc: Приостановить ваш аккаунт и скрыть контент в инстансе не 
+  удаляя навсегда, вы сможете восстановить его через какое то время.
 account_banned: Аккаунт был забанен.
 account_unbanned: Аккаунт был разбанен.
 account_is_suspended: Аккаунт пользователя приостановлен.
@@ -790,3 +825,152 @@ followers_count: '{0}Подписчиков|{1}Подписчик|]1,Inf[ Под
 remove_media: Удалить медиа
 details: Детали
 spoiler: Спойлер
+private_instance: Требовать авторизацию для просмотра содержимого сервера
+cake_day: День варенья
+from: от
+sort_by: Упорядочивание
+hidden: Скрыты
+disabled: Выключены
+test_push_message: Привет, мир!
+notification_title_new_post: Новая запись
+downvotes_mode: Режим отрицательных оценок
+enabled: Включены
+tag: Метка
+edit_entry: Редактировать ветку
+unban: Разблокировать
+ban_hashtag_btn: Заблокировать хештег
+toolbar.spoiler: Спойлер
+federation_page_dead_title: Мёртвые серверы
+account_deletion_title: Удаление аккаунта
+notification_title_new_thread: Новая ветвь
+marked_for_deletion_at: Помечено для удаления %date%
+marked_for_deletion: Помечено для удаления
+direct_message: Личное сообщение
+subscribe_for_updates: Подпишитесь, чтобы получать оповещения о новых 
+  публикациях.
+account_deletion_button: Удалить учётную запись
+account_deletion_immediate: Удалить сейчас
+notification_title_new_reply: Новый ответ
+bookmark_add_to_list: Добавить закладку в %list%
+bookmark_remove_from_list: Удалить закладку из %list%
+max_image_size: Макс. размер файла
+bookmark_lists: Списки закладок
+bookmarks: Закладки
+bookmark_list_make_default: Сделать основным
+bookmark_add_to_default_list: Добавить закладку в основной список
+table_of_contents: Содержимое
+bookmark_remove_all: Удалить все закладки
+signup_requests_paragraph: Эти пользователи желают зарегистрироваться на вашем 
+  сервере. Они не могут входить в учётные записи, пока вы не одобрите их 
+  запросы.
+comment_not_found: Комментарий не найден
+count: Количество
+bookmark_list_create: Создать
+bookmark_list_selected_list: Выбранный список
+search_type_all: Ветки и микроблоги
+search_type_entry: Ветки
+select_user: Выбор пользователя
+show_magazine_domains: Показывать домены журналов
+show_user_domains: Показывать домены уч. записей
+is_default: Основной
+bookmark_list_is_default: Основной список
+bookmarks_list: Закладки из %list%
+signup_requests_header: Запрошенные регистрации
+email_verification_pending: Для входа требуется подтверждение адреса почты.
+email_application_pending: Для входа требуется одобрение регистрации 
+  администратором.
+email_application_approved_title: Ваша регистрация одобрена
+email_application_rejected_title: Ваш запрос регистрации отклонён
+edited: изменено
+remove_user_cover: Убрать шапку
+related_entry: Связанное
+sso_show_first: Сперва предлагать SSO на страницах регистрации и входа
+remove_user_avatar: Убрать изображение профиля
+change_downvotes_mode: Сменить режим отрицательного оценивания
+viewing_one_signup_request: Вы просматриваете запрос регистрации %username%
+reporting_user: Доносчик
+own_report_rejected: Ваша жалоба была отклонена
+own_report_accepted: Ваша жалоба была принята
+sso_registrations_enabled: Регистрации через SSO включены
+sso_only_mode: Разрешить регистрации и вход только через SSO
+reported_user: Жалоба на
+show: Показать
+hide: Скрыть
+remove_schedule_delete_account_desc: Всё содержимое будет снова доступно и 
+  пользователь снова сможет входить в учётную запись.
+restrict_magazine_creation: Разрешить создание локальных журналов только 
+  администраторам и модераторам сервера
+continue_with: Продолжить с
+notify_on_user_signup: Новые регистрации
+flash_image_download_too_large_error: Невозможно добавить изображение, т.к. оно 
+  слишком большое (макс. размер %bytes%)
+flash_thread_tag_banned_error: Невозможно создать ветвь, т.к. содержимое 
+  запрещено.
+sso_registrations_enabled.error: Создание новых уч. записей через сторонние 
+  системы идентификации сейчас недоступно.
+report_accepted: Жалоба была принята
+own_content_reported_accepted: Жалоба на содержимое, которую вы создали, была 
+  рассмотрена и принята.
+open_report: Открыть жалобу
+remove_schedule_delete_account: Отменить запланированное удаление
+notification_title_message: Новое личное сообщение
+magazine_posting_restricted_to_mods: Разрешить создание ветвей только 
+  модераторам
+new_magazine_description: Новый журнал (активен менее чем %days% дней)
+admin_users_inactive: Неактивен
+new_user_description: Новый пользователь (активен менее чем %days% дней)
+admin_users_active: Активен
+notification_title_new_comment: Новый комментарий
+user_verify: Активировать уч. запись
+notification_title_edited_comment: Комментарий отредактирован
+notification_title_mention: Вас упомянули
+unregister_push_notifications_button: Удалить регистрацию пуш-уведомлений
+test_push_notifications_button: Проверить уведомления
+notification_title_removed_comment: Комментарий удалён
+version: Версия
+last_failed_contact: Последнее неуспешное взаимодействие
+admin_users_suspended: Приостановлен
+admin_users_banned: Заблокирован
+bookmark_list_create_placeholder: введите название...
+bookmark_list_create_label: Название списка
+bookmarks_list_edit: Ред. список заметок
+bookmark_list_edit: Редактировать
+search_type_post: Микроблоги
+oauth2.grant.user.bookmark.remove: Удалять заметки
+oauth2.grant.user.bookmark_list: Просматривать, изменять и удалять ваши списки 
+  заметок
+oauth2.grant.user.bookmark.add: Добавлять заметки
+notification_body_new_signup: Зарегистрировался пользователь %u%.
+answered: отвечен
+notification_title_ban: Вы заблокированы
+notification_title_edited_post: Запись отредактирована
+oauth2.grant.user.bookmark_list.delete: Удалять ваши списки заметок
+oauth2.grant.user.bookmark: Добавлять и удалять заметки
+oauth2.grant.user.bookmark_list.edit: Изменять ваши списки заметок
+last_successful_deliver: Последняя успешная отправка
+notification_title_edited_thread: Ветвь была отредактирована
+2fa.manual_code_hint: Если не получается сканировать QR-код, введите секретный 
+  ключ вручную
+oauth2.grant.user.bookmark_list.read: Просматривать ваши списки заметок
+register_push_notifications_button: Зарегистрировать канал пуш-увдеомлений
+notification_title_new_signup: Пользователь зарегистрировался
+notification_body2_new_signup_approval: Необходимо утвердить запрос регистрации,
+  прежде, чем пользователь сможет войти
+last_successful_receive: Последнее успешное получение
+schedule_delete_account_desc: Запланировать удаление этой учётной записи через 
+  30 дней. Пользователь и все его публикации будут скрыты, и он не сможет 
+  входить в учётную запись.
+signup_requests: Запросы на регистрацию
+notification_title_removed_thread: Ветвь была удалена
+notification_title_removed_post: Запись удалена
+schedule_delete_account: Запланировать удаление
+toolbar.emoji: Эмодзи
+application_text: Расскажите, почему вы хотите присоединиться
+show_rich_mention_help: Отображать имена и изображения профилей пользователей, 
+  упомянутых в тексте.
+show_rich_mention: Расширенные упоминания
+show_rich_mention_magazine: Расширенные упоминания журналов
+show_rich_mention_magazine_help: Отображать названия и изображения журналов, 
+  упомянутых в тексте.
+show_rich_ap_link: Расширенные ссылки AP
+and: и

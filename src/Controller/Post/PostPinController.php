@@ -27,9 +27,9 @@ class PostPinController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('post_pin', $request->request->get('token'));
+        $this->validateCsrf('post_pin', $request->getPayload()->get('token'));
 
         $entry = $this->manager->pin($post);
 

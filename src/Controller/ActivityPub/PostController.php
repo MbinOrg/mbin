@@ -27,13 +27,13 @@ class PostController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
         if ($post->apId) {
             return $this->redirect($post->apId);
         }
 
-        $response = new JsonResponse($this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfPost($post), true));
+        $response = new JsonResponse($this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

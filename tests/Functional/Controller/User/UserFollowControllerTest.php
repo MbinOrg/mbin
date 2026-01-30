@@ -5,29 +5,30 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\User;
 
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 class UserFollowControllerTest extends WebTestCase
 {
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanFollowAndUnfollow(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $crawler = $client->request('GET', '/m/acme/t/'.$entry->getId());
+        $crawler = $this->client->request('GET', '/m/acme/t/'.$entry->getId());
 
         // Follow
-        $client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
-        $crawler = $client->followRedirect();
+        $this->client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
+        $crawler = $this->client->followRedirect();
 
         $this->assertSelectorExists('#sidebar form[name=user_follow] .active');
         $this->assertSelectorTextContains('#sidebar .entry-info', 'Unfollow');
         $this->assertSelectorTextContains('#sidebar .entry-info', '1');
 
         // Unfollow
-        $client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Unfollow')->form());
-        $client->followRedirect();
+        $this->client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Unfollow')->form());
+        $this->client->followRedirect();
 
         $this->assertSelectorNotExists('#sidebar form[name=user_follow] .active');
         $this->assertSelectorTextContains('#sidebar .entry-info', 'Follow');
@@ -36,38 +37,37 @@ class UserFollowControllerTest extends WebTestCase
 
     public function testXmlUserCanFollow(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $crawler = $client->request('GET', '/m/acme/t/'.$entry->getId());
+        $crawler = $this->client->request('GET', '/m/acme/t/'.$entry->getId());
 
-        $client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
+        $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
+        $this->client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
 
-        $this->assertStringContainsString('{"html":', $client->getResponse()->getContent());
-        $this->assertStringContainsString('Unfollow', $client->getResponse()->getContent());
+        $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Unfollow', $this->client->getResponse()->getContent());
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testXmlUserCanUnfollow(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $crawler = $client->request('GET', '/m/acme/t/'.$entry->getId());
+        $crawler = $this->client->request('GET', '/m/acme/t/'.$entry->getId());
 
         // Follow
-        $client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
-        $crawler = $client->followRedirect();
+        $this->client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Follow')->form());
+        $crawler = $this->client->followRedirect();
 
         // Unfollow
-        $client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Unfollow')->form());
+        $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
+        $this->client->submit($crawler->filter('#sidebar .entry-info')->selectButton('Unfollow')->form());
 
-        $this->assertStringContainsString('{"html":', $client->getResponse()->getContent());
-        $this->assertStringContainsString('Follow', $client->getResponse()->getContent());
+        $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Follow', $this->client->getResponse()->getContent());
     }
 }

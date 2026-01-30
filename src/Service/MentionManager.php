@@ -19,7 +19,7 @@ class MentionManager
 
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -62,7 +62,7 @@ class MentionManager
             function ($val) {
                 preg_match(RegPatterns::LOCAL_USER, $val, $l);
 
-                return preg_match(RegPatterns::AP_USER, $val) || $val === $l[0] ?? '';
+                return preg_match(RegPatterns::AP_USER, $val) || $val === ($l[0] ?? '');
             }
         );
 
@@ -78,16 +78,24 @@ class MentionManager
         );
     }
 
-    public function extract(?string $val, $type = self::ALL): ?array
+    /**
+     * Try to extract mentions from the body (eg. @username@domain.tld).
+     *
+     * @param val Body input string
+     * @param type Type of mentions to extract (ALL, LOCAL only or REMOTE only)
+     *
+     * @return string[]
+     */
+    public function extract(?string $body, $type = self::ALL): ?array
     {
-        if (!$val) {
+        if (!$body) {
             return null;
         }
 
         $result = match ($type) {
-            self::ALL => array_merge($this->byApPrefix($val), $this->byPrefix($val)),
-            self::LOCAL => $this->byPrefix($val),
-            self::REMOTE => $this->byApPrefix($val)
+            self::ALL => array_merge($this->byApPrefix($body), $this->byPrefix($body)),
+            self::LOCAL => $this->byPrefix($body),
+            self::REMOTE => $this->byApPrefix($body),
         };
 
         $result = array_map(fn ($val) => trim($val), $result);
@@ -95,20 +103,30 @@ class MentionManager
         return \count($result) ? array_unique($result) : null;
     }
 
+    /**
+     * Remote activitypub prefix, like @username@domain.tld.
+     *
+     * @param value Input string
+     *
+     * @return string[]
+     */
     private function byApPrefix(string $value): array
     {
-        preg_match_all(
-            '/(?<!\/)\B@(\w{1,30})(@)(([\pL\pN\pS\pM\-\_]++\.)+[\pL\pN\pM]++|[a-z0-9\-\_]++)/u',
-            $value,
-            $matches
-        );
+        preg_match_all(RegPatterns::REMOTE_USER_REGEX, $value, $matches);
 
         return \count($matches[0]) ? array_unique(array_values($matches[0])) : [];
     }
 
+    /**
+     * Local username prefix, like @username.
+     *
+     * @param value Input string
+     *
+     * @return string[]
+     */
     private function byPrefix(string $value): array
     {
-        preg_match_all('/(?<!\/)\B@([a-zA-Z0-9_-]{1,30}@?)/u', $value, $matches);
+        preg_match_all(RegPatterns::LOCAL_USER_REGEX, $value, $matches);
         $results = array_filter($matches[0], fn ($val) => !str_ends_with($val, '@'));
 
         return \count($results) ? array_unique(array_values($results)) : [];
@@ -137,7 +155,7 @@ class MentionManager
         );
 
         return array_map(
-            fn ($val) => substr_count($val, '@') < 2 ? $val.'@'.SettingsManager::getValue('KBIN_DOMAIN') : $val,
+            fn ($val) => substr_count($val, '@') < 2 ? $val.'@'.$this->settingsManager->get('KBIN_DOMAIN') : $val,
             $res
         );
     }
@@ -153,13 +171,26 @@ class MentionManager
         return explode('@', $value)[1];
     }
 
-    public static function clearLocal(?array $mentions): array
+    public function getDomain(string $value): string
+    {
+        if (str_starts_with($value, '@')) {
+            $value = substr($value, 1);
+        }
+        $parts = explode('@', $value);
+        if (\count($parts) < 2) {
+            return $this->settingsManager->get('KBIN_DOMAIN');
+        } else {
+            return $parts[1];
+        }
+    }
+
+    public function clearLocal(?array $mentions): array
     {
         if (null === $mentions) {
             return [];
         }
 
-        $domain = '@'.SettingsManager::getValue('KBIN_DOMAIN');
+        $domain = '@'.$this->settingsManager->get('KBIN_DOMAIN');
 
         $mentions = array_map(fn ($val) => preg_replace('/'.preg_quote($domain, '/').'$/', '', $val), $mentions);
 
@@ -168,13 +199,13 @@ class MentionManager
         return array_filter($mentions, fn ($val) => !str_contains($val, '@'));
     }
 
-    public static function getRoute(?array $mentions): array
+    public function getRoute(?array $mentions): array
     {
         if (null === $mentions) {
             return [];
         }
 
-        $domain = '@'.SettingsManager::getValue('KBIN_DOMAIN');
+        $domain = '@'.$this->settingsManager->get('KBIN_DOMAIN');
 
         $mentions = array_map(fn ($val) => preg_replace('/'.preg_quote($domain, '/').'$/', '', $val), $mentions);
 

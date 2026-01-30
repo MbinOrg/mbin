@@ -14,12 +14,14 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPub\Wrapper\UndoWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -27,6 +29,7 @@ class LikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly KernelInterface $kernel,
         private readonly MagazineRepository $magazineRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LikeWrapper $likeWrapper,
@@ -35,8 +38,9 @@ class LikeHandler extends MbinMessageHandler
         private readonly ActivityFactory $activityFactory,
         private readonly SettingsManager $settingsManager,
         private readonly DeliverManager $deliverManager,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(LikeMessage $message): void
@@ -57,20 +61,22 @@ class LikeHandler extends MbinMessageHandler
         /** @var Entry|EntryComment|Post|PostComment $object */
         $object = $this->entityManager->getRepository($message->objectType)->find($message->objectId);
 
-        $activity = $this->likeWrapper->build(
-            $this->activityPubManager->getActorProfileId($user),
-            $this->activityFactory->create($object),
-        );
+        $activity = $this->likeWrapper->build($user, $object);
 
         if ($message->removeLike) {
             $activity = $this->undoWrapper->build($activity);
         }
 
-        $inboxes = array_filter(array_unique(array_merge(
+        $inboxes = array_merge(
             $this->userRepository->findAudience($user),
-            $this->magazineRepository->findAudience($object->magazine),
-            [$object->user->apInboxUrl, $object->magazine->apId ? $object->magazine->apInboxUrl : null]
-        )));
-        $this->deliverManager->deliver($inboxes, $activity);
+            [$object->user->apInboxUrl],
+        );
+
+        if ('random' !== $object->magazine->name) {
+            // only add the magazine subscribers if it is not the random magazine
+            $inboxes = array_merge($inboxes, $this->magazineRepository->findAudience($object->magazine));
+        }
+
+        $this->deliverManager->deliver(array_filter(array_unique($inboxes)), $this->activityJsonBuilder->buildActivityJson($activity));
     }
 }

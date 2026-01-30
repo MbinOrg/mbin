@@ -11,14 +11,13 @@ use App\DTO\UserDto;
 use App\Entity\Client;
 use App\Factory\ClientFactory;
 use App\Repository\UserRepository;
-use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -195,12 +194,7 @@ class CreateClientApi extends BaseApi
                     ImageUploadDto::IMAGE_UPLOAD_NO_ALT,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'oauth')]
     /**

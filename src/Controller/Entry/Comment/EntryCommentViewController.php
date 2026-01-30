@@ -10,8 +10,12 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Event\Entry\EntryHasBeenSeenEvent;
+use App\PageView\EntryCommentPageView;
+use App\Repository\EntryCommentRepository;
+use App\Repository\EntryRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +27,8 @@ class EntryCommentViewController extends AbstractController
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly EventDispatcherInterface $dispatcher,
+        private readonly EntryRepository $entryRepository,
+        private readonly EntryCommentRepository $entryCommentRepository,
     ) {
     }
 
@@ -34,6 +40,7 @@ class EntryCommentViewController extends AbstractController
         #[MapEntity(id: 'comment_id')]
         ?EntryComment $comment,
         Request $request,
+        Security $security,
     ): Response {
         $this->handlePrivateContent($entry);
 
@@ -41,12 +48,20 @@ class EntryCommentViewController extends AbstractController
         // it should be added so one comment view does not mark all as read in the same entry
         $this->dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
+        $this->entryRepository->hydrate($entry);
+        // Both comment and root comment can be null
+        if (null !== $comment?->root) {
+            $this->entryCommentRepository->hydrateChildren($comment->root);
+        }
+        $criteria = new EntryCommentPageView(1, $security);
+
         return $this->render(
             'entry/comment/view.html.twig',
             [
                 'magazine' => $magazine,
                 'entry' => $entry,
                 'comment' => $comment,
+                'criteria' => $criteria,
             ]
         );
     }

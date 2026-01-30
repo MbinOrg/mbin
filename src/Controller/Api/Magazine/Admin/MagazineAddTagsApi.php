@@ -9,8 +9,8 @@ use App\DTO\MagazineResponseDto;
 use App\Entity\Magazine;
 use App\Factory\MagazineFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -85,7 +85,7 @@ class MagazineAddTagsApi extends MagazineBaseApi
         string $tag,
         EntityManagerInterface $entityManager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

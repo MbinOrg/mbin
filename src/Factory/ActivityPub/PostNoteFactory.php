@@ -8,7 +8,7 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Post;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
@@ -27,11 +27,11 @@ class PostNoteFactory
         private readonly ImageWrapper $imageWrapper,
         private readonly TagsWrapper $tagsWrapper,
         private readonly MentionsWrapper $mentionsWrapper,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MentionManager $mentionManager,
         private readonly TagExtractor $tagExtractor,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 
@@ -65,11 +65,12 @@ class PostNoteFactory
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
+            'audience' => $this->groupFactory->getActivityPubId($post->magazine),
             'sensitive' => $post->isAdult(),
             'stickied' => $post->sticky,
             'content' => $this->markdownConverter->convertToHtml(
                 $body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
             ),
             'mediaType' => 'text/html',
             'source' => $post->body ? [
@@ -81,7 +82,7 @@ class PostNoteFactory
                 $this->tagsWrapper->build($tags),
                 $this->mentionsWrapper->build($post->mentions ?? [], $post->body)
             ),
-            'commentsEnabled' => true,
+            'commentsEnabled' => !$post->isLocked,
             'published' => $post->createdAt->format(DATE_ATOM),
         ]);
 

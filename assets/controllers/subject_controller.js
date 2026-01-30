@@ -1,7 +1,6 @@
 import { fetch, ok } from '../utils/http';
-import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/kbin';
+import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
 import { Controller } from '@hotwired/stimulus';
-import GLightbox from 'glightbox';
 import router from '../utils/routing';
 import { useIntersection } from 'stimulus-use';
 
@@ -11,31 +10,17 @@ export default class extends Controller {
     static targets = ['loader', 'more', 'container', 'commentsCounter', 'favCounter', 'upvoteCounter', 'downvoteCounter'];
     static values = {
         loading: Boolean,
-        isExpandedValue: Boolean,
     };
     static sendBtnLabel = null;
 
     connect() {
-        const params = { selector: '.thumb', openEffect: 'none', closeEffect: 'none', slideEffect: 'none' };
-        GLightbox(params);
-
-        const self = this;
-        if (this.hasMoreTarget) {
-            this.moreTarget.addEventListener('focusin', () => {
-                self.element.parentNode
-                    .querySelectorAll('.z-5')
-                    .forEach((el) => {
-                        el.classList.remove('z-5');
-                    });
-                this.element.classList.add('z-5');
-            });
-        }
+        this.wireMoreFocusClassAdjustment();
 
         if (this.element.classList.contains('show-preview')) {
             useIntersection(this);
         }
 
-        this.checkHeight();
+        this.wireTouchEvent();
     }
 
     async getForm(event) {
@@ -76,7 +61,7 @@ export default class extends Controller {
 
                 textarea.focus();
             }
-        } catch (e) {
+        } catch {
             window.location.href = event.target.href;
         } finally {
             this.loadingValue = false;
@@ -168,7 +153,7 @@ export default class extends Controller {
             response = await response.json();
 
             form.innerHTML = response.html;
-        } catch (e) {
+        } catch {
             form.submit();
         } finally {
             this.loadingValue = false;
@@ -192,7 +177,7 @@ export default class extends Controller {
             response = await response.json();
 
             event.target.closest('.vote').outerHTML = response.html;
-        } catch (e) {
+        } catch {
             form.submit();
         } finally {
             this.loadingValue = false;
@@ -239,7 +224,7 @@ export default class extends Controller {
             response = await response.json();
 
             this.element.querySelector('.moderate-inline').insertAdjacentHTML('afterbegin', response.html);
-        } catch (e) {
+        } catch {
             window.location.href = event.target.href;
         } finally {
             this.loadingValue = false;
@@ -294,7 +279,7 @@ export default class extends Controller {
 
             div.firstElementChild.className = this.element.className;
             this.element.outerHTML = div.firstElementChild.outerHTML;
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }
@@ -339,12 +324,12 @@ export default class extends Controller {
             let response = await fetch(event.target.parentNode.formAction, { method: 'POST' });
 
             response = await ok(response);
-            response = await response.json();
+            await response.json();
 
             event.target.parentNode.previousElementSibling.remove();
             event.target.parentNode.nextElementSibling.classList.remove('hidden');
             event.target.parentNode.remove();
-        } catch (e) {
+        } catch {
         } finally {
             this.loadingValue = false;
         }
@@ -364,53 +349,123 @@ export default class extends Controller {
         this.previewInit = true;
     }
 
-    checkHeight() {
-        this.isExpandedValue = false;
-        const elem = this.element.querySelector('.content');
-        if (elem) {
-            elem.style.maxHeight = '25rem';
+    wireMoreFocusClassAdjustment() {
+        const self = this;
+        if (this.hasMoreTarget) {
+            // Add z-5 (higher z-index with !important) to the element when more button is focused (eg. clicked)
+            // Remove z-5 from other elements in the same parent
+            this.moreTarget.addEventListener('focusin', () => {
+                self.element.parentNode
+                    .querySelectorAll('.z-5')
+                    .forEach((el) => {
+                        el.classList.remove('z-5');
+                    });
+                this.element.classList.add('z-5');
+            });
 
-            if (elem.scrollHeight - 30 > elem.clientHeight
-                || elem.scrollWidth > elem.clientWidth) {
+            // During a mouse hover, remove z-5 from other elements in the same parent
+            // and clear :focus-within from any focused element inside the same parent
+            this.moreTarget.addEventListener('mouseenter', () => {
+                // Remove z-5 from other elements in the same parent
+                const parent = self.element.parentNode;
+                parent
+                    .querySelectorAll('.z-5')
+                    .forEach((el) => {
+                        el.classList.remove('z-5');
+                    });
 
-                this.moreBtn = this.createMoreBtn(elem);
-                this.more();
-            } else {
-                elem.style.maxHeight = null;
-            }
+                // Clear keyboard/mouse focus from any element inside the same
+                // parent so that :focus-within is removed from the old
+                // element without assigning focus to the hovered one.
+                const active = document.activeElement;
+                if (active && parent.contains(active) && !self.moreTarget.contains(active)) {
+                    try {
+                        active.blur();
+                    } catch {
+                        // ignore environments where blur may throw
+                    }
+                }
+            });
         }
     }
 
-    createMoreBtn(elem) {
-        const moreBtn = document.createElement('div');
-        moreBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i>';
-        moreBtn.classList.add('more');
-
-        elem.parentNode.insertBefore(moreBtn, elem.nextSibling);
-
-        return moreBtn;
+    wireTouchEvent() {
+        if (this.isOnCombined()) {
+            this.wireTouchEventCombined();
+        } else {
+            this.wireTouchEventRegular();
+        }
     }
 
-    more() {
-        this.moreBtn.addEventListener('click', (e) => {
-            if (e.target.previousSibling.style.maxHeight) {
-                e.target.previousSibling.setAttribute('style', 'margin-bottom: 2rem !important');
-                e.target.previousSibling.style.maxHeight = null;
-                e.target.innerHTML = '<i class="fa-solid fa-angles-up"></i>';
-                this.isExpandedValue = true;
-            } else {
-                e.target.previousSibling.style.maxHeight = '25rem';
-                e.target.previousSibling.style.marginBottom = null;
-                e.target.innerHTML = '<i class="fa-solid fa-angles-down"></i>';
-                e.target.previousSibling.scrollIntoView();
-                this.isExpandedValue = false;
+    wireTouchEventRegular() {
+        // if in a list and the click is made via touch, open the post
+        if (!this.element.classList.contains('isSingle')) {
+            this.element.querySelector('.content')?.addEventListener('click', (e) => {
+                if (this.filterClickEvent(e)) {
+                    return;
+                }
+
+                if ('touch' === e.pointerType) {
+                    const link = this.element.querySelector('header a:not(.user-inline)');
+                    if (link) {
+                        const href = link.getAttribute('href');
+                        if (href) {
+                            document.location.href = href;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    wireTouchEventCombined() {
+        // if on Combined view, open the post via click on card
+        this.element.addEventListener('click', (e) => {
+            if (this.filterClickEvent(e)) {
+                return;
+            }
+
+            const link = this.element.querySelector('footer span[data-subject-target="commentsCounter"]')?.parentElement;
+            if (link) {
+                let href = link.getAttribute('href');
+                href = href.substring(0, href.length - '#comments'.length);
+                if (href) {
+                    document.location.href = href;
+                }
             }
         });
     }
 
-    expand() {
-        if (!this.isExpandedValue) {
-            this.moreBtn.click();
+    isOnCombined() {
+        return location.pathname.endsWith('/combined') || location.pathname.includes('/combined/');
+    }
+
+    filterClickEvent(e) {
+        if (e.defaultPrevented) {
+            return true;
         }
+
+        // ignore clicks on links
+        if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
+            return true;
+        }
+
+        // ignore clicks on spoilers
+        if (
+            'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
+            || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
+        ) {
+            return true;
+        }
+
+        // ignore click on images
+        const figures = this.element.querySelectorAll('figure');
+        if (
+            figures.entries().some(([, elem]) => elem.contains(e.target))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

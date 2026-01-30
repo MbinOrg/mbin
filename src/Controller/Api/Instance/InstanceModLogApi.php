@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Api\Instance;
 
 use App\DTO\MagazineLogResponseDto;
+use App\Entity\MagazineLog;
 use App\Repository\MagazineLogRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class InstanceModLogApi extends InstanceBaseApi
@@ -64,6 +66,12 @@ class InstanceModLogApi extends InstanceBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: MagazineLogRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'types[]',
+        description: 'The types of magazine logs to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', enum: MagazineLog::CHOICES))
+    )]
     #[OA\Tag('instance')]
     /**
      * Retrieve information about moderation actions taken across the instance.
@@ -72,18 +80,20 @@ class InstanceModLogApi extends InstanceBaseApi
         MagazineLogRepository $repository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        #[MapQueryParameter] ?array $types = null,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $logs = $repository->listAll(
+        $logs = $repository->findByCustom(
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineLogRepository::PER_PAGE))
+            self::constrainPerPage($request->get('perPage', MagazineLogRepository::PER_PAGE)),
+            types: $types,
         );
 
         $dtos = [];
         foreach ($logs->getCurrentPageResults() as $value) {
-            array_push($dtos, $this->serializeLogItem($value));
+            $dtos[] = $this->serializeLogItem($value);
         }
 
         return new JsonResponse(

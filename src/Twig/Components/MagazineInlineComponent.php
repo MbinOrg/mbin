@@ -15,4 +15,5 @@ final class MagazineInlineComponent
     public bool $fullName = false;
     public bool $stretchedLink = false;
     public bool $showAvatar = false;
+    public bool $showNewIcon = true;
 }

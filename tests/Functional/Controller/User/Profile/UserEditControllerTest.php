@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\User\Profile;
 
-use App\Repository\UserRepository;
-use App\Tests\Functional\Controller\Security\RegisterControllerTest;
 use App\Tests\WebTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -14,78 +13,76 @@ class UserEditControllerTest extends WebTestCase
 {
     public string $kibbyPath;
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
     }
 
     public function testUserCanSeeSettingsLink(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        $crawler = $client->request('GET', '/');
-        $client->click($crawler->filter('#header menu')->selectLink('Settings')->link());
+        $crawler = $this->client->request('GET', '/');
+        $this->client->click($crawler->filter('#header menu')->selectLink('Settings')->link());
 
-        $this->assertSelectorTextContains('#main .options__main a.active', 'general');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'General');
     }
 
     public function testUserCanEditProfile(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
-        $crawler = $client->request('GET', '/settings/profile');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'profile');
+        $crawler = $this->client->request('GET', '/settings/profile');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form([
                 'user_basic[about]' => 'test about',
             ])
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
         $this->assertSelectorTextContains('#main .user-box', 'test about');
 
-        $client->request('GET', '/people');
+        $this->client->request('GET', '/people');
 
         $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanUploadAvatar(): void
     {
-        $client = $this->createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
-        $repository = $this->getService(UserRepository::class);
+        $this->client->loginUser($user);
+        $repository = $this->userRepository;
 
-        $crawler = $client->request('GET', '/settings/profile');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'profile');
+        $crawler = $this->client->request('GET', '/settings/profile');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
         $this->assertStringContainsString('/dev/random', $user->avatar->filePath);
 
         $form = $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form();
         $form['user_basic[avatar]']->upload($this->kibbyPath);
-        $client->submit($form);
+        $this->client->submit($form);
 
         $user = $repository->find($user->getId());
         $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $user->avatar->filePath);
     }
 
+    #[Group(name: 'NonThreadSafe')]
     public function testUserCanUploadCover(): void
     {
-        $client = $this->createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
-        $repository = $this->getService(UserRepository::class);
+        $this->client->loginUser($user);
+        $repository = $this->userRepository;
 
-        $crawler = $client->request('GET', '/settings/profile');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'profile');
+        $crawler = $this->client->request('GET', '/settings/profile');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
         $this->assertNull($user->cover);
 
         $form = $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form();
         $form['user_basic[cover]']->upload($this->kibbyPath);
-        $client->submit($form);
+        $this->client->submit($form);
 
         $user = $repository->find($user->getId());
         $this->assertStringContainsString(self::KIBBY_PNG_URL_RESULT, $user->cover->filePath);
@@ -93,14 +90,14 @@ class UserEditControllerTest extends WebTestCase
 
     public function testUserCanChangePassword(): void
     {
-        $client = RegisterControllerTest::register(true);
+        $this->client = $this->register(true);
 
-        $client->loginUser($this->getService(UserRepository::class)->findOneBy(['username' => 'JohnDoe']));
+        $this->client->loginUser($this->userRepository->findOneBy(['username' => 'JohnDoe']));
 
-        $crawler = $client->request('GET', '/settings/password');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'password');
+        $crawler = $this->client->request('GET', '/settings/password');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Password');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('#main form[name=user_password]')->selectButton('Save')->form([
                 'user_password[currentPassword]' => 'secret',
                 'user_password[plainPassword][first]' => 'test123',
@@ -108,32 +105,32 @@ class UserEditControllerTest extends WebTestCase
             ])
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
-        $crawler = $client->request('GET', '/login');
+        $crawler = $this->client->request('GET', '/login');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('#main form')->selectButton('Log in')->form([
                 'email' => 'JohnDoe',
                 'password' => 'test123',
             ])
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#header', 'JohnDoe');
     }
 
     public function testUserCanChangeEmail(): void
     {
-        $client = RegisterControllerTest::register(true);
+        $this->client = $this->register(true);
 
-        $client->loginUser($this->getService(UserRepository::class)->findOneBy(['username' => 'JohnDoe']));
+        $this->client->loginUser($this->userRepository->findOneBy(['username' => 'JohnDoe']));
 
-        $crawler = $client->request('GET', '/settings/email');
-        $this->assertSelectorTextContains('#main .options__main a.active', 'email');
+        $crawler = $this->client->request('GET', '/settings/email');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Email');
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('#main form[name=user_email]')->selectButton('Save')->form([
                 'user_email[newEmail][first]' => 'acme@kbin.pub',
                 'user_email[newEmail][second]' => 'acme@kbin.pub',
@@ -153,18 +150,18 @@ class UserEditControllerTest extends WebTestCase
             ->attr('href')
         ;
 
-        $client->request('GET', $verificationLink);
+        $this->client->request('GET', $verificationLink);
 
-        $crawler = $client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
-        $client->submit(
+        $this->client->submit(
             $crawler->filter('#main form')->selectButton('Log in')->form([
                 'email' => 'JohnDoe',
                 'password' => 'secret',
             ])
         );
 
-        $client->followRedirect();
+        $this->client->followRedirect();
 
         $this->assertSelectorTextContains('#header', 'JohnDoe');
     }

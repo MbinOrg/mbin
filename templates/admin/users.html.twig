@@ -48,47 +48,99 @@
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}
     {% endif %}
     <div class="section" id="content">
-        {% if withFederated is defined %}
-        <div class="flex" data-controller="selection">
-            <label class="select">
-                <select data-action="selection#changeLocation">"
-                    <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
-                    <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
-                </select>
-            </label>
+        <div class="flex">
+            <div class="">
+                {% if searchTerm is defined %}
+                    <form action="{{ options_url('search', '') }}">
+                        <label for="adminUserSearch" class="hidden">{{ 'search'|trans }}</label>
+                        <div class="search-container flex" style="align-items: center">
+                            <input id="adminUserSearch" class="form-control" type="text" placeholder="{{ 'search'|trans }}" name="search" value="{{ searchTerm }}">
+
+                            <button class="btn btn__primary ignore-edges small" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                    </form>
+                {% endif %}
+            </div>
+            <div class="">
+                {% if withFederated is defined %}
+                    <div class="flex" data-controller="selection">
+                        <label class="select">
+                            <select data-action="selection#changeLocation">"
+                                <option value="{{ options_url('withFederated', false) }}">{{ 'local'|trans }}</option>
+                                <option value="{{ options_url('withFederated', true) }}" {{ withFederated is same as true ? 'selected' : '' }}>{{ 'federated'|trans }}</option>
+                            </select>
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-        {% endif %}
 
         {% if not users|length %}
             <aside class="section section--muted">
                 <p>{{ 'empty'|trans }}</p>
             </aside>
-            
         {% else %}
-
-        <table>
-            <thead>
-            <tr>
-                <th>{{ 'username'|trans }}</th>
-                <th>{{ 'email'|trans }}</th>
-                <th>{{ 'created_at'|trans }}</th>
-                <th>{{ 'last_active'|trans }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
+            <table>
+                <thead>
+                <tr>
+                    {% for name, field in {'username': 'username', 'email': 'email', 'created_at': 'createdAt', 'last_active': 'lastActive'} %}
+                        <th>
+                            <a
+                                {% if sortField is defined and sortField is same as field and order is not same as 'DESC' %}
+                                    href="{{ options_url('sort', 'DESC') }}"
+                                {% elseif sortField is defined and sortField is same as field and order is same as 'DESC' %}
+                                    href="{{ options_url('sort', 'ASC') }}"
+                                {% elseif sortField is defined %}
+                                    href="{{ options_url('field', field) }}"
+                                {% else %}
+                                    href="#"
+                                {% endif %}
+                            >
+                                {{ name|trans }}
+                                {% if sortField is defined and field is same as sortField %}
+                                    {% if order is defined and order is same as 'ASC' %}
+                                        <i class="fa-solid fa-sort-amount-asc" aria-hidden="true"></i>
+                                    {% elseif order is defined and order is same as 'DESC' %}
+                                        <i class="fa-solid fa-sort-amount-desc" aria-hidden="true"></i>
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        </th>
+                    {% endfor %}
+                    {% if attitudes is defined %}
+                        <th>{{ 'attitude'|trans }}</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
                     <tr>
-                        <td>{{ component('user_inline', {user: user}) }}</td>
+                        <td>{{ component('user_inline', {user: user, showNewIcon: true}) }}</td>
                         <td>{{ user.apId ? '-' : user.email }}</td>
                         <td>{{ component('date', {date: user.createdAt}) }}</td>
                         <td>{{ component('date', {date: user.lastActive}) }}</td>
+                        {% if attitudes is defined %}
+                            <td>
+                                {% if attitudes[user.id] is defined %}
+                                    {% set attitude = attitudes[user.id] %}
+                                    {% if attitude < 0 %}
+                                        -
+                                    {% else %}
+                                        {{ attitudes[user.id]|number_format(2) }}%
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        {% endif %}
                     </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        
+                {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
-
     </div>
     {% if(users.haveToPaginate is defined and users.haveToPaginate) %}
         {{ pagerfanta(users, null, {'pageParameter':'[p]'}) }}

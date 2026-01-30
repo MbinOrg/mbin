@@ -9,12 +9,14 @@ use App\DTO\EntryCommentDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Exception\InstanceBannedException;
 use App\Form\EntryCommentType;
 use App\PageView\EntryCommentPageView;
 use App\Service\EntryCommentManager;
 use App\Service\IpResolver;
 use App\Service\MentionManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -30,7 +32,7 @@ class EntryCommentCreateController extends AbstractController
         private readonly EntryCommentManager $manager,
         private readonly RequestStack $requestStack,
         private readonly IpResolver $ipResolver,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
     ) {
     }
 
@@ -44,6 +46,7 @@ class EntryCommentCreateController extends AbstractController
         #[MapEntity(id: 'parent_comment_id')]
         ?EntryComment $parent,
         Request $request,
+        Security $security,
     ): Response {
         $form = $this->getForm($entry, $parent);
         try {
@@ -63,6 +66,8 @@ class EntryCommentCreateController extends AbstractController
 
                 return $this->handleValidRequest($dto, $request);
             }
+        } catch (InstanceBannedException) {
+            $this->addFlash('error', 'flash_instance_banned_error');
         } catch (\Exception $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_comment_new_error');
@@ -77,7 +82,7 @@ class EntryCommentCreateController extends AbstractController
         }
 
         $user = $this->getUserOrThrow();
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
         $criteria->entry = $entry;
 
         return $this->getEntryCommentPageResponse(

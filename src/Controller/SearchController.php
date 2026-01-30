@@ -5,80 +5,104 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\ActivityPub\ActorHandle;
+use App\DTO\SearchDto;
 use App\Entity\Magazine;
 use App\Entity\User;
-use App\Message\ActivityPub\Inbox\ActivityMessage;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Form\SearchType;
+use App\Message\ActivityPub\Inbox\CreateMessage;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
-use App\Service\SubjectOverviewManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SearchController extends AbstractController
 {
     public function __construct(
         private readonly SearchManager $manager,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $apHttpClient,
-        private readonly SubjectOverviewManager $overviewManager,
+        private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
-        $query = $request->query->get('q') ? trim($request->query->get('q')) : null;
+        $dto = new SearchDto();
+        $form = $this->createForm(SearchType::class, $dto, ['csrf_protection' => false]);
+        try {
+            $form = $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var SearchDto $dto */
+                $dto = $form->getData();
+                $query = trim($dto->q);
+                $this->logger->debug('searching for {query}', ['query' => $query]);
 
-        if (!$query) {
-            return $this->render(
-                'search/front.html.twig',
-                [
-                    'objects' => [],
-                    'results' => [],
-                    'q' => '',
-                ]
-            );
-        }
+                $objects = [];
 
-        $this->logger->debug('searching for {query}', ['query' => $query]);
+                // looking up handles (users and mags)
+                if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
+                    if ($handle = ActorHandle::parse($query)) {
+                        $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
+                        $objects = array_merge($objects, $this->lookupHandle($handle));
+                    } else {
+                        $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
+                    }
+                }
 
-        $objects = [];
+                // looking up object by AP id (i.e. urls)
+                if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
+                    $this->logger->debug('Query is a valid url');
+                    $objects = $this->manager->findByApId($query);
+                    if (0 === \sizeof($objects)) {
+                        $body = $this->apHttpClient->getActivityObject($query);
+                        // the returned id could be different from the query url.
+                        $postId = $body['id'];
+                        $objects = $this->manager->findByApId($postId);
+                        if (0 === \sizeof($objects)) {
+                            try {
+                                // process the message in the sync transport, so that the created content is directly visible
+                                $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
+                                $objects = $this->manager->findByApId($postId);
+                            } catch (\Exception $e) {
+                                $this->addFlash('error', $e->getMessage());
+                            }
+                        }
+                    }
+                }
 
-        // looking up handles (users and mags)
-        if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
-            if ($handle = ActorHandle::parse($query)) {
-                $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
-                $objects = array_merge($objects, $this->lookupHandle($handle));
-            } else {
-                $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
+                $user = $this->getUser();
+                $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request), authorId: $dto->user?->getId(), magazineId: $dto->magazine?->getId(), specificType: $dto->type, sinceDate: $dto->since);
+
+                $this->logger->debug('results: {num}', ['num' => $res->count()]);
+
+                return $this->render(
+                    'search/front.html.twig',
+                    [
+                        'objects' => $objects,
+                        'results' => $res,
+                        'pagination' => $res,
+                        'form' => $form->createView(),
+                        'q' => $query,
+                    ]
+                );
             }
+        } catch (\Exception $e) {
+            $this->logger->error($e);
         }
-
-        // looking up object by AP id (i.e. urls)
-        if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
-            $objects = $this->manager->findByApId($query);
-            if (!$objects) {
-                $body = $this->apHttpClient->getActivityObject($query, false);
-                $this->bus->dispatch(new ActivityMessage($body));
-            }
-        }
-
-        $user = $this->getUser();
-        $res = $this->manager->findPaginated($user, $query, $this->getPageNb($request));
 
         return $this->render(
             'search/front.html.twig',
             [
-                'objects' => $objects,
-                'results' => $this->overviewManager->buildList($res),
-                'pagination' => $res,
-                'q' => $request->query->get('q'),
+                'objects' => [],
+                'results' => [],
+                'form' => $form->createView(),
             ]
         );
     }

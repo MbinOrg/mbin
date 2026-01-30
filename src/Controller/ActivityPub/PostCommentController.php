@@ -33,7 +33,7 @@ class PostCommentController extends AbstractController
         Post $post,
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
-        Request $request
+        Request $request,
     ): Response {
         if ($comment->apId) {
             return $this->redirect($comment->apId);
@@ -41,7 +41,7 @@ class PostCommentController extends AbstractController
 
         $this->handlePrivateContent($post);
 
-        $response = new JsonResponse($this->commentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfPostComment($comment), true));
+        $response = new JsonResponse($this->commentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

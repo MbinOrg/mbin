@@ -49,7 +49,48 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             );
         }
 
-        return $this->urlGenerator->generate('front', $this->getActiveOptions());
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'threads',
+        ]);
+    }
+
+    public function navbarCombinedUrl(?Magazine $magazine): string
+    {
+        if ($this->isRouteNameStartsWith('front')) {
+            return $this->frontExtension->frontOptionsUrl(
+                'content', 'combined',
+                $magazine instanceof Magazine ? 'front_magazine' : 'front',
+                ['name' => $magazine?->name, 'p' => null],
+            );
+        }
+
+        if ($magazine instanceof Magazine) {
+            return $this->urlGenerator->generate('front_magazine', [
+                'name' => $magazine->name,
+                ...$this->getActiveOptions(),
+                'content' => 'combined',
+            ]);
+        }
+
+        if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
+            return $this->urlGenerator->generate('domain_entries', [
+                'name' => $domain->name,
+                ...$this->getActiveOptions(),
+            ]);
+        }
+
+        if ($this->isRouteNameStartsWith('tag')) {
+            return $this->urlGenerator->generate(
+                'tag_entries',
+                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+            );
+        }
+
+        return $this->urlGenerator->generate('front_content', [
+            ...$this->getActiveOptions(),
+            'content' => 'combined',
+        ]);
     }
 
     public function navbarPostsUrl(?Magazine $magazine): string
@@ -130,6 +171,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         $sortOption = $this->getActiveSortOption();
         $timeOption = $this->getActiveTimeOption();
         $subscriptionOption = $this->getActiveSubscriptionOption();
+        $contentOption = $this->getActiveContentOption();
 
         // don't add the current options if they are the defaults.
         // this isn't bad, but keeps urls shorter for instance
@@ -140,6 +182,9 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         }
         if ('∞' !== $timeOption) {
             $options['time'] = $timeOption;
+        }
+        if ('default' !== $contentOption) {
+            $options['content'] = $contentOption;
         }
         if (!\in_array($subscriptionOption, [null, 'home'])) {
             $options['subscription'] = $subscriptionOption;
@@ -161,6 +206,11 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
     private function getActiveTimeOption(): string
     {
         return $this->requestStack->getCurrentRequest()->get('time') ?? '∞';
+    }
+
+    private function getActiveContentOption(): string
+    {
+        return $this->requestStack->getCurrentRequest()->get('content') ?? 'default';
     }
 
     private function isRouteNameStartsWith(string $needle): bool

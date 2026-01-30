@@ -9,8 +9,8 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +82,7 @@ class PostCommentsSetLanguageApi extends PostsBaseApi
         PostComment $comment,
         PostCommentFactory $factory,
         EntityManagerInterface $manager,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -100,7 +100,7 @@ class PostCommentsSetLanguageApi extends PostsBaseApi
         $manager->flush();
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

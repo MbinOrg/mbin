@@ -27,13 +27,13 @@ class EntryController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         if ($entry->apId) {
             return $this->redirect($entry->apId);
         }
 
-        $response = new JsonResponse($this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfEntry($entry), true));
+        $response = new JsonResponse($this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry), true));
 
         $response->headers->set('Content-Type', 'application/activity+json');
 

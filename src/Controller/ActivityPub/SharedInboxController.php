@@ -14,7 +14,7 @@ class SharedInboxController
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 

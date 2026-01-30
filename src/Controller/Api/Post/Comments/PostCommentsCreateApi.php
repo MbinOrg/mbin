@@ -12,10 +12,9 @@ use App\DTO\PostCommentResponseDto;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
-use App\Service\ImageManager;
 use App\Service\PostCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -95,7 +94,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiCommentLimiter
+        RateLimiterFactory $apiCommentLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiCommentLimiter);
 
@@ -121,7 +120,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );
@@ -184,12 +183,7 @@ class PostCommentsCreateApi extends PostsBaseApi
                     ImageUploadDto::IMAGE_UPLOAD,
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'post_comment')]
     #[Security(name: 'oauth2', scopes: ['post_comment:create'])]
@@ -203,7 +197,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         PostCommentManager $manager,
         PostCommentFactory $factory,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -232,7 +226,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );

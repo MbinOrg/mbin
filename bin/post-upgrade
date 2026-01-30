@@ -49,6 +49,6 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
     fi
 
     echo -e "INFO: Upgrade successfully completed!\n"
-    echo "INFO: You might want to clear your Redis cache (redis-cli FLUSHDB).
+    echo "INFO: You might want to clear your Redis/Valkey cache (redis-cli FLUSHDB).
     If you have OPCache enabled also reload your PHP FPM service, to clear the PHP cache."
 fi

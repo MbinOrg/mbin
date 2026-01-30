@@ -8,8 +8,8 @@ use App\DTO\EntryRequestDto;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Service\EntryManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -77,7 +77,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         Entry $entry,
         EntryManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -96,7 +96,7 @@ class EntriesUpdateApi extends EntriesBaseApi
         $entry = $manager->edit($entry, $dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }

@@ -10,7 +10,7 @@ use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
-use App\Form\Type\BadgesType;
+// use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
 use Symfony\Component\Form\AbstractType;
@@ -35,9 +35,16 @@ class EntryEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('url', UrlType::class, ['required' => false])
-            ->add('title', TextareaType::class)
-            ->add('body', TextareaType::class)
+            ->add('url', UrlType::class, [
+                'required' => false,
+                'default_protocol' => 'https',
+            ])
+            ->add('title', TextareaType::class, [
+                'required' => true,
+            ])
+            ->add('body', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('magazine', MagazineAutocompleteType::class)
             ->add('tags', TextType::class, [
                 'required' => false,
@@ -48,13 +55,13 @@ class EntryEditType extends AbstractType
                     'delimiter' => ' ',
                 ],
             ])
-            ->add(
-                'badges',
-                BadgesType::class,
-                [
-                    'required' => false,
-                ]
-            )
+            // ->add(
+            //     'badges',
+            //     BadgesType::class,
+            //     [
+            //         'required' => false,
+            //     ]
+            // )
             ->add(
                 'image',
                 FileType::class,
@@ -66,6 +73,7 @@ class EntryEditType extends AbstractType
             )
             ->add('imageUrl', UrlType::class, [
                 'required' => false,
+                'default_protocol' => 'https',
             ])
             ->add('imageAlt', TextType::class, [
                 'required' => false,

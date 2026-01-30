@@ -9,8 +9,8 @@ use App\DTO\UserBanResponseDto;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Service\UserManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,7 +74,7 @@ class UserBanApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->ban($user);
+        $manager->ban($user, $this->getUserOrThrow(), null);
         // Response needs to be an array to insert isBanned
         $response = $this->serializeUser($factory->createDto($user))->jsonSerialize();
         $response['isBanned'] = $user->isBanned;
@@ -140,7 +140,7 @@ class UserBanApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->unban($user);
+        $manager->unban($user, $this->getUserOrThrow(), null);
         // Response needs to be an array to insert isBanned
         $response = $this->serializeUser($factory->createDto($user))->jsonSerialize();
         $response['isBanned'] = $user->isBanned;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Service\ActivityPub\ContextsProvider;
 use JetBrains\PhpStorm\ArrayShape;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,6 +13,7 @@ class CollectionItemsWrapper
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ContextsProvider $contextProvider,
     ) {
     }
 
@@ -31,9 +32,10 @@ class CollectionItemsWrapper
         PagerfantaInterface $pagerfanta,
         array $items,
         int $page,
+        bool $includeContext = true,
     ): array {
         $result = [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
+            '@context' => $this->contextProvider->referencedContexts(),
             'type' => 'OrderedCollectionPage',
             'partOf' => $this->urlGenerator->generate(
                 $routeName,
@@ -48,6 +50,10 @@ class CollectionItemsWrapper
             'totalItems' => $pagerfanta->getNbResults(),
             'orderedItems' => $items,
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
 
         if ($pagerfanta->hasNextPage()) {
             $result['next'] = $this->urlGenerator->generate(

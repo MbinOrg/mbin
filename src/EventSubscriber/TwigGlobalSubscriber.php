@@ -12,7 +12,7 @@ use Twig\Environment;
 class TwigGlobalSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly Environment $twig
+        private readonly Environment $twig,
     ) {
     }
 

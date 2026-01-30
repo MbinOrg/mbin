@@ -6,9 +6,13 @@ namespace App\Controller\Api\Instance\Admin;
 
 use App\Controller\Api\Instance\InstanceBaseApi;
 use App\DTO\SettingsDto;
+use App\Schema\Errors\BadRequestErrorSchema;
+use App\Schema\Errors\ForbiddenErrorSchema;
+use App\Schema\Errors\TooManyRequestsErrorSchema;
+use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -32,22 +36,22 @@ class InstanceUpdateSettingsApi extends InstanceBaseApi
     #[OA\Response(
         response: 400,
         description: 'Invalid settings provided',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
     )]
     #[OA\Response(
         response: 401,
         description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
     )]
     #[OA\Response(
         response: 403,
         description: 'You do not have permission to edit the instance settings',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\ForbiddenErrorSchema::class))
+        content: new OA\JsonContent(ref: new Model(type: ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
         response: 429,
         description: 'You are being rate limited',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class)),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
             new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
@@ -63,7 +67,7 @@ class InstanceUpdateSettingsApi extends InstanceBaseApi
         SettingsManager $settings,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

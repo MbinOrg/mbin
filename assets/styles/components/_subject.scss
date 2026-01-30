@@ -10,7 +10,7 @@
 
   .comment {
     margin-bottom: 0;
-    margin-top: 0;
+    margin-top: 0.5em;
   }
 
   .post-comment {
@@ -21,11 +21,16 @@
 .subject {
   .more {
     background: var(--kbin-bg);
-    bottom: -15px;
     cursor: pointer;
-    position: absolute;
     text-align: center;
     width: 100%;
+    margin-top: 1rem;
+
+    // bigger button for touch devices
+    @media (pointer:none), (pointer:coarse) {
+      margin-top: 2rem;
+      padding: 0.5rem;
+    }
 
     i {
       padding: .35rem;
@@ -60,7 +65,7 @@
 }
 
 div.moderate-inline {
-  grid-area: moderate;
+  grid-area: moderate !important;
   // this is to appear below the more menu
   z-index: -1;
 }

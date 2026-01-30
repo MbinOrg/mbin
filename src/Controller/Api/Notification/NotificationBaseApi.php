@@ -12,6 +12,7 @@ use App\DTO\PostResponseDto;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\NewSignupNotification;
 use App\Entity\Notification;
 use App\Entity\Post;
 use App\Entity\PostComment;
@@ -64,7 +65,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\EntryMentionedNotification $dto
                  */
                 $entry = $dto->getSubject();
-                $toReturn['subject'] = $this->entryFactory->createResponseDto($entry, $this->tagLinkRepository->getTagsOfEntry($entry));
+                $toReturn['subject'] = $this->entryFactory->createResponseDto($entry, $this->tagLinkRepository->getTagsOfContent($entry));
                 break;
             case 'entry_comment_created_notification':
             case 'entry_comment_edited_notification':
@@ -75,7 +76,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\EntryCommentMentionedNotification $dto
                  */
                 $comment = $dto->getSubject();
-                $toReturn['subject'] = $this->entryCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfEntryComment($comment));
+                $toReturn['subject'] = $this->entryCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfContent($comment));
                 break;
             case 'post_created_notification':
             case 'post_edited_notification':
@@ -85,7 +86,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\PostMentionedNotification $dto
                  */
                 $post = $dto->getSubject();
-                $toReturn['subject'] = $this->postFactory->createResponseDto($post, $this->tagLinkRepository->getTagsOfPost($post));
+                $toReturn['subject'] = $this->postFactory->createResponseDto($post, $this->tagLinkRepository->getTagsOfContent($post));
                 break;
             case 'post_comment_created_notification':
             case 'post_comment_edited_notification':
@@ -96,7 +97,7 @@ class NotificationBaseApi extends BaseApi
                  * @var \App\Entity\PostCommentMentionedNotification $dto
                  */
                 $comment = $dto->getSubject();
-                $toReturn['subject'] = $this->postCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfPostComment($comment));
+                $toReturn['subject'] = $this->postCommentFactory->createResponseDto($comment, $this->tagLinkRepository->getTagsOfContent($comment));
                 break;
             case 'message_notification':
                 if (!$this->isGranted('ROLE_OAUTH2_USER:MESSAGE:READ')) {
@@ -135,6 +136,11 @@ class NotificationBaseApi extends BaseApi
                 $toReturn['subject'] = $this->createResponseDtoForReport($n->report->getSubject());
                 $toReturn['reportId'] = $n->report->getId();
                 break;
+            case 'new_signup':
+                /** @var NewSignupNotification $n */
+                $n = $dto;
+                $toReturn['subject'] = $this->userFactory->createDto($n->getSubject());
+                break;
         }
 
         return $toReturn;
@@ -143,13 +149,13 @@ class NotificationBaseApi extends BaseApi
     private function createResponseDtoForReport(ReportInterface $subject): EntryCommentResponseDto|EntryResponseDto|PostCommentResponseDto|PostResponseDto
     {
         if ($subject instanceof Entry) {
-            return $this->entryFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfEntry($subject));
+            return $this->entryFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
         } elseif ($subject instanceof EntryComment) {
-            return $this->entryCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfEntryComment($subject));
+            return $this->entryCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
         } elseif ($subject instanceof Post) {
-            return $this->postFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfPost($subject));
+            return $this->postFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
         } elseif ($subject instanceof PostComment) {
-            return $this->postCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfPostComment($subject));
+            return $this->postCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
         }
         throw new ArgumentException("cannot work with: '".\get_class($subject)."'");
     }

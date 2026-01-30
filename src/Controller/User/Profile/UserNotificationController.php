@@ -29,8 +29,6 @@ class UserNotificationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function read(NotificationManager $manager, Request $request): Response
     {
-        $this->validateCsrf('read_notifications', $request->request->get('token'));
-
         $manager->markAllAsRead($this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);
@@ -39,8 +37,6 @@ class UserNotificationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function clear(NotificationManager $manager, Request $request): Response
     {
-        $this->validateCsrf('clear_notifications', $request->request->get('token'));
-
         $manager->clear($this->getUserOrThrow());
 
         return $this->redirectToRefererOrHome($request);

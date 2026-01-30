@@ -23,7 +23,7 @@ class EntryModerateController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         if ($entry->magazine !== $magazine) {
             return $this->redirectToRoute(

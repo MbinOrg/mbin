@@ -3,15 +3,17 @@
         {{ component('post_comment', {
             comment: reply,
             showNested: false,
-            level: 3
+            level: 3,
+            criteria: criteria,
         }) }}
     {% endfor %}
 {% else %}
-    {% for reply in comment.children %}
+    {% for reply in comment.getChildrenByCriteria(criteria) %}
         {{ component('post_comment', {
             comment: reply,
             showNested: true,
-            level: level + 1
+            level: level + 1,
+            criteria: criteria,
         }) }}
     {% endfor %}
 {% endif %}

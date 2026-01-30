@@ -20,9 +20,13 @@ final class ContextExtension extends AbstractExtension
             new TwigFunction('route_has_param', [ContextExtensionRuntime::class, 'routeHasParam']),
             new TwigFunction('route_param_exists', [ContextExtensionRuntime::class, 'routeParamExists']),
             new TwigFunction('get_active_sort_option', [ContextExtensionRuntime::class, 'getActiveSortOption']),
+            new TwigFunction('get_active_sort_option_for_comments', [ContextExtensionRuntime::class, 'getActiveSortOptionForComments']),
+            new TwigFunction('get_default_sort_option', [ContextExtensionRuntime::class, 'getDefaultSortOption']),
+            new TwigFunction('get_default_sort_option_for_comments', [ContextExtensionRuntime::class, 'getDefaultSortOptionForComments']),
             new TwigFunction('is_route_params_contains', [ContextExtensionRuntime::class, 'isRouteParamsContains']),
             new TwigFunction('get_route_param', [ContextExtensionRuntime::class, 'getRouteParam']),
             new TwigFunction('get_time_param_translated', [ContextExtensionRuntime::class, 'getTimeParamTranslated']),
+            new TwigFunction('now', [ContextExtensionRuntime::class, 'now']),
         ];
     }
 }

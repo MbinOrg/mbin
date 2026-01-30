@@ -1,9 +1,9 @@
 # Installation
 
-You can choose between:
+You can choose between server production installations:
 
-- [Bare metal/VM installation](./bare_metal.md)
+- [Bare metal/VM installation](01-bare_metal.md)
 
 Or:
 
-- [Docker installation](./docker.md)
+- [Docker installation](02-docker.md)

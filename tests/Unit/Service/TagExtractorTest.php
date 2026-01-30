@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Service\TagExtractor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TagExtractorTest extends TestCase
 {
-    /**
-     * @dataProvider provider
-     */
+    #[DataProvider('provider')]
     public function testExtract(string $input, ?array $output): void
     {
         $this->assertEquals($output, (new TagExtractor())->extract($input, 'kbin'));
@@ -38,6 +37,7 @@ class TagExtractorTest extends TestCase
             ['#Ｓｙｎｔｈｗａｖｅ', ['synthwave']],
             ['#ｼｰｻｲﾄﾞﾗｲﾅｰ', ['シーサイドライナー']],
             ['#ぼっち・ざ・ろっく', ['ぼっち・ざ・ろっく']],
+            ['https://www.site.tld/somepath/#heading', null],
         ];
     }
 }

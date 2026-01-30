@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Traits\ActivityPubActorTrait;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class DeliverManager
@@ -13,13 +14,14 @@ readonly class DeliverManager
     public function __construct(
         private SettingsManager $settingsManager,
         private MessageBusInterface $bus,
+        private LoggerInterface $logger,
     ) {
     }
 
     /**
      * @param string[]|ActivityPubActorTrait[] $inboxes
      */
-    public function deliver(array $inboxes, array $activity): void
+    public function deliver(array $inboxes, array $activity, bool $useOldPrivateKey = false): void
     {
         foreach ($inboxes as $inbox) {
             if (!$inbox) {
@@ -32,7 +34,12 @@ readonly class DeliverManager
                 continue;
             }
 
-            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity));
+            if ($this->settingsManager->isLocalUrl($inboxUrl)) {
+                $this->logger->warning('tried delivering to a local url, {payload}', ['payload' => $activity]);
+                continue;
+            }
+
+            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey));
         }
     }
 }

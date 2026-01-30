@@ -1,0 +1,26 @@
+.search-container {
+  background: var(--kbin-input-bg);
+  border: var(--kbin-input-border);
+  border-radius: var(--kbin-rounded-edges-radius) !important;
+
+  input.form-control {
+    border-radius: 0 !important;
+    border: none;
+    background: transparent;
+    margin: 0 .5em;
+    padding: .5rem .25rem;
+  }
+
+  button {
+    border-radius: 0 var(--kbin-rounded-edges-radius) var(--kbin-rounded-edges-radius) 0 !important;
+    border: 0;
+    &:not(.small) {
+      padding: 1rem 0.5rem;
+    }
+
+    &:not(:hover) {
+      background: var(--kbin-input-bg);
+      color: var(--kbin-input-text-color) !important;
+    }
+  }
+}

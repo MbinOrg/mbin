@@ -18,6 +18,7 @@ use App\Service\FavouriteManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,13 +27,14 @@ class LikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly VoteManager $voteManager,
         private readonly MessageBusInterface $bus,
-        private readonly FavouriteManager $manager,
+        private readonly FavouriteManager $favouriteManager,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(LikeMessage $message): void
@@ -43,7 +45,7 @@ class LikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof LikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("LikeHandler called, but is wasn\'t a LikeMessage. Type: ".\get_class($message));
         }
         if (!isset($message->payload['type'])) {
             return;
@@ -51,7 +53,7 @@ class LikeHandler extends MbinMessageHandler
 
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
-                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $this->logger->info('[LikeHandler::doWork] Got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
                 $message->payload['object'] = $adjustedUrl;
             }
             $this->bus->dispatch(new ChainActivityMessage([$object], like: $message->payload));
@@ -66,7 +68,7 @@ class LikeHandler extends MbinMessageHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
             // Check if actor and entity aren't empty
             if (!empty($actor) && !empty($entity)) {
-                $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
+                $this->favouriteManager->toggle($actor, $entity, FavouriteManager::TYPE_LIKE);
             }
         } elseif ('Undo' === $message->payload['type']) {
             if ('Like' === $message->payload['object']['type']) {
@@ -78,7 +80,7 @@ class LikeHandler extends MbinMessageHandler
                 $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
                 // Check if actor and entity aren't empty
                 if (!empty($actor) && !empty($entity)) {
-                    $this->manager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
+                    $this->favouriteManager->toggle($actor, $entity, FavouriteManager::TYPE_UNLIKE);
                     $this->voteManager->removeVote($entity, $actor);
                 }
             }
@@ -87,7 +89,7 @@ class LikeHandler extends MbinMessageHandler
         if (isset($entity) and isset($actor) and ($entity instanceof Entry or $entity instanceof EntryComment or $entity instanceof Post or $entity instanceof PostComment)) {
             if (!$entity->magazine->apId and $actor->apId and 'random' !== $entity->magazine->name) {
                 // local magazine, but remote user. Don't announce for random magazine
-                $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type']));
+                $this->bus->dispatch(new AnnounceLikeMessage($actor->getId(), $entity->getId(), \get_class($entity), 'Undo' === $message->payload['type'], $message->payload['id']));
             }
         }
     }

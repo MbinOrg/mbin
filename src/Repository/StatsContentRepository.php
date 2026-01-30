@@ -24,7 +24,7 @@ class StatsContentRepository extends StatsRepository
     public function getOverallStats(
         ?User $user = null,
         ?Magazine $magazine = null,
-        ?bool $onlyLocal = null
+        ?bool $onlyLocal = null,
     ): array {
         $this->user = $user;
         $this->magazine = $magazine;
@@ -46,8 +46,8 @@ class StatsContentRepository extends StatsRepository
         $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
         $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
         $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magazineId ' : '';
-        $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count FROM $table e 
-            INNER JOIN public.user u ON u.id = user_id 
+        $sql = "SELECT to_char(e.created_at,'Mon') as month, extract(year from e.created_at) as year, COUNT(e.id) as count FROM $table e
+            INNER JOIN public.user u ON u.id = user_id
             WHERE u.is_deleted = false $onlyLocalWhere $userWhere $magazineWhere GROUP BY 1,2";
 
         $stmt = $conn->prepare($sql);
@@ -89,7 +89,7 @@ class StatsContentRepository extends StatsRepository
         $onlyLocalWhere = $this->onlyLocal ? ' AND e.ap_id IS NULL' : '';
         $userWhere = $this->user ? ' AND e.user_id = :userId ' : '';
         $magazineWhere = $this->magazine ? ' AND e.magazine_id = :magazineId ' : '';
-        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM $table e 
+        $sql = "SELECT date_trunc('day', e.created_at) as day, COUNT(e.id) as count FROM $table e
             INNER JOIN public.user u ON e.user_id = u.id
             WHERE u.is_deleted = false AND e.created_at >= :startDate $userWhere $magazineWhere $onlyLocalWhere GROUP BY 1";
 
@@ -109,7 +109,7 @@ class StatsContentRepository extends StatsRepository
         return $results;
     }
 
-    public function getStats(?Magazine $magazine, string $interval, ?\DateTime $start, ?\DateTime $end, ?bool $onlyLocal): array
+    public function getStats(?Magazine $magazine, string $interval, ?\DateTimeImmutable $start, ?\DateTimeImmutable $end, ?bool $onlyLocal): array
     {
         switch ($interval) {
             case 'all':
@@ -122,9 +122,9 @@ class StatsContentRepository extends StatsRepository
                 throw new \LogicException('Invalid interval provided');
         }
         if (null !== $start && null === $end) {
-            $end = $start->modify('-1 '.$interval);
+            $end = $start->modify('+1 '.$interval);
         } elseif (null === $start && null !== $end) {
-            $start = $end->modify('+1 '.$interval);
+            $start = $end->modify('-1 '.$interval);
         }
 
         return [
@@ -142,7 +142,7 @@ class StatsContentRepository extends StatsRepository
             'entry_comment' => 'entry_comment',
             'post' => 'post',
             'post_comment' => 'post_comment',
-            default => throw new \InvalidArgumentException("$tableName is not a valid countable")
+            default => throw new \InvalidArgumentException("$tableName is not a valid countable"),
         };
 
         $federatedCond = false === $federated ? ' AND e.ap_id IS NULL ' : '';

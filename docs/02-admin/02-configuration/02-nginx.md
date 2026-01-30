@@ -1,0 +1,390 @@
+# NGINX
+
+We will use NGINX as a reverse proxy between the public site and various backend services (static files, PHP and Mercure).
+
+## General NGINX configs
+
+Generate DH parameters (used later):
+
+```bash
+sudo openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
+```
+
+Set the correct permissions:
+
+```bash
+sudo chmod 644 /etc/nginx/dhparam.pem
+```
+
+Edit the main NGINX config file: `sudo nano /etc/nginx/nginx.conf` with the following content within the `http {}` section (replace when needed):
+
+```nginx
+ssl_protocols TLSv1.2 TLSv1.3; # Requires nginx >= 1.13.0 else only use TLSv1.2
+ssl_dhparam /etc/nginx/dhparam.pem;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
+ssl_prefer_server_ciphers off;
+ssl_ecdh_curve secp521r1:secp384r1:secp256k1; # Requires nginx >= 1.1.0
+
+ssl_session_timeout 1d;
+ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+ssl_session_tickets off; # Requires nginx >= 1.5.9
+
+ssl_stapling on; # Requires nginx >= 1.3.7
+ssl_stapling_verify on; # Requires nginx => 1.3.7
+
+# This is an example resolver configuration (replace the DNS IPs if you prefer)
+resolver 1.1.1.1 9.9.9.9 valid=300s;
+resolver_timeout 5s;
+
+# Gzip compression
+gzip            on;
+gzip_disable    msie6;
+
+gzip_vary       on;
+gzip_comp_level 5;
+gzip_min_length 256;
+gzip_buffers    16 8k;
+gzip_proxied    any;
+gzip_types
+        text/css
+        text/plain
+        text/javascript
+        text/cache-manifest
+        text/vcard
+        text/vnd.rim.location.xloc
+        text/vtt
+        text/x-component
+        text/x-cross-domain-policy
+        application/javascript
+        application/json
+        application/x-javascript
+        application/ld+json
+        application/xml
+        application/xml+rss
+        application/xhtml+xml
+        application/x-font-ttf
+        application/x-font-opentype
+        application/vnd.ms-fontobject
+        application/manifest+json
+        application/rss+xml
+        application/atom_xml
+        application/vnd.geo+json
+        application/x-web-app-manifest+json
+        image/svg+xml
+        image/x-icon
+        image/bmp
+        font/opentype;
+```
+
+## Mbin Nginx Server Block
+
+```bash
+sudo nano /etc/nginx/sites-available/mbin.conf
+```
+
+With the content:
+
+```nginx
+upstream mercure {
+    server 127.0.0.1:3000;
+    keepalive 10;
+}
+
+# Map instance requests vs the rest
+map "$http_accept:$request" $mbinInstanceRequest {
+    ~^.*:GET\ \/.well-known\/.+                                                                       1;
+    ~^.*:GET\ \/nodeinfo\/.+                                                                          1;
+    ~^.*:GET\ \/i\/actor                                                                              1;
+    ~^.*:POST\ \/i\/inbox                                                                             1;
+    ~^.*:POST\ \/i\/outbox                                                                            1;
+    ~^.*:POST\ \/f\/inbox                                                                             1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/               1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/f\/object\/.+  1;
+    default                                                                                           0;
+}
+
+# Map user requests vs the rest
+map "$http_accept:$request" $mbinUserRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/u\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/u\/.+  1;
+    default                                                                                    0;
+}
+
+# Map magazine requests vs the rest
+map "$http_accept:$request" $mbinMagazineRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/m\/.+   1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:POST\ \/m\/.+  1;
+    default                                                                                    0;
+}
+
+# Miscellaneous requests
+map "$http_accept:$request" $mbinMiscRequest {
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/reports\/.+  1;
+    ~^(?:application\/activity\+json|application\/ld\+json|application\/json).*:GET\ \/message\/.+  1;
+    ~^.*:GET\ \/contexts\..+                                                                        1;
+    default                                                                                         0;
+}
+
+# Determine if a request should go into the regular log
+map "$mbinInstanceRequest$mbinUserRequest$mbinMagazineRequest$mbinMiscRequest" $mbinRegularRequest {
+    0000    1; # Regular requests
+    default 0; # Other requests
+}
+
+map $mbinRegularRequest $mbin_limit_key {
+    0 "";
+    1 $binary_remote_addr;
+}
+
+# Two stage rate limit (10 MB zone): 5 requests/second limit (=second stage)
+limit_req_zone $mbin_limit_key zone=mbin_limit:10m rate=5r/s;
+
+# Redirect HTTP to HTTPS
+server {
+    server_name domain.tld;
+    listen 80;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name domain.tld;
+
+    root /var/www/mbin/public;
+
+    index index.php;
+
+    charset utf-8;
+
+    # TLS
+    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
+
+    # Don't leak powered-by
+    fastcgi_hide_header X-Powered-By;
+
+    # Security headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "same-origin" always;
+    add_header X-Download-Options "noopen" always;
+    add_header X-Permitted-Cross-Domain-Policies "none" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    client_max_body_size 20M; # Max size of a file that a user can upload
+
+    # Two stage rate limit
+    limit_req zone=mbin_limit burst=300 delay=200;
+
+    # Error log (if you want you can add "warn" at the end of error_log to also log warnings)
+    error_log /var/log/nginx/mbin_error.log;
+
+    # Access logs
+    access_log /var/log/nginx/mbin_access.log combined if=$mbinRegularRequest;
+    access_log /var/log/nginx/mbin_instance.log combined if=$mbinInstanceRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_user.log combined if=$mbinUserRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_magazine.log combined if=$mbinMagazineRequest buffer=32k flush=5m;
+    access_log /var/log/nginx/mbin_misc.log combined if=$mbinMiscRequest buffer=32k flush=5m;
+
+    open_file_cache          max=1000 inactive=20s;
+    open_file_cache_valid    60s;
+    open_file_cache_min_uses 2;
+    open_file_cache_errors   on;
+
+    location / {
+        # try to serve file directly, fallback to index.php
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { allow all; access_log off; log_not_found off; }
+
+    location /.well-known/mercure {
+        proxy_pass http://mercure$request_uri;
+        # Increase this time-out if you want clients have a Mercure connection open for longer (eg. 24h)
+        proxy_read_timeout 2h;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~ ^/index\.php(/|$) {
+        default_type application/x-httpd-php;
+        fastcgi_pass unix:/var/run/php/php-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+
+        # Prevents URIs that include the front controller. This will 404:
+        # http://domain.tld/index.php/some-path
+        # Remove the internal directive to allow URIs like this
+        internal;
+    }
+
+    # bypass thumbnail cache image files
+    location ~ ^/media/cache/resolve {
+      expires 1M;
+      access_log off;
+      add_header Cache-Control "public";
+      try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Static assets
+    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|tgz|gz|rar|bz2|doc|pdf|ptt|tar|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv|svgz?|ttf|ttc|otf|eot|woff2?)$ {
+        expires    30d;
+        add_header Access-Control-Allow-Origin "*";
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+    }
+
+    # return 404 for all other php files not matching the front controller
+    # this prevents access to other php files you don't want to be accessible.
+    location ~ \.php$ {
+        return 404;
+    }
+
+    # Deny dot folders and files, except for the .well-known folder
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+> [!TIP]
+> If you have multiple PHP versions installed. You can switch the PHP version that Nginx is using (`/var/run/php/php-fpm.sock`) via the the following command:
+> `sudo update-alternatives --config php-fpm.sock`
+>
+> Same is true for the PHP CLI command (`/usr/bin/php`), via the following command:
+> `sudo update-alternatives --config php`
+
+> [!WARNING]
+> If also want to configure your `www.domain.tld` subdomain; our advice is to use a HTTP 301 redirect from the `www` subdomain towards the root domain. Do _NOT_ try to setup a second instance (you want to _avoid_ that ActivityPub will see `www` as a separate instance). See Nginx example below:
+
+```nginx
+# Example of a 301 redirect response for the www subdomain
+server {
+    listen 80;
+    server_name www.domain.tld;
+    if ($host = www.domain.tld) {
+        return 301 https://domain.tld$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name www.domain.tld;
+
+    # TLS
+    ssl_certificate /etc/letsencrypt/live/domain.tld/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domain.tld/privkey.pem;
+
+    # Don't leak powered-by
+    fastcgi_hide_header X-Powered-By;
+
+    return 301 https://domain.tld$request_uri;
+}
+```
+
+Enable the NGINX site, using a symlink:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/mbin.conf /etc/nginx/sites-enabled/
+```
+
+Restart (or reload) NGINX:
+
+```bash
+sudo systemctl restart nginx
+```
+
+## Trusted Proxies
+
+If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin already configures the following trusted headers: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
+
+Trusted proxies can be configured in the `.env` file (or your `.env.local` file):
+
+```sh
+nano /var/www/mbin/.env
+```
+
+You can configure a single IP address and/or a range of IP addresses (this configuration should be sufficient if you are running Nginx yourself):
+
+```ini
+# Change the IP range if needed, this is just an example
+TRUSTED_PROXIES=127.0.0.1,192.168.1.0/24
+```
+
+Or if the IP address is dynamic, you can set the `REMOTE_ADDR` string which will be replaced at runtime by `$_SERVER['REMOTE_ADDR']`:
+
+```ini
+TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
+```
+
+> [!WARNING]
+> In this last example, be sure that you configure the web server to _not_
+> respond to traffic from _any_ clients other than your trusted load balancers
+> (eg. within AWS this can be achieved via security groups).
+
+Finally run the `post-upgrade` script to dump the `.env` to the `.env.local.php` and clear any cache:
+
+```sh
+./bin/post-upgrade
+```
+
+More detailed info can be found at: [Symfony Trusted Proxies docs](https://symfony.com/doc/current/deployment/proxies.html)
+
+## Media reverse proxy
+
+We suggest that you do not use this configuration:
+
+```ini
+KBIN_STORAGE_URL=https://mbin.domain.tld/media
+```
+
+Instead we suggest to use a subdomain for serving your media files:
+
+```ini
+KBIN_STORAGE_URL=https://media.mbin.domain.tld
+```
+
+That way you can let nginx cache media assets and seamlessly switch to an object storage provider later.
+
+```bash
+sudo nano /etc/nginx/sites-available/mbin-media.conf
+```
+
+```nginx
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=10g;
+
+server {
+    server_name media.mbin.domain.tld;
+    root /var/www/mbin/public/media;
+
+    listen 80;
+}
+```
+
+Make sure the `root /path` is correct (you may be using `/var/www/mbin/public`).
+
+Enable the NGINX site, using a symlink:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/mbin-media.conf /etc/nginx/sites-enabled/
+```
+
+> [!TIP]
+> Before reloading nginx in a production environment you can run `nginx -t` to test your configuration.
+> If your configuration is faulty and you run `systemctl reload nginx` it will cause Nginx to stop instead of reloading cleanly.
+
+Run `systemctl reload nginx` so the site configuration is reloaded.
+For it to be a usable HTTPS site, you must run: `certbot --nginx` and select the media domain or supply your certificates manually.
+
+> [!TIP]
+> Don't forget to enable HTTP/2 by adding `http2 on;` after certbot ran (underneath the `listen 443 ssl;` line). It used to be part of the same line, however in recent NGINX versions `http2 on` is a separate directive for enabling the HTTP/2 protocol.

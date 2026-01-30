@@ -26,10 +26,8 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('post_delete', $request->request->get('token'));
-
         $this->manager->delete($this->getUserOrThrow(), $post);
 
         return $this->redirectToRefererOrHome($request);
@@ -42,10 +40,8 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('post_restore', $request->request->get('token'));
-
         $this->manager->restore($this->getUserOrThrow(), $post);
 
         return $this->redirectToRefererOrHome($request);
@@ -58,10 +54,8 @@ class PostDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('post_purge', $request->request->get('token'));
-
         $this->manager->purge($this->getUserOrThrow(), $post);
 
         return $this->redirectToMagazine($magazine);

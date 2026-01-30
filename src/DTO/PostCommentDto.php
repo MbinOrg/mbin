@@ -26,7 +26,7 @@ class PostCommentDto implements ContentVisibilityInterface
     public ?ImageDto $image = null;
     public ?string $imageUrl = null;
     public ?string $imageAlt = null;
-    #[Assert\Length(max: self::MAX_BODY_LENGTH)]
+    #[Assert\Length(max: self::MAX_BODY_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $body = null;
     public ?string $lang = null;
     public bool $isAdult = false;
@@ -50,7 +50,7 @@ class PostCommentDto implements ContentVisibilityInterface
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (empty($this->image)) {
             $image = Request::createFromGlobals()->files->filter('post_comment');

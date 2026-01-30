@@ -8,7 +8,7 @@ use App\ActivityPub\JsonRdLink;
 use App\Event\ActivityPub\WebfingerResponseEvent;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\Webfinger\WebFingerParameters;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\SettingsManager;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -19,12 +19,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly WebFingerParameters $webfingerParameters,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
-        private readonly ImageManager $imageManager
+        private readonly ImageManagerInterface $imageManager,
     ) {
     }
 
@@ -38,7 +37,7 @@ class UserWebFingerProfileSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $params = $this->webfingerParameters->getParams($event->request);
+        $params = $event->params;
         $jsonRd = $event->jsonRd;
 
         if (isset($params[WebFingerParameters::ACCOUNT_KEY_NAME])) {

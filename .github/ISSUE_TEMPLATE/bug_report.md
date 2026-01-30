@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 [domain.tld]
 
 **Which Mbin version was running on the instance?**
-[e.g. 1.4.0]
+[e.g. 1.7.4]
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -31,14 +31,14 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Browser Version [e.g. 123]
+ - Browser: [e.g. chrome, safari]
+ - Browser Version: [e.g. 123]
 
 **Smartphone (please complete the following information):**
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Browser Version [e.g. 123]
+ - Browser: [e.g. stock browser, safari]
+ - Browser Version: [e.g. 123]
 
 **Additional context**
 Add any other context about the problem here.

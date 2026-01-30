@@ -3,7 +3,8 @@
         {{ component('post_comment', {
             comment: comment,
             showNested: true,
-            level: 2
+            level: 2,
+            criteria: criteria,
          }) }}
     {% endfor %}
     {% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}

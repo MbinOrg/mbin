@@ -11,7 +11,7 @@ use App\Entity\Instance;
 use App\Repository\InstanceRepository;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -43,12 +43,12 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
      * Get de-federated instances.
      */
     public function getDeFederated(
-        SettingsManager $settings,
+        InstanceRepository $instanceRepository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $dto = new InstancesDto($settings->get('KBIN_BANNED_INSTANCES'));
+        $dto = new InstancesDto($instanceRepository->getBannedInstanceUrls());
 
         return new JsonResponse(
             $dto,
@@ -123,9 +123,10 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         InstanceRepository $instanceRepository,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $instances = array_map(fn (Instance $i) => new InstanceDto($i->domain, $i->software, $i->version), $instanceRepository->getAllowedInstances());
+        $instances = array_map(fn (Instance $i) => new InstanceDto($i->domain, $i->software, $i->version), $instanceRepository->getAllowedInstances($settingsManager->getUseAllowList()));
         $dto = new InstancesDtoV2($instances);
 
         return new JsonResponse(

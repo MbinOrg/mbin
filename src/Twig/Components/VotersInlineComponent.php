@@ -13,6 +13,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\ComponentAttributes;
 use Twig\Environment;
+use Twig\Runtime\EscaperRuntime;
 
 #[AsTwigComponent('voters_inline', template: 'components/_cached.html.twig')]
 final class VotersInlineComponent
@@ -47,7 +48,7 @@ final class VotersInlineComponent
                 return $this->twig->render(
                     'components/voters_inline.html.twig',
                     [
-                        'attributes' => new ComponentAttributes($attributes->all()),
+                        'attributes' => new ComponentAttributes($attributes->all(), new EscaperRuntime()),
                         'voters' => array_map(fn ($vote) => $vote->user->username, $votes),
                         'count' => $this->subject->countUpVotes(),
                         'url' => $this->url,

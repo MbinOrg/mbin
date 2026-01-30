@@ -1,3 +1,5 @@
+@use '../layout/breakpoints' as b;
+
 .magazine {
   .panel {
     margin-bottom: 1rem;
@@ -34,7 +36,7 @@
   &__description,
   &__rules {
     ul {
-      padding-left: .75rem;
+      padding-left: 1.5rem;
 
       li {
         margin-bottom: .5rem;
@@ -42,7 +44,7 @@
     }
 
     ol {
-      padding-left: 0.75rem;
+      padding-left: 1.5rem;
 
       li {
         margin-left: 2px;
@@ -51,11 +53,14 @@
     }
   }
 
+  &__description {
+    margin-top: 2.5rem;
+  }
+
   &__subscribe {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 2.5rem;
     flex-wrap: wrap;
 
     div {
@@ -100,7 +105,7 @@
     vertical-align: middle;
     margin-right: 0.25rem;
 
-    @include media-breakpoint-down(sm){
+    @include b.media-breakpoint-down(sm){
       width: 25px;
       height: 25px;
     }
@@ -112,7 +117,7 @@
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-columns: repeat(1, 1fr);
   }
 
@@ -145,11 +150,11 @@
     margin: 0;
     padding: 0;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       grid-template-columns: repeat(1, 1fr);
     }
   }
@@ -204,7 +209,7 @@ td {
   .actions {
     margin-bottom: 0 !important;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       display: flex;
       flex-wrap: wrap;
     }
@@ -236,7 +241,7 @@ td {
 .magazines.table-responsive{
   display: none;
 
-  @include media-breakpoint-up(md){
+  @include b.media-breakpoint-up(md){
     display: block;
   }
 
@@ -327,11 +332,11 @@ td {
     }
   }
 
-  @include media-breakpoint-up(md){
+  @include b.media-breakpoint-up(md){
     border: solid 1px red;
   }
 
-  @include media-breakpoint-down(md){
+  @include b.media-breakpoint-down(md){
     display: block;
   }
 

@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntryChangeAdultController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -26,9 +26,9 @@ class EntryChangeAdultController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('change_adult', $request->request->get('token'));
+        $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 
         $entry->isAdult = 'on' === $request->get('adult');
 

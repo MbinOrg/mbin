@@ -1,5 +1,5 @@
 <a href="{{ path('user_overview', {username: user.username}) }}"
-   data-action="mouseover->mentions#user_popup mouseout->mentions#user_popup_out"
+   data-action="mouseover->mentions#userPopup mouseout->mentions#userPopupOut"
    data-mentions-username-param="{{ user.username }}"
    class="user-inline"
    title="{{ user.username|username(true) }}">
@@ -11,7 +11,10 @@
              alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% endif %}
     {{ user.apPreferredUsername ?? user.username|username -}}
-    {% if user.isNew() %}
+    {%- if fullName is defined and fullName is same as true -%}
+        @{{- user.username|apDomain -}}
+    {%- endif -%}
+    {% if user.isNew() and showNewIcon %}
         {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}

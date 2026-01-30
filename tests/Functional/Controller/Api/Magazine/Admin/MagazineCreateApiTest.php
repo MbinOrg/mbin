@@ -11,34 +11,31 @@ class MagazineCreateApiTest extends WebTestCase
 {
     public function testApiCannotCreateMagazineAnonymous(): void
     {
-        $client = self::createClient();
-        $client->request('POST', '/api/moderate/magazine/new');
+        $this->client->request('POST', '/api/moderate/magazine/new');
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiCannotCreateMagazineWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('POST', '/api/moderate/magazine/new', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', '/api/moderate/magazine/new', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanCreateMagazine(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $name = 'test';
@@ -46,7 +43,7 @@ class MagazineCreateApiTest extends WebTestCase
         $description = 'A description';
         $rules = 'Some rules';
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -54,12 +51,15 @@ class MagazineCreateApiTest extends WebTestCase
                 'description' => $description,
                 'rules' => $rules,
                 'isAdult' => false,
+                'discoverable' => false,
+                'isPostingRestrictedToMods' => true,
+                'indexable' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
 
         self::assertResponseStatusCodeSame(201);
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(MagazineRetrieveApiTest::MAGAZINE_RESPONSE_KEYS, $jsonData);
@@ -68,23 +68,25 @@ class MagazineCreateApiTest extends WebTestCase
         self::assertEquals($description, $jsonData['description']);
         self::assertEquals($rules, $jsonData['rules']);
         self::assertFalse($jsonData['isAdult']);
+        self::assertFalse($jsonData['discoverable']);
+        self::assertTrue($jsonData['isPostingRestrictedToMods']);
+        self::assertFalse($jsonData['indexable']);
     }
 
     public function testApiCannotCreateInvalidMagazine(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:create');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         $title = 'No name';
         $description = 'A description';
         $rules = 'Some rules';
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => null,
@@ -101,7 +103,7 @@ class MagazineCreateApiTest extends WebTestCase
         $name = 'a';
         $title = 'Too short name';
 
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -117,7 +119,7 @@ class MagazineCreateApiTest extends WebTestCase
 
         $name = 'long_name_that_exceeds_the_limit';
         $title = 'Too long name';
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -133,7 +135,7 @@ class MagazineCreateApiTest extends WebTestCase
 
         $name = 'invalidch@racters!';
         $title = 'Invalid Characters in name';
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -149,7 +151,7 @@ class MagazineCreateApiTest extends WebTestCase
 
         $name = 'nulltitle';
         $title = null;
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -165,7 +167,7 @@ class MagazineCreateApiTest extends WebTestCase
 
         $name = 'shorttitle';
         $title = 'as';
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
@@ -181,44 +183,12 @@ class MagazineCreateApiTest extends WebTestCase
 
         $name = 'longtitle';
         $title = 'Way too long of a title. This can only be 50 characters!';
-        $client->jsonRequest(
+        $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
             parameters: [
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
-                'isAdult' => false,
-            ],
-            server: ['HTTP_AUTHORIZATION' => $token]
-        );
-
-        self::assertResponseStatusCodeSame(400);
-
-        $name = 'shortrules';
-        $title = 'This has too short rules';
-        $client->jsonRequest(
-            'POST', '/api/moderate/magazine/new',
-            parameters: [
-                'name' => $name,
-                'title' => $title,
-                'description' => $description,
-                'rules' => 'ru',
-                'isAdult' => false,
-            ],
-            server: ['HTTP_AUTHORIZATION' => $token]
-        );
-
-        self::assertResponseStatusCodeSame(400);
-
-        $name = 'shortdescription';
-        $title = 'This has too short of a description';
-        $client->jsonRequest(
-            'POST', '/api/moderate/magazine/new',
-            parameters: [
-                'name' => $name,
-                'title' => $title,
-                'description' => 'de',
                 'rules' => $rules,
                 'isAdult' => false,
             ],

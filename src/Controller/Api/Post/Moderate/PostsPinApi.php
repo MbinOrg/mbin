@@ -9,8 +9,8 @@ use App\DTO\PostResponseDto;
 use App\Entity\Post;
 use App\Factory\PostFactory;
 use App\Service\PostManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,14 +69,14 @@ class PostsPinApi extends PostsBaseApi
         Post $post,
         PostManager $manager,
         PostFactory $factory,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $manager->pin($post);
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

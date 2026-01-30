@@ -6,7 +6,12 @@ namespace App\Form;
 
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Form\DataTransformer\FeaturedMagazinesBarTransformer;
+use App\PageView\EntryCommentPageView;
+use App\PageView\EntryPageView;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -19,12 +24,32 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserSettingsType extends AbstractType
 {
-    public function __construct(private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly Security $security,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $frontDefaultSortChoices = [];
+        foreach (EntryPageView::SORT_OPTIONS as $option) {
+            $frontDefaultSortChoices[$this->translator->trans($option)] = $option;
+        }
+        $commentDefaultSortChoices = [];
+        foreach (EntryCommentPageView::SORT_OPTIONS as $option) {
+            $commentDefaultSortChoices[$this->translator->trans($option)] = $option;
+        }
+        $directMessageSettingChoices = [];
+        foreach (EDirectMessageSettings::getValues() as $option) {
+            $directMessageSettingChoices[$this->translator->trans($option)] = $option;
+        }
+        $frontDefaultContentChoices = [
+            $this->translator->trans('default_content_default') => null,
+        ];
+        foreach (EFrontContentOptions::OPTIONS as $option) {
+            $frontDefaultContentChoices[$this->translator->trans('default_content_'.$option)] = $option;
+        }
         $builder
             ->add(
                 'hideAdult',
@@ -41,6 +66,30 @@ class UserSettingsType extends AbstractType
                 ],
             ]
             )
+            ->add('frontDefaultSort', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $frontDefaultSortChoices,
+            ])
+            ->add('frontDefaultContent', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $frontDefaultContentChoices,
+            ])
+            ->add('commentDefaultSort', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $commentDefaultSortChoices,
+            ])
+            ->add('directMessageSetting', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $directMessageSettingChoices,
+            ])
+            ->add('discoverable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_discoverable_help',
+            ])
+            ->add('indexable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_indexable_by_search_engines_help',
+            ])
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [
                 'required' => false,
@@ -108,6 +157,12 @@ class UserSettingsType extends AbstractType
                 ['required' => false]
             )
             ->add('submit', SubmitType::class);
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if ($user->isAdmin() or $user->isModerator()) {
+            $builder->add('notifyOnUserSignup', CheckboxType::class, ['required' => false]);
+        }
 
         $builder->get('featuredMagazines')->addModelTransformer(
             new FeaturedMagazinesBarTransformer()

@@ -2,8 +2,11 @@
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(post.user)) %}
+<div data-controller="post" class="post-container">
     {% if post.visibility is same as 'private' and (not app.user or not app.user.isFollower(post.user)) %}
         <div class="section section--small">
             Private
@@ -12,14 +15,24 @@
         <blockquote{{ attributes.defaults({
             class: html_classes('section post subject ', {
                 'own': app.user and post.isAuthor(app.user),
-                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not post.isAdult,
+                'isSingle': isSingle is same as true
             })}).without('id') }}
                 id="post-{{ post.id }}"
-                data-controller="post subject mentions"
-                data-action="notifications:Notification@window->subject#notification">
+                data-controller="subject mentions html-refresh"
+                data-action="notifications:Notification@window->subject#notification"
+                data-post-target="main">
+
+            {% if post.visibility in ['visible', 'private'] %}
+                {{ component('vote', {
+                    subject: post,
+                    showDownvote: false
+                }) }}
+            {% endif %}
+
             <header>
                 {% if post.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                {{ component('user_inline', {user: post.user, showAvatar: false}) }}
+                {{ component('user_inline', {user: post.user, showAvatar: true, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
                 {% if (post.user.type) == "Service" %}
                     <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
@@ -40,41 +53,37 @@
                     {{ component('date', {date: post.createdAt}) }}
                 {% endif %}
                 {{ component('date_edited', {createdAt: post.createdAt, editedAt: post.editedAt}) }}
-                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine}) }}{% endif %}
+                {% if showMagazineName %}{{ 'to'|trans }} {{ component('magazine_inline', {magazine: post.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE, showNewIcon: true}) }}{% endif %}
                 {% if post.lang is not same as app.request.locale and post.lang is not same as kbin_default_lang() %}
                     <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
                 {% endif %}
             </header>
-            {{ component('user_avatar', {
-                user: post.user,
-                width: 40,
-                height: 40,
-                asLink: true
-            }) }}
-            <div class="content">
-                {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                    {{ post.body|markdown|raw }}
-                {% elseif(post.visibility is same as 'trashed') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                {% elseif(post.visibility is same as 'soft_deleted') %}
-                    <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
-                {% endif %}
+
+            <!-- body -->
+            <div data-controller="collapsable">
+                <div data-collapsable-target="content" class="content">
+                    {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                        {{ post.body|markdown("post")|raw }}
+                    {% elseif(post.visibility is same as 'trashed') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(post.visibility is same as 'soft_deleted') %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
+                    {% endif %}
+
+                    {% if post.image %}
+                        {{ include('components/_figure_image.html.twig', {
+                            image: post.image,
+                            parent_id: post.id,
+                            is_adult: post.isAdult,
+                            thumb_filter: 'post_thumb',
+                            gallery_name: 'post-%d'|format(post.id),
+                        }) }}
+                    {% endif %}
+                </div>
+                <div data-collapsable-target="button"></div>
             </div>
-            {% if post.visibility in ['visible', 'private'] %}
-                {{ component('vote', {
-                    subject: post,
-                    showDownvote: false
-                }) }}
-            {% endif %}
+
             <footer>
-                {% if post.image %}
-                    {{ include('components/_figure_image.html.twig', {
-                        image: post.image,
-                        parent_id: post.id,
-                        is_adult: post.isAdult,
-                        thumb_filter: 'post_thumb'
-                    }) }}
-                {% endif %}
                 {% if post.visibility in ['visible', 'private'] %}
                     <menu>
                         {% if post.sticky %}
@@ -85,9 +94,18 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a class="stretched-link"
-                               href="{{ path('post_comment_create', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}"
-                               data-action="subject#getForm">{{ 'reply'|trans }}</a>
+                            {% if not post.isLocked %}
+                                <a class="stretched-link"
+                                   href="{{ path('post_comment_create', {magazine_name: post.magazine.name, post_id: post.id, slug: post.slug|length ? post.slug : '-'}) }}"
+                                   data-action="subject#getForm">
+                                    {{ 'reply'|trans }}
+                                </a>
+                            {% else %}
+                                <span class="stretched-link">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                    {{ 'reply'|trans }}
+                                </span>
+                            {% endif %}
                         </li>
                         {% if not is_route_name('post_single', true) and ((not showCommentsPreview and post.commentCount > 0) or post.commentCount > 2) %}
                             <li data-post-target="expand">
@@ -110,7 +128,13 @@
                                 subject: post
                             }) }}
                         </li>
+                        {% if app.user is defined and app.user is not same as null %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
                         {% include 'post/_menu.html.twig' %}
+                        {% if app.user is defined and app.user is not same as null and isSingle is defined and isSingle %}
+                            {{ component('notification_switch', {target: post}) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -128,10 +152,12 @@
                             <form method="post"
                                   action="{{ path('post_restore', {magazine_name: post.magazine.name, post_id: post.id}) }}"
                                   data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                                <input type="hidden" name="token" value="{{ csrf_token('post_restore') }}">
                                 <button type="submit">{{ 'restore'|trans }}</button>
                             </form>
                         </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, post) %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -140,6 +166,9 @@
                     </menu>
                 {% else %}
                     <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, post) %}
+                            {{ component('bookmark_standard', { subject: post }) }}
+                        {% endif %}
                         <li data-subject-target="loader" style="display:none">
                             <div class="loader" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -150,9 +179,14 @@
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
+
         </blockquote>
     {% endif %}
-    {% if(showCommentsPreview and post.commentCount) %}
-        {{ component('post_comments_preview', {post: post, 'data-post-target': 'preview'}) }}
-    {% endif %}
+
+    <div data-post-target="comments" class="comments post-comments post-comments-preview comments-tree">
+        {% if(showCommentsPreview and post.commentCount) %}
+            {{ component('post_comments_preview', {post: post}) }}
+        {% endif %}
+    </div>
+</div>
 {% endif %}

@@ -27,9 +27,9 @@ class EntryDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('entry_delete', $request->request->get('token'));
+        $this->validateCsrf('entry_delete', $request->getPayload()->get('token'));
 
         $this->manager->delete($this->getUserOrThrow(), $entry);
 
@@ -48,9 +48,9 @@ class EntryDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('entry_restore', $request->request->get('token'));
+        $this->validateCsrf('entry_restore', $request->getPayload()->get('token'));
 
         $this->manager->restore($this->getUserOrThrow(), $entry);
 
@@ -64,9 +64,9 @@ class EntryDeleteController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('entry_purge', $request->request->get('token'));
+        $this->validateCsrf('entry_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($this->getUserOrThrow(), $entry);
 

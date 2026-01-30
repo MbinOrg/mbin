@@ -6,13 +6,14 @@ namespace App\Controller\Api\Magazine;
 
 use App\DTO\MagazineLogResponseDto;
 use App\Entity\Magazine;
+use App\Entity\MagazineLog;
 use App\Repository\MagazineLogRepository;
-use App\Repository\MagazineRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class MagazineModLogApi extends MagazineBaseApi
@@ -78,6 +79,12 @@ class MagazineModLogApi extends MagazineBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: MagazineLogRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'types[]',
+        description: 'The types of magazine logs to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', enum: MagazineLog::CHOICES))
+    )]
     #[OA\Tag('magazine')]
     /**
      * Retrieve information about moderation actions taken in the magazine.
@@ -85,22 +92,24 @@ class MagazineModLogApi extends MagazineBaseApi
     public function collection(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        MagazineRepository $repository,
+        MagazineLogRepository $repository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        #[MapQueryParameter] ?array $types = null,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $logs = $repository->findModlog(
-            $magazine,
+        $logs = $repository->findByCustom(
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineLogRepository::PER_PAGE))
+            self::constrainPerPage($request->get('perPage', MagazineLogRepository::PER_PAGE)),
+            types: $types,
+            magazine: $magazine,
         );
 
         $dtos = [];
         foreach ($logs->getCurrentPageResults() as $value) {
-            array_push($dtos, $this->serializeLogItem($value));
+            $dtos[] = $this->serializeLogItem($value);
         }
 
         return new JsonResponse(

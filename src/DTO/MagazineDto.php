@@ -20,16 +20,17 @@ class MagazineDto
 
     private User|UserDto|null $owner = null;
     public Image|ImageDto|null $icon = null;
+    public Image|ImageDto|null $banner = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: self::MAX_NAME_LENGTH)]
+    #[Assert\Length(min: 2, max: self::MAX_NAME_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     #[Assert\Regex(pattern: RegPatterns::MAGAZINE_NAME, match: true)]
     public ?string $name = null;
     #[Assert\NotBlank]
-    #[Assert\Length(min: 3, max: self::MAX_TITLE_LENGTH)]
+    #[Assert\Length(min: 3, max: self::MAX_TITLE_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $title = null;
-    #[Assert\Length(min: 3, max: Magazine::MAX_DESCRIPTION_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_DESCRIPTION_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $description = null;
-    #[Assert\Length(min: 3, max: Magazine::MAX_RULES_LENGTH)]
+    #[Assert\Length(min: 0, max: Magazine::MAX_RULES_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $rules = null;
     public ?string $visibility = null;
     public int $subscriptionsCount = 0;
@@ -39,8 +40,10 @@ class MagazineDto
     public int $postCommentCount = 0;
     public bool $isAdult = false;
     public bool $isPostingRestrictedToMods = false;
+    public ?bool $indexable = null;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
+    public ?int $localSubscribers = null;
     public ?array $tags = null;
     public ?Collection $badges = null;
     public ?Collection $moderators = null;
@@ -51,6 +54,7 @@ class MagazineDto
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
     private ?int $id = null;
+    public ?bool $discoverable = null;
 
     public function getId(): ?int
     {

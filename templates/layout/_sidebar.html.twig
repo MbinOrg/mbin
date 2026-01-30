@@ -97,18 +97,20 @@
 {% if tag is defined and tag %}
     {% include 'tag/_panel.html.twig' %}
 {% endif %}
-{% if show_related_magazines is not same as V_FALSE %}
-    {{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+{% if not is_route_name_contains('login') %}
+    {% if show_related_magazines is not same as V_FALSE %}
+        {{ component('related_magazines', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+    {% endif %}
+    {% if not is_route_name_contains('people') and show_active_users is not same as V_FALSE %}
+        {{ component('active_users', {magazine: magazine is defined and magazine ? magazine : null}) }}
+    {% endif %}
+    {% if show_related_posts is not same as V_FALSE %}
+        {{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+    {% endif%}
+    {% if show_related_entries is not same as V_FALSE %}
+        {{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
+    {% endif%}
 {% endif %}
-{% if not is_route_name_contains('people') and show_active_users is not same as V_FALSE %}
-    {{ component('active_users', {magazine: magazine is defined and magazine ? magazine : null}) }}
-{% endif %}
-{% if show_related_posts is not same as V_FALSE %}
-    {{ component('related_posts', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
-{% endif%}
-{% if show_related_entries is not same as V_FALSE %}
-    {{ component('related_entries', {magazine: magazine is defined and magazine ? magazine.name : null, tag: tag is defined and tag ? tag : null}) }}
-{% endif%}
 <section class="about section">
     <h3>{{ kbin_domain() }}</h3>
     <div class="container">
@@ -142,7 +144,18 @@
             {% else %}
                 {% set args = {} %}
             {% endif %}
-            <li><a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
+
+            {% if criteria is defined and criteria %}
+                {% if criteria.getOption('content') is same as 'threads' %}
+                    {% set args = {...args, 'content': 'threads'} %}
+                {% elseif criteria.getOption('content') is same as 'microblog' %}
+                    {% set args = {...args, 'content': 'microblog'} %}
+                {% elseif criteria.getOption('content') is same as 'combined' %}
+                    {% set args = {...args, 'content': 'combined'} %}
+                {% endif %}
+            {% endif %}
+            <li>
+                <a href="{{ path('feed_rss', args) }}">{{ 'rss'|trans }}</a>
             </li>
         </ul>
         <div class="about-seperator"></div>
@@ -157,10 +170,10 @@
             {% set header_accept_language = app.request.headers.has('accept_language')
                 ? app.request.headers.get('accept_language')|slice(0,2)
                 : null %}
-            {% set current = app.request.cookies.get('kbin_lang') ?? header_accept_language ?? kbin_default_lang() %}
+            {% set current = app.request.cookies.get('mbin_lang') ?? header_accept_language ?? kbin_default_lang() %}
             <li>
-                <select data-action="kbin#changeLang">
-                    {% for code in ['bg', 'da', 'de', 'el', 'en', 'eo', 'es', 'fil', 'fr', 'gl', 'it', 'ja', 'nl', 'pl', 'pt', 'pt_BR', 'ru', 'tr', 'uk', 'zh_TW'] %}
+                <select data-action="mbin#changeLang">
+                    {% for code in ['bg', 'ca', 'da', 'de', 'el', 'en', 'eo', 'es', 'fil', 'fr', 'gl', 'it', 'ja', 'nl', 'pl', 'pt', 'pt_BR', 'ru', 'tr', 'uk', 'zh_TW'] %}
                         <option value="{{ code }}" {{ code is same as current ? 'selected' : '' }}>{{ code|language_name(code) }}</option>
                     {% endfor %}
                 </select>

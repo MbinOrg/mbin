@@ -15,7 +15,7 @@ use App\Schema\PaginationSchema;
 use App\Schema\SearchActorSchema;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -103,6 +103,27 @@ class SearchRetrieveApi extends BaseApi
         required: true,
         schema: new OA\Schema(type: 'string')
     )]
+    #[OA\Parameter(
+        name: 'authorId',
+        description: 'User id of the author',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Parameter(
+        name: 'magazineId',
+        description: 'Id of the magazine',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Parameter(
+        name: 'type',
+        description: 'The type of content',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'string', enum: ['', 'entry', 'post'])
+    )]
     #[OA\Tag(name: 'search')]
     public function __invoke(
         SearchManager $manager,
@@ -110,7 +131,7 @@ class SearchRetrieveApi extends BaseApi
         MagazineFactory $magazineFactory,
         SettingsManager $settingsManager,
         RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter
+        RateLimiterFactory $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -122,8 +143,16 @@ class SearchRetrieveApi extends BaseApi
 
         $page = $this->getPageNb($request);
         $perPage = self::constrainPerPage($request->get('perPage', SearchRepository::PER_PAGE));
+        $authorIdRaw = $request->get('authorId');
+        $authorId = null === $authorIdRaw ? null : \intval($authorIdRaw);
+        $magazineIdRaw = $request->get('magazineId');
+        $magazineId = null === $magazineIdRaw ? null : \intval($magazineIdRaw);
+        $type = $request->get('type');
+        if ('entry' !== $type && 'post' !== $type && null !== $type) {
+            throw new BadRequestHttpException();
+        }
 
-        $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage);
+        $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage, authorId: $authorId, magazineId: $magazineId, specificType: $type);
         $dtos = [];
         foreach ($items->getCurrentPageResults() as $value) {
             \assert($value instanceof ContentInterface);

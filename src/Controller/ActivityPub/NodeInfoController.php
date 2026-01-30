@@ -15,7 +15,7 @@ class NodeInfoController
 
     public function __construct(
         private readonly NodeInfoFactory $nodeInfoFactory,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -39,6 +39,8 @@ class NodeInfoController
 
     /**
      * Get list of links for well-known nodeinfo.
+     *
+     * @return array<string, array<string, string>[]>
      */
     private function getLinks(): array
     {

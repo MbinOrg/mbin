@@ -73,6 +73,13 @@ class OAuth2UserConsent
         // Various grants related to reading and writing information about the current user,
         //   messages they've sent and received, notifications they have, who they follow, and who they block
         'user' => 'oauth2.grant.user.all',
+        'bookmark' => 'oauth2.grant.bookmark',
+        'bookmark:add' => 'oauth2.grant.bookmark.add',
+        'bookmark:remove' => 'oauth2.grant.bookmark.remove',
+        'bookmark_list' => 'oauth2.grant.bookmark_list',
+        'bookmark_list:read' => 'oauth2.grant.bookmark_list.read',
+        'bookmark_list:edit' => 'oauth2.grant.bookmark_list.edit',
+        'bookmark_list:delete' => 'oauth2.grant.bookmark_list.delete',
         'user:profile' => 'oauth2.grant.user.profile.all',
         'user:profile:read' => 'oauth2.grant.user.profile.read',
         'user:profile:edit' => 'oauth2.grant.user.profile.edit',
@@ -82,6 +89,7 @@ class OAuth2UserConsent
         'user:notification' => 'oauth2.grant.user.notification.all',
         'user:notification:read' => 'oauth2.grant.user.notification.read',
         'user:notification:delete' => 'oauth2.grant.user.notification.delete',
+        'user:notification:edit' => 'oauth2.grant.user.notification.edit',
         'user:oauth_clients' => 'oauth2.grant.user.oauth_clients.all',
         'user:oauth_clients:read' => 'oauth2.grant.user.oauth_clients.read',
         'user:oauth_clients:edit' => 'oauth2.grant.user.oauth_clients.edit',
@@ -93,6 +101,7 @@ class OAuth2UserConsent
         'moderate:entry' => 'oauth2.grant.moderate.entry.all',
         'moderate:entry:language' => 'oauth2.grant.moderate.entry.change_language',
         'moderate:entry:pin' => 'oauth2.grant.moderate.entry.pin',
+        'moderate:entry:lock' => 'oauth2.grant.moderate.entry.lock',
         'moderate:entry:set_adult' => 'oauth2.grant.moderate.entry.set_adult',
         'moderate:entry:trash' => 'oauth2.grant.moderate.entry.trash',
         // Entry comment moderation grants
@@ -104,6 +113,7 @@ class OAuth2UserConsent
         'moderate:post' => 'oauth2.grant.moderate.post.all',
         'moderate:post:language' => 'oauth2.grant.moderate.post.change_language',
         'moderate:post:pin' => 'oauth2.grant.moderate.post.pin',
+        'moderate:post:lock' => 'oauth2.grant.moderate.post.lock',
         'moderate:post:set_adult' => 'oauth2.grant.moderate.post.set_adult',
         'moderate:post:trash' => 'oauth2.grant.moderate.post.trash',
         // Post comment moderation grants

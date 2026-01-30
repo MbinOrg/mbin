@@ -1,8 +1,10 @@
+@use '../layout/breakpoints' as b;
+
 .rounded-edges .sidebar-subscriptions .active {
   border-radius: 0.5rem;
 }
 
-.kbin-container.width--fixed {
+.mbin-container.width--fixed {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 1360px / 6) - 3rem);
   }
@@ -12,7 +14,7 @@
   }
 }
 
-.kbin-container.width--auto {
+.mbin-container.width--auto {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 85vw / 6) - 3rem);
   }
@@ -22,7 +24,7 @@
   }
 }
 
-.kbin-container.width--max {
+.mbin-container.width--max {
   .sidebar-subscriptions:not(.inline) .subscription-list .subscription a {
     max-width: calc(max(305px, 100vw / 6) - 3rem);
   }
@@ -47,7 +49,7 @@
   .sidebar-subscriptions-icons {
     float: right;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       display: none;
     }
   }
@@ -71,7 +73,7 @@
   .section {
     padding: 0.5rem 0.5rem 0;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       padding: 0.5rem;
     }
   }
@@ -79,7 +81,7 @@
   h3 {
     margin: 0 0 .5rem;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       margin: 0;
     }
   }
@@ -89,7 +91,7 @@
       border-top: unset;
     }
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       display: flex;
       flex-direction: row;
       overflow-y: auto;
@@ -99,16 +101,16 @@
     .subscription {
       padding: 0.5rem;
 
-      @include media-breakpoint-down(lg) {
+      @include b.media-breakpoint-down(lg) {
         min-width: max-content;
       }
 
       &:not(:last-child) {
-        @include media-breakpoint-up(lg) {
+        @include b.media-breakpoint-up(lg) {
           border-bottom: var(--kbin-meta-border);
         }
 
-        @include media-breakpoint-down(lg) {
+        @include b.media-breakpoint-down(lg) {
           border-right: var(--kbin-meta-border);
         }
       }
@@ -127,7 +129,7 @@
         border-radius: 50%;
         vertical-align: middle;
         &.onlyMobile {
-          @include media-breakpoint-up(lg) {
+          @include b.media-breakpoint-up(lg) {
             display: none;
           }
         }
@@ -135,11 +137,11 @@
 
       .magazine-subscription-avatar-placeholder{
         width: 1.5rem;
-        @include media-breakpoint-down(lg) {
+        @include b.media-breakpoint-down(lg) {
           display: none;
         }
         &.onlyMobile {
-          @include media-breakpoint-up(lg) {
+          @include b.media-breakpoint-up(lg) {
             display: none;
           }
         }
@@ -162,11 +164,11 @@
           &.has-image {
             margin-left: .25rem;
             &.onlyMobile {
-              @include media-breakpoint-up(lg) {
+              @include b.media-breakpoint-up(lg) {
                 margin-left: 0;
               }
             }
-            @include media-breakpoint-down(lg) {
+            @include b.media-breakpoint-down(lg) {
               display: none;
             }
           }

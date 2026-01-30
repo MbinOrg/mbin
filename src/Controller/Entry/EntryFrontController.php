@@ -12,10 +12,11 @@ use App\Form\PostType;
 use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
-use App\Repository\EntryRepository;
-use App\Repository\PostRepository;
+use App\Repository\ContentRepository;
+use App\Repository\Criteria;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +25,8 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 class EntryFrontController extends AbstractController
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
-        private readonly PostRepository $postRepository
+        private readonly ContentRepository $contentRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -37,11 +38,11 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
 
-        $criteria = $this->createCriteria($content, $request);
+        $criteria = $this->createCriteria($content, $request, $user);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
@@ -54,22 +55,16 @@ class EntryFrontController extends AbstractController
 
         $this->setUserPreferences($user, $criteria);
 
-        if ('threads' === $content) {
-            $entities = $this->entryRepository->findByCriteria($criteria);
-            $entities = $this->handleCrossposts($entities);
-            $templatePath = 'entry/';
-            $dataKey = 'entries';
-        } elseif ('microblog' === $content) {
-            $entities = $this->postRepository->findByCriteria($criteria);
-            $templatePath = 'post/';
-            $dataKey = 'posts';
-        } else {
-            throw new \LogicException("Invalid content filter '{$content}'");
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
         }
+
+        $entities = $this->contentRepository->findByCriteria($criteria);
+        $templatePath = 'content/';
+        $dataKey = 'results';
 
         return $this->renderResponse(
             $request,
-            $content,
             $criteria,
             [$dataKey => $entities],
             $templatePath,
@@ -84,7 +79,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $subscription = $this->subscriptionFor($user);
@@ -108,7 +103,7 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
+        Request $request,
     ): Response {
         $user = $this->getUser();
         $response = new Response();
@@ -116,7 +111,7 @@ class EntryFrontController extends AbstractController
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
         }
 
-        $criteria = $this->createCriteria($content, $request);
+        $criteria = $this->createCriteria($content, $request, $user);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setFederation($federation)
             ->setTime($criteria->resolveTime($time))
@@ -128,26 +123,15 @@ class EntryFrontController extends AbstractController
         $this->handleSubscription($subscription, $criteria);
 
         $this->setUserPreferences($user, $criteria);
-
-        if ('threads' === $content) {
-            $entities = $this->entryRepository->findByCriteria($criteria);
-            // Note no crosspost handling
-            $templatePath = 'entry/';
-            $dataKey = 'entries';
-        } elseif ('microblog' === $content) {
-            $entities = $this->postRepository->findByCriteria($criteria);
-            $templatePath = 'post/';
-            $dataKey = 'posts';
-        } else {
-            throw new \LogicException("Invalid content filter '{$content}'");
+        if (null !== $user) {
+            $criteria->fetchCachedItems($this->contentRepository, $user);
         }
 
         return $this->renderResponse(
             $request,
-            $content,
             $criteria,
-            [$dataKey => $entities, 'magazine' => $magazine],
-            $templatePath,
+            ['results' => $this->contentRepository->findByCriteria($criteria), 'magazine' => $magazine],
+            'content/',
             $user
         );
     }
@@ -163,7 +147,6 @@ class EntryFrontController extends AbstractController
         string $federation,
         #[MapQueryParameter]
         ?string $type,
-        Request $request
     ): Response {
         $user = $this->getUser(); // Fetch the user
         $subscription = $this->subscriptionFor($user); // Determine the subscription filter based on the user
@@ -179,12 +162,16 @@ class EntryFrontController extends AbstractController
         ]);
     }
 
-    private function createCriteria(string $content, Request $request)
+    private function createCriteria(string $content, Request $request, ?User $user): Criteria
     {
-        if ('threads' === $content) {
-            $criteria = new EntryPageView($this->getPageNb($request));
+        if ('default' === $content) {
+            $content = $user?->frontDefaultContent ?? 'threads';
+        }
+
+        if ('threads' === $content || 'combined' === $content) {
+            $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         } elseif ('microblog' === $content) {
-            $criteria = new PostPageView($this->getPageNb($request));
+            $criteria = new PostPageView($this->getPageNb($request), $this->security);
         } else {
             throw new \LogicException('Invalid content '.$content);
         }
@@ -217,11 +204,11 @@ class EntryFrontController extends AbstractController
         }
     }
 
-    private function renderResponse(Request $request, $content, $criteria, $data, $templatePath, ?User $user)
+    private function renderResponse(Request $request, Criteria $criteria, array $data, string $templatePath, ?User $user): Response
     {
         $baseData = array_merge(['criteria' => $criteria], $data);
 
-        if ('microblog' === $content) {
+        if ('microblog' === $criteria->content) {
             $dto = new PostDto();
             if (isset($data['magazine'])) {
                 $dto->magazine = $data['magazine'];

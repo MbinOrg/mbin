@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\EntryCommentReport;
 use App\Entity\EntryReport;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\PostCommentReport;
 use App\Entity\PostReport;
+use App\Entity\User;
 use App\Event\Report\SubjectReportedEvent;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -29,7 +34,7 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         $this->manager->flush();
     }
 
-    private function entries()
+    private function entries(): void
     {
         $randomNb = $this->getUniqueNb(
             EntryFixtures::ENTRIES_COUNT,
@@ -44,8 +49,8 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
             }
 
             $r = new EntryReport(
-                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT)),
-                $this->getReference('entry_'.$e)
+                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT), User::class),
+                $this->getReference('entry_'.$e, Entry::class)
             );
 
             $this->manager->persist($r);
@@ -54,6 +59,9 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         }
     }
 
+    /**
+     * @return int[]
+     */
     private function getUniqueNb(int $max, int $quantity): array
     {
         $numbers = range(1, $max);
@@ -62,7 +70,7 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         return \array_slice($numbers, 0, $quantity);
     }
 
-    public function getRandomNumber($max)
+    public function getRandomNumber(int $max): int
     {
         $numbers = range(1, $max);
         shuffle($numbers);
@@ -70,7 +78,7 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         return $numbers[0];
     }
 
-    private function entryComments()
+    private function entryComments(): void
     {
         $randomNb = $this->getUniqueNb(
             EntryCommentFixtures::COMMENTS_COUNT,
@@ -85,8 +93,8 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
             }
 
             $r = new EntryCommentReport(
-                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT)),
-                $this->getReference('entry_comment_'.$c)
+                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT), User::class),
+                $this->getReference('entry_comment_'.$c, EntryComment::class)
             );
 
             $this->manager->persist($r);
@@ -95,7 +103,7 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         }
     }
 
-    private function posts()
+    private function posts(): void
     {
         $randomNb = $this->getUniqueNb(
             PostFixtures::ENTRIES_COUNT,
@@ -110,8 +118,8 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
             }
 
             $r = new PostReport(
-                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT)),
-                $this->getReference('post_'.$e)
+                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT), User::class),
+                $this->getReference('post_'.$e, Post::class)
             );
 
             $this->manager->persist($r);
@@ -120,7 +128,7 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
         }
     }
 
-    private function postComments()
+    private function postComments(): void
     {
         $randomNb = $this->getUniqueNb(
             PostCommentFixtures::COMMENTS_COUNT,
@@ -135,8 +143,8 @@ class ReportFixtures extends BaseFixture implements DependentFixtureInterface
             }
 
             $r = new PostCommentReport(
-                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT)),
-                $this->getReference('post_comment_'.$c)
+                $this->getReference('user_'.$this->getRandomNumber(UserFixtures::USERS_COUNT), User::class),
+                $this->getReference('post_comment_'.$c, PostComment::class)
             );
 
             $this->manager->persist($r);

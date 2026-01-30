@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Entity\Vote;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -25,7 +26,8 @@ class VoteManager
         private readonly VoteFactory $factory,
         private readonly RateLimiterFactory $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SettingsManager $settingsManager,
     ) {
     }
 
@@ -38,7 +40,11 @@ class VoteManager
             }
         }
 
-        if ('Service' === $user->type) {
+        $downVotesMode = $this->settingsManager->getDownvotesMode();
+        if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
+            throw new \LogicException('cannot downvote, because that is disabled');
+        }
+        if (VotableInterface::VOTE_DOWN === $choice && 'Service' === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
@@ -115,10 +121,6 @@ class VoteManager
 
     public function upvote(VotableInterface $votable, User $user): Vote
     {
-        if ('Service' === $user->type) {
-            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
-        }
-
         // @todo save activity pub object id
         $vote = $votable->getUserVote($user);
 
@@ -155,10 +157,6 @@ class VoteManager
 
     public function removeVote(VotableInterface $votable, User $user): ?Vote
     {
-        if ('Service' === $user->type) {
-            throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
-        }
-
         // @todo save activity pub object id
         $vote = $votable->getUserVote($user);
 

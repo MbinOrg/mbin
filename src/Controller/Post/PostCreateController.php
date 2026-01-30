@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Post;
 
 use App\Controller\AbstractController;
+use App\Exception\InstanceBannedException;
 use App\Form\PostType;
 use App\Repository\Criteria;
 use App\Service\IpResolver;
@@ -20,7 +21,7 @@ class PostCreateController extends AbstractController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly PostManager $manager,
-        private readonly IpResolver $ipResolver
+        private readonly IpResolver $ipResolver,
     ) {
     }
 
@@ -53,6 +54,8 @@ class PostCreateController extends AbstractController
                     ]
                 );
             }
+        } catch (InstanceBannedException) {
+            $this->addFlash('error', 'flash_instance_banned_error');
         } catch (\Exception $e) {
             $this->logger->error('{user} tried to create a post, but an exception occurred: {ex} - {message}', ['user' => $user->username, 'ex' => \get_class($e), 'message' => $e->getMessage(), 'stacktrace' => $e->getTrace()]);
             // Show an error to the user

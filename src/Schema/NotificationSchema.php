@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Schema;
 
 use App\DTO\MagazineBanResponseDto;
+use App\DTO\UserDto;
 use App\Entity\Notification;
 use App\Repository\NotificationRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -41,6 +42,7 @@ class NotificationSchema
             'report_created_notification',
             'report_rejected_notification',
             'report_approved_notification',
+            'new_signup',
         ]
     )]
     public string $type = 'entry_created_notification';
@@ -53,6 +55,7 @@ class NotificationSchema
         new OA\Schema(ref: '#/components/schemas/PostCommentResponseDto'),
         new OA\Schema(ref: '#/components/schemas/MessageResponseDto'),
         new OA\Schema(ref: new Model(type: MagazineBanResponseDto::class)),
+        new OA\Schema(ref: new Model(type: UserDto::class)),
     ])]
     public mixed $subject = null;
 

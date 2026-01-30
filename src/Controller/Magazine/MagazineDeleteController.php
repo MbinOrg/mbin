@@ -21,7 +21,7 @@ class MagazineDeleteController extends AbstractController
     #[IsGranted('delete', subject: 'magazine')]
     public function delete(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_delete', $request->request->get('token'));
+        $this->validateCsrf('magazine_delete', $request->getPayload()->get('token'));
 
         $this->manager->delete($magazine);
 
@@ -32,7 +32,7 @@ class MagazineDeleteController extends AbstractController
     #[IsGranted('delete', subject: 'magazine')]
     public function restore(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_restore', $request->request->get('token'));
+        $this->validateCsrf('magazine_restore', $request->getPayload()->get('token'));
 
         $this->manager->restore($magazine);
 
@@ -43,7 +43,7 @@ class MagazineDeleteController extends AbstractController
     #[IsGranted('purge', subject: 'magazine')]
     public function purge(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_purge', $request->request->get('token'));
+        $this->validateCsrf('magazine_purge', $request->getPayload()->get('token'));
 
         $this->manager->purge($magazine);
 
@@ -54,7 +54,7 @@ class MagazineDeleteController extends AbstractController
     #[IsGranted('purge', subject: 'magazine')]
     public function purgeContent(Magazine $magazine, Request $request): Response
     {
-        $this->validateCsrf('magazine_purge_content', $request->request->get('token'));
+        $this->validateCsrf('magazine_purge_content', $request->getPayload()->get('token'));
 
         $this->manager->purge($magazine, true);
 

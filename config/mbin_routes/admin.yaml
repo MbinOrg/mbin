@@ -1,0 +1,124 @@
+admin_users_active:
+    controller: App\Controller\Admin\AdminUsersController::active
+    defaults: { withFederated: false }
+    path: /admin/users/active/{withFederated}
+    methods: [GET]
+
+admin_users_inactive:
+    controller: App\Controller\Admin\AdminUsersController::inactive
+    path: /admin/users/inactive
+    methods: [GET]
+
+admin_users_suspended:
+    controller: App\Controller\Admin\AdminUsersController::suspended
+    defaults: { withFederated: false }
+    path: /admin/users/suspended/{withFederated}
+    methods: [GET]
+
+admin_users_banned:
+    controller: App\Controller\Admin\AdminUsersController::banned
+    defaults: { withFederated: false }
+    path: /admin/users/banned/{withFederated}
+    methods: [GET]
+
+admin_reports:
+    controller: App\Controller\Admin\AdminReportController
+    path: /admin/reports/{status}
+    defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
+    methods: [GET]
+
+admin_settings:
+    controller: App\Controller\Admin\AdminSettingsController
+    path: /admin/settings
+    methods: [GET, POST]
+
+admin_federation:
+    controller: App\Controller\Admin\AdminFederationController
+    path: /admin/federation
+    methods: [GET, POST]
+
+admin_federation_ban_instance:
+    controller: App\Controller\Admin\AdminFederationController::banInstance
+    path: /admin/federation/ban
+    methods: [GET, POST]
+
+admin_federation_unban_instance:
+    controller: App\Controller\Admin\AdminFederationController::unbanInstance
+    path: /admin/federation/unban
+    methods: [GET]
+
+admin_federation_allow_instance:
+    controller: App\Controller\Admin\AdminFederationController::allowInstance
+    path: /admin/federation/allow
+    methods: [GET]
+
+admin_federation_deny_instance:
+    controller: App\Controller\Admin\AdminFederationController::denyInstance
+    path: /admin/federation/deny
+    methods: [GET, POST]
+
+admin_pages:
+    controller: App\Controller\Admin\AdminPagesController
+    path: /admin/pages/{page}
+    methods: [GET, POST]
+
+admin_deletion_users:
+    controller: App\Controller\Admin\AdminDeletionController::users
+    path: /admin/deletion/users
+    methods: [GET]
+
+admin_deletion_magazines:
+    controller: App\Controller\Admin\AdminDeletionController::magazines
+    path: /admin/deletion/magazines
+    methods: [GET]
+
+admin_moderators:
+    controller: App\Controller\Admin\AdminModeratorController::moderators
+    path: /admin/moderators
+    methods: [GET, POST]
+
+admin_moderator_purge:
+    controller: App\Controller\Admin\AdminModeratorController::removeModerator
+    path: /admin/moderators/purge/{username}
+    methods: [POST]
+
+admin_magazine_ownership_requests:
+    controller: App\Controller\Admin\AdminMagazineOwnershipRequestController::requests
+    path: /admin/magazine_ownership
+    methods: [GET]
+
+admin_magazine_ownership_requests_accept:
+    controller: App\Controller\Admin\AdminMagazineOwnershipRequestController::accept
+    path: /admin/magazine_ownership/{name}/{username}/accept
+    methods: [POST]
+
+admin_magazine_ownership_requests_reject:
+    controller: App\Controller\Admin\AdminMagazineOwnershipRequestController::reject
+    path: /admin/magazine_ownership/{name}/{username}/reject
+    methods: [POST]
+
+admin_signup_requests:
+    controller: App\Controller\Admin\AdminSignupRequestsController::requests
+    path: /admin/signup_requests
+    methods: [ GET ]
+
+admin_signup_requests_approve:
+    controller: App\Controller\Admin\AdminSignupRequestsController::approve
+    path: /admin/signup_requests/{id}/approve
+    methods: [ POST ]
+
+admin_signup_requests_reject:
+    controller: App\Controller\Admin\AdminSignupRequestsController::reject
+    path: /admin/signup_requests/{id}/reject
+    methods: [ POST ]
+
+admin_cc:
+    controller: App\Controller\Admin\AdminClearCacheController
+    path: /admin/cc
+    methods: [GET]
+
+admin_dashboard:
+    controller: App\Controller\Admin\AdminDashboardController
+    path: /admin/{statsPeriod}/{withFederated}
+    defaults: { statsType: content, statsPeriod: -1, withFederated: false }
+    methods: [GET]

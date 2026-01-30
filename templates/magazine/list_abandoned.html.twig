@@ -16,6 +16,7 @@
     <header>
         <h1 hidden>{{ 'magazines'|trans }}</h1>
     </header>
+
     {% include 'magazine/_options.html.twig' %}
     <div id="content">
         {% if magazines|length %}
@@ -35,7 +36,7 @@
                         <tbody>
                         {% for magazine in magazines %}
                             <tr>
-                                <td>{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, fullName: true}) }}</td>
+                                <td>{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, showNewIcon: true, fullName: true}) }}</td>
                                 <td>{{ magazine.entryCount }}</td>
                                 <td>{{ magazine.entryCommentCount }}</td>
                                 <td>{{ magazine.postCount + magazine.postCommentCount }}</td>
@@ -72,7 +73,7 @@
                     {% for magazine in magazines %}
                         <div class="magazine">
                             <div class="magazine__top">
-                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, fullName: true}) }}</div>
+                                <div class="magazine__inline">{{ component('magazine_inline', { magazine: magazine, stretchedLink: true, showAvatar: true, showNewIcon: true, fullName: true}) }}</div>
                                 <div class="magazine__information">
                                     <span class="magazine__info"><span
                                                 class="value">{{ magazine.entryCount }}</span><span

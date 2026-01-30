@@ -13,6 +13,7 @@ use App\Message\ActivityPub\Inbox\DeleteMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Message\DeleteUserMessage;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Repository\ApActivityRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPubManager;
@@ -21,6 +22,7 @@ use App\Service\EntryManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -30,15 +32,17 @@ class DeleteHandler extends MbinMessageHandler
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ActivityPubManager $activityPubManager,
+        private readonly KernelInterface $kernel,
         private readonly ApActivityRepository $apActivityRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly EntryManager $entryManager,
         private readonly EntryCommentManager $entryCommentManager,
         private readonly PostManager $postManager,
-        private readonly PostCommentManager $postCommentManager
+        private readonly PostCommentManager $postCommentManager,
+        private readonly ActivityRepository $activityRepository,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DeleteMessage $message): void
@@ -49,7 +53,7 @@ class DeleteHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DeleteMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("DeleteHandler called, but is wasn\'t a DeleteMessage. Type: ".\get_class($message));
         }
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
@@ -73,6 +77,13 @@ class DeleteHandler extends MbinMessageHandler
         }
 
         $entity = $this->entityManager->getRepository($object['type'])->find((int) $object['id']);
+
+        if ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment) {
+            if (!$entity->magazine->apId || ($actor->apId && !$entity->user->apId)) {
+                // local magazine or remote actor for a local users content -> need to announce it later
+                $this->activityRepository->createForRemoteActivity($message->payload, $entity);
+            }
+        }
 
         if ($entity instanceof Entry) {
             $this->deleteEntry($entity, $actor);

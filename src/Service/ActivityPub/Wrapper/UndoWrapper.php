@@ -4,29 +4,34 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub\Wrapper;
 
-use App\Entity\Contracts\ActivityPubActivityInterface;
-use JetBrains\PhpStorm\ArrayShape;
+use App\Entity\Activity;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UndoWrapper
 {
-    #[ArrayShape([
-        '@context' => 'string',
-        'id' => 'string',
-        'type' => 'string',
-        'actor' => 'mixed',
-        'object' => 'array',
-    ])]
-    public function build(
-        array $object,
-    ): array {
-        unset($object['@context']);
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+    }
 
-        return [
-            '@context' => ActivityPubActivityInterface::CONTEXT_URL,
-            'id' => $object['id'].'#unfollow',
-            'type' => 'Undo',
-            'actor' => $object['actor'],
-            'object' => $object,
-        ];
+    public function build(Activity|string $object, ?User $actor = null): Activity
+    {
+        $activity = new Activity('Undo');
+        if ($object instanceof Activity) {
+            $activity->innerActivity = $object;
+            $activity->setActor($object->getActor());
+        } else {
+            if (null === $actor) {
+                throw new \LogicException('actor must not be null if the object is a url');
+            }
+            $activity->innerActivityUrl = $object;
+            $activity->setActor($actor);
+        }
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        return $activity;
     }
 }

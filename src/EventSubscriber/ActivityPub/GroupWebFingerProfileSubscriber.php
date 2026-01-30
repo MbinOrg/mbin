@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class GroupWebFingerProfileSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly WebFingerParameters $webfingerParameters,
         private readonly MagazineRepository $magazineRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -32,7 +31,7 @@ class GroupWebFingerProfileSubscriber implements EventSubscriberInterface
 
     public function buildResponse(WebfingerResponseEvent $event): void
     {
-        $params = $this->webfingerParameters->getParams($event->request);
+        $params = $event->params;
         $jsonRd = $event->jsonRd;
 
         if (
@@ -55,6 +54,10 @@ class GroupWebFingerProfileSubscriber implements EventSubscriberInterface
 
     protected function getActor($name): ?Magazine
     {
+        if ('random' === $name) {
+            return null;
+        }
+
         return $this->magazineRepository->findOneByName($name);
     }
 }

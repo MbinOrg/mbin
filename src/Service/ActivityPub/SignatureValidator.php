@@ -18,7 +18,7 @@ readonly class SignatureValidator
 {
     public function __construct(
         private ActivityPubManager $activityPubManager,
-        private ApHttpClient $client,
+        private ApHttpClientInterface $client,
         private LoggerInterface $logger,
     ) {
     }
@@ -26,11 +26,11 @@ readonly class SignatureValidator
     /**
      * Attempts to validate an incoming signed HTTP request.
      *
-     * @phpstan-param RequestType $request
-     *
      * @param array  $request The information about the incoming request
      * @param array  $headers Headers attached to the incoming request
      * @param string $body    The body of the incoming request
+     *
+     * @phpstan-param RequestType $request
      *
      * @throws InvalidApSignatureException   The HTTP request was not signed appropriately
      * @throws InvalidUserPublicKeyException The public key of the specified user is invalid or null
@@ -52,6 +52,11 @@ readonly class SignatureValidator
         $signature = HttpSignature::parseSignatureHeader($signature);
 
         $this->validateUrl($signature['keyId']);
+
+        if (!isset($payload['id'])) {
+            throw new InvalidApSignatureException('Missing required "id" field in the payload');
+        }
+
         $this->validateUrl($id = \is_array($payload['id']) ? $payload['id'][0] : $payload['id']);
 
         $keyDomain = parse_url($signature['keyId'], PHP_URL_HOST);
@@ -113,7 +118,11 @@ readonly class SignatureValidator
 
         $user = $this->activityPubManager->findActorOrCreate($actorUrl);
         if (!empty($user)) {
-            $pkey = openssl_pkey_get_public($this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem']);
+            $pem = $user->publicKey ?? $this->client->getActorObject($user->apProfileId)['publicKey']['publicKeyPem'] ?? null;
+            if (null === $pem) {
+                throw new InvalidUserPublicKeyException($user->apProfileId);
+            }
+            $pkey = openssl_pkey_get_public($pem);
 
             if (false === $pkey) {
                 throw new InvalidUserPublicKeyException($user->apProfileId);

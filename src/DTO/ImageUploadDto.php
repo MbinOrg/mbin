@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Service\ImageManager;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -24,6 +25,9 @@ class ImageUploadDto
         self::IMAGE_UPLOAD,
         self::IMAGE_UPLOAD_NO_ALT,
     ])]
-    #[OA\Property(type: 'string', format: 'binary')]
+    #[OA\Property(
+        type: 'string', format: 'binary', nullable: true,
+        encoding: new OA\Encoding(property: 'uploadImage', contentType: ImageManager::IMAGE_MIMETYPE_STR)
+    )]
     public ?UploadedFile $uploadImage = null;
 }

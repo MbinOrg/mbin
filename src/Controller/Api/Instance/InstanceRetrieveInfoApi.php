@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Instance;
 
+use App\Entity\User;
+use App\Factory\ActivityPub\PersonFactory;
 use App\Service\ProjectInfoService;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
@@ -42,7 +44,19 @@ class InstanceRetrieveInfoApi extends InstanceBaseApi
         ProjectInfoService $projectInfo,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        PersonFactory $userFactory,
     ): JsonResponse {
+        $userToJson = function (User $admin) use ($userFactory) {
+            $json = $userFactory->create($admin);
+            unset($json['@context']);
+
+            return $json;
+        };
+        $adminUsers = $this->userRepository->findAllAdmins();
+        $admins = array_map($userToJson, $adminUsers);
+        $moderatorUsers = $this->userRepository->findAllModerators();
+        $moderators = array_map($userToJson, $moderatorUsers);
+
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $body = [
             'softwareName' => $projectInfo->getName(),
@@ -54,6 +68,8 @@ class InstanceRetrieveInfoApi extends InstanceBaseApi
             'websiteOpenRegistrations' => $settings->get('KBIN_REGISTRATIONS_ENABLED'),
             'websiteFederationEnabled' => $settings->get('KBIN_FEDERATION_ENABLED'),
             'websiteDefaultLang' => $settings->get('KBIN_DEFAULT_LANG'),
+            'instanceModerators' => $moderators,
+            'instanceAdmins' => $admins,
         ];
 
         return new JsonResponse(

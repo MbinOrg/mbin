@@ -9,7 +9,7 @@ use App\DTO\OAuth2ClientDto;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,7 +60,7 @@ class DeleteClientApi extends BaseApi
         EntityManagerInterface $entityManager,
         CredentialsRevokerInterface $revoker,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiOauthClientDeleteLimiter
+        RateLimiterFactory $apiOauthClientDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 

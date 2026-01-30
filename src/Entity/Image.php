@@ -50,7 +50,7 @@ class Image
         string $sha256,
         ?int $width,
         ?int $height,
-        ?string $blurhash
+        ?string $blurhash,
     ) {
         $this->filePath = $filePath;
         $this->fileName = $fileName;

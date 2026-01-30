@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Enums\ENotificationStatus;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -26,6 +27,15 @@ class UserResponseDto implements \JsonSerializable
     public ?int $userId = null;
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
+    public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $indexable = null;
+
+    /**
+     * @var int|null this will only be populated on single user retrieves, not on batch ones,
+     *               because it is a costly operation
+     */
+    public ?int $reputationPoints = null;
+    public ?bool $discoverable = null;
 
     public function __construct(UserDto $dto)
     {
@@ -46,6 +56,9 @@ class UserResponseDto implements \JsonSerializable
         $this->serverSoftwareVersion = $dto->serverSoftwareVersion;
         $this->isAdmin = $dto->isAdmin;
         $this->isGlobalModerator = $dto->isGlobalModerator;
+        $this->reputationPoints = $dto->reputationPoints;
+        $this->discoverable = $dto->discoverable;
+        $this->indexable = $dto->indexable;
     }
 
     public function jsonSerialize(): mixed
@@ -68,6 +81,10 @@ class UserResponseDto implements \JsonSerializable
             'isBlockedByUser' => $this->isBlockedByUser,
             'serverSoftware' => $this->serverSoftware,
             'serverSoftwareVersion' => $this->serverSoftwareVersion,
+            'notificationStatus' => $this->notificationStatus,
+            'reputationPoints' => $this->reputationPoints,
+            'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 }

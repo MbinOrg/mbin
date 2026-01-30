@@ -20,7 +20,7 @@ class PostCommentRootUpdateCommand extends Command
 {
     public function __construct(
         private readonly PostCommentRepository $repository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -44,7 +44,7 @@ class PostCommentRootUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function update(PostComment $comment)
+    private function update(PostComment $comment): void
     {
         if (null === $comment->parent->root) {
             $this->entityManager->getConnection()->executeQuery(

@@ -12,20 +12,28 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ThemeSettingsController extends AbstractController
 {
-    public const KBIN_LANG = 'kbin_lang';
+    public const MBIN_LANG = 'mbin_lang';
     public const ENTRIES_VIEW = 'entries_view';
     public const ENTRY_COMMENTS_VIEW = 'entry_comments_view';
     public const POST_COMMENTS_VIEW = 'post_comments_view';
     public const KBIN_THEME = 'kbin_theme';
     public const KBIN_FONT_SIZE = 'kbin_font_size';
     public const KBIN_PAGE_WIDTH = 'kbin_page_width';
+    public const MBIN_SHOW_USER_DOMAIN = 'mbin_show_users_domain';
+    public const MBIN_SHOW_MAGAZINE_DOMAIN = 'mbin_show_magazine_domain';
     public const KBIN_ENTRIES_SHOW_USERS_AVATARS = 'kbin_entries_show_users_avatars';
     public const KBIN_ENTRIES_SHOW_MAGAZINES_ICONS = 'kbin_entries_show_magazines_icons';
     public const KBIN_ENTRIES_SHOW_THUMBNAILS = 'kbin_entries_show_thumbnails';
     public const KBIN_ENTRIES_SHOW_PREVIEW = 'kbin_entries_show_preview';
     public const KBIN_ENTRIES_COMPACT = 'kbin_entries_compact';
+    public const MBIN_ENTRIES_SHOW_RICH_MENTION = 'mbin_entries_show_rich_mention';
+    public const MBIN_ENTRIES_SHOW_RICH_MENTION_MAGAZINE = 'mbin_entries_show_rich_mention_magazine';
+    public const MBIN_ENTRIES_SHOW_RICH_AP_LINK = 'mbin_entries_show_rich_ap_link';
     public const KBIN_POSTS_SHOW_PREVIEW = 'kbin_posts_show_preview';
     public const KBIN_POSTS_SHOW_USERS_AVATARS = 'kbin_posts_show_users_avatars';
+    public const MBIN_POSTS_SHOW_RICH_MENTION = 'mbin_posts_show_rich_mention';
+    public const MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE = 'mbin_posts_show_rich_mention_magazine';
+    public const MBIN_POSTS_SHOW_RICH_AP_LINK = 'mbin_posts_show_rich_ap_link';
     public const KBIN_GENERAL_ROUNDED_EDGES = 'kbin_general_rounded_edges';
     public const KBIN_GENERAL_INFINITE_SCROLL = 'kbin_general_infinite_scroll';
     public const KBIN_GENERAL_TOPBAR = 'kbin_general_topbar';
@@ -47,6 +55,8 @@ class ThemeSettingsController extends AbstractController
     public const KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON = 'kbin_subscriptions_show_magazine_icon';
     public const MBIN_MODERATION_LOG_SHOW_USER_AVATARS = 'mbin_moderation_log_show_user_avatars';
     public const MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS = 'mbin_moderation_log_show_magazine_icons';
+    public const MBIN_MODERATION_LOG_SHOW_NEW_ICONS = 'mbin_moderation_log_show_new_icons';
+    public const MBIN_LIST_IMAGE_LIGHTBOX = 'mbin_list_image_lightbox';
 
     public const CLASSIC = 'classic';
     public const CHAT = 'chat';
@@ -93,7 +103,7 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_POSTS_SHOW_PREVIEW,
         self::KBIN_POSTS_SHOW_USERS_AVATARS,
         self::KBIN_GENERAL_DYNAMIC_LISTS,
-        self::KBIN_LANG,
+        self::MBIN_LANG,
         self::KBIN_COMMENTS_SHOW_USER_AVATAR,
         self::KBIN_COMMENTS_REPLY_POSITION,
         self::KBIN_SUBSCRIPTIONS_SHOW,
@@ -104,10 +114,20 @@ class ThemeSettingsController extends AbstractController
         self::KBIN_SUBSCRIPTIONS_SHOW_MAGAZINE_ICON,
         self::MBIN_MODERATION_LOG_SHOW_USER_AVATARS,
         self::MBIN_MODERATION_LOG_SHOW_MAGAZINE_ICONS,
+        self::MBIN_MODERATION_LOG_SHOW_NEW_ICONS,
         self::MBIN_GENERAL_SHOW_RELATED_POSTS,
         self::MBIN_GENERAL_SHOW_RELATED_ENTRIES,
         self::MBIN_GENERAL_SHOW_RELATED_MAGAZINES,
         self::MBIN_GENERAL_SHOW_ACTIVE_USERS,
+        self::MBIN_SHOW_MAGAZINE_DOMAIN,
+        self::MBIN_SHOW_USER_DOMAIN,
+        self::MBIN_LIST_IMAGE_LIGHTBOX,
+        self::MBIN_ENTRIES_SHOW_RICH_MENTION,
+        self::MBIN_ENTRIES_SHOW_RICH_MENTION_MAGAZINE,
+        self::MBIN_ENTRIES_SHOW_RICH_AP_LINK,
+        self::MBIN_POSTS_SHOW_RICH_MENTION,
+        self::MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE,
+        self::MBIN_POSTS_SHOW_RICH_AP_LINK,
     ];
 
     public const VALUES = [
@@ -149,8 +169,8 @@ class ThemeSettingsController extends AbstractController
             $response->headers->setCookie(new Cookie($key, $value, strtotime('+1 year')));
         }
 
-        if (self::KBIN_LANG === $key) {
-            $response->headers->setCookie(new Cookie(self::KBIN_LANG, $value, strtotime('+1 year')));
+        if (self::MBIN_LANG === $key) {
+            $response->headers->setCookie(new Cookie(self::MBIN_LANG, $value, strtotime('+1 year')));
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -162,5 +182,77 @@ class ThemeSettingsController extends AbstractController
             302,
             $response->headers->all()
         );
+    }
+
+    public static function getShowUserFullName(?Request $request): bool
+    {
+        if (null === $request) {
+            return false;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_SHOW_USER_DOMAIN, 'false');
+    }
+
+    public static function getShowMagazineFullName(?Request $request): bool
+    {
+        if (null === $request) {
+            return false;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_SHOW_MAGAZINE_DOMAIN, 'false');
+    }
+
+    public static function getShowRichMentionEntry(?Request $request): bool
+    {
+        if (null === $request) {
+            return true;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_ENTRIES_SHOW_RICH_MENTION, self::TRUE);
+    }
+
+    public static function getShowRichMentionPosts(?Request $request): bool
+    {
+        if (null === $request) {
+            return false;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_POSTS_SHOW_RICH_MENTION, self::FALSE);
+    }
+
+    public static function getShowRichMagazineMentionEntry(?Request $request): bool
+    {
+        if (null === $request) {
+            return true;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_ENTRIES_SHOW_RICH_MENTION_MAGAZINE, self::TRUE);
+    }
+
+    public static function getShowRichMagazineMentionPosts(?Request $request): bool
+    {
+        if (null === $request) {
+            return true;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE, self::TRUE);
+    }
+
+    public static function getShowRichAPLinkEntries(?Request $request): bool
+    {
+        if (null === $request) {
+            return true;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_ENTRIES_SHOW_RICH_AP_LINK, self::TRUE);
+    }
+
+    public static function getShowRichAPLinkPosts(?Request $request): bool
+    {
+        if (null === $request) {
+            return true;
+        }
+
+        return self::TRUE === $request->cookies->get(self::MBIN_POSTS_SHOW_RICH_AP_LINK, self::TRUE);
     }
 }

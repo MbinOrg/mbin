@@ -14,6 +14,7 @@ use App\Service\ActivityPubManager;
 use App\Service\VoteManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,11 +25,12 @@ class AnnounceHandler extends MbinMessageHandler
         private readonly ActivityPubManager $activityPubManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $bus,
-        private readonly VoteManager $manager,
+        private readonly KernelInterface $kernel,
+        private readonly VoteManager $voteManager,
         private readonly VoteHandleSubscriber $voteHandleSubscriber,
         private readonly LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(AnnounceMessage $message): void
@@ -39,11 +41,11 @@ class AnnounceHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof AnnounceMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("AnnounceHandler called, but is wasn\'t an AnnounceMessage. Type: ".\get_class($message));
         }
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
-                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $this->logger->info('[AnnounceHandler::doWork] Got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
                 $message->payload['object'] = $adjustedUrl;
             }
             $this->bus->dispatch(new ChainActivityMessage([$object], announce: $message->payload));
@@ -57,7 +59,7 @@ class AnnounceHandler extends MbinMessageHandler
             $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
 
             if ($actor instanceof User) {
-                $this->manager->upvote($entity, $actor);
+                $this->voteManager->upvote($entity, $actor);
                 $this->voteHandleSubscriber->clearCache($entity);
             } else {
                 $entity->lastActive = new \DateTime();

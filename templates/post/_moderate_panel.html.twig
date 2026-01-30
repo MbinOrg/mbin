@@ -10,6 +10,20 @@
             </form>
         </li>
         <li>
+            <form action="{{ path('post_lock', {'magazine_name': post.magazine.name, 'post_id': post.id}) }}"
+                  method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('post_lock') }}">
+                <button type="submit" class="btn btn__secondary">
+                    {% if post.isLocked %}
+                        <i class="fa fa-lock-open" aria-hidden="true"></i>
+                    {% else %}
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    {% endif %}
+                    <span>{{ post.isLocked ? 'unlock'|trans : 'lock'|trans }}</span>
+                </button>
+            </form>
+        </li>
+        <li>
             <form action="{{ path('post_change_adult', {magazine_name: magazine.name, post_id: post.id}) }}"
                   method="post">
                 <input type="hidden" name="token" value="{{ csrf_token('change_adult') }}">
@@ -32,7 +46,6 @@
             <form action="{{ post_delete_url(post) }}"
                   method="post"
                   data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
                 <button type="submit" class="btn btn__secondary">
                     <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'delete'|trans }}</span>
                 </button>
@@ -43,7 +56,6 @@
                 <form action="{{ path('post_purge', {magazine_name: post.magazine.name, post_id: post.id,}) }}"
                       method="post"
                       data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                    <input type="hidden" name="token" value="{{ csrf_token('post_purge') }}">
                     <button type="submit" class="btn btn__danger">
                         <i class="fa fa-dumpster" aria-hidden="true"></i> <span>{{ 'purge'|trans }}</span>
                     </button>

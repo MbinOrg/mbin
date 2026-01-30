@@ -4,17 +4,23 @@ on:
     branches:
       - main
       - develop
+      - dev/new_features
   push:
     branches:
       - main
+      - dev/new_features
     tags:
       - 'v*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -22,168 +28,266 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
-      - name: Calculate package-lock.json hash
-        id: npm-lock-hash
-        run: |
-          echo "hash=$(md5sum package-lock.json)" >> $GITHUB_OUTPUT
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
-        id: npm-cache # use this to check for `cache-hit` (`steps.npm-cache.outputs.cache-hit != 'true'`)
+        id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ steps.npm-lock-hash.outputs.hash }}
-          restore-keys: ${{ runner.os }}-npm-
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-no-dev-${{ steps.composer-lock-hash.outputs.hash }}
-          restore-keys: ${{ runner.os }}-composer-no-dev-
+          key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
 
       - run: cp .env.example .env
       - name: Composer install
-        run: composer install --no-dev --no-progress
+        run: >
+          ./ci/skipOnExcluded.sh
+          composer install --no-dev --no-progress
+
+      - name: Test API dump
+        run: >
+          ./ci/skipOnExcluded.sh
+          php bin/console nelmio:apidoc:dump
+
       - name: NPM install
-        run: npm ci --include=dev
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm ci --include=dev
         env:
           NODE_ENV: production
+
       - name: Build frontend (production)
-        run: npm run build
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm run build
 
-  lint:
+  automated-tests:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-no-dev-${{ steps.composer-lock-hash.outputs.hash }}
-          restore-keys: ${{ runner.os }}-composer-no-dev-
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-  unit-test:
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Composer install
+        run: >
+          ./ci/skipOnExcluded.sh
+          composer install --no-scripts --no-progress
+
+      - run: cp .env.example .env
+
+      - name: NPM install
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm ci --include=dev
+        env:
+          NODE_ENV: production
+
+      - name: Build frontend (production)
+        run: >
+          ./ci/skipOnExcluded.sh
+          npm run build
+
+      - name: Run unit tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+          CREATE_SNAPSHOTS: false
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/paratest tests/Unit
+
+      - name: Run non thread safe integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/phpunit tests/Functional
+          --group NonThreadSafe
+
+      - name: Run thread safe integration tests
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+          SYMFONY_DEPRECATIONS_HELPER: disabled
+          DATABASE_HOST: postgres
+          DATABASE_PORT: 5432
+          REDIS_HOST: valkey
+          REDIS_PORT: 6379
+        run: >
+          ./ci/skipOnExcluded.sh
+          php vendor/bin/paratest tests/Functional
+          --exclude-group NonThreadSafe
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres:16
+        # Provide the password for postgres
+        env:
+          POSTGRES_DB: mbin_test
+          POSTGRES_USER: mbin
+          POSTGRES_PASSWORD: ChangeThisPostgresPass
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      valkey:
+        # Docker Hub image
+        image: valkey/valkey
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+  audit-check:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Calculate composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum composer.lock)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
+      - name: Cache vendor directory
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - run: cp .env.example .env
       - name: Composer install
         run: composer install --no-scripts --no-progress
 
-      - name: Run unit tests
-        env:
-          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
-          SYMFONY_DEPRECATIONS_HELPER: disabled
-        run: php bin/phpunit tests/Unit
+      - name: Run Npm audit
+        run: npm audit --omit=dev
 
-  security-check:
-    runs-on: ubuntu-latest
-    container:
-      image: danger89/mbin-pipeline:1.2.0
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run security checker
-        run: local-php-security-checker
-
-  twig-lint:
-    runs-on: ubuntu-latest
-    container:
-      image: danger89/mbin-pipeline:1.2.0
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Calculate tools/composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
-          restore-keys: ${{ runner.os }}-composer-tools-
-
-      - run: cp .env.example .env
-      - name: Composer install
-        run: composer install --no-scripts --no-progress
-
-      - name: Twig linter
-        run: php bin/console lint:twig
+      - name: Run Composer audit
+        run: composer audit --no-dev --abandoned=ignore
 
   fixer-dry-run:
     runs-on: ubuntu-latest
     container:
-      image: danger89/mbin-pipeline:1.2.0
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Calculate tools/composer.lock hash
-        id: composer-lock-hash
-        run: |
-          echo "hash=$(md5sum tools/composer.lock)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-tools-${{ steps.composer-lock-hash.outputs.hash }}
+          key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-tools-
 
       - name: Composer tools install
         run: composer -d tools install --no-scripts --no-progress
 
-      - name: php-cs-fixer dry-run
-        run: tools/vendor/bin/php-cs-fixer fix --dry-run -v --show-progress=none #--format=checkstyle #would be nice if codeberg did something with this like github does.
+      - name: PHP CS Fixer dry-run with diff
+        run: >
+          tools/vendor/bin/php-cs-fixer fix
+          --dry-run --diff --show-progress=none
+
+      - name: PHP CS Fixer to PR Annotations
+        run: >
+          tools/vendor/bin/php-cs-fixer fix
+          --dry-run --format=checkstyle --show-progress=none | cs2pr
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/mbinorg/mbin-pipeline-image:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add GITHUB_WORKSPACE as a safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Get NPM cache directory path
+        id: npm-cache-dir-path
+        run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ${{ steps.npm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('*/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Composer install
+        run: composer install --no-scripts --no-progress
+
+      - run: cp .env.example .env
+
+      - name: NPM install
+        run: npm ci
+
+      - name: eslint
+        run: npm run lint
 
   build-and-publish-docker-image:
     runs-on: ubuntu-latest
@@ -218,4 +322,12 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-# TODO: Integration tests
+
+      # We will also use this job to dispatch an event to the mbin-docs repository to trigger documentation build and publish
+      - name: Trigger mbin-docs workflow dispatch
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.MBIN_ACCESS_TOKEN }}
+          repository: MbinOrg/mbin-docs
+          event-type: update-docs

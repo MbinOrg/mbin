@@ -15,14 +15,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserSuspendController extends AbstractController
 {
     public function __construct(
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function suspend(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_suspend', $request->request->get('token'));
+        $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 
         $this->userManager->suspend($user);
 
@@ -34,7 +34,7 @@ class UserSuspendController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function unsuspend(User $user, Request $request): Response
     {
-        $this->validateCsrf('user_suspend', $request->request->get('token'));
+        $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 
         $this->userManager->unsuspend($user);
 

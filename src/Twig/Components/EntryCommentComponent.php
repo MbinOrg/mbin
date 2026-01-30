@@ -7,6 +7,7 @@ namespace App\Twig\Components;
 use App\Controller\User\ThemeSettingsController;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\EntryComment;
+use App\PageView\EntryCommentPageView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -16,7 +17,7 @@ final class EntryCommentComponent
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly AuthorizationCheckerInterface $authorizationChecker
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -27,6 +28,7 @@ final class EntryCommentComponent
     public int $level = 1;
     public bool $canSeeTrash = false;
     public bool $dateAsUrl = true;
+    public EntryCommentPageView $criteria;
 
     public function postMount(array $attr): array
     {

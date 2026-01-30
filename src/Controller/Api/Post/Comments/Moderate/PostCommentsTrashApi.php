@@ -10,8 +10,8 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
 use App\Service\PostCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +82,7 @@ class PostCommentsTrashApi extends PostsBaseApi
         // Force response to have all fields visible
         $visibility = $comment->visibility;
         $comment->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
-        $response = $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment))->jsonSerialize();
+        $response = $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment))->jsonSerialize();
         $response['visibility'] = $visibility;
 
         return new JsonResponse(
@@ -159,7 +159,7 @@ class PostCommentsTrashApi extends PostsBaseApi
         }
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfPostComment($comment)),
+            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

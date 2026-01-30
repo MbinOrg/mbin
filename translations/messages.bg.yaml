@@ -33,7 +33,7 @@ yes: Да
 filter.fields.names_and_descriptions: Имена и описания
 username: Потребителско име
 light: Светла
-terms: Условия на услугата
+terms: Условия за ползване
 type.article: Нишка
 people: Хора
 12h: 12ч
@@ -47,7 +47,7 @@ body: Тяло
 user_badge_bot: Бот
 threads: Нишки
 about: Относно
-owner: Собственик
+owner: Притежател
 privacy_policy: Политика за поверителност
 toolbar.link: Връзка
 stats: Статистика
@@ -88,7 +88,8 @@ edit_my_profile: Редактиране на моя профил
 deleted: Изтрито от автора
 reputation_points: Репутационни точки
 share_on_fediverse: Споделяне във Федивселената
-federated_magazine_info: Тази общност е от федериран сървър и може да е непълна.
+federated_magazine_info: Тази общност е от федеративен сървър и може да е 
+  непълна.
 down_vote: Редуциране
 following: Последвани
 top: Топ
@@ -110,7 +111,7 @@ cards_view: Картиен изглед
 change_password: Промяна на паролата
 email_verify: Потвърди адреса на ел. поща
 copy_url_to_fediverse: Копиране на оригиналния адрес
-favourites: Фаворизирания
+favourites: Гласове нагоре
 blocked: Блокирани
 delete_account: Изтрий акаунта
 all: Всички
@@ -130,13 +131,13 @@ subscribers: Абонирани
 type.magazine: Общност
 show_more: Покажи повече
 down_votes: Редуцирания
-login_or_email: Потребителско име или адрес на ел. поща
+login_or_email: Потребителско име или ел. поща
 from_url: От url адрес
 add_new_link: Добавяне на нова връзка
 added: Добавено
 new_password_repeat: Потвърди новата парола
 related_magazines: Подобни общности
-appearance: Външен вид
+appearance: Изглед
 remember_me: Запомни ме
 description: Описание
 current_password: Текуща парола
@@ -204,15 +205,15 @@ messages: Съобщения
 boost: Подсилване
 empty: Празно
 change_language: Промяна на езика
-federated_user_info: Този профил е от федериран сървър и може да е непълен.
+federated_user_info: Този профил е от федеративен сървър и може да е непълен.
 pages: Страници
 magazines: Общности
 useful: Полезно
 chat_view: Чат изглед
 all_magazines: Всички общности
 enter_your_comment: Въведи своя коментар
-favourite: Фаворизиране
-oauth2.grant.user.notification.delete: Изчистване на известията.
+favourite: Любимо
+oauth2.grant.user.notification.delete: Изчистване на твоите известия.
 show_users_avatars: Показване на ликовете на потребителите
 magazine: Общност
 privacy: Поверителност
@@ -229,22 +230,22 @@ avatar: Лик
 follow: Последване
 toolbar.italic: Курсив
 more_from_domain: Още от домейна
-oauth2.grant.user.profile.edit: Редактиране на профила.
+oauth2.grant.user.profile.edit: Редактиране на твоя профил.
 approved: Одобрени
 check_email: Провери своята ел. поща
 already_have_account: Вече имате акаунт?
 votes: Гласувания
-send_message: Изпращане на съобщение
+send_message: Изпращане на лично съобщение
 message: Съобщение
 filter.fields.only_names: Само имена
-local_and_federated: Локални и федерирани
+local_and_federated: Местни и федеративни
 firstname: Собствено име
-tags: Тагове
+tags: Етикети
 reason: Причина
 edit: Редактиране
 oc: ОС
 position_bottom: Отдолу
-people_local: Локални
+people_local: Тукашни
 in: в
 rejected: Отхвърлени
 filters: Филтри
@@ -252,21 +253,21 @@ show_avatars_on_comments: Показване на ликовете в комен
 select_magazine: Избери общност
 to: до
 dont_have_account: Нямате акаунт?
-federated: Федерирани
+federated: Федеративни
 moderated: Модерирани
 collapse: Свиване
-local: Локални
+local: Местни
 go_to_search: Към търсене
 go_to_filters: Към филтрите
 general: Общи
 expand: Разтваряне
 go_to_content: Към съдържанието
-people_federated: Федерирани
+people_federated: Федеративни
 pending: В очакване
 reject: Отхвърляне
 is_adult: 18+ / Деликатно
-agree_terms: Съгласие с %terms_link_start%Общите условия%terms_link_end% и %policy_link_start%Политиката
-  за поверителност%policy_link_end%
+agree_terms: Съгласие с %terms_link_start%Общите условия%terms_link_end% и 
+  %policy_link_start%Политиката за поверителност%policy_link_end%
 note: Бележка
 comment_reply_position: Позиция на отговор на коментари
 badges: Значки
@@ -291,7 +292,7 @@ flash_post_edit_success: Публикацията е редактирана ус
 meta: Мета
 right: Отдясно
 flash_user_edit_password_error: Неуспешна промяна на паролата.
-oauth.consent.allow: Разрешаване
+oauth.consent.allow: Позволяване
 custom_css: Персонализиран CSS
 ignore_magazines_custom_css: Игнориране на персонализирания CSS на общностите
 flash_thread_edit_error: Неуспешно редактиране на нишката. Нещо се обърка.
@@ -300,13 +301,15 @@ flash_user_edit_email_error: Неуспешна промяна на адреса
 page_width_max: Макс
 page_width: Ширина на страницата
 flash_comment_new_success: Коментарът е създаден успешно.
-flash_user_settings_general_error: Неуспешно запазване на потребителските настройки.
+flash_user_settings_general_error: Неуспешно запазване на потребителските 
+  настройки.
 removed_comment_by: премахна коментар от
 left: Отляво
 restored_comment_by: възстанови коментар от
 flash_user_edit_profile_success: Настройките на профила са запазени успешно.
-subscription_sort: Сортиране
-flash_user_settings_general_success: Потребителските настройки са запазени успешно.
+subscription_sort: Подреждане
+flash_user_settings_general_success: Потребителските настройки са запазени 
+  успешно.
 flash_thread_delete_success: Нишката е изтрита успешно.
 restored_thread_by: възстанови нишка от
 contact_email: Ел. поща за контакт
@@ -327,7 +330,7 @@ toolbar.ordered_list: Подреден списък
 email_confirm_content: 'Готов ли си да активираш своя Mbin акаунт? Щракни върху връзката
   по-долу:'
 sidebar_position: Позиция на страничната лента
-image_alt: Алтернативен текст на изображение
+image_alt: Алтернативен текст на изображението
 filter.adult.show: Показване на деликатно съдържание
 filter.adult.only: Само деликатно съдържание
 email_confirm_header: Здравей! Потвърди своя адрес на ел. поща.
@@ -358,7 +361,8 @@ edited_post: Редактира публикация
 added_new_post: Добави нова публикация
 two_factor_authentication: Двуфакторно удостоверяване
 replied_to_your_comment: Отговори на твой коментар
-2fa.verify_authentication_code.label: Въведи двуфакторен код, за да потвърдиш настройката
+2fa.verify_authentication_code.label: Въведи двуфакторен код, за да потвърдиш 
+  настройката
 flash_magazine_edit_success: Общността е редактирана успешно.
 toolbar.image: Изображение
 new_email_repeat: Потвърди новия адрес на ел. поща
@@ -404,18 +408,19 @@ show_subscriptions: Показване на абонаментите
 abandoned: Изоставени
 show_profile_followings: Показване на следваните потребители
 notify_on_new_entry_reply: Коментари на всички нива в нишки, които съм създал
-notify_on_new_post_comment_reply: Отговори на мои коментари във всички публикации
+notify_on_new_post_comment_reply: Отговори на мои коментари във всички 
+  публикации
 notify_on_new_post_reply: Отговори на всички нива в публикации, които съм създал
 subscription_header: Абонаменти за общности
 action: Действие
-related_tags: Подобни тагове
+related_tags: Подобни етикети
 show_profile_subscriptions: Показване на абонаментите за общности
 notify_on_new_posts: Нови публикации във всяка общност, за която съм абониран
-add_mentions_entries: Добавяне на тагове за споменаване в нишките
-add_mentions_posts: Добавяне на тагове за споменаване в публикациите
+add_mentions_entries: Добавяне на етикети за споменаване в нишките
+add_mentions_posts: Добавяне на етикети за споменаване в публикациите
 notify_on_new_entry_comment_reply: Отговори на мои коментари във всички нишки
-notify_on_new_entry: Нови нишки (връзки или статии) във всяка общност, за която съм
-  абониран
+notify_on_new_entry: Нови нишки (връзки или статии) във всяка общност, за която 
+  съм абониран
 unblock: Отблокиране
 marked_for_deletion: Отбелязано за изтриване
 marked_for_deletion_at: Отбелязано за изтриване на %date%
@@ -424,3 +429,721 @@ account_deletion_title: Изтриване на акаунта
 edited: редактирано
 kbin_promo_title: Създай своя собствена инстанция
 kbin_promo_desc: '%link_start%Клонирай хранилището%link_end% и разработвай федивселената'
+remove_user_cover: Премахване на корицата
+remove_user_avatar: Премахване на лика
+hidden: Скрито
+edit_entry: Редактиране на нишката
+add_badge: Добавяне на значка
+moderation.report.approve_report_title: Одобряване на доклада
+moderate: Модериране
+viewing_one_signup_request: Разглеждаш само една заявка за регистрация от 
+  %username%
+federated_search_only_loggedin: Федеративното търсене е ограничено, ако не сте 
+  влезли
+federation_page_dead_description: Инстанции, до които не можахме да доставим 
+  поне 10 дейности подред и където последната успешна доставка и получаване са 
+  били преди повече от седмица
+account_deletion_button: Изтриване на акаунта
+email.delete.description: Следният потребител е поискал акаунтът му да бъде 
+  изтрит
+resend_account_activation_email: Изпращане отново на имейл за активиране на 
+  акаунта
+email_confirm_button_text: Потвърдете заявката си за промяна на паролата
+email_confirm_link_help: Алтернативно, можеш да копираш и поставиш следното в 
+  браузъра си
+email.delete.title: Заявка за изтриване на потребителски акаунт
+resend_account_activation_email_error: Възникна проблем при изпращането на тази 
+  заявка. Може да няма акаунт, свързан с този имейл, или може би вече е 
+  активиран.
+show_avatars_on_comments_help: Показване/скриване на потребителски ликове при 
+  преглед на коментари към единична нишка или публикация.
+magazine_theme_appearance_background_image: Персонализирано фоново изображение, 
+  което ще се прилага при преглед на съдържание в твоята общност.
+magazine_theme_appearance_icon: Персонализирана иконка за общността.
+filter_by_federation: Филтриране по статут на федерирането
+flash_thread_new_success: Нишката е създадена успешно и вече е видима за другите
+  потребители.
+mod_log_alert: ПРЕДУПРЕЖДЕНИЕ - Дневникът на модерирането може да съдържа 
+  неприятно или стресиращо съдържание, което е било премахнато от модераторите. 
+  Моля, бъди внимателен.
+from: от
+reset_check_email_desc: Ако вече съществува акаунт, свързан с твоя адрес на ел. 
+  поща, скоро трябва да получиш писмо, съдържащо връзка, която можеш да 
+  използваш за нулиране на паролата си. Тази връзка ще изтече след %expire%.
+enabled: Включено
+disabled: Изключено
+oauth.consent.title: OAuth2 формуляр за съгласие
+errors.server500.description: Съжаляваме, нещо се обърка от наша страна. Ако 
+  продължаваш да виждаш тази грешка, опитай да се свържеш с притежателя на 
+  инстанцията. Ако тази инстанция изобщо не работи, разгледай %link_start%други 
+  Mbin инстанции%link_end% междувременно, докато проблемът бъде разрешен.
+oauth.consent.app_has_permissions: вече може да извършва следните действия
+comment_reply_position_help: Показване на формата за отговор на коментар в 
+  горната или долната част на страницата. Когато е включено „безкрайно 
+  превъртане“, позицията винаги ще се показва в горната част.
+flash_post_pin_success: Публикацията е закачена успешно.
+moderation.report.approve_report_confirmation: Сигурни ли сте, че искате да 
+  одобрите този доклад?
+subject_reported_exists: Това съдържание вече е докладвано.
+moderation.report.reject_report_confirmation: Сигурни ли сте, че искате да 
+  отхвърлите този доклад?
+purge_content: Изчистване на съдържанието
+reset_check_email_desc2: Ако не получиш писмо, провери папката си за спам.
+flash_thread_unpin_success: Нишката е откачена успешно.
+flash_thread_pin_success: Нишката е закачена успешно.
+too_many_requests: Ограничението е превишено, моля, опитай отново по-късно.
+banned: Забрани те
+kbin_intro_desc: е децентрализирана платформа за агрегиране на съдържание и 
+  микроблогинг, която работи в мрежата на Федивселената.
+browsing_one_thread: Разглеждаш само една нишка в дискусията! Всички коментари 
+  са достъпни на страницата на публикацията.
+infinite_scroll_help: Автоматично зареждане на още съдържание при достигане на 
+  дъното на страницата.
+reload_to_apply: Презареди страницата, за да приложиш промените
+password_confirm_header: Потвърдете заявката си за промяна на паролата.
+oauth.consent.grant_permissions: Предоставяне на разрешения
+magazine_theme_appearance_custom_css: Персонализиран CSS, който ще се прилага 
+  при преглед на съдържание в твоята общност.
+delete_content: Изтриване на съдържанието
+remove_media: Премахване на мултимедията
+account_deletion_description: Акаунтът ти ще бъде изтрит след 30 дни, освен ако 
+  не избереш да го изтриеш незабавно. За да възстановиш акаунта си в рамките на 
+  30 дни, влез със същите потребителски данни или се свържи с администратор.
+notify_on_user_signup: Нови регистрации
+solarized_dark: Слънчево тъмна
+solarized_light: Слънчево светла
+default_theme_auto: Светла/Тъмна (Автоматично)
+solarized_auto: Слънчева (Автоматично)
+show_all: Покажи всичко
+flash_register_success: Добре дошъл! Твоят акаунт вече е регистриран. Още една 
+  стъпка - провери входящата си кутия за връзка за активиране, която ще оживи 
+  акаунта ти.
+flash_magazine_new_success: Общността е създадена успешно. Вече можеш да добавяш
+  ново съдържание или да разгледаш административния панел на общността.
+flash_mark_as_adult_success: Публикацията е отбелязана успешно като деликатна.
+flash_unmark_as_adult_success: Публикацията е демаркирана успешно като 
+  деликатна.
+set_magazines_bar: Лента с общности
+mentioned_you: Спомена те
+filter.fields.label: Избери кои полета да се търсят
+your_account_is_not_yet_approved: Твоят акаунт все още не е одобрен. Ще ти 
+  изпратим имейл веднага щом администраторите обработят заявката ти за 
+  регистрация.
+your_account_is_not_active: Твоят акаунт не е активиран. Моля, провери имейла си
+  за инструкции за активиране на акаунта или <a href="%link_target%">поискай нов
+  имейл за активиране на акаунта.</a>
+toolbar.spoiler: Спойлер
+federation_page_allowed_description: Известни инстанции, с които се федерираме
+federation_page_disallowed_description: Инстанции, с които не се федерираме
+resend_account_activation_email_success: Ако съществува акаунт, свързан с този 
+  имейл, ще изпратим нов имейл за активиране.
+resend_account_activation_email_description: Въведете адреса на ел. поща свързан
+  с вашия акаунт. Ще ви изпратим друг имейл за активиране.
+oauth.consent.to_allow_access: За да разрешиш този достъп, щракни върху бутона 
+  'Позволяване' по-долу
+flash_post_unpin_success: Публикацията е откачена успешно.
+federation_page_dead_title: Мъртви инстанции
+filter.adult.label: Избери дали да се показва деликатно съдържание
+account_deletion_immediate: Незабавно изтриване
+read_all: Прочети всичко
+oauth.consent.app_requesting_permissions: иска да извърши следните действия от 
+  твое име
+sort_by: Подреждане по
+filter_by_subscription: Филтриране по абонамент
+disconnected_magazine_info: Тази общност не получава обновления (последна 
+  активност преди %days% дни).
+always_disconnected_magazine_info: Тази общност не получава обновления.
+subscribe_for_updates: Абонирай се, за да започнеш да получаваш обновления.
+moderation.report.reject_report_title: Отхвърляне на доклада
+account_settings_changed: Настройките на акаунта ти са променени успешно. Ще 
+  трябва да влезеш отново.
+show_related_magazines: Показване на случайни общности
+show_related_posts: Показване на случайни публикации
+admin_users_inactive: Неактивни
+table_of_contents: Съдържание
+search_type_all: Всичко
+show_new_icons: Показване на нови иконки
+flash_email_was_sent: Имейлът е изпратен успешно.
+flash_email_failed_to_sent: Имейлът не можа да бъде изпратен.
+magazine_is_deleted: Общността е изтрита. Можеш да я <a 
+  href="%link_target%">възстановиш</a> в рамките на 30 дни.
+magazine_log_mod_added: добави модератор
+magazine_log_mod_removed: премахна модератор
+flash_thread_tag_banned_error: Нишката не можа да бъде създадена. Съдържанието 
+  не е позволено.
+show_new_icons_help: Показване на иконка за нова общност/потребител (на 30 дни 
+  или по-нова)
+notification_title_removed_thread: Нишка беше премахната
+notification_title_mention: Беше споменат
+notification_title_new_thread: Нова нишка
+flash_image_download_too_large_error: Изображението не можа да бъде създадено, 
+  твърде голямо е (макс. размер %bytes%)
+direct_message: Лично съобщение
+notification_title_new_post: Нова публикация
+2fa.setup_error: Грешка при включване на двуфакторното удостоверяване за акаунта
+flash_account_settings_changed: Настройките на акаунта ти бяха променени 
+  успешно. Ще трябва да влезеш отново.
+flash_comment_edit_success: Коментарът е обновен успешно.
+reported_user: Докладван потребител
+cake_day: Тортен ден
+notification_title_message: Ново лично съобщение
+magazine_posting_restricted_to_mods_warning: Само модераторите могат да създават
+  нишки в тази общност
+2fa.backup_codes.recommendation: Препоръчително е да запазиш копие от тях на 
+  сигурно място.
+sensitive_toggle: Превключване на видимостта на деликатно съдържание
+continue_with: Продължаване със
+own_content_reported_accepted: Доклад за твое съдържание беше приет.
+notification_title_new_comment: Нов коментар
+notification_title_removed_comment: Коментар беше премахнат
+notification_title_edited_comment: Коментар беше редактиран
+notification_title_edited_thread: Нишка беше редактирана
+notification_title_removed_post: Публикация беше премахната
+notification_title_edited_post: Публикация беше редактирана
+notification_title_new_signup: Нов потребител се регистрира
+notification_body_new_signup: Потребителят %u% се регистрира.
+notification_body2_new_signup_approval: Трябва да одобрите заявката, преди да 
+  могат да влязат
+show_related_entries: Показване на случайни нишки
+last_failed_contact: Последен неуспешен контакт
+flash_posting_restricted_error: Създаването на нишки е ограничено до модератори 
+  в тази общност, а ти не си такъв
+admin_users_active: Активни
+max_image_size: Максимален размер на файла
+bookmark_add_to_list: Добавяне на отметка към %list%
+bookmark_add_to_default_list: Добавяне на отметка към списъка по подразбиране
+bookmark_remove_from_list: Премахване на отметка от %list%
+bookmark_lists: Списъци с отметки
+bookmark_remove_all: Премахване на всички отметки
+bookmarks: Отметки
+bookmarks_list: Отметки в %list%
+bookmark_list_create: Създаване
+bookmark_list_create_placeholder: въведи име...
+bookmark_list_create_label: Име на списъка
+bookmarks_list_edit: Редактиране на списъка с отметки
+bookmark_list_edit: Редактиране
+new_users_need_approval: Новите потребители трябва да бъдат одобрени от 
+  администратор, преди да могат да влязат.
+search_type_post: Микроблогове
+search_type_entry: Нишки
+select_user: Избери потребител
+signup_requests: Заявки за регистрация
+application_text: Обяснете защо искате да се присъедините
+signup_requests_header: Заявки за регистрация
+signup_requests_paragraph: Тези потребители биха искали да се присъединят към 
+  вашия сървър. Те не могат да влязат, докато не одобрите заявката им за 
+  регистрация.
+comment_not_found: Коментарът не е намерен
+notification_title_new_reply: Нов отговор
+flash_thread_new_error: Нишката не можа да бъде създадена. Нещо се обърка.
+deleted_by_moderator: Нишката, публикацията или коментарът е изтрит от модератор
+show_active_users: Показване на активни потребители
+notification_title_new_report: Създаден е нов доклад
+server_software: Сървърен софтуер
+last_successful_receive: Последно успешно получаване
+version: Версия
+last_successful_deliver: Последна успешна доставка
+deleted_by_author: Нишката, публикацията или коментарът е изтрит от автора
+auto: Авто.
+last_updated: Последно обновено
+back: Назад
+reporting_user: Докладващ потребител
+own_report_rejected: Твоят доклад беше отхвърлен
+own_report_accepted: Твоят доклад беше приет
+someone: Някой
+and: и
+test_push_message: Здравей, свят!
+comment_default_sort: Подреждане по подразбиране на коментарите
+magazine_log_entry_pinned: закачи запис
+magazine_log_entry_unpinned: премахна закачен запис
+compact_view_help: Компактен изглед с по-малки полета, където мултимедията е 
+  преместена отдясно.
+show_thumbnails_help: Показване на миниатюрните изображения.
+show_users_avatars_help: Показване на изображението на потребителския лик.
+image_lightbox_in_list_help: Когато е отметнато, щракването върху миниатюрата 
+  показва модален прозорец с изображение. Когато не е отметнато, щракването 
+  върху миниатюрата ще отвори нишката.
+show_magazines_icons_help: Показване на иконката на общността.
+front_default_sort: Подреждане по подразбиране на началната страница
+2fa.backup-create.help: Можеш да създадеш нови резервни кодове за 
+  удостоверяване; това ще направи съществуващите кодове невалидни.
+image_lightbox_in_list: Миниатюрите на нишките се отварят на цял екран
+2fa.backup-create.label: Създаване на нови резервни кодове за удостоверяване
+test_push_notifications_button: Тестване на известията
+register_push_notifications_button: Регистриране за известия
+bookmark_list_make_default: Задаване по подразбиране
+ownership_requests: Заявки за притежание
+request_magazine_ownership: Заявете притежание на общността
+unregister_push_notifications_button: Премахване на насочени известия
+manually_approves_followers: Ръчно одобрява последователи
+created: Създаден
+mark_as_adult: Отбелязване като деликатно
+unmark_as_adult: Демаркиране като деликатно
+show_magazine_domains: Показване на домейните на общностите
+show_user_domains: Показване на домейните на потребителите
+show_top_bar: Показване на горната лента
+sticky_navbar: Залепена навигационна лента
+magazine_panel: Панел на общността
+admin_panel: Админ панел
+registrations_enabled: Регистрирането е включено
+registration_disabled: Регистрирането е изключено
+pinned: Закачено
+federation_enabled: Федерирането е включено
+flash_magazine_theme_changed_success: Изгледът на общността е обновен успешно.
+flash_magazine_theme_changed_error: Неуспешно обновяване на изгледа на 
+  общността.
+new_user_description: Този потребител е нов (активен от по-малко от %days% дни)
+new_magazine_description: Тази общност е нова (активна от по-малко от %days% 
+  дни)
+magazine_posting_restricted_to_mods: Ограничаване на създаването на нишки до 
+  модератори
+sidebars_same_side: Страничните ленти от една и съща страна
+remove_following: Премахване на следваните
+moderator_requests: Заявки за модератор
+banned_instances: Забранени инстанции
+filter_labels: Етикети на филтрите
+purge_magazine: Изчистване на общността
+remove_subscriptions: Премахване на абонаментите
+purge_account: Изчистване на акаунта
+cancel_request: Отказване на заявката
+change_downvotes_mode: Промяна на режима на редуциране
+tag: Етикет
+eng: АНГЛ
+oauth2.grant.moderate.magazine_admin.delete: Изтриване на някоя от притежаваните
+  от теб общности.
+oauth2.grant.moderate.magazine_admin.moderators: Добавяне или премахване на 
+  модератори на някоя от притежаваните от теб общности.
+oauth2.grant.moderate.magazine_admin.stats: Преглед на съдържанието, гласуването
+  и статистиката на притежаваните от теб общности.
+oauth2.grant.entry.edit: Редактиране на твоите съществуващи нишки.
+oauth2.grant.entry.report: Докладване на всяка нишка.
+oauth2.grant.entry_comment.create: Създаване на нови коментари в нишки.
+oauth2.grant.entry_comment.vote: Гласуване нагоре, подсилване или гласуване 
+  надолу за всеки коментар в нишка.
+oauth2.grant.magazine.block: Блокиране или отблокиране на общности и преглед на 
+  общностите, които си блокирал.
+oauth2.grant.user.bookmark.add: Добавяне на отметки
+oauth2.grant.user.bookmark.remove: Премахване на отметки
+oauth2.grant.user.bookmark_list.read: Четене на твоите списъци с отметки
+oauth2.grant.user.bookmark_list.edit: Редактиране на твоите списъци с отметки
+oauth2.grant.domain.subscribe: Абониране или отписване от домейни и преглед на 
+  домейните, за които си абониран.
+oauth2.grant.moderate.entry_comment.trash: Изтриване или възстановяване на 
+  коментари в нишки в модерираните от теб общности.
+oauth2.grant.admin.entry_comment.purge: Пълно изтриване на всеки коментар в 
+  нишка от твоята инстанция.
+oauth2.grant.admin.magazine.move_entry: Преместване на нишки между общности в 
+  твоята инстанция.
+oauth2.grant.admin.user.delete: Изтриване на потребители от твоята инстанция.
+oauth.client_not_granted_message_read_permission: Това приложение не е получило 
+  разрешение да чете твоите съобщения.
+auto_preview_help: Показване на прегледите на мултимедията (снимка, видео) в 
+  по-голям размер под съдържанието.
+your_account_has_been_banned: Вашият акаунт е забранен
+oauth2.grant.report.general: Докладване на нишки, публикации или коментари.
+oauth2.grant.post.edit: Редактиране на твоите съществуващи публикации.
+schedule_delete_account: Планиране на изтриване
+oauth2.grant.domain.all: Абониране за или блокиране на домейни и преглед на 
+  домейните, за които си абониран или блокирал.
+oauth2.grant.moderate.entry_comment.set_adult: Отбелязване на коментари в нишки 
+  като деликатни в модерираните от теб общности.
+oauth2.grant.moderate.post.all: Модериране на публикации в модерираните от теб 
+  общности.
+oauth2.grant.moderate.magazine.all: Управление на забрани, доклади и преглед на 
+  изтрити елементи в модерираните от теб общности.
+oauth2.grant.admin.user.all: Забраняване, потвърждаване или пълно изтриване на 
+  потребители в твоята инстанция.
+oauth2.grant.admin.magazine.all: Преместване на нишки между или пълно изтриване 
+  на общности в твоята инстанция.
+oauth2.grant.admin.magazine.purge: Пълно изтриване на общности в твоята 
+  инстанция.
+oauth.client_identifier.invalid: Невалиден OAuth клиентски идентификатор!
+moderation.report.ban_user_description: Искаш ли да забраниш потребителя 
+  (%username%), който е създал това съдържание, от тази общност?
+report_subject: Предмет
+bans: Забрани
+oauth2.grant.moderate.magazine.reports.all: Управление на докладите в 
+  модерираните от теб общности.
+oauth2.grant.moderate.magazine.reports.read: Четене на докладите в модерираните 
+  от теб общности.
+oauth2.grant.admin.all: Извършване на всяко административно действие върху 
+  твоята инстанция.
+oauth2.grant.delete.general: Изтриване на твоите нишки, публикации или 
+  коментари.
+oauth2.grant.admin.entry.purge: Пълно изтриване на всяка нишка от твоята 
+  инстанция.
+oauth2.grant.block.general: Блокиране или отблокиране на всяка общност, домейн 
+  или потребител и преглед на общностите, домейните и потребителите, които си 
+  блокирал.
+oauth2.grant.entry.delete: Изтриване на твоите съществуващи нишки.
+oauth2.grant.entry_comment.all: Създаване, редактиране или изтриване на твоите 
+  коментари в нишки и гласуване, подсилване или докладване на всеки коментар в 
+  нишка.
+oauth2.grant.magazine.all: Абониране за или блокиране на общности и преглед на 
+  общностите, за които си абониран или блокирал.
+oauth2.grant.post_comment.all: Създаване, редактиране или изтриване на твоите 
+  коментари към публикации и гласуване, подсилване или докладване на всеки 
+  коментар към публикация.
+oauth2.grant.user.bookmark_list: Четене, редактиране и изтриване на твоите 
+  списъци с отметки
+magazine_panel_tags_info: Попълни само ако искаш съдържание от федивселената да 
+  бъде включено в тази общност въз основа на етикети
+return: Връщане
+bot_body_content: "Добре дошъл в Mbin Агента! Този агент играе ключова роля във включването
+  на ActivityPub функционалността в Mbin. Той гарантира, че Mbin може да комуникира
+  и да се федерира с други инстанции във федивселената.\n\nActivityPub е отворен стандартен
+  протокол, който позволява на децентрализираните социални мрежови платформи да комуникират
+  и да си взаимодействат. Той позволява на потребителите на различни инстанции (сървъри)
+  да следват, взаимодействат и споделят съдържание във федеративната социална мрежа,
+  известна като федивселената. Той предоставя стандартизиран начин за потребителите
+  да публикуват съдържание, да следват други потребители и да участват в социални
+  взаимодействия като харесване, споделяне и коментиране на нишки или публикации."
+suspend_account: Спиране на акаунта
+oauth2.grant.user.bookmark: Добавяне и премахване на отметки
+oauth2.grant.user.bookmark_list.delete: Изтриване на твоите списъци с отметки
+oauth2.grant.user.profile.all: Четене и редактиране на твоя профил.
+oauth2.grant.user.message.all: Четене на твоите съобщения и изпращане на 
+  съобщения до други потребители.
+oauth2.grant.admin.instance.settings.all: Преглед или обновяване на настройките 
+  на твоята инстанция.
+oauth2.grant.admin.user.purge: Пълно изтриване на потребители от твоята 
+  инстанция.
+user_suspend_desc: Спирането на акаунта ти скрива съдържанието ти в инстанцията,
+  но не го премахва за постоянно и можеш да го възстановиш по всяко време.
+sso_registrations_enabled: SSO регистрациите са включени
+restrict_magazine_creation: Ограничаване на създаването на местни общности до 
+  администратори и глобални модератори
+by: от
+answered: отговорено
+open_signup_request: Отваряне на заявката за регистрация
+downvotes_mode: Режим на редуцирането
+delete_account_desc: Изтриване на акаунта, включително отговорите на други 
+  потребители в създадените нишки, публикации и коментари.
+2fa.user_active_tfa.title: Потребителят има активно 2FA
+account_suspended: Акаунтът е спрян.
+2fa.add: Добавяне към моя акаунт
+2fa.qr_code_link.title: Посещаването на тази връзка може да позволи на твоята 
+  платформа да регистрира това двуфакторно удостоверяване
+ban_expired: Забраната изтече
+unban: Разрешаване
+ban_hashtag_btn: Забраняване на хаштага
+ban: Забраняване
+add_ban: Добавяне на забрана
+expired_at: Изтекла на
+unban_account: Разрешаване на акаунта
+captcha_enabled: Captcha е включено
+header_logo: Лого на заглавката
+mercure_enabled: Mercure е включено
+oauth2.grant.moderate.magazine.ban.delete: Разрешаване на потребители в 
+  модерираните от теб общности.
+oauth2.grant.moderate.magazine.list: Четене на списъка с модерираните от теб 
+  общности.
+private_instance: Принуждаване на потребителите да влязат, преди да имат достъп 
+  до каквото и да е съдържание
+oauth2.grant.moderate.magazine.trash.read: Преглед на изтритото съдържание в 
+  модерираните от теб общности.
+oauth2.grant.moderate.magazine_admin.all: Създаване, редактиране или изтриване 
+  на притежаваните от теб общности.
+oauth2.grant.moderate.magazine.reports.action: Приемане или отхвърляне на 
+  доклади в модерираните от теб общности.
+oauth2.grant.moderate.magazine_admin.update: Редактиране на правила, описание, 
+  състояние на деликатността или иконката на някоя от притежаваните от теб 
+  общности.
+oauth2.grant.write.general: Създаване или редактиране на твоите нишки, 
+  публикации или коментари.
+oauth2.grant.entry.create: Създаване на нови нишки.
+oauth2.grant.entry.vote: Гласуване нагоре, подсилване или гласуване надолу за 
+  всяка нишка.
+oauth2.grant.post.create: Създаване на нови публикации.
+oauth2.grant.user.profile.read: Четене на твоя профил.
+oauth2.grant.user.all: Четене и редактиране на твоя профил, съобщения или 
+  известия; Четене и редактиране на разрешенията, които си предоставил на други 
+  приложения; следване или блокиране на други потребители; преглед на списъци с 
+  потребители, които следваш или блокираш.
+oauth2.grant.user.notification.all: Четене и изчистване на твоите известия.
+oauth2.grant.user.notification.read: Четене на твоите известия, включително 
+  известия за съобщения.
+oauth2.grant.user.oauth_clients.edit: Редактиране на разрешенията, които си 
+  предоставил на други OAuth2 приложения.
+oauth2.grant.user.follow: Последване или отследване на потребители и четене на 
+  списъка с потребители, които следваш.
+oauth2.grant.user.block: Блокиране или отблокиране на потребители и четене на 
+  списъка с потребители, които блокираш.
+oauth2.grant.moderate.entry_comment.all: Модериране на коментари в нишки в 
+  модерираните от теб общности.
+oauth2.grant.moderate.entry.set_adult: Отбелязване на нишки като деликатни в 
+  модерираните от теб общности.
+oauth2.grant.moderate.entry.trash: Изтриване или възстановяване на нишки в 
+  модерираните от теб общности.
+oauth2.grant.admin.federation.read: Преглед на списъка с дефедерирани инстанции.
+oauth2.grant.admin.federation.all: Преглед и обновяване на текущо дефедерираните
+  инстанции.
+oauth2.grant.admin.instance.information.edit: Обновяване на страниците 
+  „Относно“, „Често задавани въпроси“, „За контакт“, „Условия за ползване“ и 
+  „Политика за поверителност“ на твоята инстанция.
+remove_schedule_delete_account: Премахване на планираното изтриване
+schedule_delete_account_desc: Планиране на изтриването на този акаунт след 30 
+  дни. Това ще скрие потребителя и неговото съдържание, както и ще попречи на 
+  потребителя да влезе.
+remove_schedule_delete_account_desc: Премахване на планираното изтриване. Цялото
+  съдържание ще бъде отново достъпно и потребителят ще може да влезе.
+2fa.qr_code_img.alt: QR код, който позволява настройката на двуфакторно 
+  удостоверяване за твоя акаунт
+perm: За постоянно
+oauth2.grant.admin.instance.stats: Преглед на статистиката на твоята инстанция.
+notification_title_ban: Получихте забрана
+oauth2.grant.moderate.entry.change_language: Промяна на езика на нишките в 
+  модерираните от теб общности.
+he_banned: забрани
+he_unbanned: разреши
+set_magazines_bar_desc: добави имената на общностите след запетаята
+set_magazines_bar_empty_desc: ако полето е празно, активните общности се 
+  показват на лентата.
+ban_hashtag_description: Забраната на хаштаг ще спре създаването на публикации с
+  този хаштаг, както и ще скрие съществуващите публикации с този хаштаг.
+unban_hashtag_btn: Разрешаване на хаштага
+unban_hashtag_description: Разрешаването на хаштаг ще позволи отново създаването
+  на публикации с този хаштаг. Съществуващите публикации с този хаштаг вече няма
+  да са скрити.
+ban_account: Забраняване на акаунта
+tokyo_night: Нощ в Токио
+filter.origin.label: Избери произход
+sticky_navbar_help: Навигационната лента ще залепне за горната част на 
+  страницата, когато превърташ надолу.
+federation_page_enabled: Страницата за федерирането е включена
+oauth2.grant.moderate.magazine_admin.create: Създаване на нови общности.
+restrict_oauth_clients: Ограничаване на създаването на OAuth2 клиенти до 
+  администратори
+oauth2.grant.moderate.magazine_admin.edit_theme: Редактиране на персонализирания
+  CSS на някоя от притежаваните от теб общности.
+oauth2.grant.entry_comment.edit: Редактиране на твоите съществуващи коментари в 
+  нишки.
+oauth2.grant.entry_comment.report: Докладване на всеки коментар в нишка.
+oauth2.grant.domain.block: Блокиране или отблокиране на домейни и преглед на 
+  домейните, които си блокирал.
+oauth2.grant.post.vote: Гласуване нагоре, подсилване или гласуване надолу за 
+  всяка публикация.
+oauth2.grant.post.report: Докладване на всяка публикация.
+oauth2.grant.post_comment.create: Създаване на нови коментари към публикации.
+oauth2.grant.post_comment.edit: Редактиране на твоите съществуващи коментари към
+  публикации.
+oauth2.grant.post_comment.vote: Гласуване нагоре, подсилване или гласуване 
+  надолу за всеки коментар към публикация.
+oauth2.grant.post_comment.delete: Изтриване на твоите съществуващи коментари към
+  публикации.
+oauth2.grant.user.message.read: Четене на твоите съобщения.
+oauth2.grant.user.oauth_clients.read: Четене на разрешенията, които си 
+  предоставил на други OAuth2 приложения.
+oauth2.grant.moderate.all: Извършване на всяко действие по модериране, което 
+  имаш разрешение да извършиш в модерираните от теб общности.
+oauth2.grant.moderate.entry.all: Модериране на нишки в модерираните от теб 
+  общности.
+oauth2.grant.user.message.create: Изпращане на съобщения до други потребители.
+oauth2.grant.moderate.entry.pin: Закачане на нишки в горната част на 
+  модерираните от теб общности.
+oauth2.grant.moderate.entry_comment.change_language: Промяна на езика на 
+  коментарите в нишки в модерираните от теб общности.
+oauth2.grant.moderate.post.change_language: Промяна на езика на публикациите в 
+  модерираните от теб общности.
+oauth2.grant.moderate.post_comment.change_language: Промяна на езика на 
+  коментарите към публикации в модерираните от теб общности.
+oauth2.grant.moderate.post_comment.trash: Изтриване или възстановяване на 
+  коментари към публикации в модерираните от теб общности.
+oauth2.grant.admin.user.ban: Забраняване или разрешаване на потребители от 
+  твоята инстанция.
+oauth2.grant.admin.user.verify: Потвърждаване на потребители в твоята инстанция.
+oauth2.grant.admin.instance.all: Преглед и обновяване на настройките или 
+  информацията за инстанцията.
+oauth2.grant.admin.instance.settings.edit: Обновяване на настройките на твоята 
+  инстанция.
+oauth2.grant.admin.oauth_clients.all: Преглед или анулиране на OAuth2 клиенти, 
+  които съществуват в твоята инстанция.
+oauth2.grant.admin.federation.update: Добавяне или премахване на инстанции към 
+  или от списъка с дефедерирани инстанции.
+oauth2.grant.admin.instance.settings.read: Преглед на настройките на твоята 
+  инстанция.
+oauth2.grant.admin.oauth_clients.revoke: Анулиране на достъпа до OAuth2 клиенти 
+  в твоята инстанция.
+oauth2.grant.admin.oauth_clients.read: Преглед на OAuth2 клиентите, които 
+  съществуват в твоята инстанция, и тяхната статистика за използване.
+moderation.report.ban_user_title: Забраняване на потребителя
+oauth2.grant.moderate.post.pin: Закачане на публикации в горната част на 
+  модерираните от теб общности.
+purge_content_desc: Пълно изчистване на съдържанието на потребителя, включително
+  изтриване на отговорите на други потребители в създадените нишки, публикации и
+  коментари.
+delete_content_desc: Изтриване на съдържанието на потребителя, оставяйки 
+  отговорите на други потребители в създадените нишки, публикации и коментари.
+2fa.available_apps: Използвай приложение за двуфакторно удостоверяване като 
+  %google_authenticator%, %aegis% (Android) или %raivo% (iOS), за да сканираш QR
+  кода.
+subscription_sidebar_pop_out_right: Преместване в отделна странична лента 
+  отдясно
+sso_show_first: Показване първо на SSO на страниците за вход и регистрация
+report_accepted: Доклад беше приет
+open_report: Отваряне на доклада
+admin_users_suspended: Спрени
+admin_users_banned: Забранени
+user_verify: Активиране на акаунта
+count: Брой
+bookmark_list_is_default: Списък по подразбиране
+is_default: По подразбиране
+bookmark_list_selected_list: Избран списък
+email_application_rejected_body: Благодарим ти за интереса, но със съжаление те 
+  информираме, че заявката ти за регистрация е отхвърлена.
+email_verification_pending: Трябва да потвърдиш своя адрес на ел. поща, преди да
+  можеш да влезеш.
+email_application_pending: Акаунтът ти изисква одобрение от администратор, преди
+  да можеш да влезеш.
+email_application_approved_title: Заявката ти за регистрация е одобрена
+email_application_approved_body: Твоята заявка за регистрация беше одобрена от 
+  администратора на сървъра. Вече можеш да влезеш в сървъра на <a 
+  href="%link%">%siteName%</a>.
+email_application_rejected_title: Заявката ти за регистрация е отхвърлена
+flash_application_info: Администратор трябва да одобри акаунта ти, преди да 
+  можеш да влезеш. Ще получиш имейл, след като заявката ти за регистрация бъде 
+  обработена.
+oauth2.grant.moderate.post.set_adult: Отбелязване на публикации като деликатни в
+  модерираните от теб общности.
+oauth2.grant.moderate.post.trash: Изтриване или възстановяване на публикации в 
+  модерираните от теб общности.
+oauth2.grant.moderate.post_comment.all: Модериране на коментари към публикации в
+  модерираните от теб общности.
+oauth2.grant.moderate.post_comment.set_adult: Отбелязване на коментари към 
+  публикации като деликатни в модерираните от теб общности.
+account_is_suspended: Потребителският акаунт е спрян.
+account_unbanned: Акаунтът е разрешен.
+sso_registrations_enabled.error: Новите регистрации на акаунти с мениджъри на 
+  самоличност на трети страни в момента са изключени.
+reported: докладва
+sso_only_mode: Ограничаване на влизането и регистрацията само до SSO методи
+Your account has been banned: Вашият акаунт е забранен.
+oauth2.grant.moderate.magazine_admin.badges: Създаване или премахване на значки 
+  от притежаваните от теб общности.
+oauth2.grant.moderate.magazine_admin.tags: Създаване или премахване на етикети 
+  от притежаваните от теб общности.
+oauth2.grant.entry.all: Създаване, редактиране или изтриване на твоите нишки и 
+  гласуване, подсилване или докладване на всяка нишка.
+oauth2.grant.magazine.subscribe: Абониране или отписване от общности и преглед 
+  на общностите, за които си абониран.
+oauth2.grant.post.all: Създаване, редактиране или изтриване на твоите 
+  микроблогове и гласуване, подсилване или докладване на всеки микроблог.
+oauth2.grant.post.delete: Изтриване на твоите съществуващи публикации.
+oauth2.grant.post_comment.report: Докладване на всеки коментар към публикация.
+oauth2.grant.user.oauth_clients.all: Четене и редактиране на разрешенията, които
+  си предоставил на други OAuth2 приложения.
+subscription_sidebar_pop_out_left: Преместване в отделна странична лента отляво
+unsuspend_account: Възстановяване на акаунта
+account_unsuspended: Акаунтът е възстановен.
+account_banned: Акаунтът е забранен.
+related_entry: Подобно
+2fa.remove: Премахване на 2FA
+oauth2.grant.entry_comment.delete: Изтриване на твоите съществуващи коментари в 
+  нишки.
+oauth2.grant.read.general: Четене на цялото съдържание, до което имаш достъп.
+oauth2.grant.vote.general: Гласуване нагоре, гласуване надолу или подсилване на 
+  нишки, публикации или коментари.
+oauth2.grant.subscribe.general: Абониране или следване на всяка общност, домейн 
+  или потребител и преглед на общностите, домейните и потребителите, за които си
+  абониран.
+oauth2.grant.moderate.magazine.ban.create: Забраняване на потребители в 
+  модерираните от теб общности.
+oauth2.grant.admin.post.purge: Пълно изтриване на всяка публикация от твоята 
+  инстанция.
+oauth2.grant.admin.post_comment.purge: Пълно изтриване на всеки коментар към 
+  публикация от твоята инстанция.
+oauth2.grant.moderate.magazine.ban.all: Управление на забранените потребители в 
+  модерираните от теб общности.
+oauth2.grant.moderate.magazine.ban.read: Преглед на забранените потребители в 
+  модерираните от теб общности.
+2fa.backup_codes.help: Можеш да използваш тези кодове, когато нямаш своето 
+  устройство или приложение за двуфакторно удостоверяване. <strong>Те няма да ти
+  бъдат показани отново</strong> и ще можеш да използваш всеки от тях 
+  <strong>само веднъж</strong>.
+subscription_sidebar_pop_in: Преместване на абонаментите във вградения панел
+2fa.manual_code_hint: Ако не можете да сканирате QR кода, въведете тайната ръчно
+toolbar.emoji: Емоджи
+type_search_term_url_handle: Въведи термин за търсене, уеб адрес или профил
+search_type_magazine: Общности
+search_type_user: Потребители
+search_type_actors: Общности + Потребители
+search_type_content: Нишки + Микроблогове
+user_instance_defederated_info: Инстанцията на този потребител е дефедерирана.
+magazine_instance_defederated_info: Инстанцията на тази общност е дефедерирана. 
+  Следователно общността няма да получава обновления.
+flash_thread_instance_banned: Инстанцията на тази общност е забранена.
+show_rich_mention: Разширени споменавания
+show_rich_mention_magazine: Разширени споменавания на общностите
+type_search_magazine: Ограничаване на търсенето до общност...
+type_search_user: Ограничаване на търсенето до автор...
+btn_allow: Позволяване
+allow_instance: Позволяване на инстанцията
+allowed_instances: Позволени инстанции
+nobody: Никой
+modlog_type_entry_deleted: Нишка е изтрита
+modlog_type_entry_restored: Нишка е възстановена
+modlog_type_entry_comment_deleted: Нишков коментар е изтрит
+modlog_type_entry_comment_restored: Нишков коментар е възстановен
+modlog_type_entry_pinned: Нишка е закачена
+modlog_type_entry_unpinned: Нишка е откачена
+crosspost: Препубликуване
+banner: Банер
+magazine_theme_appearance_banner: Персонализиран банер за общността. Показва се 
+  над всички нишки и трябва да е в широк формат (5:1 или 1500px * 300px).
+flash_thread_ref_image_not_found: Изображението, посочено чрез „imageHash“, не 
+  може да бъде намерено.
+show_rich_mention_help: Изобразяване на потребителски компонент при споменаване 
+  на потребител. Това ще включва показваното им име и профилна снимка.
+show_rich_mention_magazine_help: Изобразяване на компонент на общността при 
+  споменаване. Това ще включва показваното име и иконка.
+show_rich_ap_link: Богати AP връзки
+attitude: Отношение
+modlog_type_post_deleted: Микроблог е изтрит
+modlog_type_post_restored: Микроблог е възстановен
+modlog_type_post_comment_deleted: Микроблогов отговор е изтрит
+modlog_type_post_comment_restored: Микроблогов отговор е възстановен
+modlog_type_ban: Потребител получи забрана от общност
+modlog_type_moderator_add: Добавен е модератор на общност
+modlog_type_moderator_remove: Премахнат е модератор на общност
+show_rich_ap_link_help: Изобразяване на вграден компонент, когато е свързано 
+  друго съдържание на ActivityPub.
+everyone: Всеки
+followers_only: Само последователи
+delete_magazine_icon: Изтриване на иконката на общността
+flash_magazine_theme_icon_detached_success: Иконката на общността е изтрита 
+  успешно
+delete_magazine_banner: Изтриване на банера на общността
+flash_magazine_theme_banner_detached_success: Банерът на общността е изтрит 
+  успешно
+their_user_follows: Брой потребители от тяхната инстанция, следващи потребители 
+  от нашата инстанция
+our_user_follows: Брой потребители от нашата инстанция, следващи потребители от 
+  тяхната инстанция
+their_magazine_subscriptions: Брой потребители от тяхната инстанция, абонирани 
+  за общности от нашата инстанция
+our_magazine_subscriptions: Брой потребители от нашата инстанция, абонирани за 
+  общности от тяхната инстанция
+btn_deny: Отказване
+ban_instance: Забраняване на инстанцията
+default_content_threads: Нишки
+default_content_microblog: Микроблог
+combined: Обединено
+direct_message_setting_label: Кой може да ви изпраща лично съобщение
+default_content_default: По подразбиране (Нишки)
+front_default_content: Изглед по подразбиране на началната страница
+federation_uses_allowlist: Използване на списък с разрешени инстанции за 
+  федериране
+defederating_instance: Дефедериране от инстанция %i
+confirm_defederation: Потвърдете дефедериране
+flash_error_defederation_must_confirm: Трябва да потвърдите дефедерирането
+federation_page_use_allowlist_help: Ако се използва списък с разрешени 
+  инстанции, тази инстанция ще се федерира само с изрично разрешените инстанции.
+  В противен случай тази инстанция ще се федерира с всички инстанции, с 
+  изключение на тези, които са забранени.
+default_content_combined: Нишки + Микроблог
+sidebar_sections_random_local_only: Ограничаване на секциите в страничната лента
+  „Случайни нишки/публикации“ само до местни
+sidebar_sections_users_local_only: Ограничаване на секцията в страничната лента 
+  „Активни хора“ само до местни
+random_local_only_performance_warning: Включването на „Случайни (само местни)“ 
+  може да повлияе на производителността на SQL.

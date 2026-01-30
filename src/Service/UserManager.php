@@ -8,26 +8,33 @@ use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
+use App\Enums\EApplicationStatus;
+use App\Event\Instance\InstanceBanEvent;
+use App\Event\User\UserApplicationApprovedEvent;
+use App\Event\User\UserApplicationRejectedEvent;
 use App\Event\User\UserBlockEvent;
 use App\Event\User\UserEditedEvent;
 use App\Event\User\UserFollowEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\UserFactory;
+use App\Message\ClearDeletedUserMessage;
 use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
+use App\Message\Notification\SentNewSignupNotificationMessage;
 use App\Message\UserCreatedMessage;
 use App\Message\UserUpdatedMessage;
+use App\MessageHandler\ClearDeletedUserHandler;
 use App\Repository\ImageRepository;
 use App\Repository\ReputationRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserFollowRequestRepository;
 use App\Repository\UserRepository;
-use App\Scheduler\Messages\ClearDeletedUserMessage;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -57,7 +64,10 @@ readonly class UserManager
         private ImageRepository $imageRepository,
         private Security $security,
         private CacheInterface $cache,
-        private ReputationRepository $reputationRepository
+        private ReputationRepository $reputationRepository,
+        private SettingsManager $settingsManager,
+        private EventDispatcherInterface $eventDispatcher,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -142,7 +152,7 @@ readonly class UserManager
         $this->dispatcher->dispatch(new UserFollowEvent($follower, $following, true));
     }
 
-    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true): User
+    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true, ?bool $preApprove = null): User
     {
         if ($rateLimit) {
             $limiter = $this->userRegisterLimiter->create($dto->ip);
@@ -150,21 +160,36 @@ readonly class UserManager
                 throw new TooManyRequestsHttpException();
             }
         }
+        $status = EApplicationStatus::Approved;
+        if (true !== $preApprove && $this->settingsManager->getNewUsersNeedApproval()) {
+            $status = EApplicationStatus::Pending;
+        }
 
-        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId);
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId, applicationStatus: $status, applicationText: $dto->applicationText);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {
             $user = KeysGenerator::generate($user);
+            // default new local users to be discoverable
+            $user->apDiscoverable = $dto->discoverable ?? true;
+            // default new local users to be indexable
+            $user->apIndexable = true;
         }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
+        if (!$dto->apId) {
+            try {
+                $this->bus->dispatch(new SentNewSignupNotificationMessage($user->getId()));
+            } catch (\Throwable $e) {
+            }
+        }
+
         if ($verifyUserEmail) {
             try {
                 $this->bus->dispatch(new UserCreatedMessage($user->getId()));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             }
         }
 
@@ -242,9 +267,9 @@ readonly class UserManager
         $this->bus->dispatch(new DeleteUserMessage($user->getId()));
     }
 
-    public function createDto(User $user): UserDto
+    public function createDto(User $user, ?int $reputationPoints = null): UserDto
     {
-        return $this->factory->createDto($user);
+        return $this->factory->createDto($user, $reputationPoints);
     }
 
     public function verify(Request $request, User $user): void
@@ -273,24 +298,29 @@ readonly class UserManager
         $this->requestStack->getSession()->invalidate();
     }
 
-    public function ban(User $user): void
+    public function ban(User $user, ?User $bannedBy, ?string $reason): void
     {
         if ($user->isAdmin() || $user->isModerator()) {
             throw new UserCannotBeBanned();
         }
 
         $user->isBanned = true;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
-    public function unban(User $user): void
+    public function unban(User $user, ?User $bannedBy, ?string $reason): void
     {
         $user->isBanned = false;
+        $user->banReason = $reason;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        $this->eventDispatcher->dispatch(new InstanceBanEvent($user, $bannedBy, $reason));
     }
 
     public function detachAvatar(User $user): void
@@ -417,6 +447,30 @@ readonly class UserManager
             ->setParameter(':datetime', $dateTime)
             ->getQuery()
             ->getResult();
+    }
+
+    public function rejectUserApplication(User $user): void
+    {
+        if (EApplicationStatus::Rejected === $user->getApplicationStatus()) {
+            return;
+        }
+        $user->setApplicationStatus(EApplicationStatus::Rejected);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $this->logger->debug('Rejecting application for {u}', ['u' => $user->username]);
+        $this->eventDispatcher->dispatch(new UserApplicationRejectedEvent($user));
+    }
+
+    public function approveUserApplication(User $user): void
+    {
+        if (EApplicationStatus::Approved === $user->getApplicationStatus()) {
+            return;
+        }
+        $user->setApplicationStatus(EApplicationStatus::Approved);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $this->logger->debug('Approving application for {u}', ['u' => $user->username]);
+        $this->eventDispatcher->dispatch(new UserApplicationApprovedEvent($user));
     }
 
     public function getAllInboxesOfInteractions(User $user): array

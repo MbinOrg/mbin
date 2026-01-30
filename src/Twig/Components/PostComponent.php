@@ -11,7 +11,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsTwigComponent('post')]
-final class PostComponent
+class PostComponent
 {
     public Post $post;
     public bool $isSingle = false;
@@ -22,7 +22,7 @@ final class PostComponent
     public bool $canSeeTrash = false;
 
     public function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 

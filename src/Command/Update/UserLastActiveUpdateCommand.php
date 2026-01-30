@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command\Update;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,6 +25,7 @@ class UserLastActiveUpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var UserRepository $repo */
         $repo = $this->entityManager->getRepository(User::class);
         $hideAdult = false;
 

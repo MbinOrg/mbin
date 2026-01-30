@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -17,7 +17,7 @@ class UserFixtures extends BaseFixture
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
         private readonly UserRepository $userRepository,
     ) {
@@ -68,7 +68,10 @@ class UserFixtures extends BaseFixture
         }
     }
 
-    private function provideRandomUsers($count = 1): iterable
+    /**
+     * @return array<string, string>[]
+     */
+    private function provideRandomUsers(int $count = 1): iterable
     {
         if (!$this->userRepository->findOneByUsername('demo')) {
             yield [
@@ -81,8 +84,8 @@ class UserFixtures extends BaseFixture
 
         for ($i = 0; $i <= $count; ++$i) {
             yield [
-                'email' => $this->faker->email,
-                'username' => str_replace('.', '_', $this->faker->userName),
+                'email' => $this->faker->email(),
+                'username' => str_replace('.', '_', $this->faker->userName()),
                 'password' => 'secret',
                 'type' => 'Person',
             ];

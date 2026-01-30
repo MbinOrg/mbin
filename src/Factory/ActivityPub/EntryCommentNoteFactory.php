@@ -8,7 +8,7 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\EntryComment;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ContextsProvider;
 use App\Service\ActivityPub\Wrapper\ImageWrapper;
 use App\Service\ActivityPub\Wrapper\MentionsWrapper;
@@ -28,9 +28,9 @@ class EntryCommentNoteFactory
         private readonly MentionsWrapper $mentionsWrapper,
         private readonly MentionManager $mentionManager,
         private readonly EntryPageFactory $pageFactory,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
-        private readonly MarkdownConverter $markdownConverter
+        private readonly MarkdownConverter $markdownConverter,
     ) {
     }
 
@@ -58,10 +58,11 @@ class EntryCommentNoteFactory
                 ActivityPubActivityInterface::PUBLIC_URL,
             ],
             'cc' => $cc,
+            'audience' => $this->groupFactory->getActivityPubId($comment->magazine),
             'sensitive' => $comment->entry->isAdult(),
             'content' => $this->markdownConverter->convertToHtml(
                 $comment->body,
-                [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
+                context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub]
             ),
             'mediaType' => 'text/html',
             'source' => $comment->body ? [
@@ -87,7 +88,10 @@ class EntryCommentNoteFactory
         $mentions = [];
         foreach ($comment->mentions ?? [] as $mention) {
             try {
-                $mentions[] = $this->activityPubManager->webfinger($mention)->getProfileId();
+                $profileId = $this->activityPubManager->findActorOrCreate($mention)?->apProfileId;
+                if ($profileId) {
+                    $mentions[] = $profileId;
+                }
             } catch (\Exception $e) {
                 continue;
             }

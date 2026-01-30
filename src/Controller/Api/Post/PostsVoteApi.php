@@ -8,9 +8,10 @@ use App\DTO\PostResponseDto;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\Post;
 use App\Factory\PostFactory;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +83,8 @@ class PostsVoteApi extends PostsBaseApi
         int $choice,
         VoteManager $manager,
         PostFactory $factory,
-        RateLimiterFactory $apiVoteLimiter
+        RateLimiterFactory $apiVoteLimiter,
+        SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 
@@ -90,11 +92,15 @@ class PostsVoteApi extends PostsBaseApi
             throw new BadRequestHttpException('Vote must be either -1, 0, or 1');
         }
 
+        if (VotableInterface::VOTE_DOWN === $choice) {
+            throw new BadRequestHttpException('Downvotes for posts are disabled!');
+        }
+
         // Rate limit handled above
         $manager->vote($choice, $post, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfPost($post)),
+            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

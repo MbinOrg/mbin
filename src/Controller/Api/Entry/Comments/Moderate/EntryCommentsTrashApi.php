@@ -10,8 +10,8 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
 use App\Service\EntryCommentManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +82,7 @@ class EntryCommentsTrashApi extends EntriesBaseApi
         // Force response to have all fields visible
         $visibility = $comment->visibility;
         $comment->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
-        $response = $this->serializeComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfEntryComment($comment))->jsonSerialize();
+        $response = $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment))->jsonSerialize();
         $response['visibility'] = $visibility;
 
         return new JsonResponse(
@@ -159,7 +159,7 @@ class EntryCommentsTrashApi extends EntriesBaseApi
         }
 
         return new JsonResponse(
-            $this->serializeComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfEntryComment($comment)),
+            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

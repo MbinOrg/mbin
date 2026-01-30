@@ -16,10 +16,13 @@ use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
 use App\Entity\MagazineLogBan;
+use App\Entity\MagazineLogModeratorAdd;
+use App\Entity\MagazineLogModeratorRemove;
 use App\Entity\Moderator;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\MagazineSubscriptionRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,6 +34,7 @@ class MagazineFactory
         private ModeratorFactory $moderatorFactory,
         private UserFactory $userFactory,
         private MagazineRepository $magazineRepository,
+        private MagazineSubscriptionRepository $magazineSubscriptionRepository,
         private Security $security,
     ) {
     }
@@ -54,6 +58,7 @@ class MagazineFactory
         $dto = new MagazineDto();
         $dto->setOwner($magazine->getOwner());
         $dto->icon = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
+        $dto->banner = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
         $dto->name = $magazine->name;
         $dto->title = $magazine->title;
         $dto->description = $magazine->description;
@@ -65,6 +70,8 @@ class MagazineFactory
         $dto->postCommentCount = $magazine->postCommentCount;
         $dto->isAdult = $magazine->isAdult;
         $dto->isPostingRestrictedToMods = $magazine->postingRestrictedToMods;
+        $dto->discoverable = $magazine->apDiscoverable;
+        $dto->indexable = $magazine->apIndexable;
         $dto->tags = $magazine->tags;
         $dto->badges = $magazine->badges;
         $dto->moderators = $magazine->moderators;
@@ -78,6 +85,9 @@ class MagazineFactory
         // Only return the user's vote if permission to control voting has been given
         $dto->isUserSubscribed = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:SUBSCRIBE') ? $magazine->isSubscribed($currentUser) : null;
         $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_MAGAZINE:BLOCK') ? $currentUser->isBlockedMagazine($magazine) : null;
+
+        $subs = $this->magazineSubscriptionRepository->findMagazineSubscribers(1, $magazine)->count();
+        $dto->localSubscribers = $subs;
 
         $instance = $this->instanceRepository->getInstanceOfMagazine($magazine);
         if ($instance) {
@@ -110,21 +120,27 @@ class MagazineFactory
     public function createLogDto(MagazineLog $log): MagazineLogResponseDto
     {
         $magazine = $this->createSmallDto($log->magazine);
-        $moderator = $this->userFactory->createSmallDto($log->user);
-        $createdAt = $log->createdAt;
         $type = $log->getType();
-        $subject = null;
-        if ('log_ban' === $type) {
-            /**
-             * @var MagazineLogBan $log
-             */
-            $subject = $this->createBanDto($log->ban);
+        $createdAt = $log->createdAt;
+
+        if ($log instanceof MagazineLogModeratorAdd || $log instanceof MagazineLogModeratorRemove) {
+            $moderator = $this->userFactory->createSmallDto($log->actingUser);
+            $moderatorSubject = $this->userFactory->createSmallDto($log->user);
+
+            return MagazineLogResponseDto::createModeratorAddRemove($magazine, $moderator, $createdAt, $type, $moderatorSubject);
+        } elseif ($log instanceof MagazineLogBan) {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+            $banSubject = $this->createBanDto($log->ban);
             if ('unban' === $log->meta) {
                 $type = 'log_unban';
             }
-        }
 
-        return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type, $subject);
+            return MagazineLogResponseDto::createBanUnban($magazine, $moderator, $createdAt, $type, $banSubject);
+        } else {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+
+            return MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type);
+        }
     }
 
     public function createResponseDto(MagazineDto|Magazine $magazine): MagazineResponseDto
@@ -139,6 +155,7 @@ class MagazineFactory
         return MagazineResponseDto::create(
             $dto->getOwner() ? $this->moderatorFactory->createDtoWithUser($dto->getOwner(), $magazine) : null,
             $dto->icon,
+            $dto->banner,
             $dto->name,
             $dto->title,
             $dto->description,
@@ -160,6 +177,9 @@ class MagazineFactory
             $dto->serverSoftware,
             $dto->serverSoftwareVersion,
             $dto->isPostingRestrictedToMods,
+            $dto->localSubscribers,
+            $dto->discoverable,
+            $dto->indexable,
         );
     }
 

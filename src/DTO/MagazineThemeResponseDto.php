@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -16,13 +16,15 @@ class MagazineThemeResponseDto implements \JsonSerializable
 
     public ?string $customCss = null;
     public ?ImageDto $icon = null;
+    public ?ImageDto $banner;
 
-    public static function create(MagazineDto $magazine, ?string $customCss = null, ?ImageDto $icon = null): self
+    public static function create(MagazineDto $magazine, ?string $customCss = null, ?ImageDto $icon = null, ?ImageDto $banner = null): self
     {
         $dto = new MagazineThemeResponseDto();
         $dto->magazine = new MagazineSmallResponseDto($magazine);
         $dto->customCss = $customCss;
         $dto->icon = $icon;
+        $dto->banner = $banner;
 
         return $dto;
     }
@@ -33,6 +35,7 @@ class MagazineThemeResponseDto implements \JsonSerializable
             'magazine' => $this->magazine->jsonSerialize(),
             'customCss' => $this->customCss,
             'icon' => $this->icon?->jsonSerialize(),
+            'banner' => $this->banner?->jsonSerialize(),
         ];
     }
 }

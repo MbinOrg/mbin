@@ -10,6 +10,7 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Repository\EntryCommentRepository;
 use App\Service\NotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -18,10 +19,11 @@ class SentEntryCommentCreatedNotificationHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly EntryCommentRepository $repository,
-        private readonly NotificationManager $manager
+        private readonly NotificationManager $notificationManager,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(EntryCommentCreatedNotificationMessage $message)
@@ -40,6 +42,6 @@ class SentEntryCommentCreatedNotificationHandler extends MbinMessageHandler
             throw new UnrecoverableMessageHandlingException('Comment not found');
         }
 
-        $this->manager->sendCreated($comment);
+        $this->notificationManager->sendCreated($comment);
     }
 }

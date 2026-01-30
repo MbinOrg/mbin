@@ -7,7 +7,7 @@ namespace App\Controller\Api\Magazine;
 use App\DTO\MagazineThemeResponseDto;
 use App\Entity\Magazine;
 use App\Factory\MagazineFactory;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,7 +60,8 @@ class MagazineRetrieveThemeApi extends MagazineBaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $imageDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
-        $dto = MagazineThemeResponseDto::create($magazineFactory->createDto($magazine), $magazine->customCss, $imageDto);
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+        $dto = MagazineThemeResponseDto::create($magazineFactory->createDto($magazine), $magazine->customCss, $imageDto, $bannerDto);
 
         return new JsonResponse(
             $dto,

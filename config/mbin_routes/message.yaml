@@ -1,0 +1,16 @@
+messages_front:
+  controller: App\Controller\Message\MessageThreadListController
+  path: /profile/messages
+  methods: [ GET ]
+
+messages_single:
+  controller: App\Controller\Message\MessageThreadController
+  path: /profile/messages/{id}
+  methods: [ GET, POST ]
+  requirements:
+    id: \d+
+
+messages_create:
+  controller: App\Controller\Message\MessageCreateThreadController
+  path: /u/{username}/message
+  methods: [ GET, POST ]

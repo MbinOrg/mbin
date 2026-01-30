@@ -26,7 +26,7 @@ class MagazineLogBan extends MagazineLog
 
         $this->ban = $ban;
 
-        if ($ban->expiredAt < new \DateTime('+10 seconds')) {
+        if (null !== $ban->expiredAt && $ban->expiredAt < new \DateTime()) {
             $this->meta = 'unban';
         }
     }

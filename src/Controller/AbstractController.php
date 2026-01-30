@@ -36,7 +36,7 @@ abstract class AbstractController extends BaseAbstractController
     protected function validateCsrf(string $id, $token): void
     {
         if (!\is_string($token) || !$this->isCsrfTokenValid($id, $token)) {
-            throw new BadRequestHttpException('Invalid CSRF token');
+            throw new BadRequestHttpException("Invalid CSRF token, with ID: $id.");
         }
     }
 
@@ -62,7 +62,7 @@ abstract class AbstractController extends BaseAbstractController
     protected function getJsonFormResponse(
         FormInterface $form,
         string $template,
-        ?array $variables = null
+        ?array $variables = null,
     ): JsonResponse {
         return new JsonResponse(
             [

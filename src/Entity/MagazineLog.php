@@ -20,32 +20,65 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: NotificationRepository::class)]
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'log_type', type: 'text')]
-#[DiscriminatorMap([
-    'entry_deleted' => MagazineLogEntryDeleted::class,
-    'entry_restored' => MagazineLogEntryRestored::class,
-    'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
-    'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
-    'entry_pinned' => MagazineLogEntryPinned::class,
-    'entry_unpinned' => MagazineLogEntryUnpinned::class,
-    'post_deleted' => MagazineLogPostDeleted::class,
-    'post_restored' => MagazineLogPostRestored::class,
-    'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
-    'post_comment_restored' => MagazineLogPostCommentRestored::class,
-    'ban' => MagazineLogBan::class,
-    'moderator_add' => MagazineLogModeratorAdd::class,
-    'moderator_remove' => MagazineLogModeratorRemove::class,
-])]
+#[DiscriminatorMap(self::DISCRIMINATOR_MAP)]
 abstract class MagazineLog
 {
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
+    public const DISCRIMINATOR_MAP = [
+        'entry_deleted' => MagazineLogEntryDeleted::class,
+        'entry_restored' => MagazineLogEntryRestored::class,
+        'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
+        'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
+        'entry_pinned' => MagazineLogEntryPinned::class,
+        'entry_unpinned' => MagazineLogEntryUnpinned::class,
+        'post_deleted' => MagazineLogPostDeleted::class,
+        'post_restored' => MagazineLogPostRestored::class,
+        'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
+        'post_comment_restored' => MagazineLogPostCommentRestored::class,
+        'ban' => MagazineLogBan::class,
+        'moderator_add' => MagazineLogModeratorAdd::class,
+        'moderator_remove' => MagazineLogModeratorRemove::class,
+        'entry_locked' => MagazineLogEntryLocked::class,
+        'entry_unlocked' => MagazineLogEntryUnlocked::class,
+        'post_locked' => MagazineLogPostLocked::class,
+        'post_unlocked' => MagazineLogPostUnlocked::class,
+    ];
+
+    public const CHOICES = [
+        'entry_deleted',
+        'entry_restored',
+        'entry_comment_deleted',
+        'entry_comment_restored',
+        'entry_pinned',
+        'entry_unpinned',
+        'post_deleted',
+        'post_restored',
+        'post_comment_deleted',
+        'post_comment_restored',
+        'ban',
+        'moderator_add',
+        'moderator_remove',
+        'entry_locked',
+        'entry_unlocked',
+        'post_locked',
+        'post_unlocked',
+    ];
+
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'logs')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Magazine $magazine;
     #[ManyToOne(targetEntity: User::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    /**
+     * Usually the acting moderator. There are 2 exceptions MagazineLogModeratorAdd and MagazineLogModeratorRemove;
+     * in that case this is the moderator being added or removed, because the acting moderator can be null.
+     *
+     * @see MagazineLogModeratorAdd
+     * @see MagazineLogModeratorRemove
+     */
     public User $user;
     #[Id]
     #[GeneratedValue]

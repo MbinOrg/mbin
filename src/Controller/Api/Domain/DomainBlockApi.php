@@ -8,8 +8,8 @@ use App\DTO\DomainDto;
 use App\Entity\Domain;
 use App\Factory\DomainFactory;
 use App\Service\DomainManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,7 +62,7 @@ class DomainBlockApi extends DomainBaseApi
         Domain $domain,
         DomainManager $manager,
         DomainFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -118,7 +118,7 @@ class DomainBlockApi extends DomainBaseApi
         Domain $domain,
         DomainManager $manager,
         DomainFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

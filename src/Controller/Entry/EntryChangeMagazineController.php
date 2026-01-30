@@ -18,7 +18,7 @@ class EntryChangeMagazineController extends AbstractController
 {
     public function __construct(
         private readonly EntryManager $manager,
-        private readonly MagazineRepository $repository
+        private readonly MagazineRepository $repository,
     ) {
     }
 
@@ -28,9 +28,9 @@ class EntryChangeMagazineController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('change_magazine', $request->request->get('token'));
+        $this->validateCsrf('change_magazine', $request->getPayload()->get('token'));
 
         $newMagazine = $this->repository->findOneByName($request->get('change_magazine')['new_magazine']);
 

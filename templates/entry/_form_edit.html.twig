@@ -10,6 +10,7 @@
             </div>
         {% endset %}
         {{ form_label(form.url, label, {'label_html': true}) }}
+        {{ form_errors(form.url) }}
         {{ form_widget(form.url, {attr: {'data-action': 'entry-link-create#fetchLink', 'data-entry-link-create-target': 'url'}}) }}
     </div>
 
@@ -20,7 +21,7 @@
             'data-action' : 'input-length#updateDisplay',
             'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_TITLE_LENGTH')
         }}) }}
-    {{ component('editor_toolbar', {id: 'entry_article_body'}) }}
+    {{ component('editor_toolbar', {id: 'entry_edit_body'}) }}
     {{ form_row(form.body, {
         label: false, attr: {
             placeholder: 'body',
@@ -31,7 +32,7 @@
         }}) }}
     {{ form_row(form.magazine, {label: false}) }}
     {{ form_row(form.tags, {label: 'tags'}) }}
-    {{ form_row(form.badges, {label: 'badges'}) }}
+    {# form_row(form.badges, {label: 'badges'}) #}
 <div class="row params">
     {{ form_row(form.isAdult, {label: 'is_adult', row_attr: {class: 'checkbox'}}) }}
     {{ form_row(form.isOc, {label: 'oc', row_attr: {class: 'checkbox'}}) }}

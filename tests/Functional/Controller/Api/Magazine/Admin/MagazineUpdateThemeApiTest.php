@@ -5,87 +5,84 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
 use App\DTO\ModeratorDto;
-use App\Service\MagazineManager;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineUpdateThemeApiTest extends WebTestCase
 {
-    public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon'];
+    public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon', 'banner'];
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
     }
 
     public function testApiCannotUpdateMagazineThemeAnonymous(): void
     {
-        $client = self::createClient();
         $magazine = $this->getMagazineByName('test');
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme");
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme");
 
         self::assertResponseStatusCodeSame(401);
     }
 
     public function testApiModCannotUpdateMagazineTheme(): void
     {
-        $client = self::createClient();
         $moderator = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($moderator);
+        $this->client->loginUser($moderator);
         $owner = $this->getUserByUsername('JaneDoe');
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test', $owner);
-        $magazineManager = $this->getService(MagazineManager::class);
+        $magazineManager = $this->magazineManager;
         $dto = new ModeratorDto($magazine);
         $dto->user = $moderator;
+        $dto->addedBy = $owner;
         $magazineManager->addModerator($dto);
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:theme');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCannotUpdateMagazineThemeWithoutScope(): void
     {
-        $client = self::createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('POST', "/api/moderate/magazine/{$magazine->getId()}/theme", server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseStatusCodeSame(403);
     }
 
     public function testApiCanUpdateMagazineThemeWithCustomCss(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:theme');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         $customCss = 'a {background: red;}';
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/moderate/magazine/{$magazine->getId()}/theme",
             parameters: [
                 'customCss' => $customCss,
@@ -95,7 +92,7 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);
@@ -104,6 +101,7 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         self::assertStringContainsString($customCss, $jsonData['customCss']);
         self::assertIsArray($jsonData['icon']);
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['icon']);
+        self::assertNull($jsonData['banner']);
         self::assertSame(96, $jsonData['icon']['width']);
         self::assertSame(96, $jsonData['icon']['height']);
         self::assertEquals('a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png', $jsonData['icon']['filePath']);
@@ -111,23 +109,26 @@ class MagazineUpdateThemeApiTest extends WebTestCase
 
     public function testApiCanUpdateMagazineThemeWithBackgroundImage(): void
     {
-        $client = self::createClient();
         $user = $this->getUserByUsername('JohnDoe');
-        $client->loginUser($user);
+        $this->client->loginUser($user);
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
 
-        $codes = self::getAuthorizationCodeTokenResponse($client, scopes: 'read write moderate:magazine_admin:theme');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+
+        $imageManager = $this->imageManager;
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $backgroundImage = 'shape1';
 
-        $client->request(
+        $this->client->request(
             'POST', "/api/moderate/magazine/{$magazine->getId()}/theme",
             parameters: [
                 'backgroundImage' => $backgroundImage,
@@ -137,7 +138,7 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        $jsonData = self::getJsonResponse($client);
+        $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);
@@ -148,6 +149,42 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['icon']);
         self::assertSame(96, $jsonData['icon']['width']);
         self::assertSame(96, $jsonData['icon']['height']);
-        self::assertEquals(self::KIBBY_PNG_URL_RESULT, $jsonData['icon']['filePath']);
+        self::assertEquals($expectedPath, $jsonData['icon']['filePath']);
+    }
+
+    public function testCanUpdateMagazineBanner(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+        self::createOAuth2AuthCodeClient();
+
+        $magazine = $this->getMagazineByName('test');
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
+
+        $this->client->request(
+            'PUT', "/api/moderate/magazine/{$magazine->getId()}/banner",
+            files: ['uploadImage' => $image],
+            server: ['HTTP_AUTHORIZATION' => $token]
+        );
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::MAGAZINE_THEME_RESPONSE_KEYS, $jsonData);
+        self::assertIsArray($jsonData['magazine']);
+        self::assertArrayKeysMatch(WebTestCase::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['magazine']);
+        self::assertNull($jsonData['icon']);
+        self::assertArrayKeysMatch(self::IMAGE_KEYS, $jsonData['banner']);
+        self::assertSame(96, $jsonData['banner']['width']);
+        self::assertSame(96, $jsonData['banner']['height']);
+        self::assertEquals('a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png', $jsonData['banner']['filePath']);
     }
 }

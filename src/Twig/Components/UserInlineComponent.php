@@ -12,4 +12,6 @@ final class UserInlineComponent
 {
     public User $user;
     public bool $showAvatar = true;
+    public bool $showNewIcon = true;
+    public bool $fullName;
 }

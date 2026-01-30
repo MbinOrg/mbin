@@ -8,8 +8,8 @@ use App\DTO\UserResponseDto;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Service\UserManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -68,7 +68,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -133,7 +133,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter
+        RateLimiterFactory $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

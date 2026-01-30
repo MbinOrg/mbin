@@ -22,9 +22,18 @@ class EnvironmentFactory
     ) {
     }
 
-    public function createEnvironment(RenderTarget $renderTarget): EnvironmentInterface
-    {
-        $this->config['kbin'] = ['render_target' => $renderTarget];
+    public function createEnvironment(
+        RenderTarget $renderTarget,
+        bool $richMention,
+        bool $richMagazineMention,
+        bool $richAPLink,
+    ): EnvironmentInterface {
+        $this->config['kbin'] = [
+            'render_target' => $renderTarget,
+            'richMention' => $richMention,
+            'richMagazineMention' => $richMagazineMention,
+            'richAPLink' => $richAPLink,
+        ];
 
         $env = new Environment($this->config);
 

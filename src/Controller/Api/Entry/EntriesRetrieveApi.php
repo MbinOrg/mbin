@@ -7,19 +7,22 @@ namespace App\Controller\Api\Entry;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
+use App\Entity\User;
 use App\Event\Entry\EntryHasBeenSeenEvent;
 use App\Factory\EntryFactory;
 use App\PageView\EntryPageView;
+use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -82,7 +85,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         $dto = $factory->createDto($entry);
 
         return new JsonResponse(
-            $this->serializeEntry($dto, $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($dto, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }
@@ -172,22 +175,37 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false),
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     public function collection(
-        EntryRepository $repository,
+        ContentRepository $repository,
         EntryFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
+        $criteria = new EntryPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $this->handleLanguageCriteria($criteria);
+        $criteria->content = Criteria::CONTENT_THREADS;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
@@ -196,7 +214,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -276,24 +294,39 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
     public function subscribed(
-        EntryRepository $repository,
+        ContentRepository $repository,
         EntryFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
+        $criteria = new EntryPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->subscribed = true;
+        $criteria->content = Criteria::CONTENT_THREADS;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
@@ -302,7 +335,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -382,24 +415,39 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['moderate:entry'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:ENTRY')]
     public function moderated(
-        EntryRepository $repository,
+        ContentRepository $repository,
         EntryFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_NEW);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
+        $criteria = new EntryPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->moderated = true;
+        $criteria->content = Criteria::CONTENT_THREADS;
+
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
 
         $entries = $repository->findByCriteria($criteria);
 
@@ -408,7 +456,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -488,33 +536,48 @@ class EntriesRetrieveApi extends EntriesBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'integer', default: EntryRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
     #[OA\Tag(name: 'entry')]
     #[Security(name: 'oauth2', scopes: ['entry:vote'])]
     #[IsGranted('ROLE_OAUTH2_ENTRY:VOTE')]
     public function favourited(
-        EntryRepository $repository,
+        ContentRepository $repository,
         EntryFactory $factory,
-        RequestStack $request,
         RateLimiterFactory $apiReadLimiter,
+        SymfonySecurity $security,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
-        $criteria = new EntryPageView((int) $request->getCurrentRequest()->get('p', 1));
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
-        $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
-        );
+        $criteria = new EntryPageView($p ?? 1, $security);
+        $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
+        $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
+        $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->favourite = true;
 
+        $user = $security->getUser();
+        if ($user instanceof User) {
+            $criteria->fetchCachedItems($repository, $user);
+        }
+
         $entries = $repository->findByCriteria($criteria);
+        $criteria->content = Criteria::CONTENT_THREADS;
 
         $dtos = [];
         foreach ($entries->getCurrentPageResults() as $value) {
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfEntry($value)));
+                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }

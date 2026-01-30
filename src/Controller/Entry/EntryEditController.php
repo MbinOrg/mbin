@@ -36,7 +36,7 @@ class EntryEditController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
-        Request $request
+        Request $request,
     ): Response {
         $dto = $this->manager->createDto($entry);
         $maxBytes = $this->settingsManager->getMaxImageByteString();
@@ -64,7 +64,7 @@ class EntryEditController extends AbstractController
         }
 
         return $this->render(
-            'entry/edit_entry.html.twig',
+            $this->getTemplateName(edit: true),
             [
                 'magazine' => $magazine,
                 'entry' => $entry,

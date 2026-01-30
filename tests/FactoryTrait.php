@@ -27,37 +27,26 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\Site;
 use App\Entity\User;
-use App\Factory\ImageFactory;
-use App\Factory\MagazineFactory;
-use App\Repository\ImageRepository;
-use App\Repository\NotificationRepository;
-use App\Repository\SiteRepository;
-use App\Service\EntryCommentManager;
-use App\Service\EntryManager;
-use App\Service\FavouriteManager;
-use App\Service\MagazineManager;
-use App\Service\MessageManager;
-use App\Service\PostCommentManager;
-use App\Service\PostManager;
 use App\Service\UserManager;
-use App\Service\VoteManager;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use function PHPUnit\Framework\assertNotNull;
 
 trait FactoryTrait
 {
     public function createVote(int $choice, VotableInterface $subject, User $user): void
     {
         if (VotableInterface::VOTE_UP === $choice) {
-            $favManager = $this->getService(FavouriteManager::class);
+            $favManager = $this->favouriteManager;
             $favManager->toggle($user, $subject);
         } else {
-            $voteManager = $this->getService(VoteManager::class);
+            $voteManager = $this->voteManager;
             $voteManager->vote($choice, $subject, $user);
         }
     }
@@ -95,10 +84,8 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null): User
+    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null, $addImage = true): User
     {
-        $manager = $this->getService(EntityManagerInterface::class);
-
         $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type);
 
         $user->isVerified = $active;
@@ -111,11 +98,15 @@ trait FactoryTrait
         $user->showProfileFollowings = true;
         $user->showProfileSubscriptions = true;
         $user->hideAdult = $hideAdult;
+        $user->apDiscoverable = true;
         $user->about = $about;
-        $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
+        $user->apIndexable = true;
+        if ($addImage) {
+            $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
+        }
 
-        $manager->persist($user);
-        $manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $this->users->add($user);
 
@@ -133,7 +124,7 @@ trait FactoryTrait
 
     public function createMessageThread(User $to, User $from, string $content): MessageThread
     {
-        $messageManager = $this->getService(MessageManager::class);
+        $messageManager = $this->messageManager;
         $dto = new MessageDto();
         $dto->body = $content;
 
@@ -185,7 +176,7 @@ trait FactoryTrait
         $userDto->email = 'test@kbin.test';
         $userDto->plainPassword = hash('sha512', random_bytes(32));
         $userDto->isBot = true;
-        $user = $userManager->create($userDto, false, false);
+        $user = $userManager->create($userDto, false, false, true);
         $client->setUser($user);
 
         $client->setDescription('An OAuth2 client for testing purposes');
@@ -232,23 +223,24 @@ trait FactoryTrait
         ];
     }
 
-    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true): User
+    protected function getUserByUsername(string $username, bool $isAdmin = false, bool $hideAdult = true, ?string $about = null, bool $active = true, bool $isModerator = false, bool $addImage = true, ?string $email = null): User
     {
-        $user = $this->users->filter(
-            static function (User $user) use ($username) {
-                return $user->getUsername() === $username;
-            }
-        )->first();
+        $user = $this->users->filter(fn (User $user) => $user->getUsername() === $username)->first();
 
-        $user = $user ?: $this->createUser($username, hideAdult: $hideAdult, about: $about, active: $active);
+        if ($user) {
+            return $user;
+        }
+
+        $user = $this->createUser($username, email: $email, active: $active, hideAdult: $hideAdult, about: $about, addImage: $addImage);
 
         if ($isAdmin) {
             $user->roles = ['ROLE_ADMIN'];
-            $manager = $this->getService(EntityManagerInterface::class);
-
-            $manager->persist($user);
-            $manager->flush();
+        } elseif ($isModerator) {
+            $user->roles = ['ROLE_MODERATOR'];
         }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return $user;
     }
@@ -256,7 +248,7 @@ trait FactoryTrait
     protected function setAdmin(User $user): void
     {
         $user->roles = ['ROLE_ADMIN'];
-        $manager = $this->getService(EntityManagerInterface::class);
+        $manager = $this->entityManager;
 
         $manager->persist($user);
         $manager->flush();
@@ -269,10 +261,8 @@ trait FactoryTrait
         ?string $title = null,
         ?User $user = null,
         bool $isAdult = false,
-        ?string $description = null
+        ?string $description = null,
     ): Magazine {
-        $manager = $this->getService(MagazineManager::class);
-
         $dto = new MagazineDto();
         $dto->name = $name;
         $dto->title = $title ?? 'Magazine title';
@@ -284,8 +274,11 @@ trait FactoryTrait
             $dto->apId = $name;
             $dto->apProfileId = "https://{$host}/m/{$name}";
         }
+        $newMod = $user ?? $this->getUserByUsername('JohnDoe');
+        $this->entityManager->persist($newMod);
 
-        $magazine = $manager->create($dto, $user ?? $this->getUserByUsername('JohnDoe'));
+        $magazine = $this->magazineManager->create($dto, $newMod);
+        $this->entityManager->persist($magazine);
 
         $this->magazines->add($magazine);
 
@@ -302,15 +295,15 @@ trait FactoryTrait
 
         $entry = $this->getEntryByTitle('test', null, 'test', $magazine, $actor);
         $comment = $this->createEntryComment('test', $entry, $regular);
-        $this->getService(EntryCommentManager::class)->delete($owner, $comment);
-        $this->getService(EntryManager::class)->delete($owner, $entry);
+        $this->entryCommentManager->delete($owner, $comment);
+        $this->entryManager->delete($owner, $entry);
 
         $post = $this->createPost('test', $magazine, $actor);
         $comment = $this->createPostComment('test', $post, $regular);
-        $this->getService(PostCommentManager::class)->delete($owner, $comment);
-        $this->getService(PostManager::class)->delete($owner, $post);
+        $this->postCommentManager->delete($owner, $comment);
+        $this->postManager->delete($owner, $post);
 
-        $this->getService(MagazineManager::class)->ban(
+        $this->magazineManager->ban(
             $magazine,
             $actor,
             $owner,
@@ -320,22 +313,14 @@ trait FactoryTrait
 
     protected function getMagazineByName(string $name, ?User $user = null, bool $isAdult = false): Magazine
     {
-        $magazine = $this->magazines->filter(
-            static function (Magazine $magazine) use ($name) {
-                return $magazine->name === $name;
-            }
-        )->first();
+        $magazine = $this->magazines->filter(fn (Magazine $magazine) => $magazine->name === $name)->first();
 
-        return $magazine ?: $this->createMagazine($name, null, $user, $isAdult);
+        return $magazine ?: $this->createMagazine($name, $name, $user, $isAdult);
     }
 
     protected function getMagazineByNameNoRSAKey(string $name, ?User $user = null, bool $isAdult = false): Magazine
     {
-        $magazine = $this->magazines->filter(
-            static function (Magazine $magazine) use ($name) {
-                return $magazine->name === $name;
-            }
-        )->first();
+        $magazine = $this->magazines->filter(fn (Magazine $magazine) => $magazine->name === $name)->first();
 
         if ($magazine) {
             return $magazine;
@@ -352,13 +337,14 @@ trait FactoryTrait
             $dto->apProfileId = "https://{$host}/m/{$name}";
         }
 
-        $factory = $this->getService(MagazineFactory::class);
+        $factory = $this->magazineFactory;
         $magazine = $factory->createFromDto($dto, $user ?? $this->getUserByUsername('JohnDoe'));
         $magazine->apId = $dto->apId;
         $magazine->apProfileId = $dto->apProfileId;
+        $magazine->apDiscoverable = true;
 
         if (!$dto->apId) {
-            $urlGenerator = $this->getService(UrlGeneratorInterface::class);
+            $urlGenerator = $this->urlGenerator;
             $magazine->publicKey = 'fakepublic';
             $magazine->privateKey = 'fakeprivate';
             $magazine->apProfileId = $urlGenerator->generate(
@@ -368,11 +354,11 @@ trait FactoryTrait
             );
         }
 
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $entityManager = $this->entityManager;
         $entityManager->persist($magazine);
         $entityManager->flush();
 
-        $manager = $this->getService(MagazineManager::class);
+        $manager = $this->magazineManager;
         $manager->subscribe($magazine, $user ?? $this->getUserByUsername('JohnDoe'));
 
         $this->magazines->add($magazine);
@@ -389,11 +375,7 @@ trait FactoryTrait
         ?ImageDto $image = null,
         string $lang = 'en',
     ): Entry {
-        $entry = $this->entries->filter(
-            static function (Entry $entry) use ($title) {
-                return $entry->title === $title;
-            }
-        )->first();
+        $entry = $this->entries->filter(fn (Entry $entry) => $entry->title === $title)->first();
 
         if (!$entry) {
             $magazine = $magazine ?? $this->getMagazineByName('acme');
@@ -413,7 +395,7 @@ trait FactoryTrait
         ?ImageDto $imageDto = null,
         string $lang = 'en',
     ): Entry {
-        $manager = $this->getService(EntryManager::class);
+        $manager = $this->entryManager;
 
         $dto = new EntryDto();
         $dto->magazine = $magazine;
@@ -439,8 +421,8 @@ trait FactoryTrait
         ?ImageDto $imageDto = null,
         string $lang = 'en',
     ): EntryComment {
-        $manager = $this->getService(EntryCommentManager::class);
-        $repository = $this->getService(ImageRepository::class);
+        $manager = $this->entryCommentManager;
+        $repository = $this->imageRepository;
 
         if ($parent) {
             $dto = (new EntryCommentDto())->createWithParent(
@@ -462,7 +444,7 @@ trait FactoryTrait
 
     public function createPost(string $body, ?Magazine $magazine = null, ?User $user = null, ?ImageDto $imageDto = null, string $lang = 'en'): Post
     {
-        $manager = $this->getService(PostManager::class);
+        $manager = $this->postManager;
         $dto = new PostDto();
         $dto->magazine = $magazine ?: $this->getMagazineByName('acme');
         $dto->body = $body;
@@ -474,7 +456,7 @@ trait FactoryTrait
 
     public function createPostComment(string $body, ?Post $post = null, ?User $user = null, ?ImageDto $imageDto = null, ?PostComment $parent = null, string $lang = 'en'): PostComment
     {
-        $manager = $this->getService(PostCommentManager::class);
+        $manager = $this->postCommentManager;
 
         $dto = new PostCommentDto();
         $dto->post = $post ?? $this->createPost('test post content');
@@ -488,7 +470,7 @@ trait FactoryTrait
 
     public function createPostCommentReply(string $body, ?Post $post = null, ?User $user = null, ?PostComment $parent = null): PostComment
     {
-        $manager = $this->getService(PostCommentManager::class);
+        $manager = $this->postCommentManager;
 
         $dto = new PostCommentDto();
         $dto->post = $post ?? $this->createPost('test post content');
@@ -501,7 +483,12 @@ trait FactoryTrait
 
     public function createImage(string $fileName): Image
     {
-        return new Image(
+        $imageRepo = $this->imageRepository;
+        $image = $imageRepo->findOneBy(['fileName' => $fileName]);
+        if ($image) {
+            return $image;
+        }
+        $image = new Image(
             $fileName,
             '/dev/random',
             hash('sha256', $fileName),
@@ -509,12 +496,16 @@ trait FactoryTrait
             100,
             null,
         );
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        return $image;
     }
 
     public function createMessageNotification(?User $to = null, ?User $from = null): Notification
     {
-        $messageManager = $this->getService(MessageManager::class);
-        $repository = $this->getService(NotificationRepository::class);
+        $messageManager = $this->messageManager;
+        $repository = $this->notificationRepository;
 
         $dto = new MessageDto();
         $dto->body = 'test message';
@@ -525,8 +516,8 @@ trait FactoryTrait
 
     protected function createInstancePages(): Site
     {
-        $siteRepository = $this->getService(SiteRepository::class);
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        $siteRepository = $this->siteRepository;
+        $entityManager = $this->entityManager;
         $results = $siteRepository->findAll();
         $site = null;
         if (!\count($results)) {
@@ -556,11 +547,11 @@ trait FactoryTrait
      */
     public function createModlogMessages(): void
     {
-        $magazineManager = $this->getService(MagazineManager::class);
-        $entryManager = $this->getService(EntryManager::class);
-        $entryCommentManager = $this->getService(EntryCommentManager::class);
-        $postManager = $this->getService(PostManager::class);
-        $postCommentManager = $this->getService(PostCommentManager::class);
+        $magazineManager = $this->magazineManager;
+        $entryManager = $this->entryManager;
+        $entryCommentManager = $this->entryCommentManager;
+        $postManager = $this->postManager;
+        $postCommentManager = $this->postCommentManager;
         $moderator = $this->getUserByUsername('moderator');
         $magazine = $this->getMagazineByName('acme', $moderator);
         $user = $this->getUserByUsername('user');
@@ -576,21 +567,76 @@ trait FactoryTrait
         $magazineManager->ban($magazine, $user, $moderator, MagazineBanDto::create('test ban', new \DateTimeImmutable('+12 hours')));
     }
 
+    public function register($active = false): KernelBrowser
+    {
+        $crawler = $this->client->request('GET', '/register');
+
+        $this->client->submit(
+            $crawler->filter('form[name=user_register]')->selectButton('Register')->form(
+                [
+                    'user_register[username]' => 'JohnDoe',
+                    'user_register[email]' => 'johndoe@kbin.pub',
+                    'user_register[plainPassword][first]' => 'secret',
+                    'user_register[plainPassword][second]' => 'secret',
+                    'user_register[agreeTerms]' => true,
+                ]
+            )
+        );
+        if (302 === $this->client->getResponse()->getStatusCode()) {
+            $this->client->followRedirect();
+        }
+        self::assertResponseIsSuccessful();
+
+        if ($active) {
+            $user = self::getContainer()->get('doctrine')->getRepository(User::class)
+                ->findOneBy(['username' => 'JohnDoe']);
+            $user->isVerified = true;
+
+            self::getContainer()->get('doctrine')->getManager()->flush();
+            self::getContainer()->get('doctrine')->getManager()->refresh($user);
+        }
+
+        return $this->client;
+    }
+
     public function getKibbyImageDto(): ImageDto
     {
-        $imageRepository = $this->getService(ImageRepository::class);
-        $imageFactory = $this->getService(ImageFactory::class);
-        $entityManager = $this->getService(EntityManagerInterface::class);
+        return $this->getKibbyImageVariantDto('');
+    }
+
+    public function getKibbyFlippedImageDto(): ImageDto
+    {
+        return $this->getKibbyImageVariantDto('_flipped');
+    }
+
+    private function getKibbyImageVariantDto(string $suffix): ImageDto
+    {
+        $imageRepository = $this->imageRepository;
+        $imageFactory = $this->imageFactory;
+
+        if (!file_exists(\dirname($this->kibbyPath).'/copy')) {
+            if (!mkdir(\dirname($this->kibbyPath).'/copy')) {
+                throw new \Exception('The copy dir could not be created');
+            }
+        }
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
+        $tmpPath = \dirname($this->kibbyPath).'/copy/'.bin2hex(random_bytes(32)).'.png';
+        $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
+        if (!file_exists($srcPath)) {
+            throw new \Exception('For some reason the kibby image got deleted');
+        }
+        copy($srcPath, $tmpPath);
         /** @var Image $image */
-        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png'));
+        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png'));
         self::assertNotNull($image);
         $image->altText = 'kibby';
-        $entityManager->persist($image);
-        $entityManager->flush();
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
 
-        return $imageFactory->createDto($image);
+        $dto = $imageFactory->createDto($image);
+        assertNotNull($dto->id);
+
+        return $dto;
     }
 }

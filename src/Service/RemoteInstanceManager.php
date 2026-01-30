@@ -8,7 +8,7 @@ use App\Controller\ActivityPub\NodeInfoController;
 use App\Entity\Instance;
 use App\Payloads\NodeInfo\NodeInfo;
 use App\Payloads\NodeInfo\WellKnownNodeInfo;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyInfo\Extractor\ConstructorExtractor;
@@ -24,7 +24,7 @@ class RemoteInstanceManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -35,16 +35,18 @@ class RemoteInstanceManager
         if ($instance->getUpdatedAt() < new \DateTime('now - 1day') || $force) {
             $nodeInfoEndpointsRaw = $this->client->fetchInstanceNodeInfoEndpoints($instance->domain, false);
             $serializer = $this->getSerializer();
-            /** @var WellKnownNodeInfo $nodeInfoEndpoints */
-            $nodeInfoEndpoints = $serializer->deserialize($nodeInfoEndpointsRaw, WellKnownNodeInfo::class, 'json');
-
             $linkToUse = null;
-            foreach ($nodeInfoEndpoints->links as $link) {
-                if (NodeInfoController::NODE_REL_v21 === $link->rel) {
-                    $linkToUse = $link;
-                    break;
-                } elseif (null === $linkToUse && NodeInfoController::NODE_REL_v20 === $link->rel) {
-                    $linkToUse = $link;
+            if (null !== $nodeInfoEndpointsRaw) {
+                /** @var WellKnownNodeInfo $nodeInfoEndpoints */
+                $nodeInfoEndpoints = $serializer->deserialize($nodeInfoEndpointsRaw, WellKnownNodeInfo::class, 'json');
+
+                foreach ($nodeInfoEndpoints->links as $link) {
+                    if (NodeInfoController::NODE_REL_v21 === $link->rel) {
+                        $linkToUse = $link;
+                        break;
+                    } elseif (null === $linkToUse && NodeInfoController::NODE_REL_v20 === $link->rel) {
+                        $linkToUse = $link;
+                    }
                 }
             }
 
@@ -57,11 +59,18 @@ class RemoteInstanceManager
 
             $nodeInfoRaw = $this->client->fetchInstanceNodeInfo($linkToUse->href, false);
             $this->logger->debug('got raw nodeinfo for url {url}: {raw}', ['raw' => $nodeInfoRaw, 'url' => $linkToUse]);
-            /** @var NodeInfo $nodeInfo */
-            $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
-
-            $instance->software = $nodeInfo?->software?->name;
-            $instance->version = $nodeInfo?->software?->version;
+            try {
+                /** @var NodeInfo $nodeInfo */
+                $nodeInfo = $serializer->deserialize($nodeInfoRaw, NodeInfo::class, 'json');
+                $instance->software = $nodeInfo?->software?->name;
+                $instance->version = $nodeInfo?->software?->version;
+            } catch (\Error|\Exception $e) {
+                $this->logger->warning('There as an exception decoding the nodeinfo from {url}: {e} - {m}', [
+                    'url' => $instance->domain,
+                    'e' => \get_class($e),
+                    'm' => $e->getMessage(),
+                ]);
+            }
             $instance->setUpdatedAt();
             $this->entityManager->persist($instance);
 

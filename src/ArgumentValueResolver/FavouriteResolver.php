@@ -26,6 +26,7 @@ class FavouriteResolver implements ValueResolverInterface
         ) {
             ['id' => $id, 'entityClass' => $entityClass] = $request->attributes->all();
 
+            /** @var class-string<FavouriteInterface> $entityClass */
             yield $this->entityManager->find($entityClass, $id);
         }
     }

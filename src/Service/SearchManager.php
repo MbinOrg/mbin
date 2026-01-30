@@ -10,7 +10,7 @@ use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
@@ -25,7 +25,7 @@ class SearchManager
         private readonly DomainRepository $domainRepository,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
-        private readonly ApHttpClient $apHttpClient,
+        private readonly ApHttpClientInterface $apHttpClient,
     ) {
     }
 
@@ -42,14 +42,22 @@ class SearchManager
         return $this->magazineRepository->search($magazine, $page, $perPage);
     }
 
-    public function findDomainsPaginated(string $domain, int $page = 1, int $perPage = DomainRepository::PER_PAGE): PagerfantaInterface
+    public function findDomainsPaginated(string $domain, int $page = 1, int $perPage = DomainRepository::PER_PAGE): Pagerfanta
     {
         return $this->domainRepository->search($domain, $page, $perPage);
     }
 
-    public function findPaginated(?User $queryingUser, string $val, int $page = 1, int $perPage = SearchRepository::PER_PAGE): PagerfantaInterface
-    {
-        return $this->repository->search($queryingUser, $val, $page, $perPage);
+    public function findPaginated(
+        ?User $queryingUser,
+        string $val,
+        int $page = 1,
+        int $perPage = SearchRepository::PER_PAGE,
+        ?int $authorId = null,
+        ?int $magazineId = null,
+        ?string $specificType = null,
+        ?\DateTimeImmutable $sinceDate = null,
+    ): PagerfantaInterface {
+        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType, sinceDate: $sinceDate);
     }
 
     public function findByApId(string $url): array
@@ -74,7 +82,8 @@ class SearchManager
         }
 
         $objects = [];
-        $name = str_starts_with($query, '@') ? $query : '@'.$query;
+        $name = str_starts_with($query, '!') ? '@'.substr($query, 1) : $query;
+        $name = str_starts_with($name, '@') ? $name : '@'.$name;
         preg_match(RegPatterns::AP_USER, $name, $matches);
         if (\count(array_filter($matches)) >= 4) {
             try {

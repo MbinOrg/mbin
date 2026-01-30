@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class EntryCommentDto
+class EntryCommentDto implements ContentVisibilityInterface
 {
     public const MAX_BODY_LENGTH = 5000;
 
@@ -26,7 +27,7 @@ class EntryCommentDto
     public ?ImageDto $image = null;
     public ?string $imageUrl = null;
     public ?string $imageAlt = null;
-    #[Assert\Length(max: self::MAX_BODY_LENGTH)]
+    #[Assert\Length(max: self::MAX_BODY_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $body = null;
     public ?string $lang = null;
     public bool $isAdult = false;
@@ -50,7 +51,7 @@ class EntryCommentDto
     #[Assert\Callback]
     public function validate(
         ExecutionContextInterface $context,
-        $payload
+        $payload,
     ) {
         if (empty($this->image)) {
             $image = Request::createFromGlobals()->files->filter('entry_comment');
@@ -80,7 +81,7 @@ class EntryCommentDto
         Entry $entry,
         ?EntryComment $parent,
         ?Image $image = null,
-        ?string $body = null
+        ?string $body = null,
     ): self {
         $this->entry = $entry;
         $this->parent = $parent;
@@ -112,5 +113,45 @@ class EntryCommentDto
     public function userChoice(): ?int
     {
         return $this->userVote;
+    }
+
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
+    public function getMagazine(): ?Magazine
+    {
+        return $this->magazine;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->visibility;
+    }
+
+    public function isPrivate(): bool
+    {
+        return VisibilityInterface::VISIBILITY_PRIVATE === $this->visibility;
+    }
+
+    public function isSoftDeleted(): bool
+    {
+        return VisibilityInterface::VISIBILITY_SOFT_DELETED === $this->visibility;
+    }
+
+    public function isTrashed(): bool
+    {
+        return VisibilityInterface::VISIBILITY_TRASHED === $this->visibility;
+    }
+
+    public function isVisible(): bool
+    {
+        return VisibilityInterface::VISIBILITY_VISIBLE === $this->visibility;
     }
 }

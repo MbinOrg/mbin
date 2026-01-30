@@ -31,6 +31,9 @@ class MagazineSubscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, MagazineSubscription::class);
     }
 
+    /**
+     * @return MagazineSubscription[]
+     */
     public function findNewEntrySubscribers(Entry $entry): array
     {
         return $this->createQueryBuilder('ms')
@@ -46,7 +49,10 @@ class MagazineSubscriptionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findNewPostSubscribers(Post $post)
+    /**
+     * @return MagazineSubscription[]
+     */
+    public function findNewPostSubscribers(Post $post): array
     {
         return $this->createQueryBuilder('ms')
             ->addSelect('u')

@@ -10,20 +10,20 @@ There is also a **very good** [forum post on activitypub.rocks](https://socialhu
 
 ## How to setup my own Mbin instance?
 
-Have a look at our guides. A bare metal/VM setup is **recommended** at this time, however we do provide a Docker setup as well.
+Have a look at our guides. Both a bare metal/VM setup and a Docker setup is provided.
 
 ## I have an issue!
 
 You can [join our Matrix community](https://matrix.to/#/#mbin:melroy.org) and ask for help, and/or make an [issue ticket](https://github.com/MbinOrg/mbin/issues) in GitHub if that adds value (always check for duplicates).
 
-See also our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
+See also our [contributing page](../03-contributing/README.md).
 
 ## How can I contribute?
 
 New contributors are always _warmly welcomed_ to join us. The most valuable contributions come from helping with bug fixes and features through Pull Requests.
 As well as helping out with [translations](https://hosted.weblate.org/engage/mbin/) and documentation.
 
-Read more on our [contributing page](https://github.com/MbinOrg/mbin/blob/main/CONTRIBUTING.md).
+Read more on our [contributing page](../03-contributing/README.md).
 
 Do _not_ forget to [join our Matrix community](https://matrix.to/#/#mbin:melroy.org).
 
@@ -37,17 +37,28 @@ As a part of our software development and discussions, Matrix is our primary pla
 
 Mercure is a _real-time communication protocol_ and server that facilitates server-sent _events_ for web applications. It enables _real-time updates_ by allowing clients to subscribe and receiving updates pushed by the server.
 
-Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrates_ our server performance.
+Mbin uses Mercure (optionally), on very large instances you might want to consider disabling Mercure whenever it _degrades_ our server performance.
 
 ## What is Redis?
 
-Redis is a _persinstent key-value store_, which can help for caching purposes or other storage requirements. We **recommend** to setup Redis when running Mbin, but Redis is optional.
+Redis is a _persinstent key-value store_ that runs in-memory, which can help for caching purposes or other storage requirements. We **recommend** to setup Redis/Valkey or KeyDB (pick one) when running Mbin.
 
 ## What is RabbitMQ?
 
 RabbitMQ is an open-source _message broker_ software that facilitates the exchange of messages between different server instances (in our case ActivityPub messages), using queues to store and manage messages.
 
 We highly **recommend** to setup RabbitMQ on your Mbin instance, but RabbitMQ is optional. Failed messages are no longer stored in RabbitMQ, but in PostgreSQL instead (table: `public.messenger_messages`).
+
+Read more below about AMQProxy.
+
+## What is AMQProxy?
+
+AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol) most used with message brokers like RabbitMQ. It allows for channel pooling and reusing, hence reducing the AMQP protocol (TCP packages) overhead.
+
+AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol), most often used with message brokers like RabbitMQ. It allows for channel pooling and reuse, significantly reducing AMQP protocol overhead and TCP connection.  
+By maintaining persistent connections to the broker, AMQProxy minimizes connection setup latency and resource consumption, improving throughput and scalability for high-load applications. It also simplifies client configuration and load balancing by acting as a single entry point between multiple clients and one (or more) RabbitMQ instances.
+
+Therefor we highly **recommend** to use RabbitMQ together with AMQProxy for more efficient messenger processing and higher performance. Especially when all services are hosted on the same server.
 
 ## How do I know Redis is working?
 
@@ -103,8 +114,8 @@ RabbitMQ will now have new queues being added for the different delays (so a mes
 The global overview from RabbitMQ shows the ready messages for all queues combined. Messages in the retry queues count as ready messages the whole time they are in there,
 so for a correct ready count you have to go to the queue specific overview.
 
-| Overview                                                  | Queue Tab                                           | "Message" Queue Overview                                            |
-| --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| Overview                                                | Queue Tab                                         | "Message" Queue Overview                                          |
+| ------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------- |
 | ![Queued messages](../images/rabbit_queue_overview.png) | ![Queue overview](../images/rabbit_queue_tab.png) | ![Message Queue Overview](../images/rabbit_messages_overview.png) |
 
 ## RabbitMQ Prometheus exporter
@@ -134,27 +145,25 @@ scrape_configs:
 
 ## How to clean-up all failed messages?
 
-If you wish to **delete all messages** (`dead` and `failed`) at once, execute the following PostgreSQL query (assuming you're connected to the correct PostgreSQL database):
+If you want to delete all failed messages (`failed` queue) you can execute the following command:
 
-```sql
-DELETE FROM messenger_messages;
+```bash
+./bin/console mbin:messenger:failed:remove_all
 ```
 
-If you want to delete only the messages that are no longer being worked (`dead`) on you can execute this query:
+And if you want to delete the dead messages (`dead` queue) you can execute the following command:
 
-```sql
-DELETE FROM messenger_messages WHERE queue_name = 'dead';
+```bash
+./bin/console mbin:messenger:dead:remove_all
 ```
 
-To free up the disk space used by the now deleted messages, execute the following query:
-
-```sql
-VACUUM messenger_messages;
-```
+_Hint:_ Most messages that are stored in the database are most likely in the `failed` queue, thus running the first command (`mbin:messenger:failed:remove_all`) will most likely delete all messages in the `messenger_messages` table. Regularly running this command will keep your database clean.
 
 ## Where can I find my logging?
 
 You can find the Mbin logging in the `var/log/` directory from the root folder of the Mbin installation. When running production the file is called `prod-{YYYY-MM-DD}.log`, when running development the log file is called `dev-{YYYY-MM-DD}.log`.
+
+See also [troubleshooting (bare metal)](./05-troubleshooting/01-bare_metal.md).
 
 ## Should I run development mode?
 
@@ -178,7 +187,7 @@ Followed by restarting the services that are depending on the (new) configuratio
 
 ```bash
 # Clear PHP Opcache by restarting the PHP FPM service
-sudo systemctl restart php8.2-fpm.service
+sudo systemctl restart php8.4-fpm.service
 
 # Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all
@@ -201,19 +210,21 @@ If you're seeing this error in logs:
 > getInstancePrivateKey(): Return value must be of type string, null returned
 
 At time of writing, `getInstancePrivateKey()` [calls out to the Redis cache](https://github.com/MbinOrg/mbin/blob/main/src/Service/ActivityPub/ApHttpClient.php#L348)
-first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/upgrades.md#clear-cache) and [docker](04-running-mbin/upgrades.md#clear-cache-1))
+first, so any updates to the keys requires a `DEL instance_private_key instance_public_key` (or `FLUSHDB` to be certain, as documented here: [bare metal](04-running-mbin/03-upgrades.md#clear-cache) and [docker](04-running-mbin/03-upgrades.md#clear-cache-1))
 
 ## RabbitMQ shows a really high publishing rate
 
 First thing you should do to debug the issue is looking at the "Queues and Streams" tab to find out what queues have the high publishing rate.
 If the queue/s in question are `inbox` and `resolve` it is most likely a circulating `ChainActivityMessage`.
 To verify that assumption:
+
 1. stop all messengers
-    - if you're on bare metal, as root: `supervisorctl stop messenger:*`
-    - if you're on docker, inside the `docker` folder : `docker compose down messenger*`
+   - if you're on bare metal, as root: `supervisorctl stop messenger:*`
+   - if you're on docker: `docker compose down messenger`
 2. look again at the publishing rate. If it has gone down, then it definitely is a circulating message
 
 To fix the problem:
+
 1. start the messengers if they are not already started
 2. go to the `resolve` queue
 3. open the "Get Message" panel

@@ -10,42 +10,39 @@ class EntryCommentModerateControllerTest extends WebTestCase
 {
     public function testModCanShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $comment = $this->createEntryComment('test comment 1');
 
-        $crawler = $client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
-        $client->click($crawler->filter('#entry-comment-'.$comment->getId())->selectLink('moderate')->link());
+        $crawler = $this->client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
+        $this->client->click($crawler->filter('#entry-comment-'.$comment->getId())->selectLink('Moderate')->link());
 
-        $this->assertSelectorTextContains('.moderate-panel', 'ban');
+        $this->assertSelectorTextContains('.moderate-panel', 'Ban');
     }
 
     public function testXmlModCanShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $comment = $this->createEntryComment('test comment 1');
 
-        $crawler = $client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
-        $client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $client->click($crawler->filter('#entry-comment-'.$comment->getId())->selectLink('moderate')->link());
+        $crawler = $this->client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
+        $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
+        $this->client->click($crawler->filter('#entry-comment-'.$comment->getId())->selectLink('Moderate')->link());
 
-        $this->assertStringContainsString('moderate-panel', $client->getResponse()->getContent());
+        $this->assertStringContainsString('moderate-panel', $this->client->getResponse()->getContent());
     }
 
     public function testUnauthorizedCanNotShowPanel(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JaneDoe'));
+        $this->client->loginUser($this->getUserByUsername('JaneDoe'));
 
         $comment = $this->createEntryComment('test comment 1');
 
-        $client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
-        $this->assertSelectorTextNotContains('#entry-comment-'.$comment->getId(), 'moderate');
+        $this->client->request('get', "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}");
+        $this->assertSelectorTextNotContains('#entry-comment-'.$comment->getId(), 'Moderate');
 
-        $client->request(
+        $this->client->request(
             'get',
             "/m/{$comment->magazine->name}/t/{$comment->entry->getId()}/-/comment/{$comment->getId()}/moderate"
         );

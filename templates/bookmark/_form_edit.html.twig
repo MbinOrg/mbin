@@ -1,0 +1,14 @@
+{{ form_start(form, {attr: {class: 'bookmark_edit'}}) }}
+
+{{ form_row(form.name, {label: 'bookmark_list_create_label'}) }}
+
+<div class="row actions">
+    {{ form_row(form.isDefault, {label: 'bookmark_list_make_default', row_attr: {class: 'checkbox'}}) }}
+</div>
+
+<div class="row params">
+    {% set btn_label = is_create ? 'bookmark_list_create' : 'bookmark_list_edit' %}
+    {{ form_row(form.submit, {label: btn_label, attr: {class: 'btn btn__primary'}}) }}
+</div>
+
+{{ form_end(form) }}

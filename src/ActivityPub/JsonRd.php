@@ -53,7 +53,7 @@ class JsonRd
      * identify the same entity as the "subject" URI.
      * The "aliases" array is OPTIONAL in the JRD.
      *
-     * @var array[string]
+     * @var string[]
      */
     protected $aliases = [];
 
@@ -68,7 +68,7 @@ class JsonRd
      *
      * The "properties" member is OPTIONAL in the JRD.
      *
-     * @var array[string=>string]
+     * @var array<string, string>
      */
     protected $properties = [];
 
@@ -76,18 +76,18 @@ class JsonRd
      * The "links" array has any number of member objects, each of which
      * represents a link [4].
      *
-     * @var array[JsonRdLink]
+     * @var JsonRdLink[]
      */
     protected $links = [];
 
-    public function addAlias(string $uri): JsonRd
+    public function addAlias(string $uri): static
     {
         array_push($this->aliases, $uri);
 
         return $this;
     }
 
-    public function removeAlias(string $uri): JsonRd
+    public function removeAlias(string $uri): static
     {
         $key = array_search($uri, $this->aliases);
         if (false !== $key) {
@@ -97,14 +97,14 @@ class JsonRd
         return $this;
     }
 
-    public function addProperty(string $uri, ?string $value = null): JsonRd
+    public function addProperty(string $uri, ?string $value = null): static
     {
         $this->properties[$uri] = $value;
 
         return $this;
     }
 
-    public function removeProperty(string $uri): JsonRd
+    public function removeProperty(string $uri): static
     {
         if (!\array_key_exists($uri, $this->properties)) {
             return $this;
@@ -114,14 +114,14 @@ class JsonRd
         return $this;
     }
 
-    public function addLink(JsonRdLink $link): JsonRd
+    public function addLink(JsonRdLink $link): static
     {
         array_push($this->links, $link);
 
         return $this;
     }
 
-    public function removeLink(JsonRdLink $link): JsonRd
+    public function removeLink(JsonRdLink $link): static
     {
         $serialized_link = serialize($link);
         foreach ($this->links as $key => $_link) {
@@ -140,6 +140,9 @@ class JsonRd
         return json_encode($this->toArray());
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $data = [];
@@ -163,43 +166,61 @@ class JsonRd
         return $this->subject;
     }
 
-    public function setSubject(string $subject): JsonRd
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
 
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getAliases(): array
     {
         return $this->aliases;
     }
 
-    protected function setAliases(array $aliases): JsonRd
+    /**
+     * @param string[] $aliases
+     */
+    protected function setAliases(array $aliases): static
     {
         $this->aliases = $aliases;
 
         return $this;
     }
 
+    /**
+     * @return JsonRdLink[]
+     */
     public function getLinks(): array
     {
         return $this->links;
     }
 
-    protected function setLinks(array $links): JsonRd
+    /**
+     * @param JsonRdLink[] $links
+     */
+    protected function setLinks(array $links): static
     {
         $this->links = $links;
 
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
-    protected function setProperties(array $properties): JsonRd
+    /**
+     * @param array<string, string> $properties
+     */
+    protected function setProperties(array $properties): static
     {
         $this->properties = $properties;
 

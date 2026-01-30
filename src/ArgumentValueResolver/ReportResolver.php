@@ -26,6 +26,7 @@ class ReportResolver implements ValueResolverInterface
         ) {
             ['id' => $id, 'entityClass' => $entityClass] = $request->attributes->all();
 
+            /** @var class-string<ReportInterface> $entityClass */
             yield $this->entityManager->find($entityClass, $id);
         }
     }

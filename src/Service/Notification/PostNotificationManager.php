@@ -16,9 +16,12 @@ use App\Factory\MagazineFactory;
 use App\Repository\MagazineLogRepository;
 use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationSettingsRepository;
+use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\MentionManager;
 use App\Service\SettingsManager;
 use App\Utils\IriGenerator;
@@ -44,39 +47,42 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly GenerateHtmlClassService $classService,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly NotificationSettingsRepository $notificationSettingsRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
-    // @todo check if author is on the block list
     public function sendCreated(ContentInterface $subject): void
     {
         if ($subject->user->isBanned || $subject->user->isDeleted || $subject->user->isTrashed() || $subject->user->isSoftDeleted()) {
             return;
         }
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
 
-        /*
-         * @var Post $subject
-         */
         $this->notifyMagazine(new PostCreatedNotification($subject->user, $subject));
 
         // Notify mentioned
-        $mentions = MentionManager::clearLocal($this->mentionManager->extract($subject->body));
+        $mentions = $this->mentionManager->clearLocal($this->mentionManager->extract($subject->body));
         foreach ($this->mentionManager->getUsersFromArray($mentions) as $user) {
-            $notification = new PostMentionedNotification($user, $subject);
-            $this->entityManager->persist($notification);
-            $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            if (!$user->isBlocked($subject->user)) {
+                $notification = new PostMentionedNotification($user, $subject);
+                $this->entityManager->persist($notification);
+                $this->eventDispatcher->dispatch(new NotificationCreatedEvent($notification));
+            }
         }
 
         // Notify subscribers
-        $subscribers = $this->merge(
-            $this->getUsersToNotify($this->magazineRepository->findNewPostSubscribers($subject)),
-            [] // @todo user followers
-        );
+        $subscriberIds = $this->notificationSettingsRepository->findNotificationSubscribersByTarget($subject);
+        $subscribers = $this->userRepository->findBy(['id' => $subscriberIds]);
 
-        $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions ?? []));
+        if (\count($mentions)) {
+            $subscribers = array_filter($subscribers, fn ($s) => !\in_array($s->username, $mentions));
+        }
 
         foreach ($subscribers as $subscriber) {
             $notification2 = new PostCreatedNotification($subscriber, $subject);
@@ -87,7 +93,7 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         $this->entityManager->flush();
     }
 
-    private function notifyMagazine(Notification $notification)
+    private function notifyMagazine(Notification $notification): void
     {
         if (false === $this->settingsManager->get('KBIN_MERCURE_ENABLED')) {
             return;
@@ -139,18 +145,18 @@ class PostNotificationManager implements ContentNotificationManagerInterface
 
     public function sendEdited(ContentInterface $subject): void
     {
-        /*
-         * @var Post $subject
-         */
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
         $this->notifyMagazine(new PostEditedNotification($subject->user, $subject));
     }
 
-    public function sendDeleted(ContentInterface $post): void
+    public function sendDeleted(ContentInterface $subject): void
     {
-        /*
-         * @var Post $post
-         */
-        $this->notifyMagazine($notification = new PostDeletedNotification($post->user, $post));
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
+        $this->notifyMagazine($notification = new PostDeletedNotification($subject->user, $subject));
     }
 
     public function purgeNotifications(Post $post): void

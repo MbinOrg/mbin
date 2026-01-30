@@ -59,9 +59,9 @@ class MagazineBadgeController extends AbstractController
         #[MapEntity(id: 'badge_id')]
         Badge $badge,
         BadgeManager $manager,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('badge_remove', $request->request->get('token'));
+        $this->validateCsrf('badge_remove', $request->getPayload()->get('token'));
 
         $manager->delete($badge);
 

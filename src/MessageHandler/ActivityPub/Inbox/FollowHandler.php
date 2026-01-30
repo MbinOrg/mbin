@@ -9,13 +9,15 @@ use App\Entity\User;
 use App\Message\ActivityPub\Inbox\FollowMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ActivityJsonBuilder;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Wrapper\FollowResponseWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,14 +25,16 @@ class FollowHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly UserManager $userManager,
         private readonly MagazineManager $magazineManager,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly LoggerInterface $logger,
-        private readonly FollowResponseWrapper $followResponseWrapper
+        private readonly FollowResponseWrapper $followResponseWrapper,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(FollowMessage $message): void
@@ -41,7 +45,7 @@ class FollowHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof FollowMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("FollowHandler called, but is wasn\'t a FollowMessage. Type: ".\get_class($message));
         }
         $this->logger->debug('got a FollowMessage: {message}', [$message]);
         $actor = $this->activityPubManager->findActorOrCreate($message->payload['actor']);
@@ -104,13 +108,8 @@ class FollowHandler extends MbinMessageHandler
 
     private function handleFollowRequest(array $payload, User|Magazine $object, bool $isReject = false): void
     {
-        $response = $this->followResponseWrapper->build(
-            $payload['object'],
-            $payload['actor'],
-            $payload['id'],
-            $isReject
-        );
-
+        $activity = $this->followResponseWrapper->build($object, $payload, $isReject);
+        $response = $this->activityJsonBuilder->buildActivityJson($activity);
         $this->client->post($this->client->getInboxUrl($payload['actor']), $object, $response);
     }
 

@@ -9,6 +9,7 @@ use App\PageView\EntryCommentPageView;
 use App\Repository\EntryCommentRepository;
 use App\Repository\TagRepository;
 use App\Service\TagExtractor;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,13 +18,14 @@ class TagCommentFrontController extends AbstractController
     public function __construct(
         private readonly EntryCommentRepository $repository,
         private readonly TagRepository $tagRepository,
-        private readonly TagExtractor $tagManager
+        private readonly TagExtractor $tagManager,
+        private readonly Security $security,
     ) {
     }
 
     public function __invoke(string $name, ?string $sortBy, ?string $time, Request $request): Response
     {
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setTag($this->tagManager->transliterate(strtolower($name)));

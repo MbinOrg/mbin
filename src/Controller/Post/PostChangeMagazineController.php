@@ -18,7 +18,7 @@ class PostChangeMagazineController extends AbstractController
 {
     public function __construct(
         private readonly PostManager $manager,
-        private readonly MagazineRepository $repository
+        private readonly MagazineRepository $repository,
     ) {
     }
 
@@ -28,9 +28,9 @@ class PostChangeMagazineController extends AbstractController
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
-        Request $request
+        Request $request,
     ): Response {
-        $this->validateCsrf('change_magazine', $request->request->get('token'));
+        $this->validateCsrf('change_magazine', $request->getPayload()->get('token'));
 
         $newMagazine = $this->repository->findOneByName($request->get('change_magazine')['new_magazine']);
 

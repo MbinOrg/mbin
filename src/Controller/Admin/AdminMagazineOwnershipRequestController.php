@@ -17,7 +17,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
 {
     public function __construct(
         private readonly MagazineOwnershipRequestRepository $repository,
-        private readonly MagazineManager $manager
+        private readonly MagazineManager $manager,
     ) {
     }
 
@@ -32,7 +32,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function accept(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('admin_magazine_ownership_requests_accept', $request->request->get('token'));
+        $this->validateCsrf('admin_magazine_ownership_requests_accept', $request->getPayload()->get('token'));
 
         $this->manager->acceptOwnershipRequest($magazine, $user, $this->getUserOrThrow());
 
@@ -42,7 +42,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function reject(Magazine $magazine, User $user, Request $request): Response
     {
-        $this->validateCsrf('admin_magazine_ownership_requests_reject', $request->request->get('token'));
+        $this->validateCsrf('admin_magazine_ownership_requests_reject', $request->getPayload()->get('token'));
 
         $this->manager->toggleOwnershipRequest($magazine, $user);
 

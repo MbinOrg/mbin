@@ -1,11 +1,11 @@
 import { fetch, ok } from '../utils/http';
 import { Controller } from '@hotwired/stimulus';
-import getIntIdFromElement from '../utils/kbin';
+import getIntIdFromElement from '../utils/mbin';
 import router from '../utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    static targets = ['loader', 'expand', 'collapse'];
+    static targets = ['main', 'loader', 'expand', 'collapse', 'comments'];
     static values = {
         loading: Boolean,
     };
@@ -17,48 +17,34 @@ export default class extends Controller {
             return;
         }
 
-        if (this.element.nextElementSibling.classList.contains('moderate-panel')) {
-            this.element.nextElementSibling.remove();
-        }
-
         try {
             this.loadingValue = true;
 
-            const url = router().generate('ajax_fetch_post_comments', { 'id': getIntIdFromElement(this.element) });
+            const url = router().generate('ajax_fetch_post_comments', { 'id': getIntIdFromElement(this.mainTarget) });
 
             let response = await fetch(url, { method: 'GET' });
 
             response = await ok(response);
             response = await response.json();
 
-            this.collapseComments(new Event('click'));
+            this.collapseComments();
 
-            const preview = this.element.nextElementSibling;
-            preview.style.display = 'block';
+            this.commentsTarget.innerHTML = response.html;
 
-            if (true === preview.classList.contains('comments')) {
-                preview.innerHTML = response.html;
-                if (preview.children.length && preview.children[0].classList.contains('comments')) {
-                    const container = preview.children[0];
-                    const parentDiv = container.parentNode;
-                    container.classList.add('post-comments');
+            if (this.commentsTarget.children.length && this.commentsTarget.children[0].classList.contains('comments')) {
+                const container = this.commentsTarget.children[0];
+                const parentDiv = container.parentNode;
 
-                    while (container.firstChild) {
-                        parentDiv.insertBefore(container.firstChild, container);
-                    }
-
-                    parentDiv.removeChild(container);
-                }
-            } else {
-                while (this.element.nextElementSibling && this.element.nextElementSibling.classList.contains('post-comment')) {
-                    this.element.nextElementSibling.remove();
+                while (container.firstChild) {
+                    parentDiv.insertBefore(container.firstChild, container);
                 }
 
-                this.element.insertAdjacentHTML('afterend', response.html);
+                parentDiv.removeChild(container);
             }
 
             this.expandTarget.style.display = 'none';
             this.collapseTarget.style.display = 'block';
+            this.commentsTarget.style.display = 'block';
 
             this.application
                 .getControllerForElementAndIdentifier(document.getElementById('main'), 'lightbox')
@@ -67,31 +53,26 @@ export default class extends Controller {
                 .getControllerForElementAndIdentifier(document.getElementById('main'), 'timeago')
                 .connect();
         } catch (e) {
+            console.error(e);
         } finally {
             this.loadingValue = false;
         }
     }
 
     collapseComments(event) {
-        event.preventDefault();
+        event?.preventDefault();
 
-        const preview = this.element.nextElementSibling;
-
-        if (false === preview.classList.contains('comments')) {
-            return;
-        }
-
-        while (preview.firstChild) {
-            preview.removeChild(preview.firstChild);
+        while (this.commentsTarget.firstChild) {
+            this.commentsTarget.removeChild(this.commentsTarget.firstChild);
         }
 
         this.expandTarget.style.display = 'block';
         this.collapseTarget.style.display = 'none';
-        preview.style.display = 'none';
+        this.commentsTarget.style.display = 'none';
     }
 
     async expandVoters(event) {
-        event.preventDefault();
+        event?.preventDefault();
 
         try {
             this.loadingValue = true;
@@ -103,13 +84,14 @@ export default class extends Controller {
 
             event.target.parentNode.innerHTML = response.html;
         } catch (e) {
+            console.error(e);
         } finally {
             this.loadingValue = false;
         }
     }
 
     loadingValueChanged(val) {
-        const subjectController = this.application.getControllerForElementAndIdentifier(this.element, 'subject');
+        const subjectController = this.application.getControllerForElementAndIdentifier(this.mainTarget, 'subject');
         if (null !== subjectController) {
             subjectController.loadingValue = val;
         }

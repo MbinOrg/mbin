@@ -1,0 +1,18 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Like",
+    "actor": "https://kbin.test/u/user2",
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "cc": [
+        "https://kbin.test/u/user2/followers",
+        "https://kbin.test/m/test"
+    ],
+    "object": "SCRUBBED_ID",
+    "audience": "https://kbin.test/m/test"
+}

@@ -10,8 +10,6 @@ class DomainCommentFrontControllerTest extends WebTestCase
 {
     public function testDomainCommentFrontPage(): void
     {
-        $client = $this->createClient();
-
         $entry = $this->createEntry(
             'test entry 1',
             $this->getMagazineByName('acme'),
@@ -20,17 +18,17 @@ class DomainCommentFrontControllerTest extends WebTestCase
         );
         $this->createEntryComment('test comment 1', $entry);
 
-        $crawler = $client->request('GET', '/d/kbin.pub');
-        $crawler = $client->click($crawler->filter('#header')->selectLink('Comments')->link());
+        $crawler = $this->client->request('GET', '/d/kbin.pub');
+        $crawler = $this->client->click($crawler->filter('#header')->selectLink('Comments')->link());
 
         $this->assertSelectorTextContains('#header', '/d/kbin.pub');
-        $this->assertSelectorTextContains('blockquote header', 'JohnDoe,');
+        $this->assertSelectorTextContains('blockquote header', 'JohnDoe');
         $this->assertSelectorTextContains('blockquote header', 'to acme in test entry 1');
         $this->assertSelectorTextContains('blockquote .content', 'test comment 1');
 
         foreach ($this->getSortOptions() as $sortOption) {
-            $crawler = $client->click($crawler->filter('.options__main')->selectLink($sortOption)->link());
-            $this->assertSelectorTextContains('.options__main', $sortOption);
+            $crawler = $this->client->click($crawler->filter('.options__filter')->selectLink($sortOption)->link());
+            $this->assertSelectorTextContains('.options__filter', $sortOption);
             $this->assertSelectorTextContains('h1', 'kbin.pub');
             $this->assertSelectorTextContains('h2', ucfirst($sortOption));
         }
@@ -38,6 +36,6 @@ class DomainCommentFrontControllerTest extends WebTestCase
 
     private function getSortOptions(): array
     {
-        return ['hot', 'newest', 'active', 'oldest'];
+        return ['Hot', 'Newest', 'Active', 'Oldest'];
     }
 }

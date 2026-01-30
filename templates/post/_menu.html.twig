@@ -14,6 +14,17 @@
                 {{ 'activity'|trans }}
             </a>
         </li>
+
+        {% if app.user is defined and app.user is not same as null %}
+            {% set bookmarkLists = get_bookmark_lists(app.user) %}
+            {% if bookmarkLists|length %}
+                <li class="dropdown__separator"></li>
+                {% for list in bookmarkLists %}
+                    {{ component('bookmark_list', { subject: post, subjectType: 'post', list: list }) }}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
         <li class="dropdown__separator"></li>
         <li>
             <a target="_blank"
@@ -51,8 +62,21 @@
                 <form method="post"
                         action="{{ post_delete_url(post) }}"
                         data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                    <input type="hidden" name="token" value="{{ csrf_token('post_delete') }}">
                     <button type="submit">{{ 'delete'|trans }}</button>
+                </form>
+            </li>
+        {% endif %}
+
+        {% if is_granted('lock', post) %}
+            <li>
+                <form method="post" action="{{ path('post_lock', {'magazine_name': post.magazine.name, 'post_id': post.id, 'slug': post.slug}) }}" data-action="confirmation#ask"
+                    data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                    <input type="hidden" name="token" value="{{ csrf_token('post_lock') }}">
+                    {% if post.isLocked %}
+                        <button type="submit"><i class="fa fa-lock-open" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'unlock'|trans }}</button>
+                    {% else %}
+                        <button type="submit"><i class="fa fa-lock" aria-hidden="true" style="margin-right: .5em;"></i>{{ 'lock'|trans }}</button>
+                    {% endif %}
                 </form>
             </li>
         {% endif %}

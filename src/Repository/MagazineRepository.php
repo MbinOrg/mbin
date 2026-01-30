@@ -5,23 +5,21 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
-use App\Entity\Post;
-use App\Entity\PostComment;
 use App\Entity\Report;
 use App\Entity\User;
 use App\PageView\MagazinePageView;
+use App\Pagination\NativeQueryAdapter;
+use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\SettingsManager;
+use App\Utils\SqlHelpers;
 use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -29,6 +27,7 @@ use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @method Magazine|null find($id, $lockMode = null, $lockVersion = null)
@@ -49,8 +48,13 @@ class MagazineRepository extends ServiceEntityRepository
         self::SORT_NEWEST,
     ];
 
-    public function __construct(ManagerRegistry $registry, private readonly SettingsManager $settingsManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SettingsManager $settingsManager,
+        private readonly SqlHelpers $sqlHelpers,
+        private readonly ContentPopulationTransformer $contentPopulationTransformer,
+        private readonly CacheInterface $cache,
+    ) {
         parent::__construct($registry, Magazine::class);
     }
 
@@ -198,7 +202,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findModerators(
         Magazine $magazine,
         ?int $page = 1,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $criteria = Criteria::create()
             ->orderBy(['isOwner' => 'DESC'])
@@ -213,22 +217,6 @@ class MagazineRepository extends ServiceEntityRepository
         }
 
         return $moderators;
-    }
-
-    public function findModlog(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
-    {
-        $criteria = Criteria::create()->orderBy(['createdAt' => 'DESC']);
-
-        $logs = new Pagerfanta(new SelectableAdapter($magazine->logs, $criteria));
-
-        try {
-            $logs->setMaxPerPage($perPage);
-            $logs->setCurrentPage($page);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        return $logs;
     }
 
     public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
@@ -253,7 +241,7 @@ class MagazineRepository extends ServiceEntityRepository
         Magazine $magazine,
         ?int $page = 1,
         int $perPage = self::PER_PAGE,
-        string $status = Report::STATUS_PENDING
+        string $status = Report::STATUS_PENDING,
     ): PagerfantaInterface {
         $dql = 'SELECT r FROM '.Report::class.' r WHERE r.magazine = :magazine';
 
@@ -292,7 +280,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findModeratedMagazines(
         User $user,
         ?int $page = 1,
-        int $perPage = self::PER_PAGE
+        int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $dql =
             'SELECT m FROM '.Magazine::class.' m WHERE m IN ('.
@@ -319,75 +307,32 @@ class MagazineRepository extends ServiceEntityRepository
 
     public function findTrashed(Magazine $magazine, int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
-        // @todo union adapter
-        $conn = $this->_em->getConnection();
-
         $magazineId = $magazine->getId();
         $sql = '
             (SELECT id, last_active, magazine_id, \'entry\' AS type FROM entry WHERE magazine_id = :magazineId AND visibility = \'trashed\')
-            UNION
+            UNION ALL
             (SELECT id, last_active, magazine_id, \'entry_comment\' AS type FROM entry_comment WHERE magazine_id = :magazineId AND visibility = \'trashed\')
-            UNION
+            UNION ALL
             (SELECT id, last_active, magazine_id, \'post\' AS type FROM post WHERE magazine_id = :magazineId AND visibility = \'trashed\')
-            UNION
+            UNION ALL
             (SELECT id, last_active, magazine_id, \'post_comment\' AS type FROM post_comment WHERE magazine_id = :magazineId AND visibility = \'trashed\')
             ORDER BY last_active DESC';
-        $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery(['magazineId' => $magazineId]);
 
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $stmt->fetchAllAssociative()
-            )
-        );
+        $parameters = [
+            'magazineId' => $magazineId,
+        ];
+        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
 
-        $countAll = $pagerfanta->count();
-
-        try {
-            $pagerfanta->setMaxPerPage(20000);
-            $pagerfanta->setCurrentPage(1);
-        } catch (NotValidCurrentPageException $e) {
-            throw new NotFoundHttpException();
-        }
-
-        $result = $pagerfanta->getCurrentPageResults();
-
-        $entries = $this->_em->getRepository(Entry::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry')]
-        );
-        $entryComments = $this->_em->getRepository(EntryComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'entry_comment')]
-        );
-        $post = $this->_em->getRepository(Post::class)->findBy(['id' => $this->getOverviewIds((array) $result, 'post')]);
-        $postComment = $this->_em->getRepository(PostComment::class)->findBy(
-            ['id' => $this->getOverviewIds((array) $result, 'post_comment')]
-        );
-
-        $result = array_merge($entries, $entryComments, $post, $postComment);
-        uasort($result, fn ($a, $b) => $a->getCreatedAt() > $b->getCreatedAt() ? -1 : 1);
-
-        $pagerfanta = new Pagerfanta(
-            new ArrayAdapter(
-                $result
-            )
-        );
+        $pagerfanta = new Pagerfanta($adapter);
 
         try {
             $pagerfanta->setMaxPerPage($perPage);
             $pagerfanta->setCurrentPage($page);
-            $pagerfanta->setMaxNbPages($countAll > 0 ? ((int) ceil($countAll / self::PER_PAGE)) : 1);
-        } catch (NotValidCurrentPageException $e) {
+        } catch (NotValidCurrentPageException) {
             throw new NotFoundHttpException();
         }
 
         return $pagerfanta;
-    }
-
-    private function getOverviewIds(array $result, string $type): array
-    {
-        $result = array_filter($result, fn ($subject) => $subject['type'] === $type);
-
-        return array_map(fn ($subject) => $subject['id'], $result);
     }
 
     public function findAudience(Magazine $magazine): array
@@ -435,8 +380,13 @@ class MagazineRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.postCount > 0')
             ->orWhere('m.entryCount > 0')
-            ->orderBy('m.postCount', 'DESC')
+            ->andWhere('m.lastActive >= :date')
+            ->andWhere('m.isAdult = false')
+            ->andWhere('m.visibility = :visibility')
             ->setMaxResults(50)
+            ->setParameter('date', new \DateTime('-5 months'))
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->orderBy('m.entryCount', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -478,21 +428,23 @@ class MagazineRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function findRandom(): array
+    public function findRandom(?User $user = null): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT id FROM magazine
-            ';
-        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_LOCAL_ONLY')) {
-            $sql .= 'WHERE ap_id IS NULL';
+        $whereClauses = [];
+        $parameters = [];
+        if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
+            $whereClauses[] = 'm.ap_id IS NULL';
         }
-        $sql .= '
-            ORDER BY random()
-            LIMIT 5
-            ';
+        if (null !== $user) {
+            $subSql = 'SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :user';
+            $whereClauses[] = "NOT EXISTS($subSql)";
+            $parameters['user'] = $user->getId();
+        }
+        $whereString = SqlHelpers::makeWhereString($whereClauses);
+        $sql = "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5";
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery();
+        $stmt = $stmt->executeQuery($parameters);
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')
@@ -505,17 +457,23 @@ class MagazineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findRelated(string $magazine): array
+    public function findRelated(string $magazine, ?User $user = null): array
     {
-        return $this->createQueryBuilder('m')
+        $qb = $this->createQueryBuilder('m')
             ->where('m.entryCount > 0 OR m.postCount > 0')
             ->andWhere('m.title LIKE :magazine OR m.description LIKE :magazine OR m.name LIKE :magazine')
             ->andWhere('m.isAdult = false')
             ->andWhere('m.visibility = :visibility')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('magazine', "%{$magazine}%")
-            ->setMaxResults(5)
-            ->getQuery()
+            ->setMaxResults(5);
+
+        if (null !== $user) {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))));
+            $qb->setParameter('user', $user);
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 

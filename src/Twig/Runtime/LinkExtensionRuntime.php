@@ -13,7 +13,7 @@ class LinkExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly SettingsManager $settingsManager,
-        private readonly GenerateHtmlClassService $generateHtmlClassService
+        private readonly GenerateHtmlClassService $generateHtmlClassService,
     ) {
     }
 

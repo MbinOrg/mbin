@@ -4,22 +4,15 @@
     </div>
     <menu class="options__main">
         {% if magazine is defined and magazine %}
-             <li>
+            <li>
                 <a href="{{ path('magazine_entry_create', {name: magazine.name}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'link')}) }}">
-                    {{ 'type.link'|trans }}
+                   class="{{ html_classes({'active': is_route_name('magazine_entry_create')}) }}">
+                    {{ 'type.article'|trans }}
                 </a>
             </li>
             <li>
-                <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'article'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'article')}) }}">
-                    {{ 'type.article'|trans }}
-                </a>
-            </li>  
-            <li>
-                <a href="{{ path('magazine_entry_create', {name: magazine.name, type: 'photo'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'photo')}) }}">
-                    {{ 'type.photo'|trans }}
+                <a href="{{ path('magazine_posts', {name: magazine.name}) }}">
+                    {{ 'post'|trans }}
                 </a>
             </li>
             <li>
@@ -30,21 +23,9 @@
             </li>
         {% else %}
             <li>
-                <a href="{{ path('entry_create') }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'link')}) }}">
-                    {{ 'type.link'|trans }}
-                </a>
-            </li>
-            <li>
                 <a href="{{ path('entry_create', {type: 'article'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'article')}) }}">
+                   class="{{ html_classes({'active': is_route_name('entry_create')}) }}">
                     {{ 'type.article'|trans }}
-                </a>
-            </li>    
-            <li>
-                <a href="{{ path('entry_create', {type: 'photo'}) }}"
-                   class="{{ html_classes({'active': route_has_param('type', 'photo')}) }}">
-                    {{ 'type.photo'|trans }}
                 </a>
             </li>
             <li>

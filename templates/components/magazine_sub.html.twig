@@ -4,28 +4,28 @@
         aria-label="{{ magazine.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': magazine.subscriptionsCount}) }}">
         <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ magazine.subscriptionsCount }}</span>
     </div>
-    <form action="{{ path('magazine_' ~ (is_magazine_subscribed(magazine) ? 'unsubscribe' : 'subscribe'), {name: magazine.name}) }}"
-          name="magazine_subscribe"
-          method="post">
-        <button type="submit"
-                class="{{ html_classes('btn btn__secondary action', {'active': is_magazine_subscribed(magazine)}) }}"
-                data-action="subs#send">
-            {% if is_magazine_subscribed(magazine) %}
-                <i class="fa-sharp fa-solid fa-folder-minus" aria-hidden="true"></i><span>{{ 'unsubscribe'|trans }}</span>
-            {% else %}
-                <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe'|trans }}</span>
-            {% endif %}
-        </button>
-        <input type="hidden" name="token" value="{{ csrf_token('subscribe') }}">
-    </form>
-    <form action="{{ path('magazine_' ~ (is_magazine_blocked(magazine) ? 'unblock' : 'block'), {name: magazine.name}) }}"
-          name="magazine_block"
-          method="post">
-        <button type="submit"
-                class="{{ html_classes('btn btn__secondary action', {'active danger': is_magazine_blocked(magazine)}) }}"
-                data-action="subs#send">
-            <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ is_magazine_blocked(magazine) ? 'unblock'|trans : 'block'|trans }}</span>
-        </button>
-        <input type="hidden" name="token" value="{{ csrf_token('block') }}">
-    </form>
+    {% if not is_instance_of_magazine_blocked(magazine) %}
+        <form action="{{ path('magazine_' ~ (is_magazine_subscribed(magazine) ? 'unsubscribe' : 'subscribe'), {name: magazine.name}) }}"
+              name="magazine_subscribe"
+              method="post">
+            <button type="submit"
+                    class="{{ html_classes('btn btn__secondary action', {'active': is_magazine_subscribed(magazine)}) }}"
+                    data-action="subs#send">
+                {% if is_magazine_subscribed(magazine) %}
+                    <i class="fa-sharp fa-solid fa-folder-minus" aria-hidden="true"></i><span>{{ 'unsubscribe'|trans }}</span>
+                {% else %}
+                    <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe'|trans }}</span>
+                {% endif %}
+            </button>
+        </form>
+        <form action="{{ path('magazine_' ~ (is_magazine_blocked(magazine) ? 'unblock' : 'block'), {name: magazine.name}) }}"
+              name="magazine_block"
+              method="post">
+            <button type="submit"
+                    class="{{ html_classes('btn btn__secondary action', {'active danger': is_magazine_blocked(magazine)}) }}"
+                    data-action="subs#send">
+                <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ is_magazine_blocked(magazine) ? 'unblock'|trans : 'block'|trans }}</span>
+            </button>
+        </form>
+    {% endif %}
 </aside>

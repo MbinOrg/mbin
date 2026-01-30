@@ -8,6 +8,8 @@ use App\DTO\PostCommentDto;
 use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\PageView\PostCommentPageView;
+use App\Repository\BookmarkListRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagLinkRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,6 +23,7 @@ class PostCommentFactory
         private readonly ImageFactory $imageFactory,
         private readonly PostRepository $postRepository,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly BookmarkListRepository $bookmarkListRepository,
     ) {
     }
 
@@ -59,14 +62,16 @@ class PostCommentFactory
             $tags,
             $dto->createdAt,
             $dto->editedAt,
-            $dto->lastActive
+            $dto->lastActive,
+            bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
+            isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
         );
     }
 
-    public function createResponseTree(PostComment $comment, int $depth, ?bool $canModerate = null): PostCommentResponseDto
+    public function createResponseTree(PostComment $comment, PostCommentPageView $criteria, int $depth, ?bool $canModerate = null): PostCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfPostComment($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
         $toReturn->canAuthUserModerate = $canModerate;
@@ -75,10 +80,15 @@ class PostCommentFactory
             return $toReturn;
         }
 
-        foreach ($comment->children as $childComment) {
+        foreach ($comment->getChildrenByCriteria($criteria) as /** @var PostComment $childComment */ $childComment) {
             \assert($childComment instanceof PostComment);
-            $child = $this->createResponseTree($childComment, $depth > 0 ? $depth - 1 : -1, $canModerate);
-            array_push($toReturn->children, $child);
+            if (($user = $this->security->getUser()) && $user instanceof User) {
+                if ($user->isBlocked($childComment->user)) {
+                    continue;
+                }
+            }
+            $child = $this->createResponseTree($childComment, $criteria, $depth > 0 ? $depth - 1 : -1, $canModerate);
+            $toReturn->children[] = $child;
         }
 
         return $toReturn;

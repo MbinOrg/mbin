@@ -12,35 +12,34 @@ class EntryVotersControllerTest extends WebTestCase
 {
     public function testUserCanSeeUpVoters(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $manager = $client->getContainer()->get(VoteManager::class);
+        $manager = $this->client->getContainer()->get(VoteManager::class);
         $manager->vote(VotableInterface::VOTE_UP, $entry, $this->getUserByUsername('JaneDoe'));
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
-        $client->click($crawler->filter('.options-activity')->selectLink('boosts (1)')->link());
+        $this->client->click($crawler->filter('.options-activity')->selectLink('Boosts (1)')->link());
 
         $this->assertSelectorTextContains('#main .users-columns', 'JaneDoe');
     }
 
-    public function testUserCanSeeDownVoters(): void
+    public function testUserCannotSeeDownVoters(): void
     {
-        $client = $this->createClient();
-        $client->loginUser($this->getUserByUsername('JohnDoe'));
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
         $entry = $this->getEntryByTitle('test entry 1', 'https://kbin.pub');
 
-        $manager = $client->getContainer()->get(VoteManager::class);
+        $manager = $this->client->getContainer()->get(VoteManager::class);
         $manager->vote(VotableInterface::VOTE_DOWN, $entry, $this->getUserByUsername('JaneDoe'));
 
-        $crawler = $client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
+        $crawler = $this->client->request('GET', "/m/acme/t/{$entry->getId()}/test-entry-1");
 
-        $client->click($crawler->filter('.options-activity')->selectLink('reduces (1)')->link());
+        $crawler = $crawler->filter('.options-activity')->selectLink('Reduces (1)');
+        self::assertEquals(0, $crawler->count());
 
-        $this->assertSelectorTextContains('#main .users-columns', 'JaneDoe');
+        $this->assertSelectorTextContains('.options-activity', 'Reduces (1)');
     }
 }

@@ -1,9 +1,10 @@
+@use '../layout/breakpoints' as b;
+
 .user {
   &__actions {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 2.5rem;
     opacity: .75;
 
     div {
@@ -52,7 +53,7 @@
     vertical-align: middle;
     margin-right: 0.25rem;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       width: 25px;
       height: 25px;
     }
@@ -66,7 +67,8 @@
   }
 }
 
-.user-box {
+.user-box,
+.user-box-inline {
   figure {
     margin: 0;
     padding: 0;
@@ -82,12 +84,12 @@
   }
 
   .user-main {
-    display: flex;
     margin-left: 1.5rem;
     padding-top: 2rem;
     text-align: center;
+    width: max-content;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       justify-content: space-around;
       margin-left: 0;
     }
@@ -96,7 +98,7 @@
       margin-bottom: 0;
     }
 
-    h1>code {
+    h1 > code {
       background: var(--kbin-button-secondary-bg);
       border: var(--kbin-button-secondary-border);
       color: var(--kbin-button-secondary-text-color);
@@ -121,17 +123,25 @@
     margin-bottom: 2.5rem;
     padding: 0 1.5rem;
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       padding: 0 .5rem;
     }
   }
 
   .with-cover.with-avatar {
+    figure {
+      position: relative;
+      top: -60px;
+      height: 40px;
+    }
+  }
+}
+
+.user-box {
+  .with-cover.with-avatar {
     .user-main {
       margin-top: 0;
       padding-top: 0;
-      position: relative;
-      top: -60px;
 
       .user__actions {
         margin: 0;
@@ -140,8 +150,7 @@
 
     .about {
       margin-bottom: 1.5rem;
-      position: relative;
-      top: -20px;
+      margin-top: 1em;
     }
   }
 }
@@ -151,7 +160,7 @@
   gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
 
-  @include media-breakpoint-down(sm) {
+  @include b.media-breakpoint-down(sm) {
     grid-template-columns: repeat(1, 1fr);
   }
 
@@ -174,11 +183,11 @@
     margin: 0;
     padding: 0;
 
-    @include media-breakpoint-down(lg) {
+    @include b.media-breakpoint-down(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include media-breakpoint-down(sm) {
+    @include b.media-breakpoint-down(sm) {
       grid-template-columns: repeat(1, 1fr);
     }
   }
@@ -309,7 +318,8 @@ td .user__actions {
     }
   }
 
-  .twofa-backup-codes {
+  .twofa-backup-codes,
+  .twofa-secret{
     display: flex;
     gap: 0.2rem 1rem;
     flex-wrap: wrap;
@@ -336,4 +346,29 @@ td .user__actions {
 
 .new-user-icon {
   color: green;
+}
+
+.user-box-inline {
+  padding: 0;
+  overflow: clip;
+
+  .user-box-info {
+    display: flex;
+  }
+
+  .with-cover.with-avatar {
+    .user-main {
+      margin-top: 0;
+      padding-top: 0;
+
+      .user__actions {
+        margin: 0;
+      }
+    }
+  }
+
+  .about {
+    padding-top: 2em;
+    margin-bottom: 1.5rem;
+  }
 }

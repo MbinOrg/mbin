@@ -9,12 +9,10 @@ use App\Entity\User;
 use App\Event\PostComment\PostCommentBeforeDeletedEvent;
 use App\Event\PostComment\PostCommentBeforePurgeEvent;
 use App\Event\PostComment\PostCommentDeletedEvent;
-use App\Message\ActivityPub\Outbox\DeleteMessage;
 use App\Message\Notification\PostCommentDeletedNotificationMessage;
-use App\Service\ActivityPub\Wrapper\DeleteWrapper;
+use App\Service\ActivityPub\DeleteService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class PostCommentDeleteSubscriber implements EventSubscriberInterface
@@ -22,7 +20,7 @@ class PostCommentDeleteSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,
-        private readonly DeleteWrapper $deleteWrapper,
+        private readonly DeleteService $deleteService,
     ) {
     }
 
@@ -63,10 +61,6 @@ class PostCommentDeleteSubscriber implements EventSubscriberInterface
         ]);
 
         $this->bus->dispatch(new PostCommentDeletedNotificationMessage($comment->getId()));
-
-        if (!$comment->apId || !$comment->magazine->apId || (null !== $user && $comment->magazine->userIsModerator($user))) {
-            $payload = $this->deleteWrapper->adjustDeletePayload($user, $comment, Uuid::v4()->toRfc4122());
-            $this->bus->dispatch(new DeleteMessage($payload, $comment->user->getId(), $comment->magazine->getId()));
-        }
+        $this->deleteService->announceIfNecessary($user, $comment);
     }
 }

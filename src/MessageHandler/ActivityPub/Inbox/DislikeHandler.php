@@ -12,12 +12,17 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ChainActivityMessage;
 use App\Message\ActivityPub\Inbox\DislikeMessage;
+use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
 use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
+use App\Repository\ActivityRepository;
 use App\Service\ActivityPubManager;
+use App\Service\SettingsManager;
 use App\Service\VoteManager;
+use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,12 +31,15 @@ class DislikeHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly KernelInterface $kernel,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly VoteManager $voteManager,
         private readonly LoggerInterface $logger,
+        private readonly SettingsManager $settingsManager,
+        private readonly ActivityRepository $activityRepository,
     ) {
-        parent::__construct($this->entityManager);
+        parent::__construct($this->entityManager, $this->kernel);
     }
 
     public function __invoke(DislikeMessage $message): void
@@ -42,15 +50,18 @@ class DislikeHandler extends MbinMessageHandler
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof DislikeMessage)) {
-            throw new \LogicException();
+            throw new \LogicException("DislikeHandler called, but is wasn\'t a DislikeMessage. Type: ".\get_class($message));
         }
         if (!isset($message->payload['type'])) {
+            return;
+        }
+        if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
             return;
         }
 
         $chainDispatchCallback = function (array $object, ?string $adjustedUrl) use ($message) {
             if ($adjustedUrl) {
-                $this->logger->info('got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
+                $this->logger->info('[DislikeHandler::doWork] got an adjusted url: {url}, using that instead of {old}', ['url' => $adjustedUrl, 'old' => $message->payload['object']['id'] ?? $message->payload['object']]);
                 $message->payload['object'] = $adjustedUrl;
             }
             $this->bus->dispatch(new ChainActivityMessage([$object], dislike: $message->payload));
@@ -67,6 +78,11 @@ class DislikeHandler extends MbinMessageHandler
             if (!empty($actor) && !empty($entity)) {
                 if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
                     $this->voteManager->vote(VotableInterface::VOTE_DOWN, $entity, $actor);
+                    if (null === $entity->magazine->apId && null !== $actor->apId) {
+                        // local magazine, remote user
+                        $dislikeActivity = $this->activityRepository->createForRemoteActivity($message->payload);
+                        $this->bus->dispatch(new GenericAnnounceMessage($entity->magazine->getId(), null, $actor->apInboxUrl, $dislikeActivity->uuid->toString(), null));
+                    }
                 }
             }
         } elseif ('Undo' === $message->payload['type']) {
@@ -80,6 +96,11 @@ class DislikeHandler extends MbinMessageHandler
                 // Check if actor and entity aren't empty
                 if ($actor instanceof User && ($entity instanceof Entry || $entity instanceof EntryComment || $entity instanceof Post || $entity instanceof PostComment)) {
                     $this->voteManager->removeVote($entity, $actor);
+                    if (null === $entity->magazine->apId && null !== $actor->apId) {
+                        // local magazine, remote user
+                        $dislikeActivity = $this->activityRepository->createForRemoteActivity($message->payload);
+                        $this->bus->dispatch(new GenericAnnounceMessage($entity->magazine->getId(), null, $actor->apInboxUrl, $dislikeActivity->uuid->toString(), null));
+                    }
                 }
             }
         }

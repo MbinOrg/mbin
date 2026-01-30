@@ -9,6 +9,9 @@ use App\DTO\PostCommentDto;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Exception\InstanceBannedException;
+use App\Exception\TagBannedException;
+use App\Exception\UserBannedException;
 use App\Form\PostCommentType;
 use App\PageView\PostCommentPageView;
 use App\Repository\PostCommentRepository;
@@ -16,6 +19,7 @@ use App\Service\IpResolver;
 use App\Service\MentionManager;
 use App\Service\PostCommentManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +34,8 @@ class PostCommentCreateController extends AbstractController
         private readonly PostCommentManager $manager,
         private readonly PostCommentRepository $repository,
         private readonly IpResolver $ipResolver,
-        private readonly MentionManager $mentionManager
+        private readonly MentionManager $mentionManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -63,6 +68,8 @@ class PostCommentCreateController extends AbstractController
 
                 return $this->handleValidRequest($dto, $request);
             }
+        } catch (InstanceBannedException) {
+            $this->addFlash('error', 'flash_instance_banned_error');
         } catch (\Exception $e) {
             // Show an error to the user
             $this->addFlash('error', 'flash_comment_new_error');
@@ -77,7 +84,7 @@ class PostCommentCreateController extends AbstractController
         }
 
         $user = $this->getUserOrThrow();
-        $criteria = new PostCommentPageView($this->getPageNb($request));
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->post = $post;
 
         $comments = $this->repository->findByCriteria($criteria);
@@ -142,6 +149,11 @@ class PostCommentCreateController extends AbstractController
         );
     }
 
+    /**
+     * @throws InstanceBannedException
+     * @throws TagBannedException
+     * @throws UserBannedException
+     */
     private function handleValidRequest(PostCommentDto $dto, Request $request): Response
     {
         $comment = $this->manager->create($dto, $this->getUserOrThrow());

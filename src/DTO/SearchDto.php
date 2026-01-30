@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Entity\Magazine;
+use App\Entity\User;
+
 class SearchDto
 {
-    public string $val;
+    public string $q = '';
+    public ?string $type = null;
+    public ?User $user = null;
+    public ?Magazine $magazine = null;
+    public ?\DateTimeImmutable $since = null;
 }

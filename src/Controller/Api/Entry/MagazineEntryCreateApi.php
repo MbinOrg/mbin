@@ -12,9 +12,8 @@ use App\DTO\ImageUploadDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Service\EntryManager;
-use App\Service\ImageManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +28,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 {
     use PrivateContentTrait;
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -89,7 +89,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -101,12 +101,13 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -167,7 +168,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -179,12 +180,13 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created Entry',
@@ -240,7 +242,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter
+        RateLimiterFactory $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -252,12 +254,13 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
     }
 
+    #[OA\Post(deprecated: true)]
     #[OA\Response(
         response: 201,
         description: 'Returns the created image entry',
@@ -315,12 +318,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
                     'common',
                 ]
             )
-        ),
-        encoding: [
-            'imageUpload' => [
-                'contentType' => ImageManager::IMAGE_MIMETYPE_STR,
-            ],
-        ]
+        )
     ))]
     #[OA\Tag(name: 'magazine')]
     #[Security(name: 'oauth2', scopes: ['entry:create'])]
@@ -330,7 +328,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         Magazine $magazine,
         ValidatorInterface $validator,
         EntryManager $manager,
-        RateLimiterFactory $apiImageLimiter
+        RateLimiterFactory $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -343,7 +341,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 
         $deserialized = $this->deserializeEntryFromForm();
 
-        $dto = $deserialized->mergeIntoDto($dto);
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
         if (!$this->isGranted('create_content', $dto->magazine)) {
             throw new AccessDeniedHttpException();
@@ -363,7 +361,121 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         $entry = $manager->create($dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfEntry($entry)),
+            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            status: 201,
+            headers: $headers
+        );
+    }
+
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created entry',
+        content: new Model(type: EntryResponseDto::class),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'An entry must have at least one of URL, body, or image; Image was too large or is not an acceptable file type',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 403,
+        description: 'Either the entry:create scope has not been granted, or the user is banned from the magazine',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\ForbiddenErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Magazine not found',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Parameter(
+        name: 'magazine_id',
+        in: 'path',
+        description: 'The magazine to create the entry in',
+        schema: new OA\Schema(type: 'integer'),
+    )]
+    #[OA\RequestBody(
+        content: new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(
+                ref: new Model(
+                    type: EntryRequestDto::class,
+                    groups: [
+                        ImageUploadDto::IMAGE_UPLOAD,
+                        Entry::ENTRY_TYPE_ARTICLE,
+                        Entry::ENTRY_TYPE_LINK,
+                        Entry::ENTRY_TYPE_VIDEO,
+                        Entry::ENTRY_TYPE_IMAGE,
+                        'common',
+                    ],
+                )
+            )
+        )
+    )]
+    #[OA\Tag(name: 'magazine')]
+    #[Security(name: 'oauth2', scopes: ['entry:create'])]
+    #[IsGranted('ROLE_OAUTH2_ENTRY:CREATE')]
+    public function entry(
+        #[MapEntity(id: 'magazine_id')]
+        ?Magazine $magazine,
+        ValidatorInterface $validator,
+        EntryManager $manager,
+        RateLimiterFactory $apiImageLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiImageLimiter);
+
+        if (null === $magazine) {
+            throw new NotFoundHttpException('Magazine not found');
+        }
+
+        if (!$this->isGranted('create_content', $magazine)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $dto = new EntryDto();
+        $dto->magazine = $magazine;
+
+        $deserialized = $this->deserializeEntryFromForm();
+        $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
+
+        $image = $this->handleUploadedImageOptional();
+
+        if (null !== $image) {
+            $dto->image = $this->imageFactory->createDto($image);
+        }
+
+        $errors = $validator->validate($dto);
+        if (0 < \count($errors)) {
+            throw new BadRequestHttpException((string) $errors);
+        }
+
+        $entry = $manager->create($dto, $this->getUserOrThrow());
+
+        $retDto = $manager->createDto($entry);
+        $tags = $this->tagLinkRepository->getTagsOfContent($entry);
+        $crossposts = $this->entryRepository->findCross($entry);
+
+        return new JsonResponse(
+            $this->serializeEntry($retDto, $tags, $crossposts),
             status: 201,
             headers: $headers
         );

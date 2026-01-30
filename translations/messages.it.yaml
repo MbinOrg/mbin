@@ -57,36 +57,36 @@ reset_password: Reimposta password
 show_more: Mostra di più
 email_confirm_content: 'Sei pronto ad attivare il tuo account Mbin? Clicca sul link
   sottostante:'
-reset_check_email_desc2: Se non vedi alcuna e-mail, controlla nella cartella della
-  posta indesiderata.
+reset_check_email_desc2: Se non vedi alcuna e-mail, controlla nella cartella 
+  della posta indesiderata.
 email_confirm_expire: Ricorda che il link scade tra un ora.
 email_confirm_header: Ciao! Conferma il tuo indirizzo email.
 subscriptions: Iscrizioni
 subscribed: Iscritto
 notify_on_new_posts: Avvisami di nuovi post nelle riviste a cui sono iscritto
-notify_on_new_post_comment_reply: Avvisami in caso di risposte ai commenti dei miei
-  post
+notify_on_new_post_comment_reply: Avvisami in caso di risposte ai commenti dei 
+  miei post
 notify_on_new_entry_reply: Avvisami in caso di commenti nei miei thread
 notify_on_new_post_reply: Avvisami in caso di risposte ai miei post
 show_profile_subscriptions: Mostra le iscrizioni alla rivista
-flash_thread_new_success: Il thread è stato creato con successo ed è ora visibile
-  agli altri utenti.
+flash_thread_new_success: Il thread è stato creato con successo ed è ora 
+  visibile agli altri utenti.
 set_magazines_bar_desc: aggiungi il nome della rivista dopo la virgola
 flash_thread_delete_success: Il thread è stato eliminato con successo.
-flash_thread_unpin_success: Il thread è stato rimosso dai fissati in evidenza con
-  successo.
+flash_thread_unpin_success: Il thread è stato rimosso dai fissati in evidenza 
+  con successo.
 flash_magazine_edit_success: La rivista è stata modificata con successo.
 too_many_requests: Limite superato, riprova più tardi.
 mod_remove_your_thread: Un moderatore ha rimosso il tuo thread
 add_mentions_posts: Aggiungi tag di menzione degli utenti nei post
 Your account is not active: Il tuo account non è attivo.
 Your account has been banned: Il tuo account è stato sospeso.
-magazine_panel_tags_info: Da inserire solo se si desidera che i contenuti del fediverso
-  vengano aggiunti a questa rivista in base ai tag
-browsing_one_thread: Stai visualizzando solo uno dei thread nella discussione! Nella
-  pagina del post specifico potrai trovare tutti commenti.
-kbin_intro_desc: è una piattaforma decentralizzata per l'aggregazione di contenuti
-  e microblogging che opera all'interno della rete del Fediverso.
+magazine_panel_tags_info: Da inserire solo se si desidera che i contenuti del 
+  fediverso vengano aggiunti a questa rivista in base ai tag
+browsing_one_thread: Stai visualizzando solo uno dei thread nella discussione! 
+  Nella pagina del post specifico potrai trovare tutti commenti.
+kbin_intro_desc: è una piattaforma decentralizzata per l'aggregazione di 
+  contenuti e microblogging che opera all'interno della rete del Fediverso.
 kbin_promo_desc: '%link_start%Clona il repository%link_end% e sviluppa il fediverso'
 type.link: Link
 login: Accedi
@@ -101,26 +101,28 @@ type_search_term: Digita un termine di ricerca
 favourites: Preferiti
 unfollow: Non seguire
 you_cant_login: Hai dimenticato la password?
-reset_check_email_desc: Se esiste un account associato al tuo indirizzo email, dovresti
-  a breve ricevere un'email contenente un link che puoi usare per reimpostare la tua
-  password. Tra %expire% il link non sarà più attivo.
-flash_magazine_new_success: La rivista è stata creata con successo. Ora puoi aggiungere
-  nuovi contenuti o esplorare il pannello di amministrazione delle riviste.
+reset_check_email_desc: Se esiste un account associato al tuo indirizzo email, 
+  dovresti a breve ricevere un'email contenente un link che puoi usare per 
+  reimpostare la tua password. Tra %expire% il link non sarà più attivo.
+flash_magazine_new_success: La rivista è stata creata con successo. Ora puoi 
+  aggiungere nuovi contenuti o esplorare il pannello di amministrazione delle 
+  riviste.
 mod_log: Registro di moderazione
-mod_log_alert: ATTENZIONE - Il registro di moderazione potrebbe contenere contenuti
-  non piacevoli o angoscianti che sono stati rimossi dai moderatori. Per favore procedi
-  con cautela.
-set_magazines_bar_empty_desc: se il campo è vuoto, nella barra vengono visualizzate
-  le riviste attive.
+mod_log_alert: ATTENZIONE - Il registro di moderazione potrebbe contenere 
+  contenuti non piacevoli o angoscianti che sono stati rimossi dai moderatori. 
+  Per favore procedi con cautela.
+set_magazines_bar_empty_desc: se il campo è vuoto, nella barra vengono 
+  visualizzate le riviste attive.
 federated_magazine_info: 'La rivista appartiene a un server federato e potrebbe essere
   incompleta.'
 federated_user_info: 'Il profilo appartiene a un server federato e potrebbe essere
   incompleto.'
 notify_on_new_entry: Avvisami di nuovi thread nelle riviste a cui sono iscritto
-agree_terms: Acconsenti ai %terms_link_start%Termini e condizioni%terms_link_end%
-  e all'%policy_link_start%Informativa sulla privacy%policy_link_end%
-notify_on_new_entry_comment_reply: Avvisami in caso di risposte ai commenti dei miei
-  thread
+agree_terms: Acconsenti ai %terms_link_start%Termini e 
+  condizioni%terms_link_end% e all'%policy_link_start%Informativa sulla 
+  privacy%policy_link_end%
+notify_on_new_entry_comment_reply: Avvisami in caso di risposte ai commenti dei 
+  miei thread
 flash_thread_edit_success: Il thread è stato modificato con successo.
 flash_thread_pin_success: Il thread è stato fissato in evidenza con successo.
 mod_deleted_your_comment: Un moderatore ha cancellato il tuo commento

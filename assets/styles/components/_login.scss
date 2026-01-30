@@ -1,3 +1,5 @@
+@use '../layout/breakpoints' as b;
+
 .page-login,
 .page-register,
 .page-reset-password,
@@ -37,7 +39,7 @@
       gap: 0.5rem;
       justify-content: center;
 
-      @include media-breakpoint-up(lg) {
+      @include b.media-breakpoint-up(lg) {
         &:has(a + a) {
           grid-template-columns: repeat(2, 1fr);
         }

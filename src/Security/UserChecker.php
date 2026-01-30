@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Entity\User as AppUser;
+use App\Enums\EApplicationStatus;
 use App\Service\UserManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -18,7 +19,7 @@ class UserChecker implements UserCheckerInterface
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly UserManager $userManager
+        private readonly UserManager $userManager,
     ) {
     }
 
@@ -37,6 +38,17 @@ class UserChecker implements UserCheckerInterface
                 $this->userManager->removeDeleteRequest($user);
             } else {
                 throw new BadCredentialsException();
+            }
+        }
+
+        $applicationStatus = $user->getApplicationStatus();
+        if (EApplicationStatus::Approved !== $applicationStatus) {
+            if (EApplicationStatus::Pending === $applicationStatus) {
+                throw new CustomUserMessageAccountStatusException($this->translator->trans('your_account_is_not_yet_approved'));
+            } elseif (EApplicationStatus::Rejected === $applicationStatus) {
+                throw new BadCredentialsException();
+            } else {
+                throw new \LogicException("Unrecognized application status $applicationStatus->value");
             }
         }
 

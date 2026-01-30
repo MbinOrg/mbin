@@ -8,7 +8,9 @@ use App\DTO\EntryDto;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\MagazineLogEntryLocked;
 use App\Entity\MagazineLogEntryPinned;
+use App\Entity\MagazineLogEntryUnlocked;
 use App\Entity\MagazineLogEntryUnpinned;
 use App\Entity\User;
 use App\Event\Entry\EntryBeforeDeletedEvent;
@@ -16,8 +18,10 @@ use App\Event\Entry\EntryBeforePurgeEvent;
 use App\Event\Entry\EntryCreatedEvent;
 use App\Event\Entry\EntryDeletedEvent;
 use App\Event\Entry\EntryEditedEvent;
+use App\Event\Entry\EntryLockEvent;
 use App\Event\Entry\EntryPinEvent;
 use App\Event\Entry\EntryRestoredEvent;
+use App\Exception\InstanceBannedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -26,7 +30,7 @@ use App\Message\DeleteImageMessage;
 use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
@@ -61,8 +65,8 @@ class EntryManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EntryRepository $entryRepository,
         private readonly ImageRepository $imageRepository,
-        private readonly ApHttpClient $apHttpClient,
-        private readonly CacheInterface $cache
+        private readonly ApHttpClientInterface $apHttpClient,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -71,6 +75,7 @@ class EntryManager implements ContentManagerInterface
      * @throws UserBannedException
      * @throws TooManyRequestsHttpException
      * @throws PostingRestrictedException
+     * @throws InstanceBannedException
      * @throws \Exception                   if title, body and image are empty
      */
     public function create(EntryDto $dto, User $user, bool $rateLimit = true, bool $stickyIt = false): Entry
@@ -94,6 +99,10 @@ class EntryManager implements ContentManagerInterface
             throw new PostingRestrictedException($dto->magazine, $user);
         }
 
+        if (null !== $dto->magazine->apId && $this->settingsManager->isBannedInstance($dto->magazine->apInboxUrl)) {
+            throw new InstanceBannedException();
+        }
+
         $this->logger->debug('creating entry from dto');
         $entry = $this->factory->createFromDto($dto, $user);
 
@@ -104,6 +113,9 @@ class EntryManager implements ContentManagerInterface
         $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
         if ($entry->image && !$entry->image->altText) {
             $entry->image->altText = $dto->imageAlt;
+        }
+        if ($entry->url) {
+            $entry->url = ($this->urlCleaner)($dto->url);
         }
         $entry->mentions = $dto->body ? $this->mentionManager->extract($dto->body) : null;
         $entry->visibility = $dto->visibility;
@@ -131,7 +143,8 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
-        $this->tagManager->updateEntryTags($entry, $this->tagExtractor->extract($entry->body) ?? []);
+        $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
+        $this->tagManager->updateEntryTags($entry, $tags);
 
         $this->dispatcher->dispatch(new EntryCreatedEvent($entry));
 
@@ -144,29 +157,24 @@ class EntryManager implements ContentManagerInterface
 
     private function setType(EntryDto $dto, Entry $entry): Entry
     {
-        $isImageUrl = false;
-        if ($dto->url) {
-            $entry->url = ($this->urlCleaner)($dto->url);
-            $isImageUrl = ImageManager::isImageUrl($dto->url);
-        }
-
-        if (($dto->image && !$dto->url) || $isImageUrl) {
+        if ($dto->image) {
             $entry->type = Entry::ENTRY_TYPE_IMAGE;
             $entry->hasEmbed = true;
-
-            return $entry;
-        }
-
-        if ($dto->url) {
-            $entry->type = Entry::ENTRY_TYPE_LINK;
-
-            return $entry;
-        }
-
-        if ($dto->body) {
+        } elseif ($dto->url) {
+            if (ImageManager::isImageUrl($dto->url)) {
+                $entry->type = Entry::ENTRY_TYPE_IMAGE;
+                $entry->hasEmbed = true;
+            } else {
+                $entry->type = Entry::ENTRY_TYPE_LINK;
+            }
+        } elseif ($dto->body) {
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
-            $entry->hasEmbed = false;
+        } else {
+            $this->logger->warning('entry has neither image nor url nor body; defaulting to article');
+            $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         }
+
+        // TODO handle ENTRY_TYPE_VIDEO
 
         return $entry;
     }
@@ -190,11 +198,14 @@ class EntryManager implements ContentManagerInterface
         $entry->body = $dto->body;
         $entry->lang = $dto->lang;
         $entry->isAdult = $dto->isAdult || $entry->magazine->isAdult;
+        $entry->isLocked = $dto->isLocked;
         $entry->slug = $this->slugger->slug($dto->title);
         $entry->visibility = $dto->visibility;
         $oldImage = $entry->image;
-        if ($dto->image) {
-            $entry->image = $this->imageRepository->find($dto->image->id);
+        $entry->image = $dto->image ? $this->imageRepository->find($dto->image->id) : null;
+        $this->logger->debug('setting image to {imageId}, dto was {dtoImageId}', ['imageId' => $entry->image?->getId() ?? 'none', 'dtoImageId' => $dto->image?->id ?? 'none']);
+        if ($entry->image && !$entry->image->altText) {
+            $entry->image->altText = $dto->imageAlt;
         }
         $this->tagManager->updateEntryTags($entry, $this->tagManager->getTagsFromEntryDto($dto));
 
@@ -320,6 +331,23 @@ class EntryManager implements ContentManagerInterface
         if (null !== $entry->magazine->apFeaturedUrl) {
             $this->apHttpClient->invalidateCollectionObjectCache($entry->magazine->apFeaturedUrl);
         }
+
+        return $entry;
+    }
+
+    public function toggleLock(Entry $entry, ?User $actor): Entry
+    {
+        $entry->isLocked = !$entry->isLocked;
+
+        if ($entry->isLocked) {
+            $log = new MagazineLogEntryLocked($entry, $actor);
+        } else {
+            $log = new MagazineLogEntryUnlocked($entry, $actor);
+        }
+        $this->entityManager->persist($log);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new EntryLockEvent($entry, $actor));
 
         return $entry;
     }

@@ -13,7 +13,8 @@ class AnnounceMessage implements ActivityPubOutboxInterface
         public ?int $magazineId,
         public int $objectId,
         public string $objectType,
-        public bool $removeAnnounce = false
+        public bool $removeAnnounce = false,
+        public ?array $createActivity = null,
     ) {
     }
 }

@@ -22,7 +22,7 @@ class FederationStatusListener
 
         $route = $event->getRequest()->attributes->get('_route');
 
-        if (str_starts_with($route, 'ap_')) {
+        if (str_starts_with($route, 'ap_') && 'ap_node_info' !== $route && 'ap_node_info_v2' !== $route) {
             throw new NotFoundHttpException();
         }
     }

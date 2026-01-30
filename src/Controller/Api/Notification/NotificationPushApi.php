@@ -15,8 +15,8 @@ use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,7 +71,7 @@ class NotificationPushApi extends NotificationBaseApi
         SettingsManager $settingsManager,
         UserPushSubscriptionManager $pushSubscriptionManager,
         TranslatorInterface $translator,
-        #[MapRequestPayload] NotificationPushSubscriptionRequestDto $payload
+        #[MapRequestPayload] NotificationPushSubscriptionRequestDto $payload,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
         $user = $this->getUserOrThrow();
@@ -92,7 +92,7 @@ class NotificationPushApi extends NotificationBaseApi
         $this->entityManager->flush();
 
         try {
-            $testNotification = new PushNotification('', $translator->trans('test_push_message', locale: $pushSubscription->locale));
+            $testNotification = new PushNotification(null, '', $translator->trans('test_push_message', locale: $pushSubscription->locale));
             $pushSubscriptionManager->sendTextToUser($user, $testNotification, specificToken: $apiToken);
 
             return new JsonResponse(headers: $headers);
@@ -220,7 +220,7 @@ class NotificationPushApi extends NotificationBaseApi
 
         $sub = $repository->findOneBy(['user' => $user, 'apiToken' => $apiToken]);
         if ($sub) {
-            $testNotification = new PushNotification('', $translator->trans('test_push_message', locale: $sub->locale));
+            $testNotification = new PushNotification(null, '', $translator->trans('test_push_message', locale: $sub->locale));
             try {
                 $pushSubscriptionManager->sendTextToUser($user, $testNotification, specificToken: $apiToken);
 

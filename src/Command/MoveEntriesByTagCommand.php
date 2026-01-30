@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Favourite;
 use App\Entity\Magazine;
@@ -23,14 +22,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:entries:move',
-    description: 'This command will allow you to move the entries to the new magazine based on the tag.'
+    description: 'This command allows you to move entries to a new magazine based on their tag.'
 )]
 class MoveEntriesByTagCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly EntryRepository $entryRepository
+        private readonly EntryRepository $entryRepository,
     ) {
         parent::__construct();
     }
@@ -84,7 +83,10 @@ class MoveEntriesByTagCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function moveComments(ArrayCollection|Collection $comments, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, EntryComment>|Collection<int, EntryComment> $comments
+     */
+    private function moveComments(ArrayCollection|Collection $comments, Magazine $magazine): void
     {
         foreach ($comments as $comment) {
             /*
@@ -99,7 +101,10 @@ class MoveEntriesByTagCommand extends Command
         }
     }
 
-    private function moveReports(ArrayCollection|Collection $reports, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, Report>|Collection<int, Report> $reports
+     */
+    private function moveReports(ArrayCollection|Collection $reports, Magazine $magazine): void
     {
         foreach ($reports as $report) {
             /*
@@ -111,7 +116,10 @@ class MoveEntriesByTagCommand extends Command
         }
     }
 
-    private function moveFavourites(ArrayCollection|Collection $favourites, Magazine $magazine)
+    /**
+     * @param ArrayCollection<int, Favourite>|Collection<int, Favourite> $favourites
+     */
+    private function moveFavourites(ArrayCollection|Collection $favourites, Magazine $magazine): void
     {
         foreach ($favourites as $favourite) {
             /*

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\DTO\PostCommentDto;
+use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use App\Repository\ImageRepository;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\PostCommentManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,9 +23,9 @@ class PostCommentFixtures extends BaseFixture implements DependentFixtureInterfa
 
     public function __construct(
         PostCommentManager $postCommentManager,
-        private readonly ImageManager $imageManager,
+        private readonly ImageManagerInterface $imageManager,
         private readonly ImageRepository $imageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         $this->postCommentManager = $postCommentManager;
     }
@@ -65,13 +67,16 @@ class PostCommentFixtures extends BaseFixture implements DependentFixtureInterfa
         $manager->flush();
     }
 
-    private function provideRandomComments($count = 1): iterable
+    /**
+     * @return array<string, mixed>[]
+     */
+    private function provideRandomComments(int $count = 1): iterable
     {
         for ($i = 0; $i <= $count; ++$i) {
             yield [
                 'body' => $this->faker->realText($this->faker->numberBetween(10, 1024)),
-                'post' => $this->getReference('post_'.rand(1, EntryFixtures::ENTRIES_COUNT)),
-                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT)),
+                'post' => $this->getReference('post_'.rand(1, EntryFixtures::ENTRIES_COUNT), Post::class),
+                'user' => $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT), User::class),
             ];
         }
     }
@@ -88,7 +93,7 @@ class PostCommentFixtures extends BaseFixture implements DependentFixtureInterfa
 
         $entity = $this->postCommentManager->create(
             $dto,
-            $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT))
+            $this->getReference('user_'.rand(1, UserFixtures::USERS_COUNT), User::class)
         );
 
         $roll = rand(1, 400);

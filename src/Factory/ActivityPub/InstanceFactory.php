@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
-use App\Service\ActivityPub\ApHttpClient;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -12,17 +12,17 @@ class InstanceFactory
 {
     public function __construct(
         private string $kbinDomain,
-        private readonly ApHttpClient $client,
+        private readonly ApHttpClientInterface $client,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
     ) {
     }
 
-    public function create(): array
+    public function create(bool $includeContext = true): array
     {
         $actor = 'https://'.$this->kbinDomain.'/i/actor';
 
-        return [
+        $result = [
             '@context' => $this->contextProvider->referencedContexts(),
             'id' => $actor,
             'type' => 'Application',
@@ -36,7 +36,17 @@ class InstanceFactory
                 'owner' => $actor,
                 'publicKeyPem' => $this->client->getInstancePublicKey(),
             ],
-            'url' => 'https://'.$this->kbinDomain.'/instance-actor',
         ];
+
+        if (!$includeContext) {
+            unset($result['@context']);
+        }
+
+        return $result;
+    }
+
+    public function getTargetUrl(): string
+    {
+        return 'https://'.$this->kbinDomain;
     }
 }

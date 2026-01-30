@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Admin;
 
-use App\Repository\SettingsRepository;
-use App\Service\SettingsManager;
 use App\Tests\WebTestCase;
 
 class AdminFederationControllerTest extends WebTestCase
 {
     public function testAdminCanClearBannedInstances(): void
     {
-        $client = $this->createClient();
+        $instance = $this->instanceRepository->getOrCreateInstance('www.example.com');
+        $this->instanceManager->banInstance($instance);
 
-        $this->getService(SettingsManager::class)->set('KBIN_BANNED_INSTANCES', ['www.example.com']);
+        $this->client->loginUser($this->getUserByUsername('admin', isAdmin: true));
 
-        $client->loginUser($this->getUserByUsername('admin', isAdmin: true));
+        $crawler = $this->client->request('GET', '/admin/federation');
 
-        $crawler = $client->request('GET', '/admin/federation');
-
-        $client->submit($crawler->filter('#content form[name=instances] button')->form(
-            ['instances[instances]' => ''],
-        ));
+        $this->client->submit($crawler->filter('#content tr td button[type=submit]')->form());
 
         $this->assertSame(
             [],
-            $this->getService(SettingsRepository::class)->findOneBy(['name' => 'KBIN_BANNED_INSTANCES'])->json,
+            $this->settingsManager->getBannedInstances(),
         );
     }
 }

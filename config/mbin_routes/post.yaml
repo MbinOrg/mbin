@@ -1,0 +1,280 @@
+post_comment_create:
+  controller: App\Controller\Post\Comment\PostCommentCreateController
+  defaults: { slug: -, parent_comment_id: null }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{parent_comment_id}
+  methods: [ GET, POST ]
+  requirements:
+    post_id: \d+
+    parent_comment_id: \d+
+
+post_comment_edit:
+  controller: App\Controller\Post\Comment\PostCommentEditController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/edit
+  methods: [ GET, POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_moderate:
+  controller: App\Controller\Post\Comment\PostCommentModerateController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/moderate
+  methods: [ GET, POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_delete:
+  controller: App\Controller\Post\Comment\PostCommentDeleteController::delete
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/delete
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_restore:
+  controller: App\Controller\Post\Comment\PostCommentDeleteController::restore
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/restore
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_purge:
+  controller: App\Controller\Post\Comment\PostCommentDeleteController::purge
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/purge
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_change_lang:
+  controller: App\Controller\Post\Comment\PostCommentChangeLangController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/comments/{comment_id}/change_lang
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_change_adult:
+  controller: App\Controller\Post\Comment\PostCommentChangeAdultController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/comments/{comment_id}/change_adult
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_image_delete:
+  controller: App\Controller\Post\Comment\PostCommentDeleteImageController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/delete_image
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_voters:
+  controller: App\Controller\Post\Comment\PostCommentVotersController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/votes
+  methods: [ GET ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_favourites:
+  controller: App\Controller\Post\Comment\PostCommentFavouriteController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/reply/{comment_id}/favourites
+  methods: [ GET ]
+  requirements:
+    post_id: \d+
+    comment_id: \d+
+
+post_comment_vote:
+  controller: App\Controller\VoteController
+  defaults: { entityClass: App\Entity\PostComment }
+  path: /pcv/{id}/{choice}
+  methods: [ POST ]
+  requirements:
+    id: \d+
+
+post_comment_report:
+  controller: App\Controller\ReportController
+  defaults: { entityClass: App\Entity\PostComment }
+  path: /pcr/{id}
+  methods: [ GET, POST ]
+  requirements:
+    id: \d+
+
+post_comment_favourite:
+  controller: App\Controller\FavouriteController
+  defaults: { entityClass: App\Entity\PostComment }
+  path: /pcf/{id}
+  methods: [ POST ]
+  requirements:
+    id: \d+
+
+post_comment_boost:
+  controller: App\Controller\BoostController
+  defaults: { entityClass: App\Entity\PostComment }
+  path: /pcb/{id}
+  methods: [ POST ]
+  requirements:
+    id: \d+
+
+post_pin:
+  controller: App\Controller\Post\PostPinController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/pin
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_lock:
+    controller: App\Controller\Post\PostLockController
+    defaults: { slug: - }
+    path: /m/{magazine_name}/p/{post_id}/{slug}/lock
+    methods: [ POST ]
+    requirements:
+        post_id: \d+
+
+post_voters:
+  controller: App\Controller\Post\PostVotersController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/votes
+  methods: [ GET ]
+  requirements:
+    post_id: \d+
+
+post_favourites:
+  controller: App\Controller\Post\PostFavouriteController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/favourites
+  methods: [ GET ]
+  requirements:
+    post_id: \d+
+
+post_create:
+  controller: App\Controller\Post\PostCreateController
+  path: /microblog/create
+  methods: [ GET, POST ]
+
+post_edit:
+  controller: App\Controller\Post\PostEditController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/edit
+  methods: [ GET, POST ]
+  requirements:
+    post_id: \d+
+
+post_moderate:
+  controller: App\Controller\Post\PostModerateController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/moderate
+  methods: [ GET, POST ]
+  requirements:
+    post_id: \d+
+
+post_delete:
+  controller: App\Controller\Post\PostDeleteController::delete
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/delete
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_restore:
+  controller: App\Controller\Post\PostDeleteController::restore
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/restore
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_purge:
+  controller: App\Controller\Post\PostDeleteController::purge
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/purge
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_image_delete:
+  controller: App\Controller\Post\PostDeleteImageController
+  defaults: { slug: -, }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/delete_image
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_change_magazine:
+  controller: App\Controller\Post\PostChangeMagazineController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/change_magazine
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_change_lang:
+  controller: App\Controller\Post\PostChangeLangController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/change_lang
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_change_adult:
+  controller: App\Controller\Post\PostChangeAdultController
+  defaults: { slug: - }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/change_adult
+  methods: [ POST ]
+  requirements:
+    post_id: \d+
+
+post_single:
+  controller: App\Controller\Post\PostSingleController
+  defaults: { slug: -, sortBy: default }
+  path: /m/{magazine_name}/p/{post_id}/{slug}/{sortBy}
+  methods: [ GET ]
+  requirements:
+    sortBy: "%comment_sort_options%"
+    post_id: \d+
+
+post_vote:
+  controller: App\Controller\VoteController
+  defaults: { entityClass: App\Entity\Post }
+  path: /pv/{id}/{choice}
+  methods: [ POST ]
+  requirements:
+    id: \d+
+
+post_report:
+  controller: App\Controller\ReportController
+  defaults: { entityClass: App\Entity\Post }
+  path: /pr/{id}
+  methods: [ GET, POST ]
+  requirements:
+    id: \d+
+
+post_favourite:
+  controller: App\Controller\FavouriteController
+  defaults: { entityClass: App\Entity\Post }
+  path: /pf/{id}
+  methods: [ POST ]
+  requirements:
+    id: \d+
+
+post_boost:
+  controller: App\Controller\BoostController
+  defaults: { entityClass: App\Entity\Post }
+  path: /pb/{id}
+  methods: [ POST ]
+  requirements:
+    id: \d+

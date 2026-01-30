@@ -13,9 +13,10 @@ use App\PageView\EntryCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Schema\PaginationSchema;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
@@ -134,14 +135,16 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
         EntryCommentRepository $commentsRepository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $this->handlePrivateContent($entry);
 
         $request = $this->request->getCurrentRequest();
-        $criteria = new EntryCommentPageView($this->getPageNb($request));
-        $criteria->showSortOption($criteria->resolveSort($request->get('sortBy', Criteria::SORT_HOT)));
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
+        $sort = $criteria->resolveSort($request->get('sortBy', Criteria::SORT_HOT));
+        $criteria->showSortOption($sort);
         $criteria->entry = $entry;
         $criteria->perPage = self::constrainPerPage($request->get('perPage', EntryCommentRepository::PER_PAGE));
         $criteria->setTime($criteria->resolveTime($request->get('time', Criteria::TIME_ALL)));
@@ -155,8 +158,13 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
 
         $dtos = [];
         foreach ($comments->getCurrentPageResults() as $value) {
-            \assert($value instanceof EntryComment);
-            array_push($dtos, $this->serializeCommentTree($value));
+            try {
+                \assert($value instanceof EntryComment);
+                $this->handlePrivateContent($value);
+                $dtos[] = $this->serializeCommentTree($value, $criteria);
+            } catch (\Exception $e) {
+                continue;
+            }
         }
 
         return new JsonResponse(
@@ -199,15 +207,13 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
         EntryCommentRepository $commentsRepository,
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $this->handlePrivateContent($comment);
 
-        $commentsRepository->hydrate($comment);
-        $commentsRepository->hydrateChildren($comment);
-
         return new JsonResponse(
-            $this->serializeCommentTree($comment),
+            $this->serializeCommentTree($comment, new EntryCommentPageView(0, $security)),
             headers: $headers
         );
     }

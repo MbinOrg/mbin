@@ -15,14 +15,14 @@ class MagazinePeopleFrontController extends AbstractController
 {
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
     }
 
     public function __invoke(
         Magazine $magazine,
         ?string $category,
-        Request $request
+        Request $request,
     ): Response {
         return $this->render(
             'people/front.html.twig', [
@@ -31,8 +31,8 @@ class MagazinePeopleFrontController extends AbstractController
                     $this->magazineRepository->findByActivity(),
                     fn ($val) => 'random' !== $val->name && $val !== $magazine
                 ),
-                'local' => $this->userRepository->findUsersForMagazine($magazine),
-                'federated' => $this->userRepository->findUsersForMagazine($magazine, true),
+                'local' => $this->userRepository->findUsersForMagazine($magazine, limit: 28, limitTime: $magazine->getContentCount() > 1000),
+                'federated' => $this->userRepository->findUsersForMagazine($magazine, true, limit: 28, limitTime: $magazine->getContentCount() > 1000),
             ]
         );
     }

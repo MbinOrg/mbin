@@ -13,7 +13,7 @@
                 <img class="image-inline {{ magazine.isAdult ? 'image-adult' : '' }}"
                      loading="lazy"
                      src="{{ computed.magazine.icon.filePath ? (asset(computed.magazine.icon.filePath)|imagine_filter('post_thumb')) : computed.magazine.icon.sourceUrl }}"
-                     {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adult_image_hover mouseout->thumb#adult_image_hover_out"{% endif %}
+                     {% if magazine.isAdult %}data-controller="thumb" data-action="mouseover->thumb#adultImageHover mouseout->thumb#adultImageHoverOut"{% endif %}
                      alt="{{ computed.magazine.name ~ ' ' ~ 'icon'|trans|lower }}" width="260">
             </figure>
         {% endif %}
@@ -43,6 +43,13 @@
         </header>
     </div>
     {{ component('magazine_sub', {magazine: magazine}) }}
+
+    {% if app.user is defined and app.user is not same as null %}
+        <div class="notification-switch-container" data-controller="html-refresh">
+            {{ component('notification_switch', {target: magazine}) }}
+        </div>
+    {% endif %}
+
     {% if computed.magazine.description and showDescription %}
         <div class="content magazine__description">{{ computed.magazine.description|markdown|raw }}</div>
     {% endif %}
@@ -55,7 +62,7 @@
             <li>{{ 'created_at'|trans }}:
                 {{ component('date', {date: computed.magazine.createdAt}) }}
             </li>
-            {% if app.user is defined and app.user is not null and app.user.admin() and computed.magazine.apId is not null %}
+            {% if app.user is defined and app.user is not null and app.user.admin() and computed.magazine.apId is not null and computed.magazine.apFetchedAt is not same as null %}
                 <li>
                     {{ 'last_updated'|trans }}: {{ component('date', {date: computed.magazine.apFetchedAt}) }}
                 </li>
@@ -80,7 +87,7 @@
     {% macro meta_item(name, url, count) %}
         <li><a href="{{ url }}" class="{{ html_classes({'stretched-link': false}) }}">{{ name }}</a> <span>{{ count }}</span></li>
     {% endmacro %}
-    {% if magazine.tags %}
+    {% if showTags and magazine.tags %}
         <h3 class="mt-3">{{ 'tags'|trans }}</h3>
         <div class="mt-2">
             {% for tag in magazine.tags %}

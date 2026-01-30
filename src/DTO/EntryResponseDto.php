@@ -6,7 +6,8 @@ namespace App\DTO;
 
 use App\DTO\Contracts\VisibilityAwareDtoTrait;
 use App\Entity\Entry;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use App\Enums\ENotificationStatus;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema()]
@@ -37,6 +38,7 @@ class EntryResponseDto implements \JsonSerializable
     public bool $isOc = false;
     public bool $isAdult = false;
     public bool $isPinned = false;
+    public bool $isLocked = false;
     public ?\DateTimeImmutable $createdAt = null;
     public ?\DateTimeImmutable $editedAt = null;
     public ?\DateTime $lastActive = null;
@@ -45,7 +47,24 @@ class EntryResponseDto implements \JsonSerializable
     public ?string $slug = null;
     public ?string $apId = null;
     public ?bool $canAuthUserModerate = null;
+    public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $isAuthorModeratorInMagazine = null;
 
+    /** @var string[]|null */
+    #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
+    public ?array $bookmarks = null;
+
+    /**
+     * @var EntryResponseDto[]|null $crosspostedEntries other entries that share either the link or the title (if that is longer than 10 characters).
+     *                              If this property is null it means that this endpoint does not contain information about it,
+     *                              only an empty array means that there are no crossposts
+     */
+    #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: EntryResponseDto::class)))]
+    public ?array $crosspostedEntries;
+
+    /**
+     * @param string[]|null $bookmarks
+     */
     public static function create(
         ?int $id = null,
         ?MagazineSmallResponseDto $magazine = null,
@@ -62,6 +81,7 @@ class EntryResponseDto implements \JsonSerializable
         ?int $uv = null,
         ?int $dv = null,
         ?bool $isPinned = null,
+        ?bool $isLocked = null,
         ?string $visibility = null,
         ?int $favouriteCount = null,
         ?bool $isOc = null,
@@ -73,6 +93,9 @@ class EntryResponseDto implements \JsonSerializable
         ?string $slug = null,
         ?string $apId = null,
         ?bool $canAuthUserModerate = null,
+        ?array $bookmarks = null,
+        ?array $crosspostedEntries = null,
+        ?bool $isAuthorModeratorInMagazine = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -90,6 +113,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->uv = $uv;
         $dto->dv = $dv;
         $dto->isPinned = $isPinned;
+        $dto->isLocked = $isLocked;
         $dto->visibility = $visibility;
         $dto->favourites = $favouriteCount;
         $dto->isOc = $isOc;
@@ -101,6 +125,9 @@ class EntryResponseDto implements \JsonSerializable
         $dto->slug = $slug;
         $dto->apId = $apId;
         $dto->canAuthUserModerate = $canAuthUserModerate;
+        $dto->bookmarks = $bookmarks;
+        $dto->crosspostedEntries = $crosspostedEntries;
+        $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
 
         return $dto;
     }
@@ -146,6 +173,7 @@ class EntryResponseDto implements \JsonSerializable
             'isOc' => $this->isOc,
             'isAdult' => $this->isAdult,
             'isPinned' => $this->isPinned,
+            'isLocked' => $this->isLocked,
             'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
             'editedAt' => $this->editedAt?->format(\DateTimeInterface::ATOM),
             'lastActive' => $this->lastActive?->format(\DateTimeInterface::ATOM),
@@ -154,6 +182,10 @@ class EntryResponseDto implements \JsonSerializable
             'slug' => $this->slug,
             'apId' => $this->apId,
             'canAuthUserModerate' => $this->canAuthUserModerate,
+            'notificationStatus' => $this->notificationStatus,
+            'bookmarks' => $this->bookmarks,
+            'crosspostedEntries' => $this->crosspostedEntries,
+            'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
         ]);
     }
 }

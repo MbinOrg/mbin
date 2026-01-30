@@ -8,8 +8,8 @@ use App\Controller\Api\Magazine\MagazineBaseApi;
 use App\DTO\MagazineThemeResponseDto;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -70,14 +70,14 @@ class MagazineDeleteIconApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         MagazineManager $manager,
-        RateLimiterFactory $apiModerateLimiter
+        RateLimiterFactory $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $manager->detachIcon($magazine);
 
-        $imageDto = null;
-        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, $imageDto);
+        $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
+        $dto = MagazineThemeResponseDto::create($manager->createDto($magazine), $magazine->customCss, icon: null, banner: $bannerDto);
 
         return new JsonResponse(
             $dto,

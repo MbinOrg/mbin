@@ -8,7 +8,7 @@ use App\Entity\Magazine;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GroupFactory
@@ -17,7 +17,7 @@ class GroupFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MarkdownConverter $markdownConverter,
         private readonly ContextsProvider $contextProvider,
-        private readonly ImageManager $imageManager
+        private readonly ImageManagerInterface $imageManager,
     ) {
     }
 
@@ -31,7 +31,7 @@ class GroupFactory
 
         $summary = !empty($markdownSummary) ? $this->markdownConverter->convertToHtml(
             $markdownSummary,
-            [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
+            context: [MarkdownConverter::RENDER_TARGET => RenderTarget::ActivityPub],
         ) : '';
 
         $group = [
@@ -50,11 +50,7 @@ class GroupFactory
                 ['name' => $magazine->name],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
-            'followers' => $this->urlGenerator->generate(
-                'ap_magazine_followers',
-                ['name' => $magazine->name],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            ),
+            'followers' => $this->getActivityPubFollowersId($magazine),
             'featured' => $this->urlGenerator->generate(
                 'ap_magazine_pinned',
                 ['name' => $magazine->name],
@@ -78,6 +74,8 @@ class GroupFactory
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'postingRestrictedToMods' => $magazine->postingRestrictedToMods,
+            'discoverable' => $magazine->apDiscoverable,
+            'indexable' => $magazine->apIndexable,
             'endpoints' => [
                 'sharedInbox' => $this->urlGenerator->generate(
                     'ap_shared_inbox',
@@ -98,6 +96,13 @@ class GroupFactory
             ];
         }
 
+        if ($magazine->banner) {
+            $group['image'] = [
+                'type' => 'Image',
+                'url' => $this->imageManager->getUrl($magazine->banner),
+            ];
+        }
+
         if (!$includeContext) {
             unset($group['@context']);
         }
@@ -113,6 +118,19 @@ class GroupFactory
 
         return $this->urlGenerator->generate(
             'ap_magazine',
+            ['name' => $magazine->name],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    public function getActivityPubFollowersId(Magazine $magazine): string
+    {
+        if ($magazine->apId) {
+            return $magazine->apFollowersUrl;
+        }
+
+        return $this->urlGenerator->generate(
+            'ap_magazine_followers',
             ['name' => $magazine->name],
             UrlGeneratorInterface::ABSOLUTE_URL
         );

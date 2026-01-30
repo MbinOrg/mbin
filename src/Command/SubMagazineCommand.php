@@ -17,14 +17,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'mbin:magazine:sub',
-    description: 'This command allows subscribe magazine.',
+    description: 'This command allows to subscribe a user to a magazine.',
 )]
 class SubMagazineCommand extends Command
 {
     public function __construct(
         private readonly MagazineManager $manager,
         private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'signup_requests'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-federation{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {# global mods can see this page, but not navigate to any other menu option, so hiding it for now #}
+    {% if is_granted('ROLE_ADMIN') %}
+        {% include 'admin/_options.html.twig' %}
+    {% endif %}
+    <div class="section">
+        <h3>{{ 'signup_requests_header'|trans }}</h3>
+        <p>{{ 'signup_requests_paragraph'|trans }}</p>
+    </div>
+    {% if username is defined and username is not same as null %}
+        <div class="alert alert__info">
+            <p>{{ 'viewing_one_signup_request'|trans({'%username%': username}) }}</p>
+            <p><a href="{{ path('admin_signup_requests') }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{ 'return'|trans }}</a></p>
+        </div>
+    {% endif %}
+    {% if requests|length %}
+        {% for request in requests %}
+            <div class="section">
+                <div>
+                    <small class="meta">{{ component('user_inline', {user: request, showNewIcon: true}) }},
+                        {{ component('date', {date: request.createdAt}) }}</small>
+                </div>
+                <div>
+                    {{ request.applicationText }}
+                </div>
+                <div class="actions">
+                    <form method="post"
+                          action="{{ path('admin_signup_requests_reject', { page: page, id: request.id }) }}"
+                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                        <input type="hidden" name="token" value="{{ csrf_token('application_deny') }}">
+                        <button type="submit" class="btn btn__secondary">{{ 'reject'|trans }}</button>
+                    </form>
+                    <form method="post"
+                          action="{{ path('admin_signup_requests_approve', { page: page, id: request.id }) }}"
+                          data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                        <input type="hidden" name="token" value="{{ csrf_token('application_approve') }}">
+                        <button type="submit" class="btn btn__secondary">{{ 'approve'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <aside class="section section--muted">
+            <p>{{ 'empty'|trans }}</p>
+        </aside>
+    {% endif %}
+{% endblock %}

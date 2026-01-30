@@ -17,10 +17,10 @@ framework:
                     exchange:
                         name: async
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             inbox:
@@ -34,10 +34,10 @@ framework:
                     exchange:
                         name: inbox
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             receive:
@@ -51,10 +51,10 @@ framework:
                     exchange:
                         name: receive
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             deliver:
@@ -68,10 +68,10 @@ framework:
                     exchange:
                         name: deliver
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             outbox:
@@ -85,10 +85,10 @@ framework:
                     exchange:
                         name: outbox
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             resolve:
@@ -102,10 +102,10 @@ framework:
                     exchange:
                         name: resolve
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             old:
@@ -114,10 +114,10 @@ framework:
                     queues:
                         messages: ~
                 retry_strategy:
-                    max_retries: 7
+                    max_retries: 5
                     delay: 300000
                     multiplier: 4
-                    max_delay: 86400000
+                    max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
             failed:
