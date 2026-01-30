@@ -1153,3 +1153,7 @@ modlog_type_entry_lock: Fío bloqueado
 modlog_type_entry_unlock: Fío desbloqueado
 modlog_type_post_lock: Microblog bloqueado
 modlog_type_post_unlock: Microblog desbloqueado
+contentnotification.muted: Silenciar | non ter notificacións
+contentnotification.default: Predeterminado | recibir notificacións seguindo os 
+  axustes
+contentnotification.loud: Ruidoso | notificar todo
