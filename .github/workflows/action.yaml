@@ -273,7 +273,7 @@ jobs:
         run: composer install --no-scripts --no-progress
 
       - name: Twig linter
-        run: php bin/console lint:twig
+        run: php bin/console lint:twig templates/
 
   frontend-lint:
     runs-on: ubuntu-latest
