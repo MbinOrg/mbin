@@ -9,8 +9,9 @@
           method="post">
         <button type="submit"
                 class="{{ html_classes('btn btn__secondary', {'active': is_domain_subscribed(domain)}) }}"
+                title="{{ is_domain_subscribed(domain) ? 'unsubscribe'|trans : 'subscribe'|trans }}"
                 data-action="subs#send">
-            {{ is_domain_subscribed(domain) ? 'unsubscribe'|trans : 'subscribe'|trans }}
+            {{ is_domain_subscribed(domain) ? 'unsubscribe_short'|trans : 'subscribe_short'|trans }}
         </button>
     </form>
     <form action="{{ path('domain_' ~ (is_domain_blocked(domain) ? 'unblock' : 'block'), {name: domain.name}) }}"
