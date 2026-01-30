@@ -12,12 +12,10 @@ class ImageConstraint
     public static function default(): Image
     {
         return new Image(
-            [
-                'detectCorrupted' => true,
-                'groups' => ['upload'],
-                'maxSize' => '12M',
-                'mimeTypes' => ImageManager::IMAGE_MIMETYPES,
-            ]
+            maxSize: '12M',
+            mimeTypes: ImageManager::IMAGE_MIMETYPES,
+            detectCorrupted: true,
+            groups: ['upload'],
         );
     }
 }

@@ -43,7 +43,7 @@ class PostCommentType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add('imageUrl', UrlType::class, ['required' => false])
+            ->add('imageUrl', UrlType::class, ['required' => false, 'default_protocol' => 'https'])
             ->add('imageAlt', TextareaType::class, ['required' => false])
             ->add('submit', SubmitType::class);
 

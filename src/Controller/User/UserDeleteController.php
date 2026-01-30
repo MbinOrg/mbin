@@ -7,6 +7,7 @@ namespace App\Controller\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -14,8 +15,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserDeleteController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
-    public function deleteAccount(User $user, UserManager $manager, Request $request): Response
-    {
+    public function deleteAccount(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $this->validateCsrf('user_delete_account', $request->getPayload()->get('token'));
 
         $manager->delete($user);
@@ -24,8 +29,12 @@ class UserDeleteController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function scheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
-    {
+    public function scheduleDeleteAccount(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $this->validateCsrf('schedule_user_delete_account', $request->getPayload()->get('token'));
 
         $manager->deleteRequest($user, false);
@@ -34,8 +43,12 @@ class UserDeleteController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function removeScheduleDeleteAccount(User $user, UserManager $manager, Request $request): Response
-    {
+    public function removeScheduleDeleteAccount(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $this->validateCsrf('remove_schedule_user_delete_account', $request->getPayload()->get('token'));
 
         $manager->removeDeleteRequest($user);

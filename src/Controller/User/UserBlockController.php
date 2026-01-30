@@ -7,6 +7,7 @@ namespace App\Controller\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,8 +16,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserBlockController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
-    public function block(User $blocked, UserManager $manager, Request $request): Response
-    {
+    public function block(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $blocked,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $manager->block($this->getUserOrThrow(), $blocked);
 
         if ($request->isXmlHttpRequest()) {
@@ -27,8 +32,12 @@ class UserBlockController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function unblock(User $blocked, UserManager $manager, Request $request): Response
-    {
+    public function unblock(
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $blocked,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $manager->unblock($this->getUserOrThrow(), $blocked);
 
         if ($request->isXmlHttpRequest()) {

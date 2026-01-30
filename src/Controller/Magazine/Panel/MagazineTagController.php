@@ -9,6 +9,7 @@ use App\Entity\Magazine;
 use App\Form\MagazineTagsType;
 use App\Service\BadgeManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -22,8 +23,12 @@ class MagazineTagController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, BadgeManager $manager, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        BadgeManager $manager,
+        Request $request,
+    ): Response {
         $form = $this->createForm(MagazineTagsType::class, $magazine);
 
         $form->handleRequest($request);
