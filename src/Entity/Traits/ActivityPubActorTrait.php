@@ -43,6 +43,9 @@ trait ActivityPubActorTrait
     public ?bool $apDiscoverable = null;
 
     #[Column(type: 'boolean', nullable: true)]
+    public ?bool $apIndexable = null;
+
+    #[Column(type: 'boolean', nullable: true)]
     public ?bool $apManuallyApprovesFollowers = null;
 
     #[Column(type: 'text', nullable: true)]

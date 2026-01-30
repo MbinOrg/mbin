@@ -35,6 +35,16 @@
     <meta property="og:description" content="{{ block('description')|trim }}">
     <meta property="og:image" content="{% block image %}{{ absolute_url(asset('mbin-og.png')) }}{% endblock %}">
 
+    {% if magazine is defined and magazine and magazine.apIndexable is same as false %}
+        <meta name="robots" content="noindex">
+    {% elseif user is defined and user and user.apIndexable is same as false %}
+        <meta name="robots" content="noindex">
+    {% elseif entry is defined and entry and entry.user and entry.user.apIndexable is same as false %}
+        <meta name="robots" content="noindex">
+    {% elseif post is defined and post and post.user and post.user.apIndexable is same as false %}
+        <meta name="robots" content="noindex">
+    {% endif %}
+
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('assets/icons/apple-touch-icon.png') }}">
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">

@@ -18,6 +18,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
     public ?string $apId = null;
     public ?string $apProfileId = null;
     public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     public function __construct(MagazineDto $dto)
     {
@@ -30,6 +31,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
         $this->apId = $dto->apId;
         $this->apProfileId = $dto->apProfileId;
         $this->discoverable = $dto->discoverable;
+        $this->indexable = $dto->indexable;
     }
 
     public function jsonSerialize(): mixed
@@ -44,6 +46,7 @@ class MagazineSmallResponseDto implements \JsonSerializable
             'apId' => $this->apId,
             'apProfileId' => $this->apProfileId,
             'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 }
