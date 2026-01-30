@@ -22,19 +22,19 @@ class DomainSubControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/d/kbin.pub');
 
         // Subscribe
-        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Subscribe')->form());
+        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Sub')->form());
         $crawler = $this->client->followRedirect();
 
         $this->assertSelectorExists('#sidebar form[name=domain_subscribe] .active');
-        $this->assertSelectorTextContains('#sidebar .domain', 'Unsubscribe');
+        $this->assertSelectorTextContains('#sidebar .domain', 'Unsub');
         $this->assertSelectorTextContains('#sidebar .domain', '1');
 
         // Unsubscribe
-        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Unsubscribe')->form());
+        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Unsub')->form());
         $this->client->followRedirect();
 
         $this->assertSelectorNotExists('#sidebar form[name=domain_subscribe] .active');
-        $this->assertSelectorTextContains('#sidebar .domain', 'Subscribe');
+        $this->assertSelectorTextContains('#sidebar .domain', 'Sub');
         $this->assertSelectorTextContains('#sidebar .domain', '0');
     }
 
@@ -53,10 +53,10 @@ class DomainSubControllerTest extends WebTestCase
 
         // Subscribe
         $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Subscribe')->form());
+        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Sub')->form());
 
         $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
-        $this->assertStringContainsString('Unsubscribe', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Unsub', $this->client->getResponse()->getContent());
     }
 
     public function testXmlUserCanUnsubDomain(): void
@@ -73,14 +73,14 @@ class DomainSubControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/d/kbin.pub');
 
         // Subscribe
-        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Subscribe')->form());
+        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Sub')->form());
         $crawler = $this->client->followRedirect();
 
         // Unsubscribe
         $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
-        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Unsubscribe')->form());
+        $this->client->submit($crawler->filter('#sidebar .domain')->selectButton('Unsub')->form());
 
         $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
-        $this->assertStringContainsString('Subscribe', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Sub', $this->client->getResponse()->getContent());
     }
 }
