@@ -268,7 +268,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-tools-
 
       - name: Composer tools install
-        run: composer -d tools install --no-scripts --no-progress
+        run: composer install --no-scripts --no-progress
 
       - name: Twig linter
         run: php bin/console lint:twig
