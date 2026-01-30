@@ -56,7 +56,7 @@ class DeliverHandler extends MbinMessageHandler
     {
         $conn = $this->entityManager->getConnection();
         if (!$conn->isConnected()) {
-            $conn->connect();
+            $conn->getNativeConnection(); // calls connect() internally
         }
         $conn->beginTransaction();
         try {

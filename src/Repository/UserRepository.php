@@ -106,7 +106,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
         ];
 
-        return new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        return new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
     }
 
     /**
@@ -299,8 +299,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         $user->setPassword($newHashedPassword);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByUsername(string $username): ?User
@@ -528,7 +528,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
-            ->setParameters(['query' => "{$query}%", 'status' => EApplicationStatus::Approved->value])
+            ->setParameter('query', "{$query}%")
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
@@ -536,7 +537,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, int $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
-        $conn = $this->_em->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
         $sql = "
         (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
@@ -635,7 +636,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
             $results = $results->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'status' => EApplicationStatus::Approved->value])
+                ->setParameter('lastActive', (new \DateTime())->modify('-7 days'))
+                ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+                ->setParameter('status', EApplicationStatus::Approved->value)
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();

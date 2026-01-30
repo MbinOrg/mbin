@@ -29,6 +29,7 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -78,7 +79,7 @@ class PostManager implements ContentManagerInterface
             }
         }
 
-        if ($dto->magazine->isBanned($user) || $user->isBanned()) {
+        if ($dto->magazine->isBanned($user) || $user->isBanned) {
             throw new UserBannedException();
         }
 
@@ -218,7 +219,7 @@ class PostManager implements ContentManagerInterface
 
         $image = $post->image?->getId();
 
-        $sort = new Criteria(null, ['createdAt' => Criteria::DESC]);
+        $sort = new Criteria(null, ['createdAt' => Order::Descending]);
         foreach ($post->comments->matching($sort) as $comment) {
             $this->postCommentManager->purge($user, $comment);
         }

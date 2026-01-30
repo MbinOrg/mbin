@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20260128151307 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        //TODO as one can see, some things are not detected by Doctrine to be already defined as required
+        
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE entry ALTER title_ts SET DEFAULT \'english\'');
+        $this->addSql('ALTER TABLE entry ALTER body_ts SET DEFAULT \'english\'');
+        $this->addSql('ALTER TABLE entry_comment ALTER body_ts SET DEFAULT \'english\'');
+        $this->addSql('ALTER TABLE magazine ALTER name_ts DROP DEFAULT');
+        $this->addSql('ALTER TABLE magazine ALTER title_ts DROP DEFAULT');
+        $this->addSql('ALTER TABLE magazine ALTER description_ts DROP DEFAULT');
+        $this->addSql('ALTER TABLE post ALTER body_ts SET DEFAULT \'english\'');
+        $this->addSql('ALTER TABLE post_comment ALTER body_ts SET DEFAULT \'english\'');
+        $this->addSql('ALTER TABLE "user" ALTER application_status TYPE enum_application_status');
+        $this->addSql('ALTER TABLE "user" ALTER application_status SET DEFAULT \'Approved\'');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_sort TYPE enum_sort_options');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_sort SET DEFAULT \'hot\'');
+        $this->addSql('ALTER TABLE "user" ALTER comment_default_sort TYPE enum_sort_options');
+        $this->addSql('ALTER TABLE "user" ALTER comment_default_sort SET DEFAULT \'hot\'');
+        $this->addSql('ALTER TABLE "user" ALTER username_ts DROP DEFAULT');
+        $this->addSql('ALTER TABLE "user" ALTER about_ts DROP DEFAULT');
+        $this->addSql('ALTER TABLE "user" ALTER direct_message_setting TYPE enum_direct_message_settings');
+        $this->addSql('ALTER TABLE "user" ALTER direct_message_setting SET DEFAULT \'everyone\'');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_content TYPE enum_front_content_options');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_content DROP NOT NULL');
+    }
+
+    public function down(Schema $schema): void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE entry ALTER title_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, (title)::text)\'');
+        $this->addSql('ALTER TABLE entry ALTER body_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, body)\'');
+        $this->addSql('ALTER TABLE entry_comment ALTER body_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, body)\'');
+        $this->addSql('ALTER TABLE magazine ALTER name_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, (name)::text)\'');
+        $this->addSql('ALTER TABLE magazine ALTER title_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, (title)::text)\'');
+        $this->addSql('ALTER TABLE magazine ALTER description_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, description)\'');
+        $this->addSql('ALTER TABLE post ALTER body_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, body)\'');
+        $this->addSql('ALTER TABLE post_comment ALTER body_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, body)\'');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_sort TYPE VARCHAR');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_sort DROP DEFAULT');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_content TYPE VARCHAR');
+        $this->addSql('ALTER TABLE "user" ALTER front_default_content SET NOT NULL');
+        $this->addSql('ALTER TABLE "user" ALTER comment_default_sort TYPE VARCHAR');
+        $this->addSql('ALTER TABLE "user" ALTER comment_default_sort DROP DEFAULT');
+        $this->addSql('ALTER TABLE "user" ALTER direct_message_setting TYPE VARCHAR');
+        $this->addSql('ALTER TABLE "user" ALTER direct_message_setting DROP DEFAULT');
+        $this->addSql('ALTER TABLE "user" ALTER username_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, (username)::text)\'');
+        $this->addSql('ALTER TABLE "user" ALTER about_ts SET DEFAULT \'to_tsvector(\'\'english\'\'::regconfig, about)\'');
+        $this->addSql('ALTER TABLE "user" ALTER application_status TYPE VARCHAR');
+        $this->addSql('ALTER TABLE "user" ALTER application_status DROP DEFAULT');
+    }
+}
