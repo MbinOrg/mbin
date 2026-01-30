@@ -44,6 +44,7 @@ class UserSettingsDto implements \JsonSerializable
         #[OA\Property(type: 'string', enum: EFrontContentOptions::OPTIONS)]
         public ?string $frontDefaultContent = null,
         public ?bool $discoverable = null,
+        public ?bool $indexable = null,
     ) {
     }
 
@@ -72,6 +73,7 @@ class UserSettingsDto implements \JsonSerializable
             'notifyOnUserSignup' => $this->notifyOnUserSignup,
             'directMessageSetting' => $this->directMessageSetting,
             'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 
@@ -98,6 +100,7 @@ class UserSettingsDto implements \JsonSerializable
         $dto->directMessageSetting = $this->directMessageSetting ?? $dto->directMessageSetting;
         $dto->frontDefaultContent = $this->frontDefaultContent ?? $dto->frontDefaultContent;
         $dto->discoverable = $this->discoverable ?? $dto->discoverable;
+        $dto->indexable = $this->indexable ?? $dto->indexable;
 
         return $dto;
     }

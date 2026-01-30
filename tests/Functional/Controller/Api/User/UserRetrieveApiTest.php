@@ -32,6 +32,7 @@ class UserRetrieveApiTest extends WebTestCase
         'directMessageSetting',
         'frontDefaultContent',
         'discoverable',
+        'indexable',
     ];
     public const NUM_USERS = 10;
 

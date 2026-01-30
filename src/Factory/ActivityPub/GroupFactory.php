@@ -75,6 +75,7 @@ class GroupFactory
             ),
             'postingRestrictedToMods' => $magazine->postingRestrictedToMods,
             'discoverable' => $magazine->apDiscoverable,
+            'indexable' => $magazine->apIndexable,
             'endpoints' => [
                 'sharedInbox' => $this->urlGenerator->generate(
                     'ap_shared_inbox',

@@ -16,6 +16,7 @@ class MagazineRequestDto
     public ?bool $isAdult = null;
     public ?bool $isPostingRestrictedToMods = null;
     public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     public function mergeIntoDto(MagazineDto $dto): MagazineDto
     {
@@ -26,6 +27,7 @@ class MagazineRequestDto
         $dto->isAdult = null !== $this->isAdult ? $this->isAdult : $dto->isAdult;
         $dto->isPostingRestrictedToMods = $this->isPostingRestrictedToMods ?? false;
         $dto->discoverable = $this->discoverable ?? $dto->discoverable ?? true;
+        $dto->indexable = $this->indexable ?? $dto->indexable ?? true;
 
         return $dto;
     }
