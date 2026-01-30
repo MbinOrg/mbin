@@ -65,14 +65,17 @@ readonly class KernelEventsSubscriber implements EventSubscriberInterface
             $user = 'anonymous';
         }
 
-        $routeInfo = $this->router->match($request->getPathInfo());
-        $routeName = $routeInfo['_route'];
-        if (\in_array($routeName, self::ROUTES_TO_IGNORE)) {
-            return;
-        }
+        try {
+            $routeInfo = $this->router->matchRequest($request);
+            $routeName = $routeInfo['_route'];
+            if (\in_array($routeName, self::ROUTES_TO_IGNORE)) {
+                return;
+            }
 
-        if (str_starts_with($routeName, 'ap_')) {
-            $user = 'activity_pub';
+            if (str_starts_with($routeName, 'ap_')) {
+                $user = 'activity_pub';
+            }
+        } catch (\Exception) {
         }
 
         $this->monitor->startNewExecutionContext('request', $user, $routeName ?? $request->getRequestUri(), '');
