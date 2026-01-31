@@ -32,7 +32,7 @@ class PostCreateController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $dto = new PostDto();
-        // check if teh "random" magazine exists and if so, use it
+        // check if the "random" magazine exists and if so, use it
         $randomMagazine = $this->magazineRepository->findOneByName('random');
         if (null !== $randomMagazine) {
             $dto->magazine = $randomMagazine;
