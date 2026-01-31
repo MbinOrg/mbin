@@ -216,7 +216,7 @@ class EntryFrontController extends AbstractController
             if (isset($data['magazine'])) {
                 $dto->magazine = $data['magazine'];
             } else {
-                // check if teh "random" magazine exists and if so, use it
+                // check if the "random" magazine exists and if so, use it
                 $randomMagazine = $this->magazineRepository->findOneByName('random');
                 if (null !== $randomMagazine) {
                     $dto->magazine = $randomMagazine;
