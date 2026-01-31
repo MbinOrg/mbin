@@ -63,7 +63,7 @@ class SqlHelpers
      * which are not supported by sql directly. Keep in mind that postgresql has a limit of 65k parameters
      * and each one of the array values counts as one parameter (because it only works that way).
      *
-     * @return array{'sql': string, 'parameters': array}>
+     * @return array{sql: string, parameters: array}>
      */
     public static function rewriteArrayParameters(array $parameters, string $sql): array
     {
@@ -107,6 +107,23 @@ class SqlHelpers
         }
 
         return Types::STRING;
+    }
+
+    public static function invertOrderings(array $orderings): array
+    {
+        $newOrderings = [];
+        foreach ($orderings as $ordering) {
+            if (str_contains($ordering, 'DESC')) {
+                $newOrderings[] = str_replace('DESC', 'ASC', $ordering);
+            } elseif (str_contains($ordering, 'ASC')) {
+                $newOrderings[] = str_replace('ASC', 'DESC', $ordering);
+            } else {
+                // neither ASC nor DESC means ASC
+                $newOrderings[] = $ordering.' DESC';
+            }
+        }
+
+        return $newOrderings;
     }
 
     public function getBlockedMagazinesDql(User $user): string
