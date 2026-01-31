@@ -8,7 +8,7 @@
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
         "ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
-            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis xsl"
+            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers/features/node:1": {
