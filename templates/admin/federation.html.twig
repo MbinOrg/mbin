@@ -30,7 +30,9 @@
                     {{ form_label(form.federationUsesAllowList, 'federation_uses_allowlist') }}
                     {{ form_widget(form.federationUsesAllowList) }}
                 </div>
-                {{ form_help(form.federationUsesAllowList) }}
+                <div class="checkbox help-text">
+                    {{ form_help(form.federationUsesAllowList) }}
+                </div>
                 <div class="actions">
                     {{ form_row(form.submit, { 'label': 'save'|trans, attr: {class: 'btn btn__primary'} }) }}
                 </div>

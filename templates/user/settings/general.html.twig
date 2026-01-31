@@ -45,6 +45,13 @@
             <div class="checkbox help-text">
                 {{ form_help(form.discoverable) }}
             </div>
+            <div class="checkbox">
+                {{ form_label(form.indexable, 'indexable_by_search_engines') }}
+                {{ form_widget(form.indexable) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.indexable) }}
+            </div>
             <h2>{{ 'notifications'|trans }}</h2>
             {{ form_row(form.notifyOnNewEntryReply, {label: 'notify_on_new_entry_reply', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.notifyOnNewEntryCommentReply, {label: 'notify_on_new_entry_comment_reply', row_attr: {class: 'checkbox'}}) }}

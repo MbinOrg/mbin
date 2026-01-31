@@ -172,6 +172,8 @@ readonly class UserManager
             $user = KeysGenerator::generate($user);
             // default new local users to be discoverable
             $user->apDiscoverable = $dto->discoverable ?? true;
+            // default new local users to be indexable
+            $user->apIndexable = true;
         }
 
         $this->entityManager->persist($user);

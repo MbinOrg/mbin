@@ -134,8 +134,9 @@ class ActivityJsonBuilder
         ];
 
         if (null !== $activity->audience) {
-            $activityJson['cc'][] = $this->urlGenerator->generate('ap_magazine_followers', ['name' => $activity->audience->name], UrlGeneratorInterface::ABSOLUTE_URL);
-            $activityJson['audience'] = $this->groupFactory->getActivityPubId($activity->audience);
+            $magazineId = $this->groupFactory->getActivityPubId($activity->audience);
+            $activityJson['cc'][] = $magazineId;
+            $activityJson['audience'] = $magazineId;
         }
 
         return $activityJson;

@@ -28,6 +28,7 @@ class UserResponseDto implements \JsonSerializable
     public ?string $serverSoftware = null;
     public ?string $serverSoftwareVersion = null;
     public ?ENotificationStatus $notificationStatus = null;
+    public ?bool $indexable = null;
 
     /**
      * @var int|null this will only be populated on single user retrieves, not on batch ones,
@@ -57,6 +58,7 @@ class UserResponseDto implements \JsonSerializable
         $this->isGlobalModerator = $dto->isGlobalModerator;
         $this->reputationPoints = $dto->reputationPoints;
         $this->discoverable = $dto->discoverable;
+        $this->indexable = $dto->indexable;
     }
 
     public function jsonSerialize(): mixed
@@ -82,6 +84,7 @@ class UserResponseDto implements \JsonSerializable
             'notificationStatus' => $this->notificationStatus,
             'reputationPoints' => $this->reputationPoints,
             'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 }
