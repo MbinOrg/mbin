@@ -1,0 +1,10 @@
+<a href="{{ path('admin_monitoring_single_context', {'id': context.uuid.toString, 'page': page, 'compareToParent': not compareToParent}) }}" class="btn btn-link">
+    {% if compareToParent %}
+        {{ 'monitoring_twig_compare_to_total'|trans }}
+    {% else %}
+        {{ 'monitoring_twig_compare_to_parent'|trans }}
+    {% endif %}
+</a>
+{% for render in context.getRootTwigRenders() %}
+    {{ component('monitoring_twig_render', {'render': render, 'compareToParent': compareToParent}) }}
+{% endfor %}

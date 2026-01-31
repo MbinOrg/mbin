@@ -6,6 +6,8 @@ namespace App\Service\ActivityPub;
 
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Event\ActivityPub\CurlRequestBeginningEvent;
+use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\GroupFactory;
@@ -19,6 +21,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -57,6 +60,7 @@ class ApHttpClient implements ApHttpClientInterface
         private readonly MagazineRepository $magazineRepository,
         private readonly SiteRepository $siteRepository,
         private readonly ProjectInfoService $projectInfo,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -105,6 +109,11 @@ class ApHttpClient implements ApHttpClientInterface
         $this->logger->debug("[ApHttpClient::getActivityObjectImpl] URL: $url");
         $content = null;
         try {
+            $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
+        } catch (\Throwable) {
+        }
+
+        try {
             $client = new CurlHttpClient();
             $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
@@ -122,6 +131,10 @@ class ApHttpClient implements ApHttpClientInterface
             // Read also non-OK responses (like 410) by passing 'false'
             $content = $response->getContent(false);
             $this->logger->debug('[ApHttpClient::getActivityObjectImpl] URL: {url} - content: {content}', ['url' => $url, 'content' => $content]);
+            try {
+                $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true, $content));
+            } catch (\Throwable) {
+            }
         } catch (\Exception $e) {
             $this->logRequestException($response ?? null, $url, 'ApHttpClient:getActivityObject', $e);
         }
@@ -187,17 +200,23 @@ class ApHttpClient implements ApHttpClientInterface
         $this->logger->debug("[ApHttpClient::getWebfingerObjectImpl] URL: $url");
         $response = null;
         try {
+            $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
+        } catch (\Throwable) {
+        }
+        try {
             $client = new CurlHttpClient();
             $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
                 'headers' => $this->getInstanceHeaders($url, null, 'get', ApRequestType::WebFinger),
             ]);
+            $content = $response->getContent();
+            $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true, $content));
         } catch (\Exception $e) {
             $this->logRequestException($response, $url, 'ApHttpClient:getWebfingerObject', $e);
         }
 
-        return $response->getContent();
+        return $content;
     }
 
     private function getActorCacheKey(string $apProfileId): string
@@ -243,6 +262,12 @@ class ApHttpClient implements ApHttpClientInterface
     {
         $this->logger->debug("[ApHttpClient::getActorObjectImpl] URL: $apProfileId");
         $response = null;
+
+        try {
+            $this->dispatcher->dispatch(new CurlRequestBeginningEvent($apProfileId));
+        } catch (\Throwable) {
+        }
+
         try {
             // Set-up request
             $client = new CurlHttpClient();
@@ -262,6 +287,13 @@ class ApHttpClient implements ApHttpClientInterface
                     $this->magazineRepository->save($magazine, true);
                 }
             }
+
+            // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
+            $content = $response->getContent(false);
+            try {
+                $this->dispatcher->dispatch(new CurlRequestFinishedEvent($apProfileId, true, $content));
+            } catch (\Throwable) {
+            }
         } catch (\Exception|TransportExceptionInterface $e) {
             // If an exception occurred, try to find the actor locally
             if ($user = $this->userRepository->findOneByApProfileId($apProfileId)) {
@@ -280,9 +312,7 @@ class ApHttpClient implements ApHttpClientInterface
             return json_encode($this->tombstoneFactory->create($apProfileId));
         }
 
-        // Return the content.
-        // Pass the 'false' option to getContent so it doesn't throw errors on "non-OK" respones (eg. 410 status codes).
-        return $response->getContent(false);
+        return $content;
     }
 
     /**
@@ -339,6 +369,12 @@ class ApHttpClient implements ApHttpClientInterface
     {
         $this->logger->debug("[ApHttpClient::getCollectionObjectImpl] URL: $apAddress");
         $response = null;
+
+        try {
+            $this->dispatcher->dispatch(new CurlRequestBeginningEvent($apAddress));
+        } catch (\Throwable) {
+        }
+
         try {
             // Set-up request
             $client = new CurlHttpClient();
@@ -354,12 +390,17 @@ class ApHttpClient implements ApHttpClientInterface
                 // Do NOT include the response content in the error message, this will be often a full HTML page
                 throw new InvalidApPostException('Invalid status code while getting', $apAddress, $statusCode);
             }
+            $content = $response->getContent();
+            try {
+                $this->dispatcher->dispatch(new CurlRequestFinishedEvent($apAddress, true, $content));
+            } catch (\Throwable) {
+            }
         } catch (\Exception $e) {
             $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
         }
 
         // When everything goes OK, return the data
-        return $response->getContent();
+        return $content;
     }
 
     /**
@@ -399,6 +440,11 @@ class ApHttpClient implements ApHttpClientInterface
                 'content' => $content,
             ]);
         }
+        try {
+            $this->dispatcher->dispatch(new CurlRequestFinishedEvent($requestUrl, false, $content ?? null, $e));
+        } catch (\Throwable $e) {
+        }
+
         throw $e; // re-throw the exception
     }
 
@@ -431,6 +477,11 @@ class ApHttpClient implements ApHttpClientInterface
         $this->logger->debug("[ApHttpClient::post] URL: $url");
         $this->logger->debug("[ApHttpClient::post] Body: $jsonBody");
 
+        try {
+            $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url, 'POST', $jsonBody));
+        } catch (\Throwable) {
+        }
+
         // Set-up request
         try {
             $client = new CurlHttpClient();
@@ -445,6 +496,10 @@ class ApHttpClient implements ApHttpClientInterface
             if (!str_starts_with((string) $statusCode, '2')) {
                 // Do NOT include the response content in the error message, this will be often a full HTML page
                 throw new InvalidApPostException('Post failed', $url, $statusCode, $body);
+            }
+            try {
+                $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true));
+            } catch (\Throwable) {
             }
         } catch (\Exception $e) {
             $this->logRequestException($response ?? null, $url, 'ApHttpClient:post', $e, $jsonBody);
@@ -512,7 +567,15 @@ class ApHttpClient implements ApHttpClientInterface
         }
 
         try {
+            try {
+                $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
+            } catch (\Throwable) {
+            }
             $resp = $this->generalFetch($url, $requestType);
+            try {
+                $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true, $resp));
+            } catch (\Throwable) {
+            }
         } catch (\Exception $e) {
             $this->logger->warning('[ApHttpClient::generalFetchCached] There was an exception fetching {type} from {url}: {e} - {msg}', [
                 'type' => $fetchType,
@@ -521,6 +584,7 @@ class ApHttpClient implements ApHttpClientInterface
                 'msg' => $e->getMessage(),
             ]);
             $resp = null;
+            $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, false));
         }
 
         if (!$resp) {
