@@ -296,4 +296,14 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
     {
         return $this->mentionManager->getRoute([$username])[0];
     }
+
+    public function getCursorUrlValue(mixed $cursor): mixed
+    {
+        if ($cursor instanceof \DateTime || $cursor instanceof \DateTimeImmutable) {
+            return $cursor->format(DATE_ATOM);
+            // return $cursor->getTimestamp();
+        }
+
+        return $cursor;
+    }
 }
