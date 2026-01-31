@@ -143,9 +143,11 @@ class UserFrontController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
                 'html' => $this->renderView(
-                    'post/_list.html.twig',
+                    'entry/comment/_list.html.twig',
                     [
-                        'posts' => $comments,
+                        'comments' => $comments,
+                        'criteria' => $criteria,
+                        'showNested' => false,
                     ]
                 ),
             ]);
@@ -156,7 +158,7 @@ class UserFrontController extends AbstractController
             [
                 'user' => $user,
                 'comments' => $comments,
-                'criteria' => new EntryCommentPageView(0, $this->security),
+                'criteria' => $criteria,
             ],
             $response
         );
@@ -252,7 +254,9 @@ class UserFrontController extends AbstractController
                 'html' => $this->renderView(
                     'post/comment/_list.html.twig',
                     [
-                        'comments' => $results,
+                        'comments' => $comments,
+                        'criteria' => $criteria,
+                        'showNested' => false,
                     ]
                 ),
             ]);
@@ -262,8 +266,8 @@ class UserFrontController extends AbstractController
             'user/replies.html.twig',
             [
                 'user' => $user,
-                'results' => $results,
-                'pagination' => $comments,
+                'comments' => $comments,
+                'criteria' => $criteria,
             ],
             $response
         );
@@ -391,11 +395,20 @@ class UserFrontController extends AbstractController
 
         $activity = $repository->findBoosts($this->getPageNb($request), $user);
 
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('user/_boost_list.html.twig', [
+                    'results' => $activity->getCurrentPageResults(),
+                    'pagination' => $activity,
+                ]),
+            ]);
+        }
+
         return $this->render(
             'user/overview.html.twig',
             [
                 'user' => $user,
-                'results' => $this->overviewManager->buildList($activity),
+                'results' => $activity->getCurrentPageResults(),
                 'pagination' => $activity,
             ],
             $response

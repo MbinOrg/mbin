@@ -58,7 +58,7 @@ export default class extends Controller {
         const elements = div.querySelectorAll('[data-controller="subject-list"] > *');
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            if ((element.id && null === document.getElementById(element.id)) || element.classList.contains('user-box-inline') || element.classList.contains('magazine')) {
+            if ((element.id && null === document.getElementById(element.id)) || element.classList.contains('user-box-inline') || element.classList.contains('magazine') || element.classList.contains('post-container')) {
                 this.element.before(element);
 
                 if (elements[i + 1] && elements[i + 1].classList.contains('post-comments')) {

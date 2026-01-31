@@ -37,7 +37,16 @@
         }) }}
     {% endfor %}
     {% if(comments.haveToPaginate is defined and comments.haveToPaginate) %}
-        {{ pagerfanta(comments, null, {'pageParameter':'[p]'}) }}
+        {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL')) is same as 'true' %}
+            <div data-controller="infinite-scroll" class="infinite-scroll">
+                {{ component('loader', {'data-infinite-scroll-target': 'loader'}) }}
+                <div data-infinite-scroll-target="pagination" class="visually-hidden">
+                    {{ pagerfanta(comments, null, {'pageParameter':'[p]'}) }}
+                </div>
+            </div>
+        {% else %}
+            {{ pagerfanta(comments, null, {'pageParameter':'[p]'}) }}
+        {% endif %}
     {% endif %}
     {% if not comments|length %}
         <aside class="section section--muted">

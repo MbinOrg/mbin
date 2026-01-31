@@ -30,13 +30,11 @@
             'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
             'show-post-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS'))
         }) }}">
-            {% for subject in results %}
-                {% include 'layout/_subject.html.twig' %}
-            {% endfor %}
+            {% include 'post/comment/_list.html.twig' with {'showNested': false} %}
             {% if(pagination.haveToPaginate is defined and pagination.haveToPaginate) %}
                 {{ pagerfanta(pagination, null, {'pageParameter':'[p]'}) }}
             {% endif %}
-            {% if not results|length %}
+            {% if not comments|length %}
                 <aside class="section section--muted">
                     <p>{{ 'empty'|trans }}</p>
                 </aside>
