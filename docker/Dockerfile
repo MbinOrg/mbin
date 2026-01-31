@@ -37,7 +37,6 @@ RUN set -eux; \
 		pcntl \
 		exif \
 		zip \
-        xsl \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
