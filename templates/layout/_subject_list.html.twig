@@ -14,6 +14,22 @@
     {% set postCommentAttributes = {} %}
 {% endif %}
 
+{% if pagination is defined and pagination %}
+    {% if(pagination.hasPreviousPage is defined and pagination.hasPreviousPage) %}
+        {% if pagination.getCurrentCursor is defined and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL')) is not same as 'true' %}
+            {{ component('cursor_pagination', {'pagination': pagination, 'isForward': false}) }}
+        {% endif %}
+    {% endif %}
+{% else %}
+    {% if(results.hasPreviousPage is defined and results.hasPreviousPage) %}
+        {% if results.getCurrentCursor is defined and app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL')) is not same as 'true' %}
+            {% if results.getCurrentCursor is defined %}
+                {{ component('cursor_pagination', {'pagination': results, 'isForward': false}) }}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
 {% for subject in results %}
     {% include 'layout/_subject.html.twig' %}
 {% endfor %}
@@ -26,12 +42,17 @@
                     {{ pagerfanta(pagination, null, {'pageParameter':'[p]'}) }}
                 </div>
             </div>
+        {% elseif pagination.getCurrentCursor is defined %}
+            {{ component('cursor_pagination', {'pagination': pagination}) }}
         {% else %}
             {{ pagerfanta(pagination, null, {'pageParameter':'[p]'}) }}
         {% endif %}
     {% endif %}
 {% else %}
     {% if(results.haveToPaginate is defined and results.haveToPaginate) %}
+        {% if pagination.getCurrentCursor is defined %}
+            {{ component('cursor_pagination', {'pagination': results}) }}
+        {% endif %}
         {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL')) is same as 'true' %}
             <div data-controller="infinite-scroll" class="infinite-scroll">
                 {{ component('loader', {'data-infinite-scroll-target': 'loader'}) }}
@@ -39,6 +60,8 @@
                     {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
                 </div>
             </div>
+        {% elseif results.getCurrentCursor is defined %}
+            {{ component('cursor_pagination', {'pagination': results}) }}
         {% else %}
             {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
         {% endif %}

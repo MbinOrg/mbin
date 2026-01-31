@@ -8,6 +8,8 @@ use App\Entity\MagazineBlock;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -61,7 +63,7 @@ class SqlHelpers
      * which are not supported by sql directly. Keep in mind that postgresql has a limit of 65k parameters
      * and each one of the array values counts as one parameter (because it only works that way).
      *
-     * @return array{'sql': string, 'parameters': array}>
+     * @return array{sql: string, parameters: array}>
      */
     public static function rewriteArrayParameters(array $parameters, string $sql): array
     {
@@ -92,6 +94,23 @@ class SqlHelpers
             'parameters' => $newParameters,
             'sql' => $newSql,
         ];
+    }
+
+    public static function invertOrderings(array $orderings): array
+    {
+        $newOrderings = [];
+        foreach ($orderings as $ordering) {
+            if (str_contains($ordering, 'DESC')) {
+                $newOrderings[] = str_replace('DESC', 'ASC', $ordering);
+            } elseif (str_contains($ordering, 'ASC')) {
+                $newOrderings[] = str_replace('ASC', 'DESC', $ordering);
+            } else {
+                // neither ASC nor DESC means ASC
+                $newOrderings[] = $ordering.' DESC';
+            }
+        }
+
+        return $newOrderings;
     }
 
     public function getBlockedMagazinesDql(User $user): string
@@ -354,5 +373,18 @@ class SqlHelpers
         $this->logger->debug('Fetching single column row from {sql}: {res}', ['sql' => $sql, 'res' => $result]);
 
         return $result;
+    }
+
+    public static function getSqlType(mixed $value): mixed
+    {
+        if ($value instanceof \DateTimeImmutable) {
+            return Types::DATETIMETZ_IMMUTABLE;
+        } elseif ($value instanceof \DateTime) {
+            return Types::DATETIMETZ_MUTABLE;
+        } elseif (\is_int($value)) {
+            return Types::INTEGER;
+        }
+
+        return ParameterType::STRING;
     }
 }

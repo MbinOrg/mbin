@@ -40,6 +40,7 @@ final class UrlExtension extends AbstractExtension
             new TwigFunction('post_comment_delete_url', [UrlExtensionRuntime::class, 'postCommentDeleteUrl']),
             new TwigFunction('options_url', [UrlExtensionRuntime::class, 'optionsUrl']),
             new TwigFunction('mention_url', [UrlExtensionRuntime::class, 'mentionUrl']),
+            new TwigFunction('get_cursor_url_value', [UrlExtensionRuntime::class, 'getCursorUrlValue']),
         ];
     }
 }
