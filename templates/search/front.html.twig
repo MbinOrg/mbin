@@ -34,12 +34,7 @@
                 {% endif %}
             {% endfor %}
         {% elseif q is defined and q %}
-            {% include 'layout/_subject_list.html.twig' with {
-                entryCommentAttributes: {showMagazineName: true, showEntryTitle: true},
-                postCommentAttributes: {withPost: false},
-                magazineAttributes: {showMeta: false, showRules: false, showDescription: false, showInfo: false, stretchedLink: false, showTags: false},
-                userAttributes: {},
-            } %}
+            {% include 'search/_list.html.twig' %}
         {% endif %}
     </div>
 {% endblock %}
