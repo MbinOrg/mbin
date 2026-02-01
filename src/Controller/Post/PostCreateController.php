@@ -38,7 +38,7 @@ class PostCreateController extends AbstractController
             $dto->magazine = $randomMagazine;
         }
 
-        $form = $this->createForm(PostType::class)->setData($dto);
+        $form = $this->createForm(PostType::class, $dto);
         $user = $this->getUserOrThrow();
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
