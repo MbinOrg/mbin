@@ -14,6 +14,7 @@ use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
+use App\Repository\MagazineRepository;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,6 +27,7 @@ class EntryFrontController extends AbstractController
 {
     public function __construct(
         private readonly ContentRepository $contentRepository,
+        private readonly MagazineRepository $magazineRepository,
         private readonly Security $security,
     ) {
     }
@@ -210,9 +212,17 @@ class EntryFrontController extends AbstractController
 
         if ('microblog' === $criteria->content) {
             $dto = new PostDto();
+
             if (isset($data['magazine'])) {
                 $dto->magazine = $data['magazine'];
+            } else {
+                // check if the "random" magazine exists and if so, use it
+                $randomMagazine = $this->magazineRepository->findOneByName('random');
+                if (null !== $randomMagazine) {
+                    $dto->magazine = $randomMagazine;
+                }
             }
+
             $baseData['form'] = $this->createForm(PostType::class)->setData($dto)->createView();
             $baseData['user'] = $user;
         }
