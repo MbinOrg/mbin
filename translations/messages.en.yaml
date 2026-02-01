@@ -1136,3 +1136,5 @@ user_indexable_by_search_engines_help: If this setting is false, search engines 
 magazine_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of the
   threads and microblogs in this magazines. That includes the landing page and all comment pages. This setting is also
   federated to other servers.
+magazine_rules_deprecated: the rules field is deprecated and will be removed in the future. It is also not federated.
+  Please put your rules in the description box.
