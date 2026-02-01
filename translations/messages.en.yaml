@@ -1144,3 +1144,5 @@ magazine_name_as_tag_help: The tags of a magazine are used to match microblog po
 magazine_rules_deprecated: the rules field is deprecated and will be removed in the future.
   Please put your rules in the description box.
 reached_end: You've reached the end
+next_page: Next page
+previous_page: Previous page
