@@ -3,7 +3,7 @@
         <div class="section">
             {% if pagination.hasNextPage() %}
                 <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(pagination.getNextPage())) }}">
-                    {{ 'next'|trans|capitalize }}
+                    {{ 'next_page'|trans|capitalize }}
                 </a>
             {% else %}
                 {{ 'reached_end'|trans }}
@@ -13,7 +13,7 @@
         {% if pagination.hasPreviousPage() %}
             <div class="section">
                 <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(pagination.getPreviousPage())) }}">
-                    {{ 'previous'|trans|capitalize }}
+                    {{ 'previous_page'|trans|capitalize }}
                 </a>
             </div>
         {% endif %}
