@@ -1,12 +1,14 @@
 <div class="cursor-pagination">
     {% if isForward is same as true %}
-        {% if pagination.haveToPaginate %}
-            <div class="section">
+        <div class="section">
+            {% if pagination.hasNextPage() %}
                 <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(pagination.getNextPage())) }}">
                     {{ 'next'|trans|capitalize }}
                 </a>
-            </div>
-        {% endif %}
+            {% else %}
+                {{ 'reached_end'|trans }}
+            {% endif %}
+        </div>
     {% else %}
         {% if pagination.hasPreviousPage() %}
             <div class="section">

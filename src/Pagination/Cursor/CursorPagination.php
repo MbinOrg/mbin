@@ -89,12 +89,12 @@ class CursorPagination implements CursorPaginationInterface
 
     public function haveToPaginate(): bool
     {
-        return $this->maxPerPage === \sizeof($this->currentPageResults ?? [...$this->getCurrentPageResults()]);
+        return $this->hasNextPage() || $this->hasPreviousPage();
     }
 
     public function hasNextPage(): bool
     {
-        return $this->haveToPaginate();
+        return $this->maxPerPage === \sizeof($this->currentPageResults ?? [...$this->getCurrentPageResults()]);
     }
 
     public function getNextPage(): mixed

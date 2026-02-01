@@ -50,14 +50,15 @@
     {% endif %}
 {% else %}
     {% if(results.haveToPaginate is defined and results.haveToPaginate) %}
-        {% if pagination.getCurrentCursor is defined %}
-            {{ component('cursor_pagination', {'pagination': results}) }}
-        {% endif %}
         {% if app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_GENERAL_INFINITE_SCROLL')) is same as 'true' %}
             <div data-controller="infinite-scroll" class="infinite-scroll">
                 {{ component('loader', {'data-infinite-scroll-target': 'loader'}) }}
                 <div data-infinite-scroll-target="pagination" class="visually-hidden">
-                    {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
+                    {% if results.getCurrentCursor is defined %}
+                        {{ component('cursor_pagination', {'pagination': results}) }}
+                    {% else %}
+                        {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
+                    {% endif %}
                 </div>
             </div>
         {% elseif results.getCurrentCursor is defined %}
