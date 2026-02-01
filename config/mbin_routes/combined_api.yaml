@@ -1,3 +1,17 @@
+api_combined_cursor:
+    controller: App\Controller\Api\Combined\CombinedRetrieveApi::cursorCollection
+    path: /api/combined/2.0
+    methods: [ GET ]
+    format: json
+
+api_combined_user_cursor:
+    controller: App\Controller\Api\Combined\CombinedRetrieveApi::cursorUserCollection
+    path: /api/combined/2.0/{contentType}
+    requirements:
+        contentType: subscribed|moderated|favourited
+    methods: [ PUT ]
+    format: json
+
 api_combined:
   controller: App\Controller\Api\Combined\CombinedRetrieveApi::collection
   path: /api/combined

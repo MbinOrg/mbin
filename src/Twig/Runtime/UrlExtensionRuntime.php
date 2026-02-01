@@ -301,7 +301,6 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
     {
         if ($cursor instanceof \DateTime || $cursor instanceof \DateTimeImmutable) {
             return $cursor->format(DATE_ATOM);
-            // return $cursor->getTimestamp();
         }
 
         return $cursor;
