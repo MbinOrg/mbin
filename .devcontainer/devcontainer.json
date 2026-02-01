@@ -3,11 +3,11 @@
 {
     "name": "PHP",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/php:2.0.1-8.4-trixie",
+    "image": "mcr.microsoft.com/devcontainers/php:3.0.3-8.4-trixie",
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
-        "ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
+        "ghcr.io/yassinedoghri/devcontainers/php-extensions-installer:1": {
             "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
