@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Post;
 
 use App\Controller\AbstractController;
+use App\DTO\PostDto;
 use App\Exception\InstanceBannedException;
 use App\Form\PostType;
 use App\Repository\Criteria;
+use App\Repository\MagazineRepository;
 use App\Service\IpResolver;
 use App\Service\PostManager;
 use Psr\Log\LoggerInterface;
@@ -21,6 +23,7 @@ class PostCreateController extends AbstractController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly PostManager $manager,
+        private readonly MagazineRepository $magazineRepository,
         private readonly IpResolver $ipResolver,
     ) {
     }
@@ -28,7 +31,14 @@ class PostCreateController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function __invoke(Request $request): Response
     {
-        $form = $this->createForm(PostType::class);
+        $dto = new PostDto();
+        // check if the "random" magazine exists and if so, use it
+        $randomMagazine = $this->magazineRepository->findOneByName('random');
+        if (null !== $randomMagazine) {
+            $dto->magazine = $randomMagazine;
+        }
+
+        $form = $this->createForm(PostType::class, $dto);
         $user = $this->getUserOrThrow();
         try {
             // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
