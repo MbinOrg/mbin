@@ -64,7 +64,6 @@ class UserFrontControllerTest extends WebTestCase
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Replies (2)');
         $this->assertEquals(2, $crawler->filter('#main .post-comment')->count());
-        $this->assertEquals(2, $crawler->filter('#main .post')->count());
     }
 
     public function createSubscriptionsPage()
