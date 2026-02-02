@@ -123,7 +123,7 @@
         "fakerphp/faker": "^1.23.1",
         "justinrainbow/json-schema": "^6.0.0",
         "phpstan/phpstan": "^2.0.2",
-        "phpunit/phpunit": "12.1.*",
+        "phpunit/phpunit": "12.5.*",
         "spatie/phpunit-snapshot-assertions": "^5.2",
         "symfony/browser-kit": "*",
         "symfony/debug-bundle": "*",
