@@ -57,7 +57,7 @@ class SearchController extends AbstractController
                 }
 
                 // looking up object by AP id (i.e. urls)
-                if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
+                if (false !== filter_var($query, FILTER_VALIDATE_URL) && $this->federatedSearchAllowed()) {
                     $this->logger->debug('Query is a valid url');
                     $objects = $this->findObjectsByApUrl($query);
                 }
