@@ -31,6 +31,7 @@ class MagazineEditControllerTest extends WebTestCase
         $magazine = $this->getMagazineByName('acme', $owner);
         $magazine->rules = 'init rules';
         $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/m/acme/panel/general');
         self::assertResponseIsSuccessful();
