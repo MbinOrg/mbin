@@ -228,6 +228,10 @@ class SearchRepository
         SELECT id, created_at, 'post' AS type FROM post WHERE ap_id = :url
         UNION ALL
         SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE ap_id = :url
+        UNION ALL
+        SELECT id, created_at, 'user' AS type FROM \"user\" WHERE ap_profile_id = :url
+        UNION ALL
+        SELECT id, created_at, 'magazine' AS type FROM magazine WHERE ap_profile_id = :url
         ORDER BY created_at DESC
         ";
 
