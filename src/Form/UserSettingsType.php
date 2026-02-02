@@ -86,6 +86,10 @@ class UserSettingsType extends AbstractType
                 'required' => false,
                 'help' => 'user_discoverable_help',
             ])
+            ->add('indexable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'user_indexable_by_search_engines_help',
+            ])
             ->add('featuredMagazines', TextareaType::class, ['required' => false])
             ->add('preferredLanguages', LanguageType::class, [
                 'required' => false,

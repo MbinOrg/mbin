@@ -29,6 +29,10 @@ class MagazineType extends AbstractType
                 'required' => false,
                 'help' => 'magazine_discoverable_help',
             ])
+            ->add('indexable', CheckboxType::class, [
+                'required' => false,
+                'help' => 'magazine_indexable_by_search_engines_help',
+            ])
             ->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber(new DisableFieldsOnMagazineEdit());

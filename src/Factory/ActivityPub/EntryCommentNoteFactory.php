@@ -88,7 +88,10 @@ class EntryCommentNoteFactory
         $mentions = [];
         foreach ($comment->mentions ?? [] as $mention) {
             try {
-                $mentions[] = $this->activityPubManager->webfinger($mention)->getProfileId();
+                $profileId = $this->activityPubManager->findActorOrCreate($mention)?->apProfileId;
+                if ($profileId) {
+                    $mentions[] = $profileId;
+                }
             } catch (\Exception $e) {
                 continue;
             }

@@ -100,6 +100,7 @@ trait FactoryTrait
         $user->hideAdult = $hideAdult;
         $user->apDiscoverable = true;
         $user->about = $about;
+        $user->apIndexable = true;
         if ($addImage) {
             $user->avatar = $this->createImage(bin2hex(random_bytes(20)).'.png');
         }

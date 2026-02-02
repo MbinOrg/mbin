@@ -29,12 +29,14 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: MagazineRepository::class)]
 #[Index(columns: ['visibility', 'is_adult'], name: 'magazine_visibility_adult_idx')]
-#[Index(columns: ['visibility'], name: 'magazine_visibility_idx')]
 #[Index(columns: ['is_adult'], name: 'magazine_adult_idx')]
 #[Index(columns: ['name_ts'], name: 'magazine_name_ts')]
 #[Index(columns: ['title_ts'], name: 'magazine_title_ts')]
 #[Index(columns: ['description_ts'], name: 'magazine_description_ts')]
 #[UniqueConstraint(name: 'magazine_name_idx', columns: ['name'])]
+#[UniqueConstraint(name: 'magazine_ap_id_idx', columns: ['ap_id'])]
+#[UniqueConstraint(name: 'magazine_ap_profile_id_idx', columns: ['ap_profile_id'])]
+#[UniqueConstraint(name: 'magazine_ap_public_url_idx', columns: ['ap_public_url'])]
 class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiResourceInterface
 {
     use ActivityPubActorTrait;

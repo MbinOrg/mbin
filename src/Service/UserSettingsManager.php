@@ -42,6 +42,7 @@ class UserSettingsManager
             $user->directMessageSetting->value,
             $user->frontDefaultContent->value,
             $user->apDiscoverable,
+            $user->apIndexable,
         );
     }
 
@@ -74,6 +75,10 @@ class UserSettingsManager
 
         if (null !== $dto->discoverable) {
             $user->apDiscoverable = $dto->discoverable;
+        }
+
+        if (null !== $dto->indexable) {
+            $user->apIndexable = $dto->indexable;
         }
 
         $this->entityManager->flush();
