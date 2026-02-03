@@ -221,42 +221,17 @@ class UserFrontController extends AbstractController
 
         $comments = $repository->findByCriteria($criteria);
 
-        $parents = [];
-        foreach ($comments as $comment) {
-            $inParents = false;
-            $parent = $comment->post;
-
-            foreach ($parents as $val) {
-                if ($val instanceof $parent && $parent === $val) {
-                    $val->children[] = $comment;
-                    $inParents = true;
-                }
-            }
-
-            if (!$inParents) {
-                $parent->children[] = $comment;
-                $parents[] = $parent;
-            }
-        }
-
-        $results = [];
-        foreach ($parents as $postOrComment) {
-            $results[] = $postOrComment;
-            $children = $postOrComment->children;
-            usort($children, fn ($a, $b) => $a->createdAt < $b->createdAt ? -1 : 1);
-            foreach ($children as $child) {
-                $results[] = $child;
-            }
-        }
-
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
                 'html' => $this->renderView(
-                    'post/comment/_list.html.twig',
+                    'layout/_subject_list.html.twig',
                     [
-                        'comments' => $comments,
+                        'results' => $comments,
                         'criteria' => $criteria,
-                        'showNested' => false,
+                        'postCommentAttributes' => [
+                            'showNested' => false,
+                            'withPost' => true,
+                        ],
                     ]
                 ),
             ]);
@@ -266,7 +241,7 @@ class UserFrontController extends AbstractController
             'user/replies.html.twig',
             [
                 'user' => $user,
-                'comments' => $comments,
+                'results' => $comments,
                 'criteria' => $criteria,
             ],
             $response
