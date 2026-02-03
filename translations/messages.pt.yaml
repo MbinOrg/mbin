@@ -1,10 +1,10 @@
 type.link: Ligação
-type.article: Fio
+type.article: Tópico
 type.photo: Foto
 type.video: Video
 type.magazine: Magazine
 thread: Tópico
-threads: Tópico
+threads: Tópicos
 microblog: Microblog
 people: Pessoas
 events: Eventos
@@ -22,7 +22,7 @@ commented: Comentado
 change_view: Alterar vista
 filter_by_time: Filtrar por tempo
 filter_by_type: Filtrar por tipo
-favourites: Favoritos
+favourites: Votos a favor
 favourite: Favorito
 more: Mais
 avatar: Avatar
@@ -75,7 +75,7 @@ all_magazines: Todas as magazines
 stats: Estatísticas
 fediverse: Fediverse
 create_new_magazine: Criar uma nova magazine
-add_new_article: Adicionar um novo artigo
+add_new_article: Adicionar um novo tópico
 add_new_link: Adicionar um novo link
 add_new_photo: Adicionar uma nova foto
 add_new_post: Adicionar uma nova postagem
@@ -109,7 +109,7 @@ cards_view: Vista de cartão
 1d: 1d
 1m: 1m
 links: Links
-articles: Artigos
+articles: Tópicos
 1w: 1sem
 photos: Fotos
 videos: Videos
@@ -136,13 +136,13 @@ hide_adult: Esconder conteúdo NSFW
 featured_magazines: Magazines em destaque
 privacy: Privacidade
 show_profile_followings: Mostrar utilizadores seguidos
-notify_on_new_entry_reply: Qualquer nível de comentários nos fios da minha 
+notify_on_new_entry_reply: Qualquer nível de comentários nos tópicos da minha 
   autoria
 notify_on_new_post_reply: Qualquer nível de resposta a publicações da minha 
   autoria
 notify_on_new_post_comment_reply: Respostas aos meus comentários em qualquer 
   publicação
-notify_on_new_entry: Novos fios (ligações ou artigos) em qualquer revista da 
+notify_on_new_entry: Novos tópicos (ligações ou artigos) em qualquer revista da 
   qual seja assinante
 save: Guardar
 about: Sobre
@@ -171,13 +171,13 @@ no: Não
 show_magazines_icons: Mostrar os ícones das magazines
 show_thumbnails: Mostrar miniaturas
 rounded_edges: Cantos redondos
-removed_thread_by: removeu um fio de
+removed_thread_by: removeu um tópico de
 removed_comment_by: removeu um comentário de
 restored_comment_by: restaurou comentário por
 removed_post_by: removeu um post de
 restored_post_by: restaurou uma publicação de
-he_banned: banir
-he_unbanned: desbanir
+he_banned: banido
+he_unbanned: desbanidos
 read_all: Ler tudo
 show_all: Mostrar tudo
 added_new_thread: Adicionado um novo tópico
@@ -235,7 +235,7 @@ change_language: Alterar idioma
 change: Alterar
 pinned: Fixado
 preview: Previsualizar
-article: Fio
+article: Tópico
 reputation: Reputação
 note: Nota
 users: Utilizadores
@@ -291,12 +291,12 @@ done: Feito
 show_profile_subscriptions: Mostrar subscrições de magazines
 writing: Escrita
 notify_on_new_entry_comment_reply: Respostas aos meus comentários em qualquer 
-  fio
+  tópico
 admin_panel: Painel de administração
 notify_on_new_posts: Novas publicações de qualquer revista a que estou inscrito
 theme: Tema
 show_users_avatars: Mostrar os avatars dos utilizadores
-restored_thread_by: restaurou um fio de
+restored_thread_by: restaurou um tópico de
 add_new: Adicionar novo
 url: URL
 title: Título
@@ -329,13 +329,13 @@ go_to_content: Ir para o conteúdo
 go_to_filters: Ir para os filtros
 flash_thread_new_success: O tópico foi criado com sucesso e agora está visível 
   para outros utilizadores.
-flash_thread_edit_success: O fio foi editado com sucesso.
-flash_thread_delete_success: O fio foi apagado com sucesso.
+flash_thread_edit_success: O tópico foi editado com sucesso.
+flash_thread_delete_success: O tópico foi apagado com sucesso.
 flash_thread_unpin_success: O tópico foi desafixado com sucesso.
 flash_register_success: 'Bem-vindo a bordo! A sua conta já está registada. Uma última
   etapa: verifique a sua caixa de entrada para receber uma ligação de ativação que
   dará vida à sua conta.'
-flash_thread_pin_success: O fio foi fixado com sucesso.
+flash_thread_pin_success: O tópico foi fixado com sucesso.
 flash_magazine_new_success: A revista foi criada com sucesso. Pode adicionar 
   novo conteúdo ou explorar o painel de administração da revista.
 flash_magazine_edit_success: A revista foi editada com sucesso.
@@ -507,12 +507,12 @@ announcement: Anúncio
 magazine_log_entry_unpinned: a entrada fixada foi removida
 manually_approves_followers: Aprovar manualmente os seguidores
 user_verify: Ativar conta
-random_entries: Fios aleatórios
+random_entries: Tópicos aleatórios
 random_magazines: Revistas aleatórias
 oauth2.grant.user.block: Bloquear ou desbloquear utilizadores e ver a lista de 
   utilizadores bloqueados.
-oauth2.grant.moderate.entry_comment.set_adult: Marcar comentários em fios como 
-  NSFW nas suas revistas moderadas.
+oauth2.grant.moderate.entry_comment.set_adult: Marcar comentários em tópicos 
+  como NSFW nas suas revistas moderadas.
 oauth2.grant.moderate.magazine.ban.read: Visualizar utilizadores banidos nas 
   suas revistas moderadas.
 oauth2.grant.admin.instance.information.edit: Atualizar as páginas Sobre, 
@@ -539,7 +539,7 @@ oauth2.grant.moderate.magazine.ban.all: Gerir utilizadores banidos nas suas
 oauth2.grant.moderate.magazine.ban.create: Banir utilizadores nas suas revistas 
   moderadas.
 oauth2.grant.admin.entry_comment.purge: Apagar completamente um comentário em 
-  fios da sua instância.
+  tópicos da sua instância.
 2fa.qr_code_img.alt: Um código QR que permite a configuração da autenticação de 
   dois fatores para a sua conta
 2fa.qr_code_link.title: Ao aceder esta ligação, permite que a sua plataforma 
@@ -550,9 +550,9 @@ oauth2.grant.admin.entry_comment.purge: Apagar completamente um comentário em
   novamente</strong> e poderá usar cada um deles <strong>apenas uma 
   vez</strong>.
 magazine_log_mod_removed: removeu um moderador
-edit_entry: Editar fio
+edit_entry: Editar tópico
 default_theme_auto: Claro/escuro (Detecção Automática)
-preferred_languages: Filtrar idiomas dos fios e publicações
+preferred_languages: Filtrar idiomas dos tópicos e postagens
 oauth2.grant.user.oauth_clients.read: Leia as permissões que concedeu a outras 
   aplicações do OAuth2.
 oauth2.grant.moderate.post.trash: Eliminar ou restaurar publicações nas suas 
@@ -564,7 +564,7 @@ flash_account_settings_changed: As configurações da sua conta foram alteradas
   com sucesso. Precisará fazer login novamente.
 subscription_sort: Ordenar
 pending: Pendente
-deleted_by_moderator: O fio, a publicação ou o comentário foi apagado pelo 
+deleted_by_moderator: O tópico, a publicação ou o comentário foi apagado pelo 
   moderador
 register_push_notifications_button: Cadastre-se para notificações push
 tokyo_night: Noite em Tóquio
@@ -577,7 +577,7 @@ oauth2.grant.user.message.all: Leia as suas mensagens e envie mensagens para
   outros utilizadores.
 oauth2.grant.user.message.read: Leia as suas mensagens.
 delete_content_desc: Apagar o conteúdo do utilizador, deixando as respostas de 
-  outros utilizadores nos fios, publicações e comentários criados.
+  outros utilizadores nos tópicos, publicações e comentários criados.
 action: Ação
 solarized_auto: Solarizado (Detecção Automática)
 kbin_promo_desc: '%link_start%Clone o repositório%link_end% e desenvolva o fediverso'
@@ -591,7 +591,7 @@ toolbar.quote: Citação
 toolbar.code: Código
 toolbar.link: Ligação
 toolbar.image: Imagem
-oauth2.grant.entry.create: Criar fios.
+oauth2.grant.entry.create: Crie novos tópicos.
 oauth2.grant.post.all: Crie, edite ou apague os seus microblogs e vote, 
   impulsione ou denuncie qualquer microblog.
 moderation.report.approve_report_title: Aprovar a Denúncia
@@ -612,9 +612,10 @@ continue_with: Continue com
 two_factor_authentication: Autenticação de dois fatores
 oauth2.grant.moderate.magazine_admin.tags: Crie ou remova tags das revistas que 
   possui.
-oauth2.grant.entry.all: Crie, edite ou apague os seus fios e vote, impulsione ou
-  denuncie qualquer um deles.
-oauth2.grant.entry_comment.edit: Edite os seus comentários existentes nos fios.
+oauth2.grant.entry.all: Crie, edite ou apague os seus tópicos e vote, impulsione
+  ou denuncie qualquer um deles.
+oauth2.grant.entry_comment.edit: Edite os seus comentários existentes nos 
+  tópicos.
 oauth2.grant.post.delete: Apague as suas publicações existentes.
 oauth2.grant.user.profile.all: Leia e edite o seu perfil.
 2fa.verify_authentication_code.label: Inserir um código de dois fatores para 
@@ -637,13 +638,13 @@ related_magazines: Revistas relacionadas
 boost: Dar Boost
 mercure_enabled: Mercure ativado
 errors.server500.title: 500 Erro interno do servidor
-oauth2.grant.vote.general: Pode votar a favor, contra ou impulsionar fios, 
-  publicações ou comentários.
-oauth2.grant.entry.report: Denunciar qualquer fio.
+oauth2.grant.vote.general: Pode votar a favor, contra ou impulsionar tópicos, 
+  postagens ou comentários.
+oauth2.grant.entry.report: Denunciar qualquer tópico.
 oauth2.grant.entry_comment.delete: Apague os seus comentários existentes nos 
-  fios.
+  tópicos.
 oauth2.grant.entry_comment.vote: Dê um voto positivo, negativo ou impulsione 
-  qualquer comentário num fio.
+  qualquer comentário num tópico.
 oauth2.grant.post.create: Criar publicações.
 oauth2.grant.post_comment.delete: Apague os seus comentários existentes em 
   publicações.
@@ -654,8 +655,8 @@ flash_post_unpin_success: A publicação foi desafixada com sucesso.
 oauth2.grant.moderate.post.pin: Fixe as publicações na parte superior das suas 
   revistas moderadas.
 delete_content: Apagar conteúdo
-purge_content_desc: Purgar completamente o conteúdo do utilizador, incluindo 
-  apagar as respostas de outros utilizadores em fios, publicações e comentários 
+purge_content_desc: Apagar completamente o conteúdo do utilizador, incluindo 
+  apagar as respostas de outros utilizadores em tópicos, postagens e comentários
   criados.
 2fa.verify: Verificar
 2fa.code_invalid: O código de autenticação não é válido
@@ -663,9 +664,9 @@ flash_email_was_sent: O email foi enviado com sucesso.
 flash_user_edit_password_error: Não foi possível alterar a palavra-passe.
 change_my_avatar: Modificar o meu avatar
 change_my_cover: Modificar a minha capa
-oauth2.grant.admin.entry.purge: Apagar completamente qualquer fio da sua 
+oauth2.grant.admin.entry.purge: Apagar completamente qualquer tópico da sua 
   instância.
-oauth2.grant.entry_comment.report: Denunciar comentário num fio.
+oauth2.grant.entry_comment.report: Denunciar comentário num tópico.
 oauth2.grant.magazine.all: Assine ou bloqueie revistas e veja as revistas 
   assinadas ou bloqueadas.
 oauth2.grant.post.edit: Edite as suas publicações existentes.
@@ -681,18 +682,19 @@ request_magazine_ownership: Solicitar a propriedade da revista
 hide: Ocultar
 sensitive_warning: Conteúdo sensível
 show: Exibir
-oauth2.grant.write.general: Pode criar ou editar qualquer um dos seus fios, 
-  publicações ou comentários.
-oauth2.grant.delete.general: Apague qualquer um dos seus fios, publicações ou 
+oauth2.grant.write.general: Pode criar ou editar qualquer um dos seus tópicos, 
+  postagens ou comentários.
+oauth2.grant.delete.general: Apague qualquer um dos seus tópicos, postagens ou 
   comentários.
-oauth2.grant.report.general: Denunciar fios, publicações ou comentários.
-oauth2.grant.moderate.entry.trash: Deitar no lixo ou restaurar fios nas suas 
+oauth2.grant.report.general: Denunciar tópicos, postagens ou comentários.
+oauth2.grant.moderate.entry.trash: Jogar fora ou restaurar tópicos nas suas 
   revistas moderadas.
 report_accepted: Uma denúncia foi aceita
 kbin_intro_desc: é uma plataforma descentralizada para agregação de conteúdo e 
   microblogging que opera dentro da rede Fediverso.
-auto_preview_help: Expanda automaticamente as pré-visualizações de mídia.
-oauth2.grant.entry_comment.create: Criar comentários nos fios.
+auto_preview_help: Mostre as visualizações de mídia (foto, vídeo) em um tamanho 
+  maior abaixo do conteúdo.
+oauth2.grant.entry_comment.create: Criar comentários nos tópicos.
 bot_body_content: "Bem-vindo ao Agente Mbin! Este Agente desempenha um papel crucial
   na implementação do ActivityPub na Mbin. Ele garante que a Mbin possa comunicar
   e se federar com outras instâncias no fediverso.\n\nO ActivityPub é um protocolo
@@ -701,15 +703,16 @@ bot_body_content: "Bem-vindo ao Agente Mbin! Este Agente desempenha um papel cru
   sigam, interajam e partilhem conteúdo na rede social federada conhecida como fediverso.
   Ele fornece uma maneira padronizada para que os utilizadores publiquem conteúdo,
   sigam outros utilizadores e participem de interações sociais, como curtir, partilhar
-  e comentar em fios ou publicações."
+  e comentar em tópicos ou postagens."
 toolbar.spoiler: Spoiler
 federated_search_only_loggedin: Pesquisa federada limitada se não estiver logado
 account_deletion_title: Apagar contas
 account_deletion_immediate: Apagar imediatamente
 more_from_domain: Mais do domínio
-oauth2.grant.entry.vote: Vote a favor, contra ou dê um impulso em qualquer fio.
+oauth2.grant.entry.vote: Vote a favor, contra ou dê um impulso em qualquer 
+  tópico.
 oauth2.grant.entry_comment.all: Crie, edite ou apague os seus comentários nos 
-  fios e vote, impulsione ou denuncie quaisquer comentários num fio.
+  tópicos e vote, impulsione ou denuncie quaisquer comentários num tópico.
 oauth2.grant.post_comment.all: Crie, edite ou apague os seus comentários nas 
   publicações e vote, impulsione ou denuncie qualquer comentário numa 
   publicação.
@@ -720,13 +723,13 @@ oauth2.grant.user.profile.edit: Edite o seu perfil.
 oauth2.grant.user.notification.read: Leia as suas notificações, inclusive as de 
   mensagens.
 oauth2.grant.user.notification.delete: Limpe as suas notificações.
-oauth2.grant.moderate.entry.all: Moderar fios nas suas revistas moderadas.
-oauth2.grant.moderate.entry.change_language: Altere o idioma dos fios nas suas 
-  revistas moderadas.
+oauth2.grant.moderate.entry.all: Moderar tópicos nas suas revistas moderadas.
+oauth2.grant.moderate.entry.change_language: Altere o idioma dos tópicos nas 
+  suas revistas moderadas.
 oauth2.grant.moderate.entry.pin: Fixar os tópicos na parte superior das revistas
   moderadas.
 oauth2.grant.moderate.entry_comment.change_language: Altere o idioma dos 
-  comentários nos fios das suas revistas moderadas.
+  comentários nos tópicos das suas revistas moderadas.
 oauth2.grant.user.oauth_clients.all: Leia e edite as permissões que concedeu a 
   outras aplicatções do OAuth2.
 oauth2.grant.user.oauth_clients.edit: Edite as permissões que concedeu a outras 
@@ -734,7 +737,7 @@ oauth2.grant.user.oauth_clients.edit: Edite as permissões que concedeu a outras
 oauth2.grant.moderate.all: Execute ações de moderação para as quais tem 
   permissão nas suas revistas moderadas.
 oauth2.grant.moderate.entry_comment.trash: Eliminar ou restaurar comentários em 
-  fios das suas revistas moderadas.
+  tópicos das suas revistas moderadas.
 oauth2.grant.moderate.post.all: Moderar as publicações nas suas revistas 
   moderadas.
 oauth2.grant.moderate.post.change_language: Altere o idioma das publicações das 
@@ -751,7 +754,7 @@ oauth2.grant.admin.post.purge: Apagar completamente qualquer publicação da sua
   instância.
 oauth2.grant.admin.post_comment.purge: Apagar completamente uma publicação da 
   sua instância.
-oauth2.grant.admin.magazine.all: Mover fios entre revistas ou apagá-las 
+oauth2.grant.admin.magazine.all: Mover tópicos entre revistas ou apagá-las 
   completamente da sua instância.
 oauth2.grant.admin.user.verify: Verificar utilizadores da sua instância.
 oauth2.grant.admin.user.delete: Apagar utilizadores da sua instância.
@@ -766,12 +769,12 @@ comment_reply_position_help: Exibir o formulário de resposta a comentários na
   ativada, a posição sempre aparecerá na parte superior.
 show_avatars_on_comments: Mostrar avatares de comentários
 show_avatars_on_comments_help: Exibir/ocultar avatares de utilizadores ao 
-  visualizar comentários num único fio ou publicação.
+  visualizar comentários num único tópico ou postagem.
 magazine_theme_appearance_background_image: Imagem de fundo personalizada que 
   será aplicada quando visualizar o conteúdo da sua revista.
 subject_reported_exists: Este conteúdo já foi denunciado.
 delete_account_desc: Apagar a conta, incluindo as respostas de outros 
-  utilizadores em fios, publicações e comentários criados.
+  utilizadores em tópicos, postagens e comentários criados.
 schedule_delete_account: Programar o apagar
 schedule_delete_account_desc: Programar o apagar desta conta em 30 dias. Isto 
   ocultará o utilizador e o seu conteúdo, além de impedir que ele faça login.
@@ -787,8 +790,8 @@ two_factor_backup: Códigos de backup da autenticação de dois fatores
 2fa.available_apps: Use uma aplicação de autenticação de dois fatores, como 
   %google_authenticator%, %aegis% (Android) ou %raivo% (iOS) para fazer a 
   leitura do código QR.
-flash_thread_new_error: Não foi possível criar o fio. Algo deu errado.
-flash_thread_tag_banned_error: Não foi possível criar o fio. O conteúdo não é 
+flash_thread_new_error: Não foi possível criar o tópico. Algo deu errado.
+flash_thread_tag_banned_error: Não foi possível criar o tópico. O conteúdo não é
   permitido.
 flash_post_new_error: Não foi possível criar a publicação. Algo deu errado.
 flash_magazine_theme_changed_success: Atualizou com sucesso a aparência da 
@@ -803,7 +806,7 @@ flash_post_edit_success: A publicação foi editada com sucesso.
 page_width: Largura da página
 edit_my_profile: Editar o meu perfil
 keywords: Palavras-chave
-deleted_by_author: O fio, a publicação ou o comentário foi apagado pelo autor
+deleted_by_author: O tópico, a publicação ou o comentário foi apagado pelo autor
 sensitive_show: Clique para mostrar
 details: Pormenores
 spoiler: Spoiler
@@ -822,13 +825,13 @@ version: Versão
 last_successful_deliver: Última entrega bem-sucedida
 last_successful_receive: Última receção bem-sucedida
 last_failed_contact: Último contato que não deu certo
-magazine_posting_restricted_to_mods: Restringir a criação de fios aos 
+magazine_posting_restricted_to_mods: Restringir a criação de tópicos aos 
   moderadores
 max_image_size: Tamanho máximo do ficheiro
 federation_page_dead_title: Instâncias mortas
-federation_page_dead_description: Instâncias em que não conseguimos entregar 
-  pelo menos 10 atividades seguidas e em que a última entrega bem-sucedida foi 
-  há mais que uma semana
+federation_page_dead_description: Instâncias em que não poderíamos entregar ao 
+  menos 10 atividades seguidas e onde a última entrega bem sucedida e -recebida 
+  foi a mais de uma semana atrás
 open_url_to_fediverse: Abrir URL original
 delete_magazine: Apagar revista
 magazine_is_deleted: A revista foi apagada. Pode <a 
@@ -836,7 +839,7 @@ magazine_is_deleted: A revista foi apagada. Pode <a
 account_suspended: A conta foi suspensa.
 oauth2.grant.moderate.magazine.all: Gerir banimentos, denúncias e visualizar 
   elementos descartados nas suas revistas moderadas.
-oauth2.grant.admin.magazine.move_entry: Mover fios entre revistas da sua 
+oauth2.grant.admin.magazine.move_entry: Mover tópicos entre revistas da sua 
   instância.
 oauth2.grant.admin.user.all: Banir, verificar ou apagar completamente os 
   utilizadores da sua instância.
@@ -847,8 +850,7 @@ oauth2.grant.admin.user.purge: Apagar completamente utilizadores da sua
 oauth2.grant.admin.instance.settings.read: Exibir as configurações da sua 
   instância.
 update_comment: Atualizar comentário
-magazine_theme_appearance_icon: Ícone personalizado para a revista. Se não 
-  selecionar nenhum, o ícone padrão será usado.
+magazine_theme_appearance_icon: Ícone personalizado para a revista.
 moderation.report.ban_user_description: Deseja banir o utilizador (%username%) 
   que criou este conteúdo desta revista?
 moderation.report.approve_report_confirmation: Tem certeza de que deseja aprovar
@@ -876,18 +878,18 @@ purge_content: Purgar conteúdo
 2fa.remove: Remover 2FA
 cancel: Cancelar
 sensitive_toggle: Alternar a visibilidade de conteúdo sensível
-flash_posting_restricted_error: Criar fios é restrito aos moderadores desta 
+flash_posting_restricted_error: Criar tópicos é restrito aos moderadores desta 
   revista e não é um deles
 magazine_posting_restricted_to_mods_warning: Somente os moderadores podem criar 
   tópicos nesta revista
 server_software: Software do servidor
 purge_account: Purgar conta
 close: Fechar
-flash_thread_edit_error: Não foi possível editar o fio. Algo deu errado.
+flash_thread_edit_error: Não foi possível editar o tópico. Algo deu errado.
 oauth2.grant.moderate.magazine_admin.stats: Veja o conteúdo, vote e veja as 
   estatísticas das revistas que possui.
-oauth2.grant.entry.edit: Edite os fios existentes.
-oauth2.grant.entry.delete: Apague os fios existentes.
+oauth2.grant.entry.edit: Edite os tópicos existentes.
+oauth2.grant.entry.delete: Apague os tópicos existentes.
 oauth2.grant.post_comment.edit: Edite os seus comentários existentes em 
   publicações.
 oauth2.grant.post_comment.vote: Dê um voto positivo, negativo ou impulsione um 
@@ -906,13 +908,13 @@ position_bottom: Inferior
 position_top: Topo
 and: e
 show_related_magazines: Mostrar revistas aleatórias
-show_related_entries: Mostrar fios aleatórios
+show_related_entries: Mostrar tópicos aleatórios
 show_related_posts: Mostrar publicações aleatórias
 show_active_users: Mostrar utilizadores ativos
 add_mentions_posts: Adicionar tags de menção em publicações
-related_entries: Fios relacionados
+related_entries: Tópicos relacionados
 local_and_federated: Local e federado
-add_mentions_entries: Adicionar tags de menção nos fios
+add_mentions_entries: Adicionar tags de menção nos tópicos
 toolbar.unordered_list: Lista desordenada
 toolbar.ordered_list: Lista ordenada
 toolbar.mention: Menção
@@ -926,9 +928,9 @@ account_deletion_description: A sua conta será apagada em 30 dias, a menos que
   com um administrador.
 oauth2.grant.magazine.block: Bloqueie ou desbloqueie revistas e veja as revistas
   que bloqueou.
-oauth2.grant.moderate.entry.set_adult: Marcar os fios como NSFW nas suas 
+oauth2.grant.moderate.entry.set_adult: Marcar os tópicos como NSFW nas suas 
   revistas moderadas.
-oauth2.grant.moderate.entry_comment.all: Moderar comentários em fios nas suas 
+oauth2.grant.moderate.entry_comment.all: Moderar comentários em tópicos nas suas
   revistas moderadas.
 flash_user_edit_email_error: Não foi possível alterar o e-mail.
 flash_post_edit_error: Não foi possível editar a publicação.
@@ -950,9 +952,9 @@ notification_title_removed_comment: Um comentário foi removido
 notification_title_edited_comment: Um comentário foi editado
 notification_title_mention: Foi mencionado
 notification_title_new_reply: Nova resposta
-notification_title_new_thread: Novo fio
-notification_title_removed_thread: Um fio foi removido
-notification_title_edited_thread: Um fio foi editado
+notification_title_new_thread: Novo tópico
+notification_title_removed_thread: Um tópico foi removido
+notification_title_edited_thread: Um tópico foi editado
 notification_title_ban: Foi banido
 notification_title_message: Nova mensagem direta
 notification_title_new_post: Nova publicação
@@ -962,3 +964,197 @@ admin_users_active: Ativos
 admin_users_inactive: Inativos
 admin_users_suspended: Suspensos
 admin_users_banned: Banidos
+remove_user_avatar: Remover avatar
+remove_user_cover: Remover capa
+crosspost: Postagem cruzada
+notify_on_user_signup: Novas inscrições
+ban_expires: Expira o banimento
+banner: Banner
+type_search_term_url_handle: Digite o termo de pesquisa, URL ou identificador.
+magazine_panel_tags_info: Fornecer apenas se você quiser que o conteúdo do 
+  fediverse seja incluído nesta revista com base em tags
+viewing_one_signup_request: Você só está vendo um pedido de inscrição por 
+  %username%
+your_account_is_not_yet_approved: Sua conta ainda não foi aprovada. Lhe 
+  enviaremos um e-mail assim que os administradores tiverem aceitado o seu 
+  pedido de inscrição.
+toolbar.emoji: Emoji
+account_deletion_button: Apagar conta
+oauth2.grant.user.bookmark: Adicionar e remover favoritos
+oauth2.grant.user.bookmark.add: Adicionar aos favoritos
+oauth2.grant.user.bookmark.remove: Remover dos favoritos
+oauth2.grant.user.bookmark_list: Leia, edite e exclua suas listas de favoritos
+oauth2.grant.user.bookmark_list.read: Leia suas listas de favoritos
+oauth2.grant.user.bookmark_list.edit: Edite suas listas de favoritos
+oauth2.grant.user.bookmark_list.delete: Excluir suas listas de favoritos
+oauth2.grant.moderate.entry.lock: Fechar tópicos em suas revistas moderadas, 
+  para que ninguém possa comentar sobre eles
+oauth2.grant.moderate.post.lock: Fechar microblogs em suas revistas moderadas, 
+  para que ninguém possa comentar sobre eles
+single_settings: Único
+comment_reply_position: Posição de resposta de comentário
+magazine_theme_appearance_banner: Banner personalizado para a revista. Ele é 
+  exibido acima de todos os tópicos e deve estar possuir um amplo aspect ratio 
+  (5:1, ou 1500px * 300px).
+2fa.backup: Seus códigos de backup de dois fatores
+2fa.manual_code_hint: Se você não puder digitalizar o QR code, digite o segredo 
+  manualmente
+flash_thread_ref_image_not_found: A imagem referenciada por 'imageHash' não pôde
+  ser encontrada.
+search_type_content: Tópicos + Microblogs
+select_user: Escolha um usuário
+new_users_need_approval: Novos usuários têm que ser aprovados por um 
+  administrador antes que eles possam fazer login.
+signup_requests: Pedidos de inscrição
+application_text: Explique por que você gostaria de participar
+signup_requests_header: Pedidos de inscrição
+signup_requests_paragraph: Esses usuários gostariam de se juntar ao seu 
+  servidor. Não podem entrar até aprovar o pedido de inscrição.
+flash_application_info: Um administrador precisa aprovar sua conta antes de 
+  poder fazer login. Você receberá um e-mail assim que o pedido de inscrição for
+  processado.
+email_application_approved_title: Seu pedido de inscrição foi aprovado
+email_application_approved_body: Seu pedido de inscrição foi aprovado pelo 
+  administrador do servidor. Agora você pode fazer login no servidor em <a 
+  href="%link%">%siteName%</a>.
+email_application_rejected_title: Seu pedido de inscrição foi rejeitado
+email_application_rejected_body: Obrigado pelo seu interesse, mas lamentamos 
+  informar que o seu pedido de inscrição foi recusado.
+email_application_pending: Sua conta requer aprovação do administrador antes de 
+  poder fazer login.
+email_verification_pending: Você tem que verificar seu endereço de e-mail antes 
+  de fazer login.
+show_magazine_domains: Mostrar domínios de revistas
+show_user_domains: Mostrar domínios de usuário
+answered: respondidas
+by: por
+front_default_sort: Tipo padrão da página inicial
+comment_default_sort: Tipo padrão de comentário
+open_signup_request: Pedidos de inscrição abertos
+image_lightbox_in_list: Thumbnails de tópicos abrem em tela cheia
+compact_view_help: Uma visão compacta com menos margens, onde a mídia é movida 
+  para o lado direito.
+show_users_avatars_help: Exibir a imagem de avatar do usuário.
+show_magazines_icons_help: Exibir o ícone da revista.
+show_thumbnails_help: Mostre as imagens de thumbnails.
+image_lightbox_in_list_help: Quando marcado, clicando no thumbnail mostra uma 
+  janela de caixa de imagem modal. Quando desmarcado, clicar na miniatura abrirá
+  o tópico.
+show_new_icons: Mostrar novos ícones
+show_new_icons_help: Mostrar ícone para nova revista / usuário (mais ou menos 30
+  dias)
+magazine_instance_defederated_info: A instância desta revista não é federada. A 
+  revista, portanto, não receberá atualizações.
+user_instance_defederated_info: A instância deste usuário não é federada.
+flash_thread_instance_banned: A instância desta revista está banida.
+show_rich_mention: Menções ricas
+show_rich_mention_help: Renderizar um componente de usuário quando um usuário 
+  for mencionado. Isso incluirá seu nome de exibição e foto de perfil.
+show_rich_mention_magazine: Quantidade de menções em revistas
+show_rich_mention_magazine_help: Renderize um componente de revista quando uma 
+  revista for mencionada. Isso incluirá seu nome de exibição e ícone.
+show_rich_ap_link: Quantidade de AP links
+show_rich_ap_link_help: Renderizar um componente embutido quando outro conteúdo 
+  do ActivityPub for vinculado.
+attitude: Atitude
+type_search_magazine: Limitar a busca à revista...
+type_search_user: Limitar a busca ao autor...
+modlog_type_entry_deleted: Tópico apagado
+modlog_type_entry_restored: Tópico restaurado
+modlog_type_entry_comment_deleted: Comentário do tópico apagado
+modlog_type_entry_comment_restored: Comentário de tópico restaurado
+modlog_type_entry_pinned: Tópico fixado
+modlog_type_entry_unpinned: Tópico desfixado
+modlog_type_post_deleted: Microblog apagado
+modlog_type_post_restored: Microblog restaurado
+modlog_type_post_comment_deleted: Resposta do microblog apagada
+modlog_type_post_comment_restored: Resposta do microblog restaurada
+modlog_type_ban: Usuário banido da revista
+modlog_type_moderator_add: Moderador de revista adicionado
+modlog_type_moderator_remove: Moderador de revista removido
+everyone: Todo mundo
+nobody: Ninguém
+followers_only: Apenas seguidores
+direct_message_setting_label: Quem pode enviar uma mensagem direta
+delete_magazine_icon: Excluir ícone da revista
+flash_magazine_theme_icon_detached_success: Ícone da revista excluído com 
+  sucesso
+delete_magazine_banner: Excluir banner de revista
+flash_magazine_theme_banner_detached_success: Banner de revista excluído com 
+  sucesso
+federation_uses_allowlist: Use a lista de permissões para federação
+defederating_instance: Desfederar instância %i
+their_user_follows: Quantidade de usuários de sua instância seguindo usuários em
+  nossa instância
+our_user_follows: Quantidade de usuários de nossa instância seguindo usuários em
+  sua instância
+their_magazine_subscriptions: Quantidade de usuários de sua instância inscritos 
+  em revistas em nossa instância
+our_magazine_subscriptions: Quantidade de usuários em nossa instância inscritos 
+  em revistas de sua instância
+confirm_defederation: Confirmar desfederação
+flash_error_defederation_must_confirm: Você tem que confirmar a desfederação
+allowed_instances: Instâncias permitidas
+btn_deny: Recusar
+btn_allow: Permitir
+ban_instance: Banir instância
+allow_instance: Permitir instância
+federation_page_use_allowlist_help: Se uma lista de permissão for usada, essa 
+  instância somente federará com as instâncias explicitamente permitidas. Caso 
+  contrário, esta instância vai federar com cada instância, exceto aquelas que 
+  estão banidas.
+you_have_been_banned_from_magazine: Você foi banido da revista %m.
+you_have_been_banned_from_magazine_permanently: Você foi permanentemente banido 
+  da revista %m.
+you_are_no_longer_banned_from_magazine: Você não está mais banido da revista %m.
+front_default_content: Visão padrão da página inicial
+default_content_default: Predefinição do servidor (Tópicos)
+default_content_combined: Tópicos + Microblog
+default_content_threads: Tópicos
+default_content_microblog: Microblog
+combined: Combinado
+sidebar_sections_random_local_only: Restringir seções da barra lateral "Tópicos 
+  aleatórios/Postagens" para apenas local
+sidebar_sections_users_local_only: Restringir seção de barra lateral "pessoas 
+  ativas" para apenas local
+random_local_only_performance_warning: Habilitar "Aleatoriedade apenas local" 
+  pode causar impacto de desempenho SQL.
+discoverable: Descobrível
+user_discoverable_help: Se isso estiver ativado, seu perfil, tópicos, microblogs
+  e comentários podem ser encontrados através da pesquisa e pelos painéis 
+  aleatórios. Seu perfil também pode aparecer no painel de usuário ativo e na 
+  página de pessoas. Se for desativado, seus posts ainda serão visíveis para 
+  outros usuários, mas eles não aparecerão por todo feed.
+magazine_discoverable_help: Se isso estiver ativado, esta revista e tópicos, 
+  microblogs e comentários desta revista podem ser encontrados através da 
+  pesquisa e por painéis aleatórios. Se isso for desativado, a revista ainda 
+  aparecerá na lista de revistas, mas os tópicos e microblogs não aparecerão em 
+  todo o feed.
+flash_thread_lock_success: Tópico fechado com sucesso
+flash_thread_unlock_success: Tópico reaberto com sucesso
+flash_post_lock_success: Microblog fechado com sucesso
+flash_post_unlock_success: Microblog reaberto com sucesso
+lock: Fechar
+unlock: Reabrir
+comments_locked: Fechado para comentários.
+magazine_log_entry_locked: fechar comentários de
+magazine_log_entry_unlocked: reabrir comentários de
+modlog_type_entry_lock: Tópico fechado
+modlog_type_entry_unlock: Tópico reaberto
+modlog_type_post_lock: Microblog fechado
+modlog_type_post_unlock: Microblog reaberto
+contentnotification.muted: Mutar | não receber notificações
+contentnotification.default: Padrão | obter notificações de acordo com suas 
+  configurações padrão
+contentnotification.loud: Geral | obter todas as notificações
+indexable_by_search_engines: Indexável por motores de busca
+user_indexable_by_search_engines_help: Se esta configuração for falsa, os 
+  motores de busca são aconselhados a não indexar qualquer um dos seus tópicos e
+  microblogs, no entanto, seus comentários não são afetados por este e maus 
+  atores podem ignorá-lo. Esta configuração também é federada para outros 
+  servidores.
+magazine_indexable_by_search_engines_help: Se esta configuração for falsa, os 
+  motores de busca são aconselhados a não indexar nenhum dos tópicos e 
+  microblogs nestas revistas. Isso inclui a landing page e todas as páginas de 
+  comentários. Esta configuração também é federada para outros servidores.
+search_type_entry: Tópicos
