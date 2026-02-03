@@ -967,3 +967,72 @@ flash_account_settings_changed: As configurações da sua conta foram alteradas
 flash_thread_new_error: Não foi possível criar o fio. Algo deu errado.
 reported: denunciado
 open_report: abrir denúncia
+remove_user_avatar: Remover avatar
+remove_user_cover: Remover Capa
+crosspost: Postagem cruzada
+show_profile_followings: Mostrar usuários seguidos
+notify_on_user_signup: Novas inscrições
+ban_expires: Banimento expira
+banner: Banner
+type_search_term_url_handle: Digite termo de busca, URL ou identificador
+viewing_one_signup_request: Você só está vendo um pedido de inscrição por 
+  %username%
+your_account_is_not_yet_approved: Sua conta ainda não foi aprovada. Lhe 
+  enviaremos um e-mail assim que os administradores tiverem processado o seu 
+  pedido de inscrição.
+toolbar.emoji: Emoji
+oauth2.grant.user.bookmark: Adicionar ou remover favorito
+oauth2.grant.user.bookmark.add: Adicionar aos favoritos
+oauth2.grant.user.bookmark.remove: Remover dos favoritos
+oauth2.grant.user.bookmark_list: Leia, edite e exclua suas listas de favoritos
+oauth2.grant.user.bookmark_list.read: Leia suas listas de favoritos
+oauth2.grant.user.bookmark_list.edit: Edite suas listas de favoritos
+oauth2.grant.user.bookmark_list.delete: Excluir suas listas de favoritos
+oauth2.grant.moderate.entry.lock: Bloquear tópicos em suas revistas moderadas, 
+  para que ninguém possa comentar sobre ele
+oauth2.grant.moderate.post.lock: Bloquear microblogs em suas revistas moderadas,
+  para que ninguém possa comentar neles
+bookmark_list_make_default: Tornar padrão
+bookmark_list_create_placeholder: Digite o nome...
+bookmarks_list_edit: Editar lista de favoritos
+bookmark_list_create_label: Nome da lista
+bookmark_list_edit: Editar
+bookmark_list_selected_list: Lista selecionada
+table_of_contents: Quadro de conteúdos
+search_type_all: Tudo
+search_type_entry: Tópicos
+search_type_post: Microblogs
+search_type_magazine: Revistas
+search_type_user: Usuários
+search_type_actors: Revistas + Usuários
+search_type_content: Tópicos + Microblogs
+select_user: Escolha um usuário
+show_magazine_domains: Mostrar domínios de revistas
+show_user_domains: Mostrar domínios de usuário
+answered: respondidas
+by: por
+front_default_sort: Tipo padrão da página inicial
+comment_default_sort: Tipo padrão de comentário
+open_signup_request: Abrir pedidos de inscrição
+image_lightbox_in_list: Miniaturas de tópicos abrem tela cheia
+compact_view_help: Uma visão compacta com menos margens, onde a mídia é movida 
+  para o lado direito.
+show_users_avatars_help: Exibir a imagem de avatar do usuário.
+show_magazines_icons_help: Exibir o ícone da revista.
+show_thumbnails_help: Mostre as imagens da miniatura.
+image_lightbox_in_list_help: Quando verificado, clicando na miniatura mostra uma
+  janela de caixa de imagem modal. Quando desmarcado, clicar na miniatura abrirá
+  o tópico.
+show_new_icons: Mostrar novos ícones
+show_new_icons_help: Mostrar ícone para nova revista / usuário (mais ou menos 30
+  dias)
+magazine_instance_defederated_info: A instância desta revista não é federada. A 
+  revista, portanto, não receberá atualizações.
+user_instance_defederated_info: A instância deste usuário não é federada.
+flash_thread_instance_banned: A instância desta revista está banida.
+show_rich_mention: Menções populares
+show_rich_mention_help: Renderize um componente de usuário quando um usuário for
+  mencionado. Isso incluirá o nome de exibição e a foto de perfil dele.
+show_rich_mention_magazine: Menções populares de revistas
+show_rich_mention_magazine_help: Renderize um componente de revista quando uma 
+  revista for mencionada. Isso incluirá o nome de exibição e o ícone dela.
