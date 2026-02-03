@@ -68,6 +68,7 @@ class UserFrontController extends AbstractController
                     'layout/_generic_subject_list.html.twig',
                     [
                         'results' => $results,
+                        'pagination' => $activity,
                     ]
                 ),
             ]);
