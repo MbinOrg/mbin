@@ -142,10 +142,17 @@ class SearchController extends AbstractController
         $objects = $this->manager->findByApId($url);
         if (0 === \sizeof($objects)) {
             // the url could resolve to a different id.
-            $body = $this->apHttpClient->getActivityObject($url);
-            $apId = $body['id'];
-            $objects = $this->manager->findByApId($apId);
-            if (0 === \sizeof($objects)) {
+            try {
+                $body = $this->apHttpClient->getActivityObject($url);
+                $apId = $body['id'];
+                $objects = $this->manager->findByApId($apId);
+            } catch (\Exception $e) {
+                $body = null;
+                $apId = $url;
+                $this->addFlash('error', $e->getMessage());
+            }
+
+            if (0 === \sizeof($objects) && null !== $body) {
                 // maybe it is an entry, post, etc.
                 try {
                     // process the message in the sync transport, so that the created content is directly visible
@@ -154,15 +161,15 @@ class SearchController extends AbstractController
                 } catch (\Exception $e) {
                     $this->addFlash('error', $e->getMessage());
                 }
+            }
 
-                if (0 === \sizeof($objects)) {
-                    // maybe it is a magazine or user
-                    try {
-                        $this->activityPubManager->findActorOrCreate($apId);
-                        $objects = $this->manager->findByApId($apId);
-                    } catch (\Exception $e) {
-                        $this->addFlash('error', $e->getMessage());
-                    }
+            if (0 === \sizeof($objects)) {
+                // maybe it is a magazine or user
+                try {
+                    $this->activityPubManager->findActorOrCreate($apId);
+                    $objects = $this->manager->findByApId($apId);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', $e->getMessage());
                 }
             }
         }
