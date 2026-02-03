@@ -29,7 +29,7 @@ newest: Mais novo
 filter_by_federation: Filtrar por status de federação
 marked_for_deletion: Marcado para exclusão
 marked_for_deletion_at: Marcado para exclusão em %date%
-favourites: Favoritos
+favourites: Votos a favor
 favourite: Favorito
 more: Mais
 avatar: Avatar
@@ -340,7 +340,7 @@ change_magazine: Mudar a revista
 change_language: Alterar idioma
 mark_as_adult: Marcar como NSFW
 users: Usuários
-writing: Escrever
+writing: Escrevendo
 meta: Meta
 contact_email: E-mail de contato
 active_users: Pessoas ativas
@@ -446,7 +446,7 @@ removed_comment_by: removeu um comentário de
 restored_comment_by: restaurou o comentário de
 removed_post_by: removeu um post de
 restored_post_by: restaurou uma publicação de
-he_banned: banir
+he_banned: banido
 he_unbanned: desbanir
 set_magazines_bar_desc: adicionar os nomes da revista após a vírgula
 added_new_thread: Novo fio adicionado
@@ -966,7 +966,7 @@ flash_account_settings_changed: As configurações da sua conta foram alteradas
   com sucesso. Você precisará fazer login novamente.
 flash_thread_new_error: Não foi possível criar o fio. Algo deu errado.
 reported: denunciado
-open_report: abrir denúncia
+open_report: Abrir denúncia
 remove_user_avatar: Remover avatar
 remove_user_cover: Remover Capa
 crosspost: Postagem cruzada
@@ -1036,3 +1036,161 @@ show_rich_mention_help: Renderize um componente de usuário quando um usuário f
 show_rich_mention_magazine: Menções populares de revistas
 show_rich_mention_magazine_help: Renderize um componente de revista quando uma 
   revista for mencionada. Isso incluirá o nome de exibição e o ícone dela.
+delete_magazine_icon: Excluir ícone da revista
+flash_magazine_theme_icon_detached_success: Ícone da revista excluído com 
+  sucesso
+delete_magazine_banner: Excluir banner de revista
+flash_magazine_theme_banner_detached_success: Banner de revista excluído com 
+  sucesso
+federation_uses_allowlist: Use a lista de permissões para federação
+defederating_instance: Desfederar instância %i
+their_user_follows: Quantidade de usuários de sua instância seguindo usuários em
+  nossa instância
+our_user_follows: Quantidade de usuários de nossa instância seguindo usuários em
+  sua instância
+their_magazine_subscriptions: Quantidade de usuários de sua instância inscritos 
+  em revistas em nossa instância
+our_magazine_subscriptions: Quantidade de usuários em nossa instância inscritos 
+  em revistas de sua instância
+confirm_defederation: Confirmar desfederação
+flash_error_defederation_must_confirm: Você tem que confirmar a desfederação
+allowed_instances: Instâncias permitidas
+btn_deny: Recusar
+btn_allow: Permitir
+ban_instance: Banir instância
+allow_instance: Permitir instância
+federation_page_use_allowlist_help: Se uma lista de permissão for usada, essa 
+  instância somente irá federar com as instâncias explicitamente permitidas. 
+  Caso contrário, esta instância  irá federar com cada instância, exceto aqueles
+  que são proibidos.
+you_have_been_banned_from_magazine: Você foi banido da revista %m.
+you_have_been_banned_from_magazine_permanently: Você foi permanentemente banido 
+  da revista %m.
+you_are_no_longer_banned_from_magazine: Você não está mais banido da revista %m.
+front_default_content: Visão padrão da página inicial
+default_content_default: Predefinição do servidor (Tópicos)
+default_content_combined: Tópicos + Microblog
+default_content_threads: Tópicos
+default_content_microblog: Microblog
+combined: Combinado
+sidebar_sections_random_local_only: Restringir seções da barra lateral 
+  "Tópicos/Postagens aleatórios" para apenas local
+sidebar_sections_users_local_only: Restringir seção de barra lateral "pessoas 
+  ativas" apenas local
+random_local_only_performance_warning: Habilitar "Apenas local aleatoriamente" 
+  pode causar impacto de desempenho SQL.
+discoverable: Descobrível
+user_discoverable_help: Se isso estiver ativado, seu perfil, tópicos, microblogs
+  e comentários podem ser encontrados através da pesquisa e os painéis 
+  aleatórios. Seu perfil também pode aparecer no painel de usuário ativo e na 
+  página de pessoas. Se isso for desativado, seus posts ainda serão visíveis 
+  para outros usuários, mas eles não aparecerão no feed todo.
+magazine_discoverable_help: Se isso estiver ativado, esta revista e tópicos, 
+  microblogs e comentários desta revista podem ser encontrados através da 
+  pesquisa e os painéis aleatórios. Se isso for desativado, a revista ainda 
+  aparecerá na lista de revistas, mas os fios e microblogs não aparecerão em 
+  todo o feed.
+flash_thread_lock_success: Tópico bloqueado com sucesso
+flash_thread_unlock_success: Tópico desbloqueado com sucesso
+flash_post_lock_success: Microblog bloqueado com sucesso
+flash_post_unlock_success: Microblog desbloqueado com sucesso
+lock: Fechado
+unlock: Reabrir
+comments_locked: Os comentários estão fechado.
+magazine_log_entry_locked: fechar os comentários de
+magazine_log_entry_unlocked: reabrir os comentários de
+modlog_type_entry_lock: Tópico fechado
+modlog_type_entry_unlock: Tópico reaberto
+modlog_type_post_lock: Microblog fechado
+modlog_type_post_unlock: Microblog reaberto
+contentnotification.muted: Mutar | não receber notificações
+contentnotification.default: Padrão | obter notificações de acordo com suas 
+  configurações padrão
+contentnotification.loud: Geral | obter todas as notificações
+indexable_by_search_engines: Indexável por motores de busca
+user_indexable_by_search_engines_help: Se esta configuração é falsa, os motores 
+  de busca são aconselhados a não indexar qualquer um dos seus tópicos e 
+  microblogs, no entanto, seus comentários não são afetados por este e maus 
+  atores podem ignorá-lo. Esta configuração também é federada para outros 
+  servidores.
+magazine_indexable_by_search_engines_help: Se esta configuração é falsa, os 
+  motores de busca são aconselhados a não indexar nenhum dos tópicos e 
+  microblogs nestas revistas. Isso inclui a landing page e todas as páginas de 
+  comentários. Esta configuração também é federada para outros servidores.
+magazine_name_as_tag: Use o nome da revista como uma tag
+magazine_name_as_tag_help: As tags de uma revista são usadas para combinar 
+  postagens microblog para esta revista. Por exemplo, se o nome é "fediverso" e 
+  as tags da revista contêm "fediverso", então cada post microblog contendo 
+  "#fediverso" será colocado nesta revista.
+magazine_theme_appearance_banner: Banner personalizado para a revista. Ele é 
+  exibido acima de todos os fios e deve estar em uma relação de aspecto amplo 
+  (5:1, ou 1500px * 300px).
+2fa.manual_code_hint: Se você não puder digitalizar o QR code, digite o segredo 
+  manualmente
+flash_thread_ref_image_not_found: A imagem referenciada por 'imageHash' não pôde
+  ser encontrada.
+moderator_requests: Pedidos de Mod
+user_badge_global_moderator: Mod Global
+user_badge_moderator: Mod
+user_badge_bot: Bot
+reporting_user: Reportando o usuário
+magazine_log_entry_pinned: Entrada fixada
+notification_title_new_signup: Um novo usuário registrado
+notification_body_new_signup: O usuário %u% registrado.
+notification_body2_new_signup_approval: Você precisa aprovar o pedido antes que 
+  eles possam fazer login
+bookmark_add_to_list: Adicionar favorito a %list%
+bookmark_remove_from_list: Remover favorito de %list%
+bookmark_remove_all: Remover todos os favoritos
+bookmark_add_to_default_list: Adicionar favorito à lista padrão
+bookmark_lists: Listas de favoritos
+bookmarks: Favoritos
+bookmarks_list: Favoritos na %list%
+count: Contagem
+is_default: É o padrão
+bookmark_list_is_default: É a lista padrão
+bookmark_list_create: Criar
+new_users_need_approval: Novos usuários têm que ser aprovados por um 
+  administrador antes que eles possam fazer login.
+signup_requests: Pedidos de inscrição
+application_text: Explique por que você quer participar
+signup_requests_header: Pedidos de inscrição
+signup_requests_paragraph: Esses usuários gostariam de se juntar ao seu 
+  servidor. Não podem entrar até aprovar o pedido de inscrição.
+flash_application_info: Um administrador precisa aprovar sua conta antes de 
+  poder fazer login. Você receberá um e-mail assim que o pedido de inscrição for
+  processado.
+email_application_approved_title: Seu pedido de inscrição foi aprovado
+email_application_approved_body: Seu pedido de inscrição foi aprovado pelo 
+  administrador do servidor. Agora você pode fazer login no servidor em <a 
+  href="%link%">%siteName%</a>.
+email_application_rejected_title: Seu pedido de inscrição foi rejeitado
+email_application_rejected_body: Obrigado pelo seu interesse, mas lamentamos 
+  informar que o seu pedido de inscrição foi recusado.
+email_application_pending: Sua conta requer aprovação do administrador antes de 
+  poder fazer login.
+email_verification_pending: Você tem que verificar seu endereço de e-mail antes 
+  de fazer login.
+show_rich_ap_link: Múltiplos PA links
+show_rich_ap_link_help: Renderiza um componente embutido quando outro conteúdo 
+  do ActivityPub estiver vinculado.
+attitude: Atitude
+type_search_magazine: Limitar a busca à revista...
+type_search_user: Limitar a busca ao autor...
+modlog_type_entry_deleted: Tópico apagado
+modlog_type_entry_restored: Tópico restaurado
+modlog_type_entry_comment_deleted: Comentário do Tópico excluído
+modlog_type_entry_comment_restored: Comentário de Tópico restaurado
+modlog_type_entry_pinned: Tópico fixado
+modlog_type_entry_unpinned: Tópico desfixado
+modlog_type_post_deleted: Microblog excluído
+modlog_type_post_restored: Microblog restaurado
+modlog_type_post_comment_deleted: Resposta do microblog apagada
+modlog_type_post_comment_restored: Resposta do microblog restaurada
+modlog_type_ban: Usuário baniddo da revista
+modlog_type_moderator_add: Moderador de revista adicionado
+modlog_type_moderator_remove: Moderador de revista removido
+everyone: Todo mundo
+nobody: Ninguém
+followers_only: Apenas seguidores
+direct_message_setting_label: Quem pode enviar uma mensagem direta
