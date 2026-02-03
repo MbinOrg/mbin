@@ -23,6 +23,7 @@ use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use App\Service\SubjectOverviewManager;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -59,12 +60,25 @@ class UserFrontController extends AbstractController
         }
 
         $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
+        $results = $this->overviewManager->buildList($activity);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView(
+                    'layout/_generic_subject_list.html.twig',
+                    [
+                        'results' => $results,
+                        'pagination' => $activity,
+                    ]
+                ),
+            ]);
+        }
 
         return $this->render(
             'user/overview.html.twig',
             [
                 'user' => $user,
-                'results' => $this->overviewManager->buildList($activity),
+                'results' => $results,
                 'pagination' => $activity,
             ],
             $response
@@ -85,12 +99,24 @@ class UserFrontController extends AbstractController
         $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
         $criteria->user = $user;
+        $entries = $repository->findByCriteria($criteria);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView(
+                    'entry/_list.html.twig',
+                    [
+                        'entries' => $entries,
+                    ]
+                ),
+            ]);
+        }
 
         return $this->render(
             'user/entries.html.twig',
             [
                 'user' => $user,
-                'entries' => $repository->findByCriteria($criteria),
+                'entries' => $entries,
             ],
             $response
         );
@@ -115,12 +141,25 @@ class UserFrontController extends AbstractController
 
         $comments = $repository->findByCriteria($criteria);
 
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView(
+                    'entry/comment/_list.html.twig',
+                    [
+                        'comments' => $comments,
+                        'criteria' => $criteria,
+                        'showNested' => false,
+                    ]
+                ),
+            ]);
+        }
+
         return $this->render(
             'user/comments.html.twig',
             [
                 'user' => $user,
                 'comments' => $comments,
-                'criteria' => new EntryCommentPageView(0, $this->security),
+                'criteria' => $criteria,
             ],
             $response
         );
@@ -142,6 +181,17 @@ class UserFrontController extends AbstractController
         $criteria->user = $user;
 
         $posts = $repository->findByCriteria($criteria);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView(
+                    'post/_list.html.twig',
+                    [
+                        'posts' => $posts,
+                    ]
+                ),
+            ]);
+        }
 
         return $this->render(
             'user/posts.html.twig',
@@ -172,40 +222,28 @@ class UserFrontController extends AbstractController
 
         $comments = $repository->findByCriteria($criteria);
 
-        $parents = [];
-        foreach ($comments as $comment) {
-            $inParents = false;
-            $parent = $comment->post;
-
-            foreach ($parents as $val) {
-                if ($val instanceof $parent && $parent === $val) {
-                    $val->children[] = $comment;
-                    $inParents = true;
-                }
-            }
-
-            if (!$inParents) {
-                $parent->children[] = $comment;
-                $parents[] = $parent;
-            }
-        }
-
-        $results = [];
-        foreach ($parents as $postOrComment) {
-            $results[] = $postOrComment;
-            $children = $postOrComment->children;
-            usort($children, fn ($a, $b) => $a->createdAt < $b->createdAt ? -1 : 1);
-            foreach ($children as $child) {
-                $results[] = $child;
-            }
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView(
+                    'layout/_subject_list.html.twig',
+                    [
+                        'results' => $comments,
+                        'criteria' => $criteria,
+                        'postCommentAttributes' => [
+                            'showNested' => false,
+                            'withPost' => true,
+                        ],
+                    ]
+                ),
+            ]);
         }
 
         return $this->render(
             'user/replies.html.twig',
             [
                 'user' => $user,
-                'results' => $results,
-                'pagination' => $comments,
+                'results' => $comments,
+                'criteria' => $criteria,
             ],
             $response
         );
@@ -333,11 +371,20 @@ class UserFrontController extends AbstractController
 
         $activity = $repository->findBoosts($this->getPageNb($request), $user);
 
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('user/_boost_list.html.twig', [
+                    'results' => $activity->getCurrentPageResults(),
+                    'pagination' => $activity,
+                ]),
+            ]);
+        }
+
         return $this->render(
             'user/overview.html.twig',
             [
                 'user' => $user,
-                'results' => $this->overviewManager->buildList($activity),
+                'results' => $activity->getCurrentPageResults(),
                 'pagination' => $activity,
             ],
             $response

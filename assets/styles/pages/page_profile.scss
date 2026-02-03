@@ -1,0 +1,16 @@
+.page-user:not(.page-user-replies) {
+  .subjects {
+    .entry-comment,
+    .post-comment,
+    .comment {
+      margin-left: 1.5rem;
+    }
+  }
+}
+
+.page-user {
+  .entry-comment,
+  .post-comment {
+    margin-bottom: .5rem;
+  }
+}
