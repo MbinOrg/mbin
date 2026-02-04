@@ -88,6 +88,10 @@ class MagazineManager
             $magazine->apIndexable = $dto->indexable ?? true;
         }
 
+        if ($dto->nameAsTag) {
+            $magazine->tags = [$magazine->name];
+        }
+
         $this->entityManager->persist($magazine);
         $this->entityManager->flush();
 

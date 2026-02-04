@@ -1136,5 +1136,9 @@ user_indexable_by_search_engines_help: If this setting is false, search engines 
 magazine_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of the
   threads and microblogs in this magazines. That includes the landing page and all comment pages. This setting is also
   federated to other servers.
+magazine_name_as_tag: Use the magazine name as a tag
+magazine_name_as_tag_help: The tags of a magazine are used to match microblog posts to this magazine.
+  For example if the name is "fediverse" and the magazine tags contain "fediverse", then every microblog post
+  containing "#fediverse" will be put in this magazine.
 magazine_rules_deprecated: the rules field is deprecated and will be removed in the future.
   Please put your rules in the description box.

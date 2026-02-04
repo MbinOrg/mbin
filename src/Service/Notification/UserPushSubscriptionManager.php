@@ -78,8 +78,10 @@ class UserPushSubscriptionManager
             } else {
                 $this->logger->debug('[x] Message failed to sent for subscription {e}: {r}', ['e' => $endpoint, 'r' => $report->getReason()]);
                 if ($report->isSubscriptionExpired()) {
-                    $subscription = $this->pushSubscriptionRepository->findBy(['endpoint' => $endpoint]);
-                    $this->entityManager->remove($subscription);
+                    $subscriptions = $this->pushSubscriptionRepository->findBy(['endpoint' => $endpoint]);
+                    foreach ($subscriptions as $sub) {
+                        $this->entityManager->remove($sub);
+                    }
                     $this->logger->info('Removed push subscription for user "{u}" at endpoint "{e}", because it expired', ['e' => $endpoint, 'u' => $user->username]);
                 }
             }

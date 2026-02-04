@@ -34,5 +34,7 @@ final class DisableFieldsOnMagazineEdit implements EventSubscriberInterface
             \get_class($field->getConfig()->getType()->getInnerType()),
             $attrs
         );
+
+        $form->remove($form->get('nameAsTag')->getName());
     }
 }

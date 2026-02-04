@@ -37,6 +37,11 @@ class MagazineType extends AbstractType
                 'required' => false,
                 'help' => 'magazine_indexable_by_search_engines_help',
             ])
+            // this is removed through the event subscriber below on magazine edit
+            ->add('nameAsTag', CheckboxType::class, [
+                'required' => false,
+                'help' => 'magazine_name_as_tag_help',
+            ])
             ->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber(new DisableFieldsOnMagazineEdit());
