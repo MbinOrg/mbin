@@ -138,3 +138,10 @@ api_comment_favourite:
   path: /api/comments/{comment_id}/favourite
   methods: [ PUT ]
   format: json
+
+# boosts and upvotes
+api_entry_activity:
+  controller: App\Controller\Api\Entry\EntriesActivityApi
+  path: /api/entry/{entry_id}/activity
+  methods: [ GET ]
+  format: json
