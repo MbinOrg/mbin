@@ -134,31 +134,23 @@ class CheckDuplicatesUsersMagazines extends Command
         }
 
         foreach ($duplicates as $url => $items) {
-            $io->text("\n".str_repeat('=', 139));
+            $io->text("\n".str_repeat('=', 30));
             $io->text('Duplicate Group: '.$url);
-            $io->text(str_repeat('-', 139));
 
-            // Table header
-            $io->text(\sprintf(
-                '| %-8s | %-80s | %-19s | %-19s |',
-                'ID',
-                ucfirst($nameField),
-                'Created At',
-                'Last Active'
-            ));
-            $io->text(str_repeat('-', 139));
+            // Prepare table data
+            $headers = ['ID', ucfirst($nameField), 'Created At', 'Last Active'];
+            $rows = [];
 
-            // Table rows
             foreach ($items as $item) {
-                $io->text(\sprintf(
-                    '| %-8s | %-80s | %-19s | %-19s |',
+                $rows[] = [
                     $item['id'],
-                    substr($item[$nameField], 0, 80),
+                    $item[$nameField],
                     $item['created_at'] ? substr($item['created_at'], 0, 19) : 'N/A',
-                    $item['last_active'] ? substr($item['last_active'], 0, 19) : 'N/A'
-                ));
+                    $item['last_active'] ? substr($item['last_active'], 0, 19) : 'N/A',
+                ];
             }
-            $io->text(str_repeat('-', 139));
+
+            $io->horizontalTable($headers, $rows);
         }
 
         $io->text(\sprintf("\nTotal duplicate {$entityName}s: %d", \count($results)));
