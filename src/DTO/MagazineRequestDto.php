@@ -12,6 +12,8 @@ class MagazineRequestDto
     public ?string $name = null;
     public ?string $title = null;
     public ?string $description = null;
+
+    #[OA\Property(description: 'If this field is populated, it will throw a BadRequestException.', deprecated: true)]
     public ?string $rules = null;
     public ?bool $isAdult = null;
     public ?bool $isPostingRestrictedToMods = null;

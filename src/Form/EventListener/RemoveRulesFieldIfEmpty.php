@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form\EventListener;
 
+use App\Entity\Magazine;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-final class DisableFieldsOnMagazineEdit implements EventSubscriberInterface
+final class RemoveRulesFieldIfEmpty implements EventSubscriberInterface
 {
     public static function getSubscribedEvents(): array
     {
@@ -17,24 +18,15 @@ final class DisableFieldsOnMagazineEdit implements EventSubscriberInterface
 
     public function preSetData(FormEvent $event): void
     {
+        /** @var Magazine $magazine */
         $magazine = $event->getData();
         $form = $event->getForm();
 
-        if (!$magazine || null === $magazine->getId()) {
+        $field = $form->get('rules');
+
+        if (!$field->isEmpty() || !empty($magazine?->rules)) {
             return;
         }
-
-        $field = $form->get('name');
-        $attrs = $field->getConfig()->getOptions();
-        $attrs['disabled'] = 'disabled';
-
         $form->remove($field->getName());
-        $form->add(
-            $field->getName(),
-            \get_class($field->getConfig()->getType()->getInnerType()),
-            $attrs
-        );
-
-        $form->remove($form->get('nameAsTag')->getName());
     }
 }

@@ -13,6 +13,7 @@ class MagazineUpdateRequestDto
     public ?int $iconId = null;
     public ?string $title = null;
     public ?string $description = null;
+    #[OA\Property(description: 'This field is deprecated. Only changing existing rules is supported. Adding rules to a magazine that did not have any previously will throw a BadRequestException.', deprecated: true)]
     public ?string $rules = null;
     public ?bool $isAdult = null;
     public ?bool $isPostingRestrictedToMods = null;

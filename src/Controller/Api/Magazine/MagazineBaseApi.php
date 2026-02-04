@@ -81,6 +81,10 @@ class MagazineBaseApi extends BaseApi
             throw new BadRequestHttpException((string) $errors);
         }
 
+        if (!empty($dto->rules)) {
+            throw new BadRequestHttpException($this->translator->trans('magazine_rules_deprecated'));
+        }
+
         // Rate limit handled elsewhere
         $magazine = $this->manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 

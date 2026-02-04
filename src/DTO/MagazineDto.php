@@ -55,6 +55,7 @@ class MagazineDto
     public ?string $serverSoftwareVersion = null;
     private ?int $id = null;
     public ?bool $discoverable = null;
+    public ?bool $nameAsTag = null;
 
     public function getId(): ?int
     {

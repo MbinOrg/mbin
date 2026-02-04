@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MagazineUpdateApi extends MagazineBaseApi
 {
@@ -81,6 +82,7 @@ class MagazineUpdateApi extends MagazineBaseApi
         ValidatorInterface $validator,
         MagazineFactory $factory,
         RateLimiterFactory $apiUpdateLimiter,
+        TranslatorInterface $translator,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -93,6 +95,10 @@ class MagazineUpdateApi extends MagazineBaseApi
         $errors = $validator->validate($dto);
         if (\count($errors) > 0) {
             throw new BadRequestHttpException((string) $errors);
+        }
+
+        if (!$magazine->rules && $dto->rules) {
+            throw new BadRequestHttpException($translator->trans('magazine_rules_deprecated'));
         }
 
         if ($magazine->name !== $dto->name) {
