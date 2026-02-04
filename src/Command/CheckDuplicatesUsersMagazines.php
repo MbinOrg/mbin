@@ -150,7 +150,7 @@ class CheckDuplicatesUsersMagazines extends Command
                 ];
             }
 
-            $io->horizontalTable($headers, $rows);
+            $io->table($headers, $rows);
         }
 
         $io->text(\sprintf("\nTotal duplicate {$entityName}s: %d", \count($results)));
