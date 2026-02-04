@@ -41,6 +41,7 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Factory\UserFactory;
 use App\Form\Constraint\ImageConstraint;
+use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
 use App\Repository\Criteria;
@@ -55,6 +56,7 @@ use App\Repository\PostRepository;
 use App\Repository\ReputationRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
+use App\Schema\CursorPaginationSchema;
 use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
 use App\Service\InstanceManager;
@@ -230,6 +232,14 @@ class BaseApi extends AbstractController
         return [
             'items' => $serializedItems,
             'pagination' => new PaginationSchema($pagerfanta),
+        ];
+    }
+
+    public function serializeCursorPaginated(array $serializedItems, CursorPaginationInterface $pagerfanta): array
+    {
+        return [
+            'items' => $serializedItems,
+            'pagination' => new CursorPaginationSchema($pagerfanta),
         ];
     }
 
