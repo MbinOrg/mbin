@@ -1219,3 +1219,5 @@ magazine_name_as_tag_help: Les etiquetes d'una revista s'utilitzen per fer
   nom és "fediverse" i les etiquetes de la revista contenen "fediverse", totes 
   les entrades de microblog que continguin "#fediverse" es posaran en aquesta 
   revista.
+magazine_rules_deprecated: el camp de regles està obsolet i s'eliminarà en el 
+  futur. Si us plau, poseu les vostres regles al quadre de descripció.
