@@ -229,9 +229,9 @@ class SearchRepository
         UNION ALL
         SELECT id, created_at, 'post_comment' AS type FROM post_comment WHERE ap_id = :url
         UNION ALL
-        SELECT id, created_at, 'user' AS type FROM \"user\" WHERE ap_profile_id = :url
+        SELECT id, created_at, 'user' AS type FROM \"user\" WHERE ap_profile_id = :url OR ap_public_url = :url
         UNION ALL
-        SELECT id, created_at, 'magazine' AS type FROM magazine WHERE ap_profile_id = :url
+        SELECT id, created_at, 'magazine' AS type FROM magazine WHERE ap_profile_id = :url OR ap_public_url = :url
         ORDER BY created_at DESC
         ";
 
