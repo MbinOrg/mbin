@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\User;
+use App\Service\MagazineManager;
+use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,6 +23,8 @@ class CheckDuplicatesUsersMagazines extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly UserManager $userManager,
+        private readonly MagazineManager $magazineManager,
     ) {
         parent::__construct();
     }
@@ -158,38 +163,34 @@ class CheckDuplicatesUsersMagazines extends Command
 
     private function deleteEntities(SymfonyStyle $io, string $entity, array $ids): int
     {
-        $conn = $this->entityManager->getConnection();
-        $tableName = 'users' === $entity ? '"user"' : 'magazine';
-        $entityName = ucfirst(substr($entity, 0, -1)); // Remove 's' and capitalize
-        $nameField = 'users' === $entity ? 'username' : 'name';
-
         try {
-            $conn->beginTransaction();
-
             foreach ($ids as $id) {
-                // First check if entity exists
-                $checkSql = "SELECT id, {$nameField} FROM {$tableName} WHERE id = :id";
-                $stmt = $conn->prepare($checkSql);
-                $stmt = $stmt->executeQuery(['id' => $id]);
-                $item = $stmt->fetchAssociative();
+                if ('users' === $entity) {
+                    // Check if user exists first
+                    $existingUser = $this->entityManager->getRepository(User::class)->find($id);
+                    if (!$existingUser) {
+                        $io->warning("User with ID $id not found, skipping...");
+                        continue;
+                    }
 
-                if (!$item) {
-                    $io->warning("{$entityName} with ID $id not found, skipping...");
-                    continue;
+                    $this->userManager->delete($existingUser);
+                    $io->success("Deleted user: {$existingUser->getUsername()} (ID: $id)");
+                } else { // magazines
+                    // Check if magazine exists first
+                    $magazine = $this->entityManager->getRepository(\App\Entity\Magazine::class)->find($id);
+                    if (!$magazine) {
+                        $io->warning("Magazine with ID $id not found, skipping...");
+                        continue;
+                    }
+
+                    $this->magazineManager->purge($magazine);
+                    $io->success("Deleted magazine: {$magazine->getName()} (ID: $id)");
                 }
-
-                // Delete the entity
-                $deleteSql = "DELETE FROM {$tableName} WHERE id = :id";
-                $stmt = $conn->prepare($deleteSql);
-                $stmt->executeStatement(['id' => $id]);
-
-                $io->success("Deleted {$entityName}: {$item[$nameField]} (ID: $id)");
             }
 
-            $conn->commit();
+            $entityName = ucfirst(substr($entity, 0, -1));
             $io->success("{$entityName} deletion completed successfully.");
         } catch (\Exception $e) {
-            $conn->rollBack();
             $io->error('Error during deletion: '.$e->getMessage());
 
             return Command::FAILURE;
