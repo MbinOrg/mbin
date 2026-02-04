@@ -71,10 +71,12 @@ class MonitoringRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('limit', $limit, ParameterType::INTEGER);
         foreach ($criteria['parameters'] as $key => $value) {
-            if (\is_string($value)) {
-                $stmt->bindValue($key, $value);
-            } elseif (\is_array($value)) {
+            if (\is_array($value)) {
                 $stmt->bindValue($key, $value['value'], $value['type']);
+            } elseif (\is_int($value)) {
+                $stmt->bindValue($key, $value, ParameterType::INTEGER);
+            } else {
+                $stmt->bindValue($key, $value);
             }
         }
 
