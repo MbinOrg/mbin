@@ -134,9 +134,9 @@ class CheckDuplicatesUsersMagazines extends Command
         }
 
         foreach ($duplicates as $url => $items) {
-            $io->text("\n".str_repeat('=', 80));
+            $io->text("\n".str_repeat('=', 139));
             $io->text('Duplicate Group: '.$url);
-            $io->text(str_repeat('-', 80));
+            $io->text(str_repeat('-', 139));
 
             // Table header
             $io->text(\sprintf(
@@ -146,7 +146,7 @@ class CheckDuplicatesUsersMagazines extends Command
                 'Created At',
                 'Last Active'
             ));
-            $io->text(str_repeat('-', 130));
+            $io->text(str_repeat('-', 139));
 
             // Table rows
             foreach ($items as $item) {
@@ -158,7 +158,7 @@ class CheckDuplicatesUsersMagazines extends Command
                     $item['last_active'] ? substr($item['last_active'], 0, 19) : 'N/A'
                 ));
             }
-            $io->text(str_repeat('-', 130));
+            $io->text(str_repeat('-', 139));
         }
 
         $io->text(\sprintf("\nTotal duplicate {$entityName}s: %d", \count($results)));
