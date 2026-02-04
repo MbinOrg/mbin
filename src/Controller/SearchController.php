@@ -51,31 +51,16 @@ class SearchController extends AbstractController
                 if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
                     if ($handle = ActorHandle::parse($query)) {
                         $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
-                        $objects = array_merge($objects, $this->lookupHandle($handle));
+                        $objects = $this->lookupHandle($handle);
                     } else {
                         $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
                     }
                 }
 
                 // looking up object by AP id (i.e. urls)
-                if (false !== filter_var($query, FILTER_VALIDATE_URL)) {
+                if (false !== filter_var($query, FILTER_VALIDATE_URL) && $this->federatedSearchAllowed()) {
                     $this->logger->debug('Query is a valid url');
-                    $objects = $this->manager->findByApId($query);
-                    if (0 === \sizeof($objects)) {
-                        $body = $this->apHttpClient->getActivityObject($query);
-                        // the returned id could be different from the query url.
-                        $postId = $body['id'];
-                        $objects = $this->manager->findByApId($postId);
-                        if (0 === \sizeof($objects)) {
-                            try {
-                                // process the message in the sync transport, so that the created content is directly visible
-                                $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
-                                $objects = $this->manager->findByApId($postId);
-                            } catch (\Exception $e) {
-                                $this->addFlash('error', $e->getMessage());
-                            }
-                        }
-                    }
+                    $objects = $this->findObjectsByApUrl($query);
                 }
 
                 $user = $this->getUser();
@@ -159,5 +144,63 @@ class SearchController extends AbstractController
         }
 
         return $objects;
+    }
+
+    private function findObjectsByApUrl(string $url): array
+    {
+        $objects = $this->manager->findByApId($url);
+        if (0 === \sizeof($objects)) {
+            // the url could resolve to a different id.
+            try {
+                $body = $this->apHttpClient->getActivityObject($url);
+                $apId = $body['id'];
+                $objects = $this->manager->findByApId($apId);
+            } catch (\Exception $e) {
+                $body = null;
+                $apId = $url;
+                $this->addFlash('error', $e->getMessage());
+            }
+
+            if (0 === \sizeof($objects) && null !== $body) {
+                // maybe it is an entry, post, etc.
+                try {
+                    // process the message in the sync transport, so that the created content is directly visible
+                    $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
+                    $objects = $this->manager->findByApId($apId);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', $e->getMessage());
+                }
+            }
+
+            if (0 === \sizeof($objects)) {
+                // maybe it is a magazine or user
+                try {
+                    $this->activityPubManager->findActorOrCreate($apId);
+                    $objects = $this->manager->findByApId($apId);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', $e->getMessage());
+                }
+            }
+        }
+
+        return $this->mapApResultsToViewModel($objects);
+    }
+
+    private function mapApResultsToViewModel(array $objects): array
+    {
+        return array_map(function ($object) {
+            if ($object instanceof Magazine) {
+                $type = 'magazine';
+            } elseif ($object instanceof User) {
+                $type = 'user';
+            } else {
+                $type = 'subject';
+            }
+
+            return [
+                'type' => $type,
+                'object' => $object,
+            ];
+        }, $objects);
     }
 }
