@@ -95,7 +95,7 @@ class MonitoringExecutionContextFilterDto
             }
         }
         if (null !== $this->durationMinimum) {
-            $criteria[] = 'durationMilliseconds > :durationMin';
+            $criteria[] = 'duration_milliseconds > :durationMin';
             $parameters[':durationMin'] = $this->durationMinimum;
         }
         if (null !== $this->createdFrom) {
