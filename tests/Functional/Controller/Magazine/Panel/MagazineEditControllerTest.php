@@ -28,7 +28,10 @@ class MagazineEditControllerTest extends WebTestCase
     {
         $owner = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($owner);
-        $this->getMagazineByName('acme', $owner);
+        $magazine = $this->getMagazineByName('acme', $owner);
+        $magazine->rules = 'init rules';
+        $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/m/acme/panel/general');
         self::assertResponseIsSuccessful();
@@ -44,6 +47,26 @@ class MagazineEditControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorTextContains('#sidebar .magazine', 'test description edit');
         $this->assertSelectorTextContains('#sidebar .magazine', 'test rules edit');
+    }
+
+    public function testCannotEditRulesWhenEmpty(): void
+    {
+        $owner = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($owner);
+        $this->getMagazineByName('acme', $owner);
+
+        $crawler = $this->client->request('GET', '/m/acme/panel/general');
+        self::assertResponseIsSuccessful();
+        $exception = null;
+        try {
+            $crawler->filter('#main form[name=magazine]')->selectButton('Done')->form([
+                'magazine[rules]' => 'test rules edit',
+            ]);
+        } catch (\Exception $e) {
+            $exception = $e;
+        }
+        self::assertNotNull($exception);
+        self::assertStringContainsString('Unreachable field "rules"', $exception->getMessage());
     }
 
     public function testUnauthorizedUserCannotEditMagazine(): void

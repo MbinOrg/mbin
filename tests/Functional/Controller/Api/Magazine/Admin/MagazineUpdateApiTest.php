@@ -38,6 +38,9 @@ class MagazineUpdateApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
+        $magazine->rules = 'Some initial rules';
+        $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:update');
         $token = $codes['token_type'].' '.$codes['access_token'];
@@ -89,7 +92,6 @@ class MagazineUpdateApiTest extends WebTestCase
         $name = 'someothername';
         $title = 'Different name';
         $description = 'A description';
-        $rules = 'Some rules';
 
         $this->client->jsonRequest(
             'PUT', "/api/moderate/magazine/{$magazine->getId()}",
@@ -97,7 +99,6 @@ class MagazineUpdateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -112,7 +113,6 @@ class MagazineUpdateApiTest extends WebTestCase
             parameters: [
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -127,12 +127,24 @@ class MagazineUpdateApiTest extends WebTestCase
             parameters: [
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
 
+        self::assertResponseStatusCodeSame(400);
+
+        $rules = 'Some rules';
+        $description = 'Rules are deprecated';
+        $this->client->jsonRequest(
+            'PUT', "/api/moderate/magazine/{$magazine->getId()}",
+            parameters: [
+                'rules' => $rules,
+                'description' => $description,
+                'isAdult' => false,
+            ],
+            server: ['HTTP_AUTHORIZATION' => $token]
+        );
         self::assertResponseStatusCodeSame(400);
     }
 }

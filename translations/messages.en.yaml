@@ -1140,3 +1140,5 @@ magazine_name_as_tag: Use the magazine name as a tag
 magazine_name_as_tag_help: The tags of a magazine are used to match microblog posts to this magazine.
   For example if the name is "fediverse" and the magazine tags contain "fediverse", then every microblog post
   containing "#fediverse" will be put in this magazine.
+magazine_rules_deprecated: the rules field is deprecated and will be removed in the future.
+  Please put your rules in the description box.

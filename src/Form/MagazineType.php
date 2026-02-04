@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\DTO\MagazineDto;
 use App\Form\EventListener\DisableFieldsOnMagazineEdit;
+use App\Form\EventListener\RemoveRulesFieldIfEmpty;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -22,7 +23,10 @@ class MagazineType extends AbstractType
             ->add('name', TextType::class, ['required' => true])
             ->add('title', TextType::class, ['required' => true])
             ->add('description', TextareaType::class, ['required' => false])
-            ->add('rules', TextareaType::class, ['required' => false])
+            ->add('rules', TextareaType::class, [
+                'required' => false,
+                'help' => 'magazine_rules_deprecated',
+            ])
             ->add('isAdult', CheckboxType::class, ['required' => false])
             ->add('isPostingRestrictedToMods', CheckboxType::class, ['required' => false])
             ->add('discoverable', CheckboxType::class, [
@@ -41,6 +45,7 @@ class MagazineType extends AbstractType
             ->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber(new DisableFieldsOnMagazineEdit());
+        $builder->addEventSubscriber(new RemoveRulesFieldIfEmpty());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
