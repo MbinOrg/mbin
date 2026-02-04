@@ -140,25 +140,25 @@ class CheckDuplicatesUsersMagazines extends Command
 
             // Table header
             $io->text(\sprintf(
-                '| %-8s | %-20s | %-19s | %-19s |',
+                '| %-8s | %-120s | %-19s | %-19s |',
                 'ID',
                 ucfirst($nameField),
                 'Created At',
                 'Last Active'
             ));
-            $io->text(str_repeat('-', 80));
+            $io->text(str_repeat('-', 170));
 
             // Table rows
             foreach ($items as $item) {
                 $io->text(\sprintf(
-                    '| %-8s | %-20s | %-19s | %-19s |',
+                    '| %-8s | %-120s | %-19s | %-19s |',
                     $item['id'],
-                    substr($item[$nameField], 0, 20),
+                    substr($item[$nameField], 0, 120),
                     $item['created_at'] ? substr($item['created_at'], 0, 19) : 'N/A',
                     $item['last_active'] ? substr($item['last_active'], 0, 19) : 'N/A'
                 ));
             }
-            $io->text(str_repeat('-', 80));
+            $io->text(str_repeat('-', 170));
         }
 
         $io->text(\sprintf("\nTotal duplicate {$entityName}s: %d", \count($results)));
