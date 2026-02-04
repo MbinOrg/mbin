@@ -90,15 +90,14 @@ class MagazineUpdateApi extends MagazineBaseApi
             throw new AccessDeniedHttpException();
         }
 
-        $magazineDto = $manager->createDto($magazine);
-        $dto = $this->deserializeMagazine($magazineDto);
+        $dto = $this->deserializeMagazine($manager->createDto($magazine));
 
         $errors = $validator->validate($dto);
         if (\count($errors) > 0) {
             throw new BadRequestHttpException((string) $errors);
         }
 
-        if (empty($magazineDto->rules) && !empty($dto->rules)) {
+        if (!$magazine->rules && $dto->rules) {
             throw new BadRequestHttpException($translator->trans('magazine_rules_deprecated'));
         }
 

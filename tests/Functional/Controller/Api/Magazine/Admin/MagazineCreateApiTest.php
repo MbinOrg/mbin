@@ -41,7 +41,6 @@ class MagazineCreateApiTest extends WebTestCase
         $name = 'test';
         $title = 'API Test Magazine';
         $description = 'A description';
-        $rules = 'Some rules';
 
         $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
@@ -49,7 +48,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
                 'discoverable' => false,
                 'isPostingRestrictedToMods' => true,
@@ -84,7 +82,6 @@ class MagazineCreateApiTest extends WebTestCase
 
         $title = 'No name';
         $description = 'A description';
-        $rules = 'Some rules';
 
         $this->client->jsonRequest(
             'POST', '/api/moderate/magazine/new',
@@ -92,7 +89,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => null,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -109,7 +105,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -125,7 +120,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -141,7 +135,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -157,7 +150,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -173,7 +165,6 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -189,6 +180,21 @@ class MagazineCreateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
+                'isAdult' => false,
+            ],
+            server: ['HTTP_AUTHORIZATION' => $token]
+        );
+
+        self::assertResponseStatusCodeSame(400);
+
+        $name = 'rulesDeprecated';
+        $title = 'rules are deprecated';
+        $rules = 'Some rules';
+        $this->client->jsonRequest(
+            'POST', '/api/moderate/magazine/new',
+            parameters: [
+                'name' => $name,
+                'title' => $title,
                 'rules' => $rules,
                 'isAdult' => false,
             ],
