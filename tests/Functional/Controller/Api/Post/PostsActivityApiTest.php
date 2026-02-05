@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller\Api\Post;
 
 use App\DTO\UserSmallResponseDto;
@@ -8,8 +10,8 @@ use App\Tests\WebTestCase;
 
 class PostsActivityApiTest extends WebTestCase
 {
-
-    public function testEmpty() {
+    public function testEmpty()
+    {
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
         $post = $this->createPost('test post', user: $user, magazine: $magazine);
@@ -25,7 +27,8 @@ class PostsActivityApiTest extends WebTestCase
         self::assertSame(null, $jsonData['downvotes']);
     }
 
-    public function testUpvotes() {
+    public function testUpvotes()
+    {
         $author = $this->getUserByUsername('userA');
         $user1 = $this->getUserByUsername('user1');
         $user2 = $this->getUserByUsername('user2');
@@ -47,13 +50,14 @@ class PostsActivityApiTest extends WebTestCase
         self::assertSame(null, $jsonData['downvotes']);
 
         self::assertCount(2, $jsonData['upvotes']);
-        self::assertTrue(\array_all($jsonData['upvotes'], function ($u) use ($user1, $user2) {
+        self::assertTrue(array_all($jsonData['upvotes'], function ($u) use ($user1, $user2) {
             /* @var UserSmallResponseDto $u */
             return $u['userId'] === $user1->getId() || $u['userId'] === $user2->getId();
-        }), \serialize($jsonData['upvotes']));
+        }), serialize($jsonData['upvotes']));
     }
 
-    public function testBoosts() {
+    public function testBoosts()
+    {
         $author = $this->getUserByUsername('userA');
         $user1 = $this->getUserByUsername('user1');
         $user2 = $this->getUserByUsername('user2');
@@ -75,9 +79,9 @@ class PostsActivityApiTest extends WebTestCase
         self::assertSame(null, $jsonData['downvotes']);
 
         self::assertCount(2, $jsonData['boosts']);
-        self::assertTrue(\array_all($jsonData['boosts'], function ($u) use ($user1, $user2) {
+        self::assertTrue(array_all($jsonData['boosts'], function ($u) use ($user1, $user2) {
             /* @var UserSmallResponseDto $u */
             return $u['userId'] === $user1->getId() || $u['userId'] === $user2->getId();
-        }), \serialize($jsonData['boosts']));
+        }), serialize($jsonData['boosts']));
     }
 }

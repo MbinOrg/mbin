@@ -1,25 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Api\Entry\Comments;
 
 use App\Controller\Api\Entry\EntriesBaseApi;
 use App\Controller\Traits\PrivateContentTrait;
-use App\DTO\ActivitiesResponseDto;
-use App\Entity\Entry;
 use App\Entity\EntryComment;
-use App\Entity\EntryCommentFavourite;
-use App\Entity\EntryCommentVote;
-use App\Entity\EntryFavourite;
-use App\Entity\EntryVote;
 use App\Factory\ContentActivityDtoFactory;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
-
 class EntryCommentsActivityApi extends EntriesBaseApi
 {
-
     use PrivateContentTrait;
 
     public function __invoke(
@@ -34,10 +28,10 @@ class EntryCommentsActivityApi extends EntriesBaseApi
         $this->handlePrivateContent($comment);
 
         $dto = $dtoFactory->createActivitiesDto($comment);
+
         return new JsonResponse(
             $dto,
             headers: $headers
         );
     }
-
 }

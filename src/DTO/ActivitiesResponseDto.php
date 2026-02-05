@@ -9,7 +9,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema]
 class ActivitiesResponseDto implements \JsonSerializable
 {
-
     #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class), description: 'null if the user is not allowed to access the data or it is not supported by the subject')]
     public ?array $boosts = null;
     #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class), description: 'null if the user is not allowed to access the data or it is not supported by the subject')]
@@ -21,7 +20,6 @@ class ActivitiesResponseDto implements \JsonSerializable
      * @param UserSmallResponseDto[]|null $boosts
      * @param UserSmallResponseDto[]|null $upvotes
      * @param UserSmallResponseDto[]|null $downvotes
-     * @return ActivitiesResponseDto
      */
     public static function create(
         ?array $boosts = null,
@@ -32,6 +30,7 @@ class ActivitiesResponseDto implements \JsonSerializable
         $dto->boosts = $boosts;
         $dto->upvotes = $upvotes;
         $dto->downvotes = $downvotes;
+
         return $dto;
     }
 
