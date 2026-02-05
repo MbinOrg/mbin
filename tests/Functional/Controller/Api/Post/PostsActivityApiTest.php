@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Tests\Functional\Controller\Api\Entry\Comment;
+namespace App\Tests\Functional\Controller\Api\Post;
 
 use App\DTO\UserSmallResponseDto;
 use App\Tests\Functional\Controller\Api\Entry\EntriesActivityApiTest;
 use App\Tests\WebTestCase;
 
-class EntryCommentsActivityApiTest extends WebTestCase
+class PostsActivityApiTest extends WebTestCase
 {
 
     public function testEmpty() {
         $user = $this->getUserByUsername('user');
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
-        $entry = $this->getEntryByTitle('test article', body: 'test for activites', user: $user, magazine: $magazine);
-        $comment = $this->createEntryComment('test comment', $entry, $user);
+        $post = $this->createPost('test post', user: $user, magazine: $magazine);
 
-        $this->client->jsonRequest('GET', "/api/comments/{$comment->getId()}/activity");
+        $this->client->jsonRequest('GET', "/api/post/{$post->getId()}/activity");
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -33,13 +32,12 @@ class EntryCommentsActivityApiTest extends WebTestCase
         $this->getUserByUsername('user3');
 
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
-        $entry = $this->getEntryByTitle('test article', body: 'test for activites', user: $author, magazine: $magazine);
-        $comment = $this->createEntryComment('test comment', $entry, $author);
+        $post = $this->createPost('test post', user: $author, magazine: $magazine);
 
-        $this->favouriteManager->toggle($user1, $comment);
-        $this->favouriteManager->toggle($user2, $comment);
+        $this->favouriteManager->toggle($user1, $post);
+        $this->favouriteManager->toggle($user2, $post);
 
-        $this->client->jsonRequest('GET', "/api/comments/{$comment->getId()}/activity");
+        $this->client->jsonRequest('GET', "/api/post/{$post->getId()}/activity");
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -62,13 +60,12 @@ class EntryCommentsActivityApiTest extends WebTestCase
         $this->getUserByUsername('user3');
 
         $magazine = $this->getMagazineByNameNoRSAKey('acme');
-        $entry = $this->getEntryByTitle('test article', body: 'test for activites', user: $author, magazine: $magazine);
-        $comment = $this->createEntryComment('test comment', $entry, $author);
+        $post = $this->createPost('test post', user: $author, magazine: $magazine);
 
-        $this->voteManager->upvote($comment, $user1);
-        $this->voteManager->upvote($comment, $user2);
+        $this->voteManager->upvote($post, $user1);
+        $this->voteManager->upvote($post, $user2);
 
-        $this->client->jsonRequest('GET', "/api/comments/{$comment->getId()}/activity");
+        $this->client->jsonRequest('GET', "/api/post/{$post->getId()}/activity");
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 

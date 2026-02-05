@@ -1,33 +1,32 @@
 <?php
 
-namespace App\Controller\Api\Entry\Comments;
+namespace App\Controller\Api\Post\Comments;
 
-use App\Controller\Api\Entry\EntriesBaseApi;
+use App\Controller\Api\Post\PostsBaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ActivitiesResponseDto;
-use App\Entity\Entry;
-use App\Entity\EntryComment;
-use App\Entity\EntryCommentFavourite;
-use App\Entity\EntryCommentVote;
 use App\Entity\EntryFavourite;
 use App\Entity\EntryVote;
+use App\Entity\Post;
+use App\Entity\PostComment;
+use App\Entity\PostFavourite;
+use App\Entity\PostVote;
 use App\Factory\ContentActivityDtoFactory;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
-
-class EntryCommentsActivityApi extends EntriesBaseApi
+class PostCommentsActivityApi extends PostsBaseApi
 {
 
     use PrivateContentTrait;
 
     public function __invoke(
         #[MapEntity(id: 'comment_id')]
-        EntryComment $comment,
+        PostComment               $comment,
         ContentActivityDtoFactory $dtoFactory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactory        $apiReadLimiter,
+        RateLimiterFactory        $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -39,5 +38,4 @@ class EntryCommentsActivityApi extends EntriesBaseApi
             headers: $headers
         );
     }
-
 }
