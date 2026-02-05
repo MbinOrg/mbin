@@ -73,33 +73,19 @@ class CheckDuplicatesUsersMagazines extends Command
 
         if ('users' === $entity) {
             $sql = '
-                SELECT id, username, ap_public_url, created_at, last_active 
-                FROM "user" u2 
-                WHERE EXISTS (
-                    SELECT COUNT(*), ap_public_url 
-                    FROM "user" 
-                    WHERE ap_id IS NOT NULL 
-                    AND ap_public_url = u2.ap_public_url 
-                    GROUP BY ap_public_url 
-                    HAVING COUNT(*) > 1
-                )
-                ORDER BY ap_public_url, created_at
+                SELECT id, username, ap_public_url, created_at, last_active FROM 
+                "user" WHERE ap_public_url IN 
+                (SELECT ap_public_url FROM "user" WHERE ap_public_url IS NOT NULL GROUP BY ap_public_url HAVING COUNT(*) > 1) 
+                ORDER BY ap_public_url;
             ';
             $entityName = 'User';
             $nameField = 'username';
         } else { // magazines
             $sql = '
-                SELECT id, name, ap_public_url, created_at, last_active 
-                FROM magazine m2 
-                WHERE EXISTS (
-                    SELECT COUNT(*), ap_public_url 
-                    FROM magazine 
-                    WHERE ap_id IS NOT NULL 
-                    AND ap_public_url = m2.ap_public_url 
-                    GROUP BY ap_public_url 
-                    HAVING COUNT(*) > 1
-                )
-                ORDER BY ap_public_url, created_at
+                SELECT id, name, ap_public_url, created_at, last_active FROM 
+                "magazine" WHERE ap_public_url IN 
+                (SELECT ap_public_url FROM "magazine" WHERE ap_public_url IS NOT NULL GROUP BY ap_public_url HAVING COUNT(*) > 1) 
+                ORDER BY ap_public_url; 
             ';
             $entityName = 'Magazine';
             $nameField = 'name';
