@@ -10,11 +10,11 @@ use OpenApi\Attributes as OA;
 class ActivitiesResponseDto implements \JsonSerializable
 {
 
-    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class))]
+    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class), description: 'null if the user is not allowed to access the data')]
     public ?array $boosts = null;
-    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class))]
+    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class), description: 'null if the user is not allowed to access the data')]
     public ?array $upvotes = null;
-    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class))]
+    #[OA\Property(type: 'array', nullable: true, items: new OA\Items(type: UserSmallResponseDto::class), description: 'null if the user is not allowed to access the data')]
     public ?array $downvotes = null;
 
     /**
