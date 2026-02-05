@@ -28,7 +28,6 @@ class ContextsProvider
     public function referencedContexts(): array
     {
         return [
-            ActivityPubActivityInterface::CONTEXT_URL,
             $this->urlGenerator->generate('ap_contexts', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ];
     }

@@ -1,6 +1,5 @@
 {
     "@context": [
-        "https://www.w3.org/ns/activitystreams",
         "https://kbin.test/contexts"
     ],
     "id": "SCRUBBED_ID",
