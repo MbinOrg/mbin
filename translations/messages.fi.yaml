@@ -117,9 +117,10 @@ banned_instances: Estetyt instanssit
 captcha_enabled: Captcha käytössä
 boost: Tehosta
 return: Palaa
-browsing_one_thread: Selaat vain yhtä ketjua keskustelussa! Kaikki kommentit ovat
-  näkyvillä viestisivulla.
-infinite_scroll_help: Lataa lisää sisältöä automaattisesti, kun saavutat sivun alalaidan.
+browsing_one_thread: Selaat vain yhtä ketjua keskustelussa! Kaikki kommentit 
+  ovat näkyvillä viestisivulla.
+infinite_scroll_help: Lataa lisää sisältöä automaattisesti, kun saavutat sivun 
+  alalaidan.
 reload_to_apply: Lataa sivu uudelleen, jotta muutokset tulevat voimaan
 auto_preview_help: Laajenna automaattisesti median esikatselut.
 filter.fields.only_names: Vain nimet
@@ -217,9 +218,9 @@ appearance: Ulkoasu
 general: Yleinen
 size: Koko
 show_all: Näytä kaikki
-flash_register_success: Tervetuloa mukaan! Tilisi on nyt rekisteröity. Vielä yksi
-  asia - tarkista sähköpostisi ja napsauta vastaanottamaasi aktivointilinkkiä saattaaksesi
-  tilisi eloon.
+flash_register_success: Tervetuloa mukaan! Tilisi on nyt rekisteröity. Vielä 
+  yksi asia - tarkista sähköpostisi ja napsauta vastaanottamaasi 
+  aktivointilinkkiä saattaaksesi tilisi eloon.
 created: Luotu
 expired_at: Vanheni
 firstname: Etunimi
@@ -248,7 +249,8 @@ filter.adult.only: Vain NSFW
 toolbar.link: Linkki
 account_deletion_immediate: Poista välittömästi
 local_and_federated: Paikallinen ja federoitu
-agree_terms: Hyväksy %terms_link_start%käyttöehdot%terms_link_end% ja %policy_link_start%tietosuojakäytäntö%policy_link_end%
+agree_terms: Hyväksy %terms_link_start%käyttöehdot%terms_link_end% ja 
+  %policy_link_start%tietosuojakäytäntö%policy_link_end%
 reason: Syy
 preview: Esikatselu
 article: Ketju
@@ -277,8 +279,8 @@ notification_title_new_comment: Uusi kommentti
 random_posts: Satunnaiset viestit
 1d: 1 päivä
 page_width_fixed: Kiinteä
-kbin_intro_desc: on hajautettu alusta sisällön yhteenkokoamiseen sekä mikrobloggaukseen,
-  ja se toimii osana Fediverse-verkkoa.
+kbin_intro_desc: on hajautettu alusta sisällön yhteenkokoamiseen sekä 
+  mikrobloggaukseen, ja se toimii osana Fediverse-verkkoa.
 show_profile_subscriptions: Näytä makasiinitilaukset
 show_related_entries: Näytä satunnaisia ketjuja
 show_related_posts: Näytä satunnaisia viestejä
@@ -325,20 +327,21 @@ comment_reply_position: Kommentin vastauksen sijainti
 subscription_header: TIlatut makasiinit
 position_bottom: Alhaalla
 position_top: Ylhäällä
-flash_account_settings_changed: Tilisi asetukset on muutettu onnistuneesti. Sinun
-  täytyy kirjautua uudelleen sisään.
+flash_account_settings_changed: Tilisi asetukset on muutettu onnistuneesti. 
+  Sinun täytyy kirjautua uudelleen sisään.
 subscription_sort: Järjestä
 alphabetically: Aakkosjärjestys
 subscription_sidebar_pop_out_right: Siirrä erilliseen sivupalkkiin oikealle
 subscription_sidebar_pop_out_left: Siirrä erilliseen sivupalkkiin vasemmalle
 flash_user_edit_profile_error: Profiilin asetusten tallentaminen epäonnistui.
-flash_user_settings_general_error: Käyttäjän asetusten tallentaminen epäonnistui.
+flash_user_settings_general_error: Käyttäjän asetusten tallentaminen 
+  epäonnistui.
 magazine_deletion: Makasiinin poisto
 delete_magazine: Poista makasiini
 restore_magazine: Palauta makasiini
 open_url_to_fediverse: Avaa alkuperäinen osoite
-magazine_is_deleted: Makasiini on poistettu. Voit <a href="%link_target%">palauttaa</a>
-  sen 30 päivän sisällä.
+magazine_is_deleted: Makasiini on poistettu. Voit <a 
+  href="%link_target%">palauttaa</a> sen 30 päivän sisällä.
 request_magazine_ownership: Pyydä makasiinin omistajuutta
 accept: Hyväksy
 abandoned: Hylätty
