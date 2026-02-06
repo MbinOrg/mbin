@@ -66,7 +66,7 @@ class PostSingleControllerTest extends WebTestCase
         $older->createdAt = new \DateTimeImmutable('now - 1 day');
         $newer = $this->createPostComment('newer comment', post: $post);
 
-        $user->commentDefaultSort = ESortOptions::Oldest->value;
+        $user->commentDefaultSort = ESortOptions::Oldest;
         $this->entityManager->flush();
 
         $this->client->loginUser($user);
@@ -84,7 +84,7 @@ class PostSingleControllerTest extends WebTestCase
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-comment-{$newer->getId()}", $secondId);
 
-        $user->commentDefaultSort = ESortOptions::Newest->value;
+        $user->commentDefaultSort = ESortOptions::Newest;
         $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', "/m/{$post->magazine->name}/p/{$post->getId()}/-");

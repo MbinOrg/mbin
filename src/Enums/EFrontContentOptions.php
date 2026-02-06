@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
+
+#[EnumType('enum_front_content_options')]
 enum EFrontContentOptions: string
 {
     case Combined = 'combined';
@@ -15,6 +18,16 @@ enum EFrontContentOptions: string
         EFrontContentOptions::Threads->value,
         EFrontContentOptions::Microblog->value,
     ];
+
+    public static function getFromString(string $value): ?EFrontContentOptions
+    {
+        return match ($value) {
+            EFrontContentOptions::Combined->value => EFrontContentOptions::Combined,
+            EFrontContentOptions::Threads->value => EFrontContentOptions::Threads,
+            EFrontContentOptions::Microblog->value => EFrontContentOptions::Microblog,
+            default => null,
+        };
+    }
 
     /**
      * @return string[]

@@ -19,6 +19,7 @@ use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
@@ -222,7 +223,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->orderBy(['createdAt' => 'DESC']);
 
@@ -321,7 +322,7 @@ class MagazineRepository extends ServiceEntityRepository
         $parameters = [
             'magazineId' => $magazineId,
         ];
-        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
 
         $pagerfanta = new Pagerfanta($adapter);
 
@@ -409,7 +410,8 @@ class MagazineRepository extends ServiceEntityRepository
             )
             ->orderBy('m.apId', 'DESC')
             ->orderBy('m.subscriptionsCount', 'DESC')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'q' => '%'.$magazine.'%']);
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('q', '%'.$magazine.'%');
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
@@ -438,12 +440,15 @@ class MagazineRepository extends ServiceEntityRepository
         if (null !== $user) {
             $subSql = 'SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :user';
             $whereClauses[] = "NOT EXISTS($subSql)";
-            $parameters['user'] = $user->getId();
+            $parameters['user'] = [$user->getId(), ParameterType::INTEGER];
         }
         $whereString = SqlHelpers::makeWhereString($whereClauses);
         $sql = "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5";
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery($parameters);
+        foreach ($parameters as $param => $value) {
+            $stmt->bindValue($param, $value[0], $value[1]);
+        }
+        $stmt = $stmt->executeQuery();
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')

@@ -6,6 +6,9 @@ namespace App\Service;
 
 use App\DTO\UserSettingsDto;
 use App\Entity\User;
+use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
+use App\Enums\ESortOptions;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserSettingsManager
@@ -29,15 +32,15 @@ class UserSettingsManager
             $user->addMentionsEntries,
             $user->addMentionsPosts,
             $user->homepage,
-            $user->frontDefaultSort,
-            $user->commentDefaultSort,
+            $user->frontDefaultSort->value,
+            $user->commentDefaultSort->value,
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
-            $user->directMessageSetting,
-            $user->frontDefaultContent,
+            $user->directMessageSetting->value,
+            $user->frontDefaultContent->value,
             $user->apDiscoverable,
             $user->apIndexable,
         );
@@ -52,8 +55,8 @@ class UserSettingsManager
         $user->notifyOnNewEntryReply = $dto->notifyOnNewEntryReply;
         $user->notifyOnNewPostCommentReply = $dto->notifyOnNewPostCommentReply;
         $user->homepage = $dto->homepage;
-        $user->frontDefaultSort = $dto->frontDefaultSort;
-        $user->commentDefaultSort = $dto->commentDefaultSort;
+        $user->frontDefaultSort = null !== $dto->frontDefaultSort ? ESortOptions::getFromString($dto->frontDefaultSort) : null;
+        $user->commentDefaultSort = null !== $dto->commentDefaultSort ? ESortOptions::getFromString($dto->commentDefaultSort) : null;
         $user->hideAdult = $dto->hideAdult;
         $user->showProfileSubscriptions = $dto->showProfileSubscriptions;
         $user->showProfileFollowings = $dto->showProfileFollowings;
@@ -63,8 +66,8 @@ class UserSettingsManager
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
-        $user->directMessageSetting = $dto->directMessageSetting;
-        $user->frontDefaultContent = $dto->frontDefaultContent;
+        $user->directMessageSetting = null !== $dto->directMessageSetting ? EDirectMessageSettings::getFromString($dto->directMessageSetting) : null;
+        $user->frontDefaultContent = null !== $dto->frontDefaultContent ? EFrontContentOptions::getFromString($dto->frontDefaultContent) : null;
 
         if (null !== $dto->notifyOnUserSignup) {
             $user->notifyOnUserSignup = $dto->notifyOnUserSignup;

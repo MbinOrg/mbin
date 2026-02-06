@@ -95,7 +95,7 @@ class EntrySingleControllerTest extends WebTestCase
         $older->createdAt = new \DateTimeImmutable('now - 1 day');
         $newer = $this->createEntryComment('newer comment', entry: $entry);
 
-        $user->commentDefaultSort = ESortOptions::Oldest->value;
+        $user->commentDefaultSort = ESortOptions::Oldest;
         $this->entityManager->flush();
 
         $this->client->loginUser($user);
@@ -113,7 +113,7 @@ class EntrySingleControllerTest extends WebTestCase
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("entry-comment-{$newer->getId()}", $secondId);
 
-        $user->commentDefaultSort = ESortOptions::Newest->value;
+        $user->commentDefaultSort = ESortOptions::Newest;
         $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', "/m/{$entry->magazine->name}/t/{$entry->getId()}/-");

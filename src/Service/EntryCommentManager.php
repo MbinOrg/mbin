@@ -65,7 +65,7 @@ class EntryCommentManager implements ContentManagerInterface
             }
         }
 
-        if ($dto->entry->magazine->isBanned($user) || $user->isBanned()) {
+        if ($dto->entry->magazine->isBanned($user) || $user->isBanned) {
             throw new UserBannedException();
         }
 

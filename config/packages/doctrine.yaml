@@ -3,11 +3,6 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
         types:
             citext: App\DoctrineExtensions\DBAL\Types\Citext
-            enumApplicationStatus: App\DoctrineExtensions\DBAL\Types\EnumApplicationStatus
-            enumNotificationStatus: App\DoctrineExtensions\DBAL\Types\EnumNotificationStatus
-            enumSortOptions: App\DoctrineExtensions\DBAL\Types\EnumSortOptions
-            enumDirectMessageSettings: App\DoctrineExtensions\DBAL\Types\EnumDirectMessageSettings
-            enumFrontContentOptions: App\DoctrineExtensions\DBAL\Types\EnumFrontContentOptions
         mapping_types:
             user_type: string
             citext: citext

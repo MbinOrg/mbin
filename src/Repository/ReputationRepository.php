@@ -52,7 +52,7 @@ class ReputationRepository extends ServiceEntityRepository
             SELECT f.created_at, 1 as choice FROM favourite f INNER JOIN $table s ON f.$idColumn = s.id WHERE s.user_id = :userId --upvotes -> 1x
         ) as interactions GROUP BY day ORDER BY day DESC";
 
-        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, ['userId' => $user->getId()], cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, ['userId' => $user->getId()], cache: $this->cache);
         $pagerfanta = new Pagerfanta($adapter);
 
         try {
