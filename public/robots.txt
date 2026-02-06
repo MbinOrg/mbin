@@ -1437,4 +1437,25 @@ Disallow: /new/*
 Disallow: /newMagazine
 Disallow: /terms
 Disallow: /privacy-policy
+Disallow: /search
 
+# Voting, Boosting, Reporting
+Disallow /er/*
+Disallow /ev/*
+Disallow /ef/*
+Disallow /eb/*
+Disallow /ecr/*
+Disallow /ecv/*
+Disallow /ecf/*
+Disallow /ecb/*
+Disallow /pr/*
+Disallow /pv/*
+Disallow /pf/*
+Disallow /pb/*
+Disallow /pcr/*
+Disallow /pcv/*
+Disallow /pcf/*
+Disallow /pcb/*
+
+# Crossposting
+Disallow /crosspost/*

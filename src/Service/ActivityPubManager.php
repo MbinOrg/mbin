@@ -140,7 +140,7 @@ class ActivityPubManager
             return null;
         }
 
-        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Cearching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
+        $this->logger->debug('[ActivityPubManager::findActorOrCreate] Searching for actor at "{handle}"', ['handle' => $actorUrlOrHandle]);
         if (str_contains($actorUrlOrHandle, $this->settingsManager->get('KBIN_DOMAIN').'/m/')) {
             $magazine = str_replace('https://'.$this->settingsManager->get('KBIN_DOMAIN').'/m/', '', $actorUrlOrHandle);
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found magazine: "{magName}"', ['magName' => $magazine]);
@@ -151,14 +151,18 @@ class ActivityPubManager
         $actorUrl = $actorUrlOrHandle;
         if (false === filter_var($actorUrl, FILTER_VALIDATE_URL)) {
             if (!substr_count(ltrim($actorUrl, '@'), '@')) {
+                // local user. Maybe an @ at the beginning, but not in the middle
                 $user = $this->userRepository->findOneBy(['username' => ltrim($actorUrl, '@')]);
-                if ($user instanceof User) {
-                    if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
-                        $this->dispatchUpdateActor($user->apProfileId);
-                    }
-
-                    return $user;
+            } else {
+                // remote user. Maybe @user@domain, maybe only user@domain -> trim left and look in apId
+                $user = $this->userRepository->findOneBy(['apId' => ltrim($actorUrl, '@')]);
+            }
+            if ($user instanceof User) {
+                if ($user->apId && !$user->isDeleted && !$user->isSoftDeleted() && !$user->isTrashed() && (!$user->apFetchedAt || $user->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    $this->dispatchUpdateActor($user->apProfileId);
                 }
+
+                return $user;
             }
 
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
@@ -196,6 +200,10 @@ class ActivityPubManager
         }
 
         $magazine = $this->magazineRepository->findOneBy(['apProfileId' => $actorUrl]);
+        if (!$magazine) {
+            // also try the public URL if it was not found by the profile id
+            $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $actorUrl]);
+        }
         if ($magazine instanceof Magazine) {
             $this->logger->debug('[ActivityPubManager::findActorOrCreate] Found remote user for url: "{url}" in db', ['url' => $actorUrl]);
             if (!$magazine->isTrashed() && !$magazine->isSoftDeleted() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
@@ -380,6 +388,7 @@ class ActivityPubManager
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? null;
+            $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
             $user->apPublicUrl = $actor['url'] ?? $actorUrl;
             $user->apDeletedAt = null;
@@ -652,6 +661,7 @@ class ActivityPubManager
             $magazine->apFetchedAt = new \DateTime();
             $magazine->isAdult = $actor['sensitive'] ?? false;
             $magazine->postingRestrictedToMods = filter_var($actor['postingRestrictedToMods'] ?? false, FILTER_VALIDATE_BOOLEAN) ?? false;
+            $magazine->apIndexable = $actor['indexable'] ?? null;
 
             if (null !== $magazine->apFollowersUrl) {
                 try {

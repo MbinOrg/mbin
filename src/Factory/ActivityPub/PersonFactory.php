@@ -46,6 +46,7 @@ class PersonFactory
                 'url' => $this->getActivityPubId($user),
                 'manuallyApprovesFollowers' => false,
                 'discoverable' => $user->apDiscoverable,
+                'indexable' => $user->apIndexable,
                 'published' => $user->createdAt->format(DATE_ATOM),
                 'following' => $this->urlGenerator->generate(
                     'ap_user_following',

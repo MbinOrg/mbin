@@ -20,25 +20,16 @@ use App\Entity\ReportApprovedNotification;
 use App\Entity\ReportCreatedNotification;
 use App\Entity\ReportRejectedNotification;
 use App\Factory\MessageFactory;
-use GraphQL\Exception\ArgumentException;
 use Symfony\Contracts\Service\Attribute\Required;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationBaseApi extends BaseApi
 {
     private MessageFactory $messageFactory;
-    private TranslatorInterface $translator;
 
     #[Required]
     public function setMessageFactory(MessageFactory $messageFactory)
     {
         $this->messageFactory = $messageFactory;
-    }
-
-    #[Required]
-    public function setTranslator(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
     }
 
     /**
@@ -157,6 +148,6 @@ class NotificationBaseApi extends BaseApi
         } elseif ($subject instanceof PostComment) {
             return $this->postCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
         }
-        throw new ArgumentException("cannot work with: '".\get_class($subject)."'");
+        throw new \InvalidArgumentException("cannot work with: '".\get_class($subject)."'");
     }
 }

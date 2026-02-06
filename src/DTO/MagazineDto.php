@@ -40,6 +40,7 @@ class MagazineDto
     public int $postCommentCount = 0;
     public bool $isAdult = false;
     public bool $isPostingRestrictedToMods = false;
+    public ?bool $indexable = null;
     public ?bool $isUserSubscribed = null;
     public ?bool $isBlockedByUser = null;
     public ?int $localSubscribers = null;
@@ -54,6 +55,7 @@ class MagazineDto
     public ?string $serverSoftwareVersion = null;
     private ?int $id = null;
     public ?bool $discoverable = null;
+    public ?bool $nameAsTag = null;
 
     public function getId(): ?int
     {

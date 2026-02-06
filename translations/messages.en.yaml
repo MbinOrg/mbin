@@ -1126,3 +1126,19 @@ modlog_type_entry_lock: Thread locked
 modlog_type_entry_unlock: Thread unlocked
 modlog_type_post_lock: Microblog locked
 modlog_type_post_unlock: Microblog unlocked
+contentnotification.muted: Mute | get no notifications
+contentnotification.default: Default | get notifications according to your default settings
+contentnotification.loud: Loud | get all notifications
+indexable_by_search_engines: Indexable by search engines
+user_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of your threads
+  and microblogs, however your comments are not affected by this and bad actors might ignore it. This setting is also
+  federated to other servers.
+magazine_indexable_by_search_engines_help: If this setting is false, search engines are advised to not index any of the
+  threads and microblogs in this magazines. That includes the landing page and all comment pages. This setting is also
+  federated to other servers.
+magazine_name_as_tag: Use the magazine name as a tag
+magazine_name_as_tag_help: The tags of a magazine are used to match microblog posts to this magazine.
+  For example if the name is "fediverse" and the magazine tags contain "fediverse", then every microblog post
+  containing "#fediverse" will be put in this magazine.
+magazine_rules_deprecated: the rules field is deprecated and will be removed in the future.
+  Please put your rules in the description box.

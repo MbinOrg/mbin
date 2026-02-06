@@ -78,6 +78,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Image as BaseImageConstraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BaseApi extends AbstractController
 {
@@ -122,6 +123,7 @@ class BaseApi extends AbstractController
         protected readonly ReputationRepository $reputationRepository,
         protected readonly InstanceRepository $instanceRepository,
         protected readonly InstanceManager $instanceManager,
+        protected readonly TranslatorInterface $translator,
     ) {
     }
 

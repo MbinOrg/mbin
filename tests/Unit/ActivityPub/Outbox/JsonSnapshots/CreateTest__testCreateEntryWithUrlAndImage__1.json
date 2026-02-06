@@ -1,6 +1,5 @@
 {
     "@context": [
-        "https://www.w3.org/ns/activitystreams",
         "https://kbin.test/contexts"
     ],
     "id": "SCRUBBED_ID",
@@ -50,7 +49,7 @@
             {
                 "type": "Image",
                 "mediaType": "image/png",
-                "url": "https://mbin.domain.tld/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
+                "url": "https://kbin.test/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
                 "name": "kibby",
                 "blurhash": "L$Pie*?^spxt%3W.oyn*r^W-tQjG",
                 "focalPoint": [
@@ -67,7 +66,7 @@
         ],
         "image": {
             "type": "Image",
-            "url": "https://mbin.domain.tld/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png"
+            "url": "https://kbin.test/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png"
         }
     },
     "audience": "https://kbin.test/m/test"

@@ -1153,3 +1153,16 @@ modlog_type_entry_lock: Fío bloqueado
 modlog_type_entry_unlock: Fío desbloqueado
 modlog_type_post_lock: Microblog bloqueado
 modlog_type_post_unlock: Microblog desbloqueado
+contentnotification.muted: Silenciar | non ter notificacións
+contentnotification.default: Predeterminado | recibir notificacións seguindo os 
+  axustes
+contentnotification.loud: Ruidoso | notificar todo
+indexable_by_search_engines: Os motores de busca poden atopalo
+user_indexable_by_search_engines_help: Se este axuste se desactiva, os motores 
+  de busca reciben o sinal de non incluír ningún dos teus fíos ou microblogs, 
+  pero os comentarios non se ven afectados e actores maliciosos poderían 
+  ignoralo. Este axuste fedérase con outros servidores.
+magazine_indexable_by_search_engines_help: Se este axuste se desactiva, os 
+  motores de busca reciben o aviso de non incluír non resultados ningún dos fíos
+  ou microblogs nestas revistas. Isto inclúe a páxina de inicio e todas as 
+  páxinas de comentarios. Este axuste tamén se federa con outros servidores.

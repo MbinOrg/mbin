@@ -22,6 +22,7 @@ class UserSmallResponseDto implements \JsonSerializable
     public ?string $apProfileId = null;
     public ?\DateTimeImmutable $createdAt = null;
     public ?bool $discoverable = null;
+    public ?bool $indexable = null;
 
     public function __construct(UserDto $dto)
     {
@@ -38,6 +39,7 @@ class UserSmallResponseDto implements \JsonSerializable
         $this->isAdmin = $dto->isAdmin;
         $this->isGlobalModerator = $dto->isGlobalModerator;
         $this->discoverable = $dto->discoverable;
+        $this->indexable = $dto->indexable;
     }
 
     public function jsonSerialize(): mixed
@@ -56,6 +58,7 @@ class UserSmallResponseDto implements \JsonSerializable
             'apProfileId' => $this->apProfileId,
             'createdAt' => $this->createdAt?->format(\DateTimeImmutable::ATOM),
             'discoverable' => $this->discoverable,
+            'indexable' => $this->indexable,
         ];
     }
 }

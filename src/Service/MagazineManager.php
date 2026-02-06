@@ -84,6 +84,12 @@ class MagazineManager
             );
             // default new local magazines to be discoverable
             $magazine->apDiscoverable = $dto->discoverable ?? true;
+            // default new local magazines to be indexable
+            $magazine->apIndexable = $dto->indexable ?? true;
+        }
+
+        if ($dto->nameAsTag) {
+            $magazine->tags = [$magazine->name];
         }
 
         $this->entityManager->persist($magazine);
@@ -148,6 +154,9 @@ class MagazineManager
 
         if (null !== $dto->discoverable) {
             $magazine->apDiscoverable = $dto->discoverable;
+        }
+        if (null !== $dto->indexable) {
+            $magazine->apIndexable = $dto->indexable;
         }
 
         $this->entityManager->flush();

@@ -32,10 +32,12 @@
                 {{ component('editor_toolbar', {id: 'magazine_description'}) }}
                 {{ form_row(form.description, {label: false, attr: {placeholder: 'description', 'data-entry-link-create-target': 'magazine_description'}}) }}
             </div>
-            <div>
-                {{ component('editor_toolbar', {id: 'magazine_rules'}) }}
-                {{ form_row(form.rules, {label: false, attr: {placeholder: 'rules', 'data-entry-link-create-target': 'magazine_rules'}}) }}
-            </div>
+            {% if form.rules is defined and form.rules %}
+                <div>
+                    {{ component('editor_toolbar', {id: 'magazine_rules'}) }}
+                    {{ form_row(form.rules, {label: false, attr: {placeholder: 'rules', 'data-entry-link-create-target': 'magazine_rules'}}) }}
+                </div>
+            {% endif %}
             <div class="checkbox">
                 {{ form_label(form.isAdult) }}
                 {{ form_widget(form.isAdult) }}
@@ -50,6 +52,13 @@
             </div>
             <div class="checkbox help-text">
                 {{ form_help(form.discoverable) }}
+            </div>
+            <div class="checkbox">
+                {{ form_label(form.indexable, 'indexable_by_search_engines') }}
+                {{ form_widget(form.indexable) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.indexable) }}
             </div>
             <div class="actions">
                 {{ form_row(form.submit, { 'label': 'done'|trans, 'attr': {'class': 'btn btn__primary'} }) }}

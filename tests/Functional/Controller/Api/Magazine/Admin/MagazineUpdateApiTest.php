@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 
-use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
 class MagazineUpdateApiTest extends WebTestCase
@@ -39,6 +38,9 @@ class MagazineUpdateApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
 
         $magazine = $this->getMagazineByName('test');
+        $magazine->rules = 'Some initial rules';
+        $this->entityManager->persist($magazine);
+        $this->entityManager->flush();
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:update');
         $token = $codes['token_type'].' '.$codes['access_token'];
@@ -57,6 +59,7 @@ class MagazineUpdateApiTest extends WebTestCase
                 'rules' => $rules,
                 'isAdult' => true,
                 'discoverable' => false,
+                'indexable' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
@@ -65,13 +68,14 @@ class MagazineUpdateApiTest extends WebTestCase
         $jsonData = self::getJsonResponse($this->client);
 
         self::assertIsArray($jsonData);
-        self::assertArrayKeysMatch(MagazineRetrieveApiTest::MAGAZINE_RESPONSE_KEYS, $jsonData);
+        self::assertArrayKeysMatch(WebTestCase::MAGAZINE_RESPONSE_KEYS, $jsonData);
         self::assertEquals($name, $jsonData['name']);
         self::assertSame($user->getId(), $jsonData['owner']['userId']);
         self::assertEquals($description, $jsonData['description']);
         self::assertEquals($rules, $jsonData['rules']);
         self::assertTrue($jsonData['isAdult']);
         self::assertFalse($jsonData['discoverable']);
+        self::assertFalse($jsonData['indexable']);
     }
 
     public function testApiCannotUpdateMagazineWithInvalidParams(): void
@@ -88,7 +92,6 @@ class MagazineUpdateApiTest extends WebTestCase
         $name = 'someothername';
         $title = 'Different name';
         $description = 'A description';
-        $rules = 'Some rules';
 
         $this->client->jsonRequest(
             'PUT', "/api/moderate/magazine/{$magazine->getId()}",
@@ -96,7 +99,6 @@ class MagazineUpdateApiTest extends WebTestCase
                 'name' => $name,
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -111,7 +113,6 @@ class MagazineUpdateApiTest extends WebTestCase
             parameters: [
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
@@ -126,12 +127,24 @@ class MagazineUpdateApiTest extends WebTestCase
             parameters: [
                 'title' => $title,
                 'description' => $description,
-                'rules' => $rules,
                 'isAdult' => false,
             ],
             server: ['HTTP_AUTHORIZATION' => $token]
         );
 
+        self::assertResponseStatusCodeSame(400);
+
+        $rules = 'Some rules';
+        $description = 'Rules are deprecated';
+        $this->client->jsonRequest(
+            'PUT', "/api/moderate/magazine/{$magazine->getId()}",
+            parameters: [
+                'rules' => $rules,
+                'description' => $description,
+                'isAdult' => false,
+            ],
+            server: ['HTTP_AUTHORIZATION' => $token]
+        );
         self::assertResponseStatusCodeSame(400);
     }
 }

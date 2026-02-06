@@ -1,6 +1,5 @@
 {
     "@context": [
-        "https://www.w3.org/ns/activitystreams",
         "https://kbin.test/contexts"
     ],
     "id": "SCRUBBED_ID",
@@ -23,6 +22,7 @@
         "url": "https://kbin.test/u/user",
         "manuallyApprovesFollowers": false,
         "discoverable": true,
+        "indexable": true,
         "published": "SCRUBBED_DATE",
         "following": "https://kbin.test/u/user/following",
         "followers": "https://kbin.test/u/user/followers",
