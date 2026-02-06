@@ -1166,3 +1166,6 @@ magazine_indexable_by_search_engines_help: Se este axuste se desactiva, os
   motores de busca reciben o aviso de non incluír non resultados ningún dos fíos
   ou microblogs nestas revistas. Isto inclúe a páxina de inicio e todas as 
   páxinas de comentarios. Este axuste tamén se federa con outros servidores.
+magazine_name_as_tag: ''
+magazine_rules_deprecated: ''
+magazine_name_as_tag_help: ''
