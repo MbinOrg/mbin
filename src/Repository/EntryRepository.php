@@ -428,9 +428,14 @@ class EntryRepository extends ServiceEntityRepository
         }
 
         if (null !== $user) {
-            $qb->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedMagazinesDql($user))))
-                ->andWhere($qb->expr()->not($qb->expr()->exists($this->sqlHelpers->getBlockedUsersDql($user))));
-            $qb->setParameter('user', $user);
+            $magazineBlocks = $this->sqlHelpers->getCachedUserMagazineBlocks($user);
+            if (\sizeof($magazineBlocks) > 0) {
+                $qb->andWhere($qb->expr()->not($qb->expr()->in('m.id', $magazineBlocks)));
+            }
+            $userBlocks = $this->sqlHelpers->getCachedUserBlocks($user);
+            if (\sizeof($userBlocks) > 0) {
+                $qb->andWhere($qb->expr()->not($qb->expr()->in('u.id', $userBlocks)));
+            }
         }
 
         return $qb->join('e.magazine', 'm')

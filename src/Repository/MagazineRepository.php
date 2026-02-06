@@ -54,6 +54,7 @@ class MagazineRepository extends ServiceEntityRepository
         private readonly SqlHelpers $sqlHelpers,
         private readonly ContentPopulationTransformer $contentPopulationTransformer,
         private readonly CacheInterface $cache,
+        private readonly SqlHelpers $sqlHelper,
     ) {
         parent::__construct($registry, Magazine::class);
     }
@@ -430,27 +431,28 @@ class MagazineRepository extends ServiceEntityRepository
     public function findRandom(?User $user = null): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $whereClauses = [];
-        $parameters = [];
+        $whereClauses = [
+            'm.is_adult = false',
+            'm.visibility = :visibility',
+        ];
+        $parameters = [
+            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+        ];
         if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY')) {
             $whereClauses[] = 'm.ap_id IS NULL';
         }
         if (null !== $user) {
-            $subSql = 'SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :user';
-            $whereClauses[] = "NOT EXISTS($subSql)";
-            $parameters['user'] = $user->getId();
+            $whereClauses[] = 'm.id NOT IN(:blockedMagazines)';
+            $parameters['blockedMagazines'] = $this->sqlHelpers->getCachedUserMagazineBlocks($user);
         }
         $whereString = SqlHelpers::makeWhereString($whereClauses);
-        $sql = "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5";
-        $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery($parameters);
+        $sql = SqlHelpers::rewriteArrayParameters($parameters, "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5");
+        $stmt = $conn->prepare($sql['sql']);
+        $stmt = $stmt->executeQuery($sql['parameters']);
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')
             ->where('m.id IN (:ids)')
-            ->andWhere('m.isAdult = false')
-            ->andWhere('m.visibility = :visibility')
-            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();

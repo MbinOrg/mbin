@@ -16,6 +16,7 @@ use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\PostRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -311,6 +312,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -332,7 +334,7 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $posts = $repository->findByCriteria($criteria);
@@ -436,6 +438,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -455,7 +458,7 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $posts = $repository->findByCriteria($criteria);
@@ -554,6 +557,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -575,7 +579,7 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $posts = $repository->findByCriteria($criteria);
@@ -702,6 +706,7 @@ class PostsRetrieveApi extends PostsBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -724,7 +729,7 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $posts = $repository->findByCriteria($criteria);

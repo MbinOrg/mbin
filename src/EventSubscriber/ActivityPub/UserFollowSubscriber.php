@@ -6,7 +6,7 @@ namespace App\EventSubscriber\ActivityPub;
 
 use App\Event\User\UserFollowEvent;
 use App\Message\ActivityPub\Outbox\FollowMessage;
-use App\Repository\ContentRepository;
+use App\Utils\SqlHelpers;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -17,7 +17,7 @@ class UserFollowSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly CacheInterface $cache,
-        private readonly ContentRepository $contentRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -31,7 +31,7 @@ class UserFollowSubscriber implements EventSubscriberInterface
 
     public function onUserFollow(UserFollowEvent $event): void
     {
-        $this->contentRepository->clearCachedUserFollows($event->follower);
+        $this->sqlHelpers->clearCachedUserFollows($event->follower);
 
         if (!$event->follower->apId && $event->following->apId) {
             $this->bus->dispatch(
