@@ -11,6 +11,8 @@ class MagazinePageView extends Criteria
     public const SORT_THREADS = 'threads';
     public const SORT_COMMENTS = 'comments';
     public const SORT_POSTS = 'posts';
+    /** only applicable if $abandoned === true */
+    public const SORT_OWNER_LAST_ACTIVE = 'ownerLastActive';
 
     public const FIELDS_NAMES = 'names';
     public const FIELDS_NAMES_DESCRIPTIONS = 'names_descriptions';
@@ -32,6 +34,7 @@ class MagazinePageView extends Criteria
         public string $sortOption,
         public string $federation,
         public string $adult,
+        public bool $abandoned = false,
     ) {
         parent::__construct($page);
         $this->resolveSort($sortOption);
