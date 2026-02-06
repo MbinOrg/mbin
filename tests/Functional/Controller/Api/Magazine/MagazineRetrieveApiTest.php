@@ -553,6 +553,70 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertTrue($jsonData['items'][0]['isBlockedByUser']);
     }
 
+    public function testApiCanRetrieveAbandonedMagazine(): void
+    {
+        $abandoningUser = $this->getUserByUsername('JohnDoe');
+        $activeUser = $this->getUserByUsername('DoeJohn');
+        $magazine1 = $this->getMagazineByName('test1', $abandoningUser);
+        $magazine2 = $this->getMagazineByName('test2', $abandoningUser);
+        $magazine3 = $this->getMagazineByName('test3', $activeUser);
+
+        $abandoningUser->lastActive = new \DateTime('-6 months');
+        $activeUser->lastActive = new \DateTime('-2 days');
+        $this->userRepository->save($abandoningUser, true);
+        $this->userRepository->save($activeUser, true);
+
+        $this->client->request('GET', '/api/magazines?abandoned=true&federation=local');
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(2, $jsonData['pagination']['count']);
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(2, $jsonData['items']);
+        self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($magazine1->getId(), $jsonData['items'][0]['magazineId']);
+        self::assertSame($magazine2->getId(), $jsonData['items'][1]['magazineId']);
+    }
+
+    public function testApiCanRetrieveAbandonedMagazineSortedByOwner(): void
+    {
+        $abandoningUser1 = $this->getUserByUsername('user1');
+        $abandoningUser2 = $this->getUserByUsername('user2');
+        $abandoningUser3 = $this->getUserByUsername('user3');
+        $magazine1 = $this->getMagazineByName('test1', $abandoningUser1);
+        $magazine2 = $this->getMagazineByName('test2', $abandoningUser2);
+        $magazine3 = $this->getMagazineByName('test3', $abandoningUser3);
+
+        $abandoningUser1->lastActive = new \DateTime('-6 months');
+        $abandoningUser2->lastActive = new \DateTime('-5 months');
+        $abandoningUser3->lastActive = new \DateTime('-7 months');
+        $this->userRepository->save($abandoningUser1, true);
+        $this->userRepository->save($abandoningUser2, true);
+        $this->userRepository->save($abandoningUser3, true);
+
+        $this->client->request('GET', '/api/magazines?abandoned=true&federation=local&sort=ownerLastActive');
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(3, $jsonData['pagination']['count']);
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(3, $jsonData['items']);
+        self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][0]);
+        self::assertSame($magazine1->getId(), $jsonData['items'][1]['magazineId']);
+        self::assertSame($magazine2->getId(), $jsonData['items'][2]['magazineId']);
+        self::assertSame($magazine3->getId(), $jsonData['items'][0]['magazineId']);
+    }
+
     public static function assertAllValuesFoundByName(array $magazines, array $values, string $message = '')
     {
         $nameMap = array_column($magazines, null, 'name');

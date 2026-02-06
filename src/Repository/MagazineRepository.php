@@ -97,6 +97,19 @@ class MagazineRepository extends ServiceEntityRepository
             $qb->andWhere('m.apId IS NULL');
         }
 
+        if ($criteria->abandoned) {
+            if (!$criteria->showOnlyLocalMagazines()) {
+                throw new \InvalidArgumentException('filtering for abandoned magazines only works for local');
+            }
+
+            $qb->andWhere('mod.magazine IS NOT NULL')
+                ->andWhere('mod.isOwner = true')
+                ->andWhere('modUser.lastActive < :abandonedThreshold')
+                ->join('m.moderators', 'mod')
+                ->join('mod.user', 'modUser')
+                ->setParameter('abandonedThreshold', new \DateTime('-1 month'));
+        }
+
         match ($criteria->adult) {
             $criteria::ADULT_HIDE => $qb->andWhere('m.isAdult = false'),
             $criteria::ADULT_ONLY => $qb->andWhere('m.isAdult = true'),
@@ -110,6 +123,9 @@ class MagazineRepository extends ServiceEntityRepository
             $criteria::SORT_THREADS => $qb->addOrderBy('m.entryCount', 'DESC'),
             $criteria::SORT_COMMENTS => $qb->addOrderBy('m.entryCommentCount', 'DESC'),
             $criteria::SORT_POSTS => $qb->addOrderBy('m.postCount + m.postCommentCount', 'DESC'),
+            $criteria::SORT_OWNER_LAST_ACTIVE => $criteria->abandoned ?
+                $qb->orderBy('modUser.lastActive', 'ASC')
+                : throw new \InvalidArgumentException($criteria::SORT_OWNER_LAST_ACTIVE.' requires abandoned filter'),
         };
 
         $pagerfanta = new Pagerfanta(new QueryAdapter($qb));
