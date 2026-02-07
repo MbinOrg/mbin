@@ -7,6 +7,7 @@ namespace App\Controller\Magazine;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class MagazineBlockController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('block', subject: 'magazine')]
-    public function block(Magazine $magazine, Request $request): Response
+    public function block(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->manager->block($magazine, $this->getUserOrThrow());
 
@@ -33,7 +34,7 @@ class MagazineBlockController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('block', subject: 'magazine')]
-    public function unblock(Magazine $magazine, Request $request): Response
+    public function unblock(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->manager->unblock($magazine, $this->getUserOrThrow());
 

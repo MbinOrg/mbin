@@ -20,6 +20,7 @@ use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -159,7 +160,7 @@ class User2FAController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function remove(User $user, Request $request): Response
+    public function remove(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
     {
         $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 

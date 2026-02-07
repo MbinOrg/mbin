@@ -9,6 +9,7 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\ModeratorRequestRepository;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -22,8 +23,11 @@ class MagazineModeratorRequestsController extends AbstractController
     }
 
     #[IsGranted('edit', subject: 'magazine')]
-    public function requests(Magazine $magazine, Request $request): Response
-    {
+    public function requests(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        Request $request,
+    ): Response {
         return $this->render('magazine/panel/moderator_requests.html.twig', [
             'magazine' => $magazine,
             'requests' => $this->repository->findAllPaginated($magazine, $request->get('page', 1)),
@@ -32,8 +36,13 @@ class MagazineModeratorRequestsController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function accept(Magazine $magazine, User $user, Request $request): Response
-    {
+    public function accept(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        Request $request,
+    ): Response {
         $this->validateCsrf('magazine_panel_moderator_request_accept', $request->getPayload()->get('token'));
 
         $this->manager->acceptModeratorRequest($magazine, $user, $this->getUserOrThrow());
@@ -43,8 +52,13 @@ class MagazineModeratorRequestsController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function reject(Magazine $magazine, User $user, Request $request): Response
-    {
+    public function reject(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        #[MapEntity(mapping: ['username' => 'username'])]
+        User $user,
+        Request $request,
+    ): Response {
         $this->validateCsrf('magazine_panel_moderator_request_reject', $request->getPayload()->get('token'));
 
         $this->manager->toggleModeratorRequest($magazine, $user);
