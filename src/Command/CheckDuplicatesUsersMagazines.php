@@ -181,7 +181,7 @@ class CheckDuplicatesUsersMagazines extends Command
                     }
 
                     $this->magazineManager->purge($magazine);
-                    $io->success("Deleted magazine: {$magazine->getName()} (ID: $id)");
+                    $io->success("Deleted magazine: {$magazine->getApName()} (ID: $id)");
                 }
             }
 
