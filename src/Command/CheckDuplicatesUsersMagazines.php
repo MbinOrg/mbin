@@ -10,7 +10,6 @@ use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -32,42 +31,70 @@ class CheckDuplicatesUsersMagazines extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('action', InputArgument::REQUIRED, 'Action to perform: check or delete')
-            ->addArgument('entity', InputArgument::REQUIRED, 'Entity type: users or magazines')
-            ->addArgument('ids', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'IDs to delete (comma-separated)');
+            ->setDescription('Check for duplicate users and magazines with interactive deletion options.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $action = $input->getArgument('action');
-        $entity = $input->getArgument('entity');
 
-        if (!\in_array($entity, ['users', 'magazines'])) {
-            $io->error('Invalid entity type. Use "users" or "magazines"');
+        $io->title('Duplicate Users and Magazines Checker');
 
-            return Command::FAILURE;
+        // Let user choose entity type
+        $entity = $io->choice(
+            'What would you like to check for duplicates?',
+            ['users' => 'Users', 'magazines' => 'Magazines'],
+            'users'
+        );
+
+        // Check for duplicates
+        $duplicates = $this->findDuplicates($io, $entity);
+
+        if (empty($duplicates)) {
+            $entityName = ucfirst(substr($entity, 0, -1));
+            $io->success("No duplicate {$entityName}s found.");
+
+            return Command::SUCCESS;
         }
 
-        if ('check' === $action) {
-            return $this->checkDuplicates($io, $entity);
-        } elseif ('delete' === $action) {
-            $ids = $input->getArgument('ids');
-            if (empty($ids)) {
-                $io->error('Please provide IDs to delete');
+        // Display duplicates table
+        $entityName = ucfirst($entity);
+        $nameField = 'users' === $entity ? 'username' : 'name';
+        $this->displayDuplicatesTable($io, $duplicates, $entityName, $nameField);
 
-                return Command::FAILURE;
+        // Ask if user wants to delete any duplicates
+        $deleteChoice = $io->confirm('Would you like to delete any of these duplicates?', false);
+
+        if (!$deleteChoice) {
+            $io->success('Operation completed. No deletions performed.');
+
+            return Command::SUCCESS;
+        }
+
+        // Get IDs to delete
+        $idsInput = $io->ask(
+            'Enter the IDs to delete (comma-separated, e.g., 1,2,3)',
+            null,
+            function ($input) {
+                if (empty($input)) {
+                    throw new \InvalidArgumentException('Please provide at least one ID');
+                }
+
+                $ids = array_map('trim', explode(',', $input));
+                foreach ($ids as $id) {
+                    if (!is_numeric($id)) {
+                        throw new \InvalidArgumentException("Invalid ID: $id");
+                    }
+                }
+
+                return $ids;
             }
+        );
 
-            return $this->deleteEntities($io, $entity, $ids);
-        } else {
-            $io->error('Invalid action. Use "check" or "delete"');
-
-            return Command::FAILURE;
-        }
+        return $this->deleteEntities($io, $entity, $idsInput);
     }
 
-    private function checkDuplicates(SymfonyStyle $io, string $entity): int
+    private function findDuplicates(SymfonyStyle $io, string $entity): array
     {
         $conn = $this->entityManager->getConnection();
 
@@ -78,8 +105,6 @@ class CheckDuplicatesUsersMagazines extends Command
                 (SELECT ap_public_url FROM "user" WHERE ap_public_url IS NOT NULL GROUP BY ap_public_url HAVING COUNT(*) > 1) 
                 ORDER BY ap_public_url;
             ';
-            $entityName = 'User';
-            $nameField = 'username';
         } else { // magazines
             $sql = '
                 SELECT id, name, ap_public_url, created_at, last_active FROM 
@@ -87,27 +112,13 @@ class CheckDuplicatesUsersMagazines extends Command
                 (SELECT ap_public_url FROM "magazine" WHERE ap_public_url IS NOT NULL GROUP BY ap_public_url HAVING COUNT(*) > 1) 
                 ORDER BY ap_public_url; 
             ';
-            $entityName = 'Magazine';
-            $nameField = 'name';
         }
 
         $stmt = $conn->prepare($sql);
         $stmt = $stmt->executeQuery();
         $results = $stmt->fetchAllAssociative();
 
-        if (empty($results)) {
-            $io->success("No duplicate {$entityName}s found.");
-
-            return Command::SUCCESS;
-        }
-
-        $this->displayDuplicatesTable($io, $results, $entityName, $nameField);
-
-        $io->section('Deletion Instructions');
-        $io->text("To delete specific {$entityName}s, run:");
-        $io->text("./bin/console mbin:check:duplicates-users-magazines delete {$entity} id1,id2,id3");
-
-        return Command::SUCCESS;
+        return $results;
     }
 
     private function displayDuplicatesTable(SymfonyStyle $io, array $results, string $entityName, string $nameField): void
