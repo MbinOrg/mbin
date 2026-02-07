@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\Magazine;
 use App\Entity\User;
 use App\Service\MagazineManager;
 use App\Service\UserManager;
@@ -174,7 +175,7 @@ class CheckDuplicatesUsersMagazines extends Command
                     $io->success("Deleted user: {$existingUser->getUsername()} (ID: $id)");
                 } else { // magazines
                     // Check if magazine exists first
-                    $magazine = $this->entityManager->getRepository(\App\Entity\Magazine::class)->find($id);
+                    $magazine = $this->entityManager->getRepository(Magazine::class)->find($id);
                     if (!$magazine) {
                         $io->warning("Magazine with ID $id not found, skipping...");
                         continue;
