@@ -1,4 +1,4 @@
-# Using the latest LTS release
+# Using latest Debian Stable
 FROM debian:13-slim
 
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
