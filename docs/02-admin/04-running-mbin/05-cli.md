@@ -366,6 +366,17 @@ php bin/console mbin:cache:build
 
 ## Miscellaneous
 
+### Search for duplicate magazines or users and remove them
+
+This command provides a guided tour to search for, and remove duplicate magazines or users.
+This has been added to make the creation of unique indexes easier if the migration failed.
+
+Usage:
+
+```bash
+php bin/console mbin:check:duplicates-users-magazines
+```
+
 ### Users-Remove-Marked-For-Deletion
 
 > [!NOTE]
