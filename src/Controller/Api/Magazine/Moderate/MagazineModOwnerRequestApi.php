@@ -7,8 +7,6 @@ namespace App\Controller\Api\Magazine\Moderate;
 use App\Controller\Api\Magazine\MagazineBaseApi;
 use App\DTO\ToggleCreatedDto;
 use App\Entity\Magazine;
-use App\Entity\MagazineOwnershipRequest;
-use App\Entity\ModeratorRequest;
 use App\Entity\User;
 use App\Security\Voter\MagazineVoter;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -17,6 +15,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -78,13 +77,8 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
 
         $this->manager->toggleModeratorRequest($magazine, $this->getUserOrThrow());
 
-        $modRequest = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $this->getUserOrThrow(),
-        ]);
-
         return new JsonResponse(
-            new ToggleCreatedDto(null !== $modRequest),
+            new ToggleCreatedDto($this->manager->userRequestedModerator($magazine, $this->getUserOrThrow())),
             headers: $headers,
         );
     }
@@ -143,11 +137,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $modRequest = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $user,
-        ]);
-        if (null === $modRequest) {
+        if (!$this->manager->userRequestedModerator($magazine, $user)) {
             throw new NotFoundHttpException('moderator request does not exist');
         }
 
@@ -213,11 +203,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $modRequest = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $user,
-        ]);
-        if (null === $modRequest) {
+        if (!$this->manager->userRequestedModerator($magazine, $user)) {
             throw new NotFoundHttpException('moderator request does not exist');
         }
 
@@ -225,6 +211,76 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
 
         return new Response(
             status: Response::HTTP_NO_CONTENT,
+            headers: $headers,
+        );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'returns a list of moderator requests with user and magazine',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token or you are no admin',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Magazine not found or id was invalid',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Parameter(
+        name: 'magazine',
+        in: 'query',
+        description: 'The magazine to filter for',
+        required: false,
+        schema: new OA\Schema(type: 'integer'),
+    )]
+    #[OA\Tag(name: 'moderation/magazine/owner')]
+    #[Security(name: 'oauth2', scopes: ['admin:magazine:moderate'])]
+    #[IsGranted('ROLE_OAUTH2_ADMIN:MAGAZINE:MODERATE')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getModRequests(
+        #[MapQueryParameter(name: 'magazine')]
+        ?int $magazineId,
+        RateLimiterFactory $apiModerateLimiter,
+    ): Response {
+        $headers = $this->rateLimit($apiModerateLimiter);
+
+        $magazine = null;
+        if (null !== $magazineId) {
+            $magazine = $this->entityManager->getRepository(Magazine::class)->find($magazineId);
+
+            if (null === $magazine) {
+                throw new NotFoundHttpException("magazine with id $magazineId does not exist");
+            }
+        }
+
+        $requests = $this->manager->listModeratorRequests($magazine);
+        $requestsDto = array_map(function ($item) {
+            return [
+                'user' => $this->userFactory->createSmallDto($item->user),
+                'magazine' => $this->magazineFactory->createSmallDto($item->magazine),
+            ];
+        }, $requests);
+
+        return new JsonResponse(
+            $requestsDto,
             headers: $headers,
         );
     }
@@ -283,13 +339,8 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
 
         $this->manager->toggleOwnershipRequest($magazine, $this->getUserOrThrow());
 
-        $ownerRequest = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $this->getUserOrThrow(),
-        ]);
-
         return new JsonResponse(
-            new ToggleCreatedDto(null !== $ownerRequest),
+            new ToggleCreatedDto($this->manager->userRequestedOwnership($magazine, $this->getUserOrThrow())),
             headers: $headers,
         );
     }
@@ -348,11 +399,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $ownerRequest = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $user,
-        ]);
-        if (null === $ownerRequest) {
+        if (!$this->manager->userRequestedOwnership($magazine, $user)) {
             throw new NotFoundHttpException('ownership request does not exist');
         }
 
@@ -418,11 +465,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $ownerRequest = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
-            'magazine' => $magazine,
-            'user' => $user,
-        ]);
-        if (null === $ownerRequest) {
+        if (!$this->manager->userRequestedOwnership($magazine, $user)) {
             throw new NotFoundHttpException('ownership request does not exist');
         }
 
@@ -430,6 +473,76 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
 
         return new Response(
             status: Response::HTTP_NO_CONTENT,
+            headers: $headers,
+        );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'returns a list of ownership requests with user and magazine',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token or you are no admin',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Magazine not found or id was invalid',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Parameter(
+        name: 'magazine',
+        in: 'query',
+        description: 'The magazine filter for',
+        required: false,
+        schema: new OA\Schema(type: 'integer'),
+    )]
+    #[OA\Tag(name: 'moderation/magazine/owner')]
+    #[Security(name: 'oauth2', scopes: ['admin:magazine:moderate'])]
+    #[IsGranted('ROLE_OAUTH2_ADMIN:MAGAZINE:MODERATE')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getOwnerRequests(
+        #[MapQueryParameter(name: 'magazine')]
+        ?int $magazineId,
+        RateLimiterFactory $apiModerateLimiter,
+    ): Response {
+        $headers = $this->rateLimit($apiModerateLimiter);
+
+        $magazine = null;
+        if (null !== $magazineId) {
+            $magazine = $this->entityManager->getRepository(Magazine::class)->find($magazineId);
+
+            if (null === $magazine) {
+                throw new NotFoundHttpException("magazine with id $magazineId does not exist");
+            }
+        }
+
+        $requests = $this->manager->listOwnershipRequests($magazine);
+        $requestsDto = array_map(function ($item) {
+            return [
+                'user' => $this->userFactory->createSmallDto($item->user),
+                'magazine' => $this->magazineFactory->createSmallDto($item->magazine),
+            ];
+        }, $requests);
+
+        return new JsonResponse(
+            $requestsDto,
             headers: $headers,
         );
     }
