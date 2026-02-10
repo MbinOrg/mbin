@@ -129,6 +129,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
         'admin:magazine',
         'admin:magazine:move_entry',
         'admin:magazine:purge',
+        'admin:magazine:moderate',
         'admin:user',
         'admin:user:ban',
         'admin:user:verify',

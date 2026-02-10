@@ -1192,3 +1192,20 @@ contentnotification.muted: Stummschalten | keine Benachrichtigungen erhalten
 contentnotification.default: Standard | erhalte Benachrichtigungen anhand deiner
   Standard-Einstellungen
 contentnotification.loud: Laut | erhalte alle Benachrichtigungen
+indexable_by_search_engines: Indizierbar von Suchmaschinen
+user_indexable_by_search_engines_help: Wenn diese Einstellung aus ist, werden 
+  Suchmaschinen angewiesen deine Themen und Mikroblogs nicht zu indizieren, 
+  allerdings werden deine Kommentare davon nicht beeinflusst und böswillige 
+  Akteure könnten es ignorieren. Diese Einstellung wird auch an andere Server 
+  föderiert.
+magazine_indexable_by_search_engines_help: Wenn diese Einstellung aus ist, 
+  werden Suchmaschinen angewiesen keins der Themen und Mikroblogs dieses 
+  Magazins zu indizieren. Das beinhaltet die Front Seite und alle 
+  Kommentar-Seiten. Diese Einstellung wird auch an andere Server föderiert.
+magazine_name_as_tag: Nutze den Magazinnamen als Hashtag
+magazine_name_as_tag_help: Die Hashtags eines Magazine werden genutzt um 
+  Mikroblogs einem Magazin zuzuweise. Wenn ein Magazin den Namen "fediverse" hat
+  und dieses Magazine den Hashtag "fediverse" enthält, wird jeder Mikroblog mit 
+  dem Hashtag "#fediverse" diesem Magazine zugewiesen.
+magazine_rules_deprecated: das Regel-Feld ist veraltet und wird in der Zukunft 
+  entfernt werden. Bitte schreib die Regeln in das Beschreibungs-Feld.
