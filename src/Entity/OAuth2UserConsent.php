@@ -153,6 +153,7 @@ class OAuth2UserConsent
         'admin:magazine' => 'oauth2.grant.admin.magazine.all',
         'admin:magazine:move_entry' => 'oauth2.grant.admin.magazine.move_entry',
         'admin:magazine:purge' => 'oauth2.grant.admin.magazine.purge',
+        'admin:magazine:moderate' => 'oauth2.grant.admin.magazine.moderate',
         // Administrate users
         'admin:user' => 'oauth2.grant.admin.user.all',
         'admin:user:ban' => 'oauth2.grant.admin.user.ban',
