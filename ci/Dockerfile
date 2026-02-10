@@ -24,8 +24,7 @@ RUN apt install -y php8.4 \
     php8.4-mbstring \
     php8.4-zip \
     php8.4-bz2 \
-    php8.4-intl \
-    php8.4-bcmath
+    php8.4-intl
 
 # Unlimited memory
 RUN echo "memory_limit = -1" >>/etc/php/8.4/cli/conf.d/docker-php-memlimit.ini
