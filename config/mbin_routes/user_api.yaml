@@ -199,3 +199,9 @@ api_user_boosts_retrieve:
     path: /api/users/{user_id}/boosts
     methods: [ GET ]
     format: json
+
+api_user_moderated_retrieve:
+    controller: App\Controller\Api\User\UserModeratesApi
+    path: /api/users/{user_id}/moderatedMagazines
+    methods: [ GET ]
+    format: json
