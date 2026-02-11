@@ -336,6 +336,7 @@ security:
             [
                 'ROLE_OAUTH2_ADMIN:MAGAZINE:MOVE_ENTRY',
                 'ROLE_OAUTH2_ADMIN:MAGAZINE:PURGE',
+                'ROLE_OAUTH2_ADMIN:MAGAZINE:MODERATE',
             ]
         'ROLE_OAUTH2_ADMIN:USER':
             [

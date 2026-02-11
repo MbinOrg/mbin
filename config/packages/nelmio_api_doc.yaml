@@ -196,9 +196,10 @@ nelmio_api_doc:
                                 admin:entry_comment:purge: Completely delete any comment in a thread from your instance.
                                 admin:post:purge: Completely delete any post from your instance.
                                 admin:post_comment:purge: Completely delete any comment on a post from your instance.
-                                admin:magazine: Move threads between or completely delete magazines on your instance.
+                                admin:magazine: Move threads between, manage moderators of or completely delete magazines on your instance.
                                 admin:magazine:move_entry: Move threads between magazines on your instance.
                                 admin:magazine:purge: Completely delete magazines on your instance.
+                                admin:magazine:moderate: Manage moderators and owners of magazines.
                                 admin:user: Ban, verify, or completely delete users on your instance.
                                 admin:user:ban: Ban or unban users from your instance.
                                 admin:user:verify: Verify users on your instance.
@@ -311,9 +312,10 @@ nelmio_api_doc:
                                 admin:entry_comment:purge: Completely delete any comment in a thread from your instance.
                                 admin:post:purge: Completely delete any post from your instance.
                                 admin:post_comment:purge: Completely delete any comment on a post from your instance.
-                                admin:magazine: Move threads between or completely delete magazines on your instance.
+                                admin:magazine: Move threads between, manage moderators of or completely delete magazines on your instance.
                                 admin:magazine:move_entry: Move threads between magazines on your instance.
                                 admin:magazine:purge: Completely delete magazines on your instance.
+                                admin:magazine:moderate: Manage moderators and owners of magazines.
                                 admin:user: Ban, verify, or completely delete users on your instance.
                                 admin:user:ban: Ban or unban users from your instance.
                                 admin:user:verify: Verify users on your instance.

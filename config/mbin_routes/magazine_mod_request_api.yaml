@@ -1,0 +1,35 @@
+api_magazine_modrequest_toggle:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::toggleModRequest
+    path: /api/moderate/magazine/{magazine_id}/modRequest/toggle
+    methods: [ PUT ]
+    format: json
+
+api_magazine_modrequest_accept:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::acceptModRequest
+    path: /api/moderate/magazine/{magazine_id}/modRequest/accept/{user_id}
+    methods: [ PUT ]
+    format: json
+
+api_magazine_modrequest_reject:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::rejectModRequest
+    path: /api/moderate/magazine/{magazine_id}/modRequest/reject/{user_id}
+    methods: [ PUT ]
+    format: json
+
+api_magazine_ownerrequest_toggle:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::toggleOwnerRequest
+    path: /api/moderate/magazine/{magazine_id}/ownerRequest/toggle
+    methods: [ PUT ]
+    format: json
+
+api_magazine_ownerrequest_accept:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::acceptOwnerRequest
+    path: /api/moderate/magazine/{magazine_id}/ownerRequest/accept/{user_id}
+    methods: [ PUT ]
+    format: json
+
+api_magazine_ownerrequest_reject:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::rejectOwnerRequest
+    path: /api/moderate/magazine/{magazine_id}/ownerRequest/reject/{user_id}
+    methods: [ PUT ]
+    format: json

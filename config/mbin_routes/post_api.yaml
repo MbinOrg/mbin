@@ -134,3 +134,17 @@ api_post_comments_vote:
   path: /api/post-comments/{comment_id}/vote/{choice}
   methods: [ PUT ]
   format: json
+
+# boosts and upvotes for posts
+api_post_activity:
+    controller: App\Controller\Api\Post\PostsActivityApi
+    path: /api/post/{post_id}/activity
+    methods: [ GET ]
+    format: json
+
+# boosts and upvotes entry post comments
+api_post_comment_activity:
+    controller: App\Controller\Api\Post\Comments\PostCommentsActivityApi
+    path: /api/post-comments/{comment_id}/activity
+    methods: [ GET ]
+    format: json
