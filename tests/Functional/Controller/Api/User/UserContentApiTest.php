@@ -49,6 +49,57 @@ class UserContentApiTest extends WebTestCase
         }));
     }
 
+    public function testCanGetUserContentHideAdult()
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $dummyUser = $this->getUserByUsername('dummy');
+        $magazine = $this->getMagazineByName('test');
+        $entry1 = $this->createEntry('e 1', $magazine, $user);
+        $entry2 = $this->createEntry('e 2', $magazine, $user);
+        $entryDummy = $this->createEntry('dummy', $magazine, $dummyUser);
+        $post1 = $this->createPost('p 1', $magazine, $user);
+        $post2 = $this->createPost('p 2', $magazine, $user);
+        $this->createPost('dummy', $magazine, $dummyUser);
+        $comment1 = $this->createEntryComment('c 1', $entryDummy, $user);
+        $comment2 = $this->createEntryComment('c 2', $entryDummy, $user);
+        $this->createEntryComment('dummy', $entryDummy, $dummyUser);
+        $reply1 = $this->createPostComment('r 1', $post1, $user);
+        $reply2 = $this->createPostComment('r 2', $post1, $user);
+        $this->createPostComment('dummy', $post1, $dummyUser);
+
+        $entry2->isAdult = true;
+        $post2->isAdult = true;
+        $comment2->isAdult = true;
+        $reply2->isAdult = true;
+        $this->entityManager->persist($entry2);
+        $this->entityManager->persist($post2);
+        $this->entityManager->persist($comment2);
+        $this->entityManager->persist($reply2);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', "/api/users/{$user->getId()}/content?hideAdult=true");
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(4, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(4, $jsonData['pagination']['count']);
+
+        self::assertTrue(array_all($jsonData['items'], function ($item) use ($entry1, $post1, $comment1, $reply1) {
+            return
+                (null !== $item['entry'] && $item['entry']['entryId'] === $entry1->getId())
+                || (null !== $item['post'] && $item['post']['postId'] === $post1->getId())
+                || (null !== $item['entryComment'] && $item['entryComment']['commentId'] === $comment1->getId())
+                || (null !== $item['postComment'] && $item['postComment']['commentId'] === $reply1->getId())
+            ;
+        }));
+    }
+
     public function testCanGetUserBoosts()
     {
         $user = $this->getUserByUsername('JohnDoe');
