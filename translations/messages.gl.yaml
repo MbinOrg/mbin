@@ -1166,3 +1166,10 @@ magazine_indexable_by_search_engines_help: Se este axuste se desactiva, os
   motores de busca reciben o aviso de non incluír non resultados ningún dos fíos
   ou microblogs nestas revistas. Isto inclúe a páxina de inicio e todas as 
   páxinas de comentarios. Este axuste tamén se federa con outros servidores.
+magazine_name_as_tag: Usar o nome da revista como etiqueta
+magazine_name_as_tag_help: As etiquetas dunha revista úsanse para ligar as 
+  publicacións microblog a esta revista. Por exemplo, se o nome é «fediverso» e 
+  a revista ten a etiqueta «fediverso», entón todas as publicacións microblog 
+  que conteñan «#fediverso» vanse incluír nesta revista.
+magazine_rules_deprecated: o campo coas regras xa non se usa, e vaise retirar no
+  futuro. Pon as túas regras na cadro coa descrición.
