@@ -252,9 +252,9 @@ class OAuth2ClientApiTest extends WebTestCase
 
         // If tests are run near midnight UTC we might get unlucky with a failure, but that
         // should be unlikely.
-        $today = (new \DateTime())->setTime(0, 0)->format('Y-m-d H:i:s');
+        $today = (new \DateTime())->setTime(0, 0)->format('Y-m-d H:i:sO');
 
-        self::assertEquals($today, $jsonData['data'][0]['datetime']);
+        self::assertEquals($today, $jsonData['data'][0]['datetime'].'00');
         self::assertArrayHasKey('count', $jsonData['data'][0]);
         self::assertEquals(1, $jsonData['data'][0]['count']);
     }

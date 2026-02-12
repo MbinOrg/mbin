@@ -21,6 +21,7 @@ use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -82,7 +83,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?\DateTime $lastActive;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $comments;
@@ -281,8 +282,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         Assert::isInstanceOf($vote, PostVote::class);
 
         if ($this->votes->removeElement($vote)) {
-            if ($vote->getPost() === $this) {
-                $vote->setPost(null);
+            if ($vote->post === $this) {
+                $vote->post = null;
             }
         }
 

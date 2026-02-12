@@ -30,24 +30,8 @@
             "config/routes/rss_atom.yaml"
         ]
     },
-    "doctrine/annotations": {
-        "version": "1.14",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "1.10",
-            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
-        },
-        "files": []
-    },
-    "doctrine/cache": {
-        "version": "2.1.1"
-    },
     "doctrine/collections": {
         "version": "1.6.7"
-    },
-    "doctrine/common": {
-        "version": "3.1.2"
     },
     "doctrine/data-fixtures": {
         "version": "1.5.0"
@@ -85,7 +69,7 @@
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
-        "version": "3.2",
+        "version": "3.7",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -108,9 +92,6 @@
     },
     "doctrine/lexer": {
         "version": "1.2.1"
-    },
-    "doctrine/migrations": {
-        "version": "3.2.0"
     },
     "doctrine/orm": {
         "version": "2.9.3"
@@ -147,6 +128,9 @@
     },
     "guzzlehttp/psr7": {
         "version": "2.0.0"
+    },
+    "heymoon/doctrine-psql-enum": {
+        "version": "3.1.1"
     },
     "imagine/imagine": {
         "version": "1.2.4"

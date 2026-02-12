@@ -13,7 +13,7 @@ use App\Message\ActivityPub\Outbox\LikeMessage;
 use App\Message\Notification\FavouriteNotificationMessage;
 use App\Service\CacheService;
 use App\Service\VoteManager;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -26,6 +26,7 @@ class FavouriteHandleSubscriber implements EventSubscriberInterface
         private readonly CacheInterface $cache,
         private readonly CacheService $cacheService,
         private readonly VoteManager $voteManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -48,7 +49,7 @@ class FavouriteHandleSubscriber implements EventSubscriberInterface
         $this->bus->dispatch(
             new FavouriteNotificationMessage(
                 $subject->getId(),
-                ClassUtils::getRealClass(\get_class($event->subject))
+                $this->entityManager->getClassMetadata(\get_class($subject))->getName()
             )
         );
 

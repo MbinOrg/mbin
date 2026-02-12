@@ -21,6 +21,7 @@ use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -75,7 +76,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public ?\DateTime $lastActive;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;

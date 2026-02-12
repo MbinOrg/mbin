@@ -64,7 +64,7 @@ class DeleteClientApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 
-        $dto = new OAuth2ClientDto(null);
+        $dto = new OAuth2ClientDto();
         $dto->identifier = $request->get('client_id');
         $dto->secret = $request->get('client_secret');
 

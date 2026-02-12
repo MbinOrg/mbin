@@ -27,7 +27,7 @@ abstract class MbinMessageHandler
         if ('test' !== $this->kernel->getEnvironment()) {
             $conn = $this->entityManager->getConnection();
             if (!$conn->isConnected()) {
-                $conn->connect();
+                $conn->getNativeConnection(); // calls connect() internally
             }
 
             $conn->transactional(fn () => $this->doWork($message));

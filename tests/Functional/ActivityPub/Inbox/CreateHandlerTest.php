@@ -202,14 +202,14 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateMessageFollowersOnlyFails(): void
     {
-        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly->value;
+        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly;
         self::expectException(HandlerFailedException::class);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
     }
 
     public function testCreateMessageFollowersOnly(): void
     {
-        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly->value;
+        $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly;
         $this->userManager->follow($this->remoteUser, $this->localUser);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
         $message = $this->messageRepository->findOneBy(['apId' => $this->createMessage['object']['id']]);
@@ -218,7 +218,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateMessageNobodyFails(): void
     {
-        $this->localUser->directMessageSetting = EDirectMessageSettings::Nobody->value;
+        $this->localUser->directMessageSetting = EDirectMessageSettings::Nobody;
         $this->userManager->follow($this->remoteUser, $this->localUser);
         self::expectException(HandlerFailedException::class);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));

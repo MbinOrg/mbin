@@ -190,10 +190,10 @@ class OAuth2UserConsent
     #[JoinColumn(name: 'client_identifier', referencedColumnName: 'identifier', nullable: false)]
     private ?Client $client = null;
 
-    #[Column]
+    #[Column(type: 'datetimetz_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Column]
+    #[Column(type: 'datetimetz_immutable')]
     private ?\DateTimeImmutable $expiresAt = null;
 
     #[Column(type: Types::JSON)]
