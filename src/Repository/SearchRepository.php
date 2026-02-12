@@ -10,10 +10,13 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class SearchRepository
 {
@@ -22,6 +25,7 @@ class SearchRepository
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ContentPopulationTransformer $transformer,
+        private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -76,6 +80,52 @@ class SearchRepository
             'userId' => $user->getId(),
         ], transformer: $this->transformer));
 
+        $pagerfanta->setCurrentPage($page);
+
+        return $pagerfanta;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getUserPublicActivityQueryAdapter(User $user, bool $hideAdult): AdapterInterface
+    {
+        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
+        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
+        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'post' AS type FROM post
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'post_comment' AS type FROM post_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        ORDER BY created_at DESC";
+
+        $parameters = [
+            'userId' => $user->getId(),
+            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+        ];
+
+        return new NativeQueryAdapter(
+            $this->entityManager->getConnection(),
+            $sql,
+            $parameters,
+            transformer: $this->transformer,
+            cache: $this->cache
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findUserPublicActivity(int $page, User $user, bool $hideAdult): PagerfantaInterface
+    {
+        $pagerfanta = new Pagerfanta($this->getUserPublicActivityQueryAdapter($user, $hideAdult));
+        $pagerfanta->setMaxPerPage(self::PER_PAGE);
         $pagerfanta->setCurrentPage($page);
 
         return $pagerfanta;
