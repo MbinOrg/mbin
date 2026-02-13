@@ -1203,3 +1203,21 @@ contentnotification.muted: Silenciós | no rebre notificacions
 contentnotification.default: Predeterminat | rebre notificacions segons la 
   configuració predeterminada
 contentnotification.loud: Sorollós | rebre totes les notificacions
+indexable_by_search_engines: Indexable pels motors de cerca
+user_indexable_by_search_engines_help: Si aquesta configuració es desactiva, es 
+  recomana als motors de cerca que no indexin cap dels vostres fils i 
+  microblogs, però els vostres comentaris no es veuen afectats per això i els 
+  malfactors podrien ignorar-la. Aquesta configuració també està federada a 
+  altres servidors.
+magazine_indexable_by_search_engines_help: Si aquesta configuració es desactiva,
+  es recomana als motors de cerca que no indexin cap dels fils i microblogs 
+  d'aquestes revistes. Això inclou la pàgina de destinació i totes les pàgines 
+  de comentaris. Aquesta configuració també està federada a altres servidors.
+magazine_name_as_tag: Utilitza el nom de la revista com a etiqueta
+magazine_name_as_tag_help: Les etiquetes d'una revista s'utilitzen per fer 
+  coincidir les entrades de microblog amb aquesta revista. Per exemple, si el 
+  nom és "fediverse" i les etiquetes de la revista contenen "fediverse", totes 
+  les entrades de microblog que continguin "#fediverse" es posaran en aquesta 
+  revista.
+magazine_rules_deprecated: el camp de regles està obsolet i s'eliminarà en el 
+  futur. Si us plau, poseu les vostres regles al quadre de descripció.

@@ -42,7 +42,7 @@ class UserFrontController extends AbstractController
         #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
-        UserRepository $repository,
+        SearchRepository $repository,
     ): Response {
         $response = new Response();
         if ($user->apId) {
@@ -64,7 +64,7 @@ class UserFrontController extends AbstractController
             $this->notificationRepository->markUserSignupNotificationsAsRead($loggedInUser, $user);
         }
 
-        $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
+        $activity = $repository->findUserPublicActivity($this->getPageNb($request), $user, $hideAdult);
         $results = $this->overviewManager->buildList($activity);
 
         if ($request->isXmlHttpRequest()) {
