@@ -21,7 +21,7 @@ class UserSuspendController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function suspend(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
+    public function suspend(#[MapEntity] User $user, Request $request): Response
     {
         $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 
@@ -33,7 +33,7 @@ class UserSuspendController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function unsuspend(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
+    public function unsuspend(#[MapEntity] User $user, Request $request): Response
     {
         $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 

@@ -219,7 +219,7 @@ class AjaxController extends AbstractController
         ]);
     }
 
-    public function fetchUserPopup(#[MapEntity(mapping: ['username' => 'username'])] User $user, UserNoteManager $manager): JsonResponse
+    public function fetchUserPopup(#[MapEntity] User $user, UserNoteManager $manager): JsonResponse
     {
         if ($this->getUser()) {
             $dto = $manager->createDto($this->getUserOrThrow(), $user);

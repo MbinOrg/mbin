@@ -21,7 +21,7 @@ class MagazineModeratorRequestController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function __invoke(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
+    public function __invoke(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         // applying to be a moderator is only supported for local magazines
         if ($magazine->apId) {

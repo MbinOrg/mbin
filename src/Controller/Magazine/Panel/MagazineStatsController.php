@@ -22,7 +22,7 @@ class MagazineStatsController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
     public function __invoke(
-        #[MapEntity(mapping: ['name' => 'name'])]
+        #[MapEntity]
         Magazine $magazine,
         ?string $statsType,
         ?int $statsPeriod,

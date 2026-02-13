@@ -21,7 +21,7 @@ class MagazineBlockController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('block', subject: 'magazine')]
-    public function block(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
+    public function block(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         $this->manager->block($magazine, $this->getUserOrThrow());
 
@@ -34,7 +34,7 @@ class MagazineBlockController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('block', subject: 'magazine')]
-    public function unblock(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
+    public function unblock(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         $this->manager->unblock($magazine, $this->getUserOrThrow());
 

@@ -21,7 +21,7 @@ class MagazineSubController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function subscribe(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
+    public function subscribe(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         $this->manager->subscribe($magazine, $this->getUserOrThrow());
 
@@ -34,7 +34,7 @@ class MagazineSubController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function unsubscribe(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
+    public function unsubscribe(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         $this->manager->unsubscribe($magazine, $this->getUserOrThrow());
 

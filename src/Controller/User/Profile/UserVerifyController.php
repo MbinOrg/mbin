@@ -21,7 +21,7 @@ class UserVerifyController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
+    public function __invoke(#[MapEntity] User $user, Request $request): Response
     {
         $this->validateCsrf('user_verify', $request->getPayload()->get('token'));
 

@@ -22,7 +22,7 @@ class MagazineTrashController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function __invoke(
-        #[MapEntity(mapping: ['name' => 'name'])]
+        #[MapEntity]
         Magazine $magazine,
         BadgeManager $manager,
         Request $request,
