@@ -16,7 +16,7 @@ class UserRemoveFollowing extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
     public function __invoke(
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         User $user,
         UserManager $manager,
         Request $request,

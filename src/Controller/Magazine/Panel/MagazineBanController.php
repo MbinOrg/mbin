@@ -29,7 +29,7 @@ class MagazineBanController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function bans(
-        #[MapEntity(mapping: ['name' => 'name'])]
+        #[MapEntity]
         Magazine $magazine,
         UserRepository $repository,
         Request $request,
@@ -46,10 +46,10 @@ class MagazineBanController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function ban(
-        #[MapEntity(mapping: ['name' => 'name'])]
+        #[MapEntity]
         Magazine $magazine,
         Request $request,
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         ?User $user = null,
     ): Response {
         if (!$user) {
@@ -78,9 +78,9 @@ class MagazineBanController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function unban(
-        #[MapEntity(mapping: ['name' => 'name'])]
+        #[MapEntity]
         Magazine $magazine,
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         User $user,
         Request $request,
     ): Response {

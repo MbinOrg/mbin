@@ -16,7 +16,7 @@ class UserDeleteController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
     public function deleteAccount(
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         User $user,
         UserManager $manager,
         Request $request,
@@ -30,7 +30,7 @@ class UserDeleteController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     public function scheduleDeleteAccount(
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         User $user,
         UserManager $manager,
         Request $request,
@@ -44,7 +44,7 @@ class UserDeleteController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     public function removeScheduleDeleteAccount(
-        #[MapEntity(mapping: ['username' => 'username'])]
+        #[MapEntity]
         User $user,
         UserManager $manager,
         Request $request,

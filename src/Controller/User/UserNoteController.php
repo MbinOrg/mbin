@@ -20,7 +20,7 @@ class UserNoteController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function __invoke(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
+    public function __invoke(#[MapEntity] User $user, Request $request): Response
     {
         $dto = $this->manager->createDto($this->getUserOrThrow(), $user);
 
