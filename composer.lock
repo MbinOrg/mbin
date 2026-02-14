@@ -6438,16 +6438,16 @@
         },
         {
             "name": "predis/predis",
-            "version": "v3.2.0",
+            "version": "v3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/predis/predis.git",
-                "reference": "9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8"
+                "reference": "1183f5732e6b10efd33f64984a96726eaecb59aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/predis/predis/zipball/9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8",
-                "reference": "9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8",
+                "url": "https://api.github.com/repos/predis/predis/zipball/1183f5732e6b10efd33f64984a96726eaecb59aa",
+                "reference": "1183f5732e6b10efd33f64984a96726eaecb59aa",
                 "shasum": ""
             },
             "require": {
@@ -6489,7 +6489,7 @@
             ],
             "support": {
                 "issues": "https://github.com/predis/predis/issues",
-                "source": "https://github.com/predis/predis/tree/v3.2.0"
+                "source": "https://github.com/predis/predis/tree/v3.4.0"
             },
             "funding": [
                 {
@@ -6497,7 +6497,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-06T06:41:24+00:00"
+            "time": "2026-02-11T17:30:28+00:00"
         },
         {
             "name": "privacyportal/oauth2-privacyportal",
