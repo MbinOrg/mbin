@@ -37,7 +37,7 @@ class UserFrontController extends AbstractController
     ) {
     }
 
-    public function front(User $user, Request $request, UserRepository $repository): Response
+    public function front(User $user, Request $request, SearchRepository $repository): Response
     {
         $response = new Response();
         if ($user->apId) {
@@ -59,7 +59,7 @@ class UserFrontController extends AbstractController
             $this->notificationRepository->markUserSignupNotificationsAsRead($loggedInUser, $user);
         }
 
-        $activity = $repository->findPublicActivity($this->getPageNb($request), $user, $hideAdult);
+        $activity = $repository->findUserPublicActivity($this->getPageNb($request), $user, $hideAdult);
         $results = $this->overviewManager->buildList($activity);
 
         if ($request->isXmlHttpRequest()) {
