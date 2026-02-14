@@ -158,6 +158,7 @@ class NotificationPushApi extends NotificationBaseApi
         try {
             $conn = $this->entityManager->getConnection();
             $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND api_token = :token');
+            // TODO fix deprecation
             $stmt->executeQuery(['user' => $user->getId(), 'token' => $apiToken]);
 
             return new JsonResponse(headers: $headers);

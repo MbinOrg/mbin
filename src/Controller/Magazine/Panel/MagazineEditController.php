@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Form\MagazineType;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -21,8 +22,11 @@ class MagazineEditController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity]
+        Magazine $magazine,
+        Request $request,
+    ): Response {
         $magazineDto = $this->manager->createDto($magazine);
 
         $form = $this->createForm(MagazineType::class, $magazineDto);

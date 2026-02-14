@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +21,7 @@ class MagazinePeopleFrontController extends AbstractController
     }
 
     public function __invoke(
+        #[MapEntity]
         Magazine $magazine,
         ?string $category,
         Request $request,

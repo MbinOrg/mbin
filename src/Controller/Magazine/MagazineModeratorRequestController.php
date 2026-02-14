@@ -7,6 +7,7 @@ namespace App\Controller\Magazine;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -20,7 +21,7 @@ class MagazineModeratorRequestController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, Request $request): Response
+    public function __invoke(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         // applying to be a moderator is only supported for local magazines
         if ($magazine->apId) {

@@ -7,6 +7,7 @@ namespace App\Controller\User\Profile;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class UserVerifyController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(User $user, Request $request): Response
+    public function __invoke(#[MapEntity] User $user, Request $request): Response
     {
         $this->validateCsrf('user_verify', $request->getPayload()->get('token'));
 

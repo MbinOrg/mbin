@@ -12,6 +12,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Repository\ReputationRepository;
 use App\Service\ReputationManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,8 +24,12 @@ class UserReputationController extends AbstractController
     ) {
     }
 
-    public function __invoke(User $user, ?string $reputationType, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity]
+        User $user,
+        ?string $reputationType,
+        Request $request,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();

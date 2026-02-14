@@ -7,6 +7,7 @@ namespace App\Controller\Domain;
 use App\Controller\AbstractController;
 use App\Entity\Domain;
 use App\Service\DomainManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class DomainSubController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function subscribe(Domain $domain, Request $request): Response
+    public function subscribe(#[MapEntity] Domain $domain, Request $request): Response
     {
         $this->manager->subscribe($domain, $this->getUserOrThrow());
 
@@ -32,7 +33,7 @@ class DomainSubController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function unsubscribe(Domain $domain, Request $request): Response
+    public function unsubscribe(#[MapEntity] Domain $domain, Request $request): Response
     {
         $this->manager->unsubscribe($domain, $this->getUserOrThrow());
 

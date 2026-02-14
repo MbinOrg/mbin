@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\StatsRepository;
 use App\Service\StatsManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,8 +21,14 @@ class MagazineStatsController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, ?string $statsType, ?int $statsPeriod, ?bool $withFederated, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity]
+        Magazine $magazine,
+        ?string $statsType,
+        ?int $statsPeriod,
+        ?bool $withFederated,
+        Request $request,
+    ): Response {
         $this->denyAccessUnlessGranted('edit_profile', $this->getUserOrThrow());
 
         $statsType = $this->manager->resolveType($statsType);

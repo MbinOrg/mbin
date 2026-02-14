@@ -7,6 +7,7 @@ namespace App\Controller\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +17,12 @@ class UserFollowController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
     #[IsGranted('follow', subject: 'following')]
-    public function follow(User $following, UserManager $manager, Request $request): Response
-    {
+    public function follow(
+        #[MapEntity]
+        User $following,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $manager->follow($this->getUserOrThrow(), $following);
 
         if ($request->isXmlHttpRequest()) {
@@ -29,8 +34,12 @@ class UserFollowController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('follow', subject: 'following')]
-    public function unfollow(User $following, UserManager $manager, Request $request): Response
-    {
+    public function unfollow(
+        #[MapEntity]
+        User $following,
+        UserManager $manager,
+        Request $request,
+    ): Response {
         $manager->unfollow($this->getUserOrThrow(), $following);
 
         if ($request->isXmlHttpRequest()) {
