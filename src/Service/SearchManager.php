@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\ActivityPub\ActorHandle;
 use App\Entity\Magazine;
 use App\Entity\User;
-use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
-use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SearchManager
 {
@@ -26,6 +27,7 @@ class SearchManager
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly ApHttpClientInterface $apHttpClient,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -71,64 +73,131 @@ class SearchManager
     }
 
     /**
-     * @param string $query One or more canonical ActivityPub usernames, such as kbinMeta@kbin.social or @ernest@kbin.social (anything that matches RegPatterns::AP_USER)
+     * @param ActorHandle $handle a valid handle (can be obtained from string via ActorHandle::parse())
      *
-     * @return array a list of magazines or users that were found using the given identifiers, empty if none were found or no @ is in the query
+     * @return array ['type' => 'magazine'|'user', 'object' => Magazine|User][]
      */
-    public function findActivityPubActorsByUsername(string $query): array
+    public function findActivityPubActorsByUsername(ActorHandle $handle): array
     {
-        if (false === str_contains($query, '@')) {
-            return [];
-        }
-
         $objects = [];
-        $name = str_starts_with($query, '!') ? '@'.substr($query, 1) : $query;
-        $name = str_starts_with($name, '@') ? $name : '@'.$name;
-        preg_match(RegPatterns::AP_USER, $name, $matches);
-        if (\count(array_filter($matches)) >= 4) {
-            try {
-                $webfinger = $this->activityPubManager->webfinger($name);
-                foreach ($webfinger->getProfileIds() as $profileId) {
-                    $object = $this->activityPubManager->findActorOrCreate($profileId);
-                    if (!empty($object)) {
-                        if ($object instanceof Magazine) {
-                            $type = 'magazine';
-                        } elseif ($object instanceof User) {
-                            $type = 'user';
-                        }
+        $name = $handle->plainHandle();
 
-                        $objects[] = [
-                            'type' => $type,
-                            'object' => $object,
-                        ];
+        try {
+            $webfinger = $this->activityPubManager->webfinger($name);
+            foreach ($webfinger->getProfileIds() as $profileId) {
+                $this->logger->debug('Found "{profileId}" at "{name}"', ['profileId' => $profileId, 'name' => $name]);
+
+                // if actor object exists or successfully created
+                $object = $this->activityPubManager->findActorOrCreate($profileId);
+                if (!empty($object)) {
+                    if ($object instanceof Magazine) {
+                        $type = 'magazine';
+                    } elseif ($object instanceof User && '!' !== $handle->prefix) {
+                        $type = 'user';
+                    } else {
+                        $this->logger->error(
+                            'Unexpected AP object type: {type} , handle: {handle}',
+                            [
+                                'type' => \get_class($object),
+                                'handle' => $name,
+                            ]
+                        );
+                        continue;
                     }
+
+                    $objects[] = [
+                        'type' => $type,
+                        'object' => $object,
+                    ];
                 }
-            } catch (\Exception $e) {
             }
+        } catch (\Exception $e) {
+            $this->logger->warning(
+                'an error occurred during webfinger lookup of "{handle}": {exceptionClass}: {message}',
+                [
+                    'handle' => $name,
+                    'exceptionClass' => \get_class($e),
+                    'message' => $e->getMessage(),
+                ]
+            );
         }
 
-        return $objects ?? [];
+        return $objects;
     }
 
     /**
-     * @param string $query a string that may or may not be a URL
+     * Will dispatch a getActivityObject request if a valid URL was provided but no item was found locally.
      *
-     * @return array A list of objects found by the given query, or an empty array if none were found.
-     *               Will dispatch a getActivityObject request if a valid URL was provided but no item was found
-     *               locally.
+     * @param string $url a string that may or may not be a URL
+     *
+     * @return array array ['results' => ['type' => 'magazine'|'user'|'subject', 'object' => Magazine|User|ContentInterface][], 'errors' => Exception[]]
      */
-    public function findActivityPubObjectsByURL(string $query): array
+    public function findActivityPubObjectsByURL(string $url): array
     {
-        if (false === filter_var($query, FILTER_VALIDATE_URL)) {
-            return [];
+        if (false === filter_var($url, FILTER_VALIDATE_URL)) {
+            return [
+                'results' => [],
+                'errors' => [],
+            ];
         }
 
-        $objects = $this->findByApId($query);
-        if (!$objects) {
-            $body = $this->apHttpClient->getActivityObject($query, false);
-            $this->bus->dispatch(new ActivityMessage($body));
+        $exceptions = [];
+        $objects = $this->findByApId($url);
+        if (0 === \sizeof($objects)) {
+            // the url could resolve to a different id.
+            try {
+                $body = $this->apHttpClient->getActivityObject($url);
+                $apId = $body['id'];
+                $objects = $this->findByApId($apId);
+            } catch (\Exception $e) {
+                $body = null;
+                $apId = $url;
+                $exceptions[] = $e;
+            }
+
+            if (0 === \sizeof($objects) && null !== $body) {
+                // maybe it is an entry, post, etc.
+                try {
+                    // process the message in the sync transport, so that the created content is directly visible
+                    $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
+                    $objects = $this->findByApId($apId);
+                } catch (\Exception $e) {
+                    $exceptions[] = $e;
+                }
+            }
+
+            if (0 === \sizeof($objects)) {
+                // maybe it is a magazine or user
+                try {
+                    $this->activityPubManager->findActorOrCreate($apId);
+                    $objects = $this->findByApId($apId);
+                } catch (\Exception $e) {
+                    $exceptions[] = $e;
+                }
+            }
         }
 
-        return $objects ?? [];
+        return [
+            'results' => $this->mapApResultsToSearchModel($objects),
+            'errors' => $exceptions,
+        ];
+    }
+
+    private function mapApResultsToSearchModel(array $objects): array
+    {
+        return array_map(function ($object) {
+            if ($object instanceof Magazine) {
+                $type = 'magazine';
+            } elseif ($object instanceof User) {
+                $type = 'user';
+            } else {
+                $type = 'subject';
+            }
+
+            return [
+                'type' => $type,
+                'object' => $object,
+            ];
+        }, $objects);
     }
 }
