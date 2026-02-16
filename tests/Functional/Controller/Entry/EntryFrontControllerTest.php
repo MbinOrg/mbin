@@ -126,6 +126,8 @@ class EntryFrontControllerTest extends WebTestCase
         $this->client->setServerParameter('HTTP_X-Requested-With', 'XMLHttpRequest');
         $this->client->request('GET', '/m/acme/newest');
 
+        self::assertResponseIsSuccessful();
+
         $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
     }
 
