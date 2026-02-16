@@ -84,6 +84,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected const PAGINATED_KEYS = ['items', 'pagination'];
     protected const PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
+    protected const CURSOR_PAGINATION_KEYS = ['currentCursor', 'nextCursor', 'previousCursor', 'perPage'];
     protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
     protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
     protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints', 'discoverable', 'indexable'];

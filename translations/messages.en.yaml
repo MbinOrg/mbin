@@ -1190,3 +1190,6 @@ monitoring_total_duration: Total duration
 monitoring_mean_duration: Mean duration
 monitoring_twig_compare_to_total: Compare to total duration
 monitoring_twig_compare_to_parent: Compare to parent duration
+reached_end: You've reached the end
+next_page: Next page
+previous_page: Previous page
