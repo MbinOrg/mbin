@@ -8,7 +8,7 @@ use App\Form\Type\MagazineAutocompleteType;
 use App\Form\Type\UserAutocompleteType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -37,7 +37,7 @@ class SearchType extends AbstractType
                     'search_type_content' => 'entry+post',
                 ],
             ])
-            ->add('since', DateTimeType::class, ['required' => false])
+            ->add('since', DateType::class, ['required' => false])
         ;
     }
 }
