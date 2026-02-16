@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\EventSubscriber\Magazine;
 
 use App\Event\Magazine\MagazineBlockedEvent;
-use App\Repository\ContentRepository;
+use App\Utils\SqlHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MagazineBlockSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -22,6 +22,6 @@ class MagazineBlockSubscriber implements EventSubscriberInterface
 
     public function handleMagazineBlockedEvent(MagazineBlockedEvent $event): void
     {
-        $this->contentRepository->clearCachedUserMagazineBlocks($event->user);
+        $this->sqlHelpers->clearCachedUserMagazineBlocks($event->user);
     }
 }

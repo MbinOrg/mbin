@@ -8,6 +8,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Utils\SqlHelpers;
 
 abstract class Criteria
 {
@@ -342,21 +343,21 @@ abstract class Criteria
         };
     }
 
-    public function fetchCachedItems(ContentRepository $contentRepository, User $loggedInUser): void
+    public function fetchCachedItems(SqlHelpers $sqlHelpers, User $loggedInUser): void
     {
-        $this->cachedUserFollows = $contentRepository->getCachedUserFollows($loggedInUser);
+        $this->cachedUserFollows = $sqlHelpers->getCachedUserFollows($loggedInUser);
 
         if ($this->subscribed) {
-            $this->cachedUserSubscribedDomains = $contentRepository->getCachedUserSubscribedDomains($loggedInUser);
-            $this->cachedUserSubscribedMagazines = $contentRepository->getCachedUserSubscribedMagazines($loggedInUser);
+            $this->cachedUserSubscribedDomains = $sqlHelpers->getCachedUserSubscribedDomains($loggedInUser);
+            $this->cachedUserSubscribedMagazines = $sqlHelpers->getCachedUserSubscribedMagazines($loggedInUser);
         }
 
         if ($this->moderated) {
-            $this->cachedUserModeratedMagazines = $contentRepository->getCachedUserModeratedMagazines($loggedInUser);
+            $this->cachedUserModeratedMagazines = $sqlHelpers->getCachedUserModeratedMagazines($loggedInUser);
         }
 
-        $this->cachedUserBlocks = $contentRepository->getCachedUserBlocks($loggedInUser);
-        $this->cachedUserBlockedDomains = $contentRepository->getCachedUserDomainBlocks($loggedInUser);
-        $this->cachedUserBlockedMagazines = $contentRepository->getCachedUserMagazineBlocks($loggedInUser);
+        $this->cachedUserBlocks = $sqlHelpers->getCachedUserBlocks($loggedInUser);
+        $this->cachedUserBlockedDomains = $sqlHelpers->getCachedUserDomainBlocks($loggedInUser);
+        $this->cachedUserBlockedMagazines = $sqlHelpers->getCachedUserMagazineBlocks($loggedInUser);
     }
 }

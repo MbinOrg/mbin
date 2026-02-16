@@ -15,6 +15,7 @@ use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -188,6 +189,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -204,7 +206,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -308,6 +310,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -325,7 +328,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -429,6 +432,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -446,7 +450,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -550,6 +554,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
         EntryFactory $factory,
         RateLimiterFactory $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -566,7 +571,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
