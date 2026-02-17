@@ -112,14 +112,14 @@
                                 <a class="stretched-link"
                                    href="#{{ get_url_fragment(post) }}"
                                    data-action="post#expandComments">{{ 'expand'|trans }} (<span
-                                            data-subject-target="commentsCounter">{{ post.commentCount }}</span>)</a>
+                                            data-subject-target="commentsCounter">{{ post.commentCount|abbreviateNumber }}</span>)</a>
                             </li>
                             <li data-post-target="collapse"
                                 style="display: none">
                                 <a class="stretched-link"
                                    href="#{{ get_url_fragment(post) }}"
                                    data-action="post#collapseComments">{{ 'collapse'|trans }}
-                                    ({{ post.commentCount }})
+                                    ({{ post.commentCount|abbreviateNumber }})
                                 </a>
                             </li>
                         {% endif %}
