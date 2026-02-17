@@ -11,23 +11,29 @@
                 {{ 'overview'|trans }}
             </a>
         </li>
-        <li>
-            <a href="{{ path('admin_monitoring_single_context', {page: 'queries', id: context.uuid.toString()}) }}"
-               class="{{ html_classes({'active': route_has_param('page', 'queries')}) }}">
-                {{ 'monitoring_queries'|trans({'%count%': 2}) }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('admin_monitoring_single_context', {page: 'twig', id: context.uuid.toString()}) }}"
-               class="{{ html_classes({'active': route_has_param('page', 'twig')}) }}">
-                {{ 'monitoring_twig_renders'|trans }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('admin_monitoring_single_context', {page: 'requests', id: context.uuid.toString()}) }}"
-               class="{{ html_classes({'active': route_has_param('page', 'requests')}) }}">
-                {{ 'monitoring_curl_requests'|trans({'%count%': 2}) }}
-            </a>
-        </li>
+        {% if context.queries|length %}
+            <li>
+                <a href="{{ path('admin_monitoring_single_context', {page: 'queries', id: context.uuid.toString()}) }}"
+                   class="{{ html_classes({'active': route_has_param('page', 'queries')}) }}">
+                    {{ 'monitoring_queries'|trans({'%count%': 2}) }}
+                </a>
+            </li>
+        {% endif %}
+        {% if context.twigRenders|length %}
+            <li>
+                <a href="{{ path('admin_monitoring_single_context', {page: 'twig', id: context.uuid.toString()}) }}"
+                   class="{{ html_classes({'active': route_has_param('page', 'twig')}) }}">
+                    {{ 'monitoring_twig_renders'|trans }}
+                </a>
+            </li>
+        {% endif %}
+        {% if context.curlRequests|length %}
+            <li>
+                <a href="{{ path('admin_monitoring_single_context', {page: 'requests', id: context.uuid.toString()}) }}"
+                   class="{{ html_classes({'active': route_has_param('page', 'requests')}) }}">
+                    {{ 'monitoring_curl_requests'|trans({'%count%': 2}) }}
+                </a>
+            </li>
+        {% endif %}
     </menu>
 </div>

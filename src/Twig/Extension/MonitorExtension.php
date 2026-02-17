@@ -31,7 +31,7 @@ class MonitorExtension extends AbstractExtension
      */
     public function enter(Profile $profile): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordTwigRenders() || null === $this->monitor->currentContext) {
             return;
         }
 
@@ -50,7 +50,7 @@ class MonitorExtension extends AbstractExtension
      */
     public function leave(Profile $profile): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordTwigRenders() || null === $this->monitor->currentContext) {
             return;
         }
 

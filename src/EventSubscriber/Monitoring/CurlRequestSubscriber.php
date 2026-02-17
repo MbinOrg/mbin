@@ -26,7 +26,7 @@ readonly class CurlRequestSubscriber implements EventSubscriberInterface
 
     public function onCurlRequestBeginning(CurlRequestBeginningEvent $event): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordCurlRequests() || null === $this->monitor->currentContext) {
             return;
         }
 
@@ -35,7 +35,7 @@ readonly class CurlRequestSubscriber implements EventSubscriberInterface
 
     public function onCurlRequestFinished(CurlRequestFinishedEvent $event): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordCurlRequests() || null === $this->monitor->currentContext) {
             return;
         }
 

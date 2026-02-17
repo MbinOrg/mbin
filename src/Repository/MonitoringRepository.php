@@ -24,6 +24,13 @@ class MonitoringRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
+        private readonly bool $monitoringQueryParametersEnabled,
+        private readonly bool $monitoringQueriesEnabled,
+        private readonly bool $monitoringQueriesPersistingEnabled,
+        private readonly bool $monitoringTwigRendersEnabled,
+        private readonly bool $monitoringTwigRendersPersistingEnabled,
+        private readonly bool $monitoringCurlRequestsEnabled,
+        private readonly bool $monitoringCurlRequestPersistingEnabled,
     ) {
         parent::__construct($registry, MonitoringExecutionContext::class);
     }
@@ -89,5 +96,29 @@ class MonitoringRepository extends ServiceEntityRepository
         $criteria->orderBy(orderings: ['createdAt' => 'DESC']);
 
         return $this->findByPaginated($criteria);
+    }
+
+    /**
+     * @return array{
+     *     monitoringQueryParametersEnabled: bool,
+     *     monitoringQueriesEnabled: bool,
+     *     monitoringQueriesPersistingEnabled: bool,
+     *     monitoringTwigRendersEnabled: bool,
+     *     monitoringTwigRendersPersistingEnabled: bool,
+     *     monitoringCurlRequestsEnabled: bool,
+     *     monitoringCurlRequestPersistingEnabled: bool
+     * }
+     */
+    public function getConfiguration(): array
+    {
+        return [
+            'monitoringQueryParametersEnabled' => $this->monitoringQueryParametersEnabled,
+            'monitoringQueriesEnabled' => $this->monitoringQueriesEnabled,
+            'monitoringQueriesPersistingEnabled' => $this->monitoringQueriesPersistingEnabled,
+            'monitoringTwigRendersEnabled' => $this->monitoringTwigRendersEnabled,
+            'monitoringTwigRendersPersistingEnabled' => $this->monitoringTwigRendersPersistingEnabled,
+            'monitoringCurlRequestsEnabled' => $this->monitoringCurlRequestsEnabled,
+            'monitoringCurlRequestPersistingEnabled' => $this->monitoringCurlRequestPersistingEnabled,
+        ];
     }
 }

@@ -34,7 +34,7 @@ class DoctrineStatementMiddleware extends AbstractStatementMiddleware
 
     public function execute($params = null): Result
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             return parent::execute($params);
         }
 

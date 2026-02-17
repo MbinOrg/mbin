@@ -1191,3 +1191,12 @@ monitoring_total_duration: Total duration
 monitoring_mean_duration: Mean duration
 monitoring_twig_compare_to_total: Compare to total duration
 monitoring_twig_compare_to_parent: Compare to parent duration
+monitoring_queries_enabled_persisted: Query monitoring is enabled.
+monitoring_queries_enabled_not_persisted: Query monitoring is enabled, but only the execution time.
+monitoring_queries_disabled: Query monitoring is disabled.
+monitoring_twig_renders_enabled_persisted: Twig render monitoring is enabled.
+monitoring_twig_renders_enabled_not_persisted: Twig rendering is enabled, but only the execution time.
+monitoring_twig_renders_disabled: Twig render monitoring is disabled.
+monitoring_curl_requests_enabled_persisted: Curl request monitoring is enabled.
+monitoring_curl_requests_enabled_not_persisted: Curl request monitoring is enabled, but only the execution time.
+monitoring_curl_requests_disabled: Curl request monitoring is disabled.

@@ -19,6 +19,35 @@
         <div class="container">
             {% if chart is not same as null %}
                 <h2>{{ 'monitoring_route_overview'|trans }}</h2>
+                <p>
+                    {% if configuration['monitoringQueriesEnabled'] is same as true %}
+                        {% if configuration['monitoringQueriesPersistingEnabled'] is same as true %}
+                            <span>{{ 'monitoring_queries_enabled_persisted'|trans }}</span>
+                        {% else %}
+                            <span>{{ 'monitoring_queries_enabled_not_persisted'|trans }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span>{{ 'monitoring_queries_disabled'|trans }}</span>
+                    {% endif %}
+                    {% if configuration['monitoringTwigRendersEnabled'] is same as true %}
+                        {% if configuration['monitoringTwigRendersPersistingEnabled'] is same as true %}
+                            <span>{{ 'monitoring_twig_renders_enabled_persisted'|trans }}</span>
+                        {% else %}
+                            <span>{{ 'monitoring_twig_renders_enabled_not_persisted'|trans }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span>{{ 'monitoring_twig_renders_disabled'|trans }}</span>
+                    {% endif %}
+                    {% if configuration['monitoringCurlRequestsEnabled'] is same as true %}
+                        {% if configuration['monitoringCurlRequestPersistingEnabled'] is same as true %}
+                            <span>{{ 'monitoring_curl_requests_enabled_persisted'|trans }}</span>
+                        {% else %}
+                            <span>{{ 'monitoring_curl_requests_enabled_not_persisted'|trans }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span>{{ 'monitoring_curl_requests_disabled'|trans }}</span>
+                    {% endif %}
+                </p>
                 <p>{{ 'monitoring_route_overview_description'|trans }}</p>
                 {{ render_chart(chart, {'data-chart-unit-value': 'ms'}) }}
             {% endif %}

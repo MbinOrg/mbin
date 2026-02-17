@@ -54,6 +54,7 @@ class AdminMonitoringController extends AbstractController
             'executionContexts' => $contexts,
             'chart' => $chart ?? null,
             'form' => $form,
+            'configuration' => $this->monitoringRepository->getConfiguration(),
         ]);
     }
 

@@ -35,12 +35,33 @@ class Monitor
         protected readonly LoggerInterface $logger,
         private readonly bool $monitoringEnabled,
         private readonly bool $monitoringQueryParametersEnabled,
+        private readonly bool $monitoringQueriesEnabled,
+        private readonly bool $monitoringQueriesPersistingEnabled,
+        private readonly bool $monitoringTwigRendersEnabled,
+        private readonly bool $monitoringTwigRendersPersistingEnabled,
+        private readonly bool $monitoringCurlRequestsEnabled,
+        private readonly bool $monitoringCurlRequestPersistingEnabled,
     ) {
     }
 
     public function shouldRecord(): bool
     {
         return $this->monitoringEnabled;
+    }
+
+    public function shouldRecordTwigRenders(): bool
+    {
+        return $this->shouldRecord() && $this->monitoringTwigRendersEnabled;
+    }
+
+    public function shouldRecordQueries(): bool
+    {
+        return $this->shouldRecord() && $this->monitoringQueriesEnabled;
+    }
+
+    public function shouldRecordCurlRequests(): bool
+    {
+        return $this->shouldRecord() && $this->monitoringCurlRequestsEnabled;
     }
 
     /**
@@ -67,6 +88,11 @@ class Monitor
             'user' => $userType,
             'path' => $path,
             'handler' => $handler,
+        ]);
+        $this->logger->debug('[Monitor] queries: {queries}, twig: {twig}, curl: {curl}', [
+            'queries' => $this->monitoringQueriesEnabled,
+            'twig' => $this->monitoringTwigRendersEnabled,
+            'curl' => $this->monitoringCurlRequestsEnabled,
         ]);
     }
 
@@ -100,9 +126,23 @@ class Monitor
             'stacktrace' => $this->currentContext->stacktrace,
         ]);
 
-        $this->currentContext->queryDurationMilliseconds = $this->calculateDurationFromCollection(array_filter($this->contextSegments, fn ($item) => $item instanceof MonitoringQuery));
-        $this->currentContext->twigRenderDurationMilliseconds = $this->calculateDurationFromCollection(array_filter($this->contextSegments, fn ($item) => $item instanceof MonitoringTwigRender && null === $item->parent));
-        $this->currentContext->curlRequestDurationMilliseconds = $this->calculateDurationFromCollection(array_filter($this->contextSegments, fn ($item) => $item instanceof MonitoringCurlRequest));
+        $queryDuration = 0;
+        $twigDuration = 0;
+        $curlDuration = 0;
+
+        foreach ($this->contextSegments as $contextSegment) {
+            if ($contextSegment instanceof MonitoringQuery) {
+                $queryDuration += $contextSegment->getDuration();
+            } elseif ($contextSegment instanceof MonitoringTwigRender && null === $contextSegment->parent) {
+                $twigDuration += $contextSegment->getDuration();
+            } elseif ($contextSegment instanceof MonitoringCurlRequest) {
+                $curlDuration += $contextSegment->getDuration();
+            }
+        }
+
+        $this->currentContext->queryDurationMilliseconds = $queryDuration;
+        $this->currentContext->twigRenderDurationMilliseconds = $twigDuration;
+        $this->currentContext->curlRequestDurationMilliseconds = $curlDuration;
 
         try {
             $this->entityManager->persist($this->currentContext);
@@ -110,6 +150,9 @@ class Monitor
             $queryStringsByHash = [];
             foreach ($this->contextSegments as $contextSegment) {
                 if ($contextSegment instanceof MonitoringQuery) {
+                    if (!$this->monitoringQueriesPersistingEnabled) {
+                        continue;
+                    }
                     // we don't want to compute hashes during event listening, as even sha1 will be a bit time-consuming
                     $hash = hash('sha1', $contextSegment->queryString->query);
                     if (\array_key_exists($hash, $queryStringsByHash)) {
@@ -124,6 +167,14 @@ class Monitor
                         $queryStringsByHash[$hash] = $contextSegment->queryString;
                         $contextSegment->queryString->queryHash = $hash;
                         $this->entityManager->persist($contextSegment->queryString);
+                    }
+                } elseif ($contextSegment instanceof MonitoringTwigRender) {
+                    if (!$this->monitoringTwigRendersPersistingEnabled) {
+                        continue;
+                    }
+                } elseif ($contextSegment instanceof MonitoringCurlRequest) {
+                    if (!$this->monitoringCurlRequestPersistingEnabled) {
+                        continue;
                     }
                 }
                 $this->entityManager->persist($contextSegment);

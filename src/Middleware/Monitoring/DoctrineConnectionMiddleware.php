@@ -29,7 +29,7 @@ class DoctrineConnectionMiddleware extends AbstractConnectionMiddleware
 
     public function query(string $sql): Result
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             return parent::query($sql);
         }
 
@@ -44,7 +44,7 @@ class DoctrineConnectionMiddleware extends AbstractConnectionMiddleware
 
     public function exec(string $sql): int
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             return parent::exec($sql);
         }
 
@@ -59,7 +59,7 @@ class DoctrineConnectionMiddleware extends AbstractConnectionMiddleware
 
     public function beginTransaction(): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             parent::beginTransaction();
 
             return;
@@ -76,7 +76,7 @@ class DoctrineConnectionMiddleware extends AbstractConnectionMiddleware
 
     public function commit(): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             parent::commit();
 
             return;
@@ -93,7 +93,7 @@ class DoctrineConnectionMiddleware extends AbstractConnectionMiddleware
 
     public function rollBack(): void
     {
-        if (!$this->monitor->shouldRecord() || null === $this->monitor->currentContext) {
+        if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
             parent::rollBack();
 
             return;
