@@ -21,7 +21,7 @@
 {% endif %}
 
 {% set forCombined = (route_param_exists('content') and get_route_param('content') is same as 'combined')
-    or (criteria is defined and criteria.getOption('content') == 'combined') %}
+    or (criteria is defined and criteria.getOption('content') is same as 'combined') %}
 
 {% if subject is entry %}
     {{ component('entry', {entry: subject}|merge(attributes)|merge(entryAttributes)) }}
