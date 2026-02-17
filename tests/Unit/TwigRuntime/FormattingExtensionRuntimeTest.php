@@ -109,6 +109,10 @@ And a second paragraph. With more than one sentence. And so on, and so on.
                 'number' => 1234567890,
                 'expected' => '1.23B',
             ],
+            [
+                'number' => 12345678900000,
+                'expected' => '12345.68B',
+            ],
         ];
     }
 }

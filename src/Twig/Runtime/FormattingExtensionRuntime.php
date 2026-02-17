@@ -76,10 +76,8 @@ class FormattingExtensionRuntime implements RuntimeExtensionInterface
             return round($value / 1000, 2).'K';
         } elseif ($value < 1000000000) {
             return round($value / 1000000, 2).'M';
-        } elseif ($value < 1000000000000) {
-            return round($value / 1000000000, 2).'B';
         } else {
-            return ''.$value;
+            return round($value / 1000000000, 2).'B';
         }
     }
 }
