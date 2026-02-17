@@ -156,8 +156,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.title_ts @@ plainto_tsquery( :query ) = true OR e.title LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
@@ -169,8 +169,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
@@ -182,8 +182,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
@@ -195,8 +195,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
@@ -208,7 +208,7 @@ class SearchRepository
                 AND m.visibility = :visibility
                 AND m.ap_deleted_at IS NULL
                 AND m.marked_for_deletion_at IS NULL
-                AND m.ap_discoverable = true
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
@@ -219,7 +219,7 @@ class SearchRepository
                 AND u.is_deleted = false
                 AND u.marked_for_deletion_at IS NULL
                 AND u.ap_deleted_at IS NULL
-                AND u.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 $createdWhereUser $blockMagazineAndUserResult
         ";
