@@ -15,6 +15,7 @@ use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
+use Doctrine\DBAL\ParameterType;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -158,8 +159,9 @@ class NotificationPushApi extends NotificationBaseApi
         try {
             $conn = $this->entityManager->getConnection();
             $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND api_token = :token');
-            // TODO fix deprecation
-            $stmt->executeQuery(['user' => $user->getId(), 'token' => $apiToken]);
+            $stmt->bindValue('user', $user->getId(), ParameterType::INTEGER);
+            $stmt->bindValue('token', $apiToken->getIdentifier());
+            $stmt->executeQuery();
 
             return new JsonResponse(headers: $headers);
         } catch (\Exception $e) {
