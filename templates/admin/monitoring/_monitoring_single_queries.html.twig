@@ -53,7 +53,7 @@
                     </div>
                     {% if showParameters %}
                         <div data-controller="collapsable">
-                            <pre data-collapsable-target="content">{{ 'parameters'|trans }} = {{ query.parameters|json_encode(constant('\JSON_PRETTY_PRINT')) }}</pre>
+                            <pre data-collapsable-target="content">{{ 'parameters'|trans }} = {{ query.parameters|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
                         </div>
                         <div data-collapsable-target="button"></div>
                     {% endif %}
