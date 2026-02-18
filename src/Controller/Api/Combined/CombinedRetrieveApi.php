@@ -18,6 +18,7 @@ use App\Schema\CursorPaginationSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Pagerfanta\PagerfantaInterface;
@@ -449,6 +450,7 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         string $collectionType,
+        SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $perPage, $contentRepository, $collectionType);
@@ -470,7 +472,7 @@ class CombinedRetrieveApi extends BaseApi
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($contentRepository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         switch ($collectionType) {

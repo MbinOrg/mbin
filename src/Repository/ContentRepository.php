@@ -15,27 +15,16 @@ use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Utils\SqlHelpers;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\PagerfantaInterface;
-use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class ContentRepository
 {
     public const int PER_PAGE = 25;
-
-    public const string USER_FOLLOWS_KEY = 'cached_user_follows_';
-    public const string USER_MAGAZINE_SUBSCRIPTION_KEY = 'cached_user_magazine_subscription_';
-    public const string USER_MAGAZINE_MODERATION_KEY = 'cached_user_magazine_moderation_';
-    public const string USER_DOMAIN_SUBSCRIPTION_KEY = 'cached_user_domain_subscription_';
-    public const string USER_BLOCKS_KEY = 'cached_user_blocks_';
-    public const string USER_MAGAZINE_BLOCKS_KEY = 'cached_user_magazine_block_';
-    public const string USER_DOMAIN_BLOCKS_KEY = 'cached_user_domain_block_';
 
     public function __construct(
         private readonly Security $security,

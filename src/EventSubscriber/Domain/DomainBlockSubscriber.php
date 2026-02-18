@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\EventSubscriber\Domain;
 
 use App\Event\DomainBlockedEvent;
-use App\Repository\ContentRepository;
+use App\Utils\SqlHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DomainBlockSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -22,6 +22,6 @@ class DomainBlockSubscriber implements EventSubscriberInterface
 
     public function handleDomainBlockedEvent(DomainBlockedEvent $event): void
     {
-        $this->contentRepository->clearCachedUserDomainBlocks($event->user);
+        $this->sqlHelpers->clearCachedUserDomainBlocks($event->user);
     }
 }
