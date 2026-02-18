@@ -67,7 +67,7 @@
                     {{ 'last_updated'|trans }}: {{ component('date', {date: computed.magazine.apFetchedAt}) }}
                 </li>
             {% endif %}
-            <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount }}</span></li>
+            <li>{{ 'subscribers'|trans }}: <span>{{ computed.magazine.subscriptionsCount|abbreviateNumber }}</span></li>
             {% set instance = get_instance_of_magazine(computed.magazine) %}
             {% if instance is not same as null %}
                 <li>{{ 'server_software'|trans }}: <div><span>{{ instance.software }}{% if instance.version is not same as null and app.user is defined and app.user is not null and app.user.admin() %} v{{ instance.version }}{% endif %}</span></div></li>
@@ -76,10 +76,10 @@
     {% endif %}
     {% if showMeta %}
         <ul class="meta">
-            {{ _self.meta_item( 'threads'|trans, path('front_magazine', {'name': computed.magazine.name }), computed.magazine.entryCount) }}
-            {{ _self.meta_item( 'comments'|trans, path('magazine_entry_comments', {'name': computed.magazine.name}), computed.magazine.entryCommentCount) }}
-            {{ _self.meta_item( 'posts'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCount) }}
-            {{ _self.meta_item( 'replies'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCommentCount) }}
+            {{ _self.meta_item( 'threads'|trans, path('front_magazine', {'name': computed.magazine.name }), computed.magazine.entryCount|abbreviateNumber) }}
+            {{ _self.meta_item( 'comments'|trans, path('magazine_entry_comments', {'name': computed.magazine.name}), computed.magazine.entryCommentCount|abbreviateNumber) }}
+            {{ _self.meta_item( 'posts'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCount|abbreviateNumber) }}
+            {{ _self.meta_item( 'replies'|trans, path('magazine_posts', {'name': computed.magazine.name}), computed.magazine.postCommentCount|abbreviateNumber) }}
             {{ _self.meta_item( 'moderators'|trans, path('magazine_moderators', {'name': computed.magazine.name}), computed.magazine.getModeratorCount()) }}
             {{ _self.meta_item( 'mod_log'|trans, path('magazine_modlog', {'name': computed.magazine.name}), computed.magazine.logs|length) }}
         </ul>

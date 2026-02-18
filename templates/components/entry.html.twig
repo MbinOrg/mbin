@@ -174,12 +174,12 @@
                             {% if not entry.isLocked %}
                                 <a class="stretched-link"
                                    href="{{ entry_url(entry) ~ '#comments' }}">
-                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount|abbreviateNumber }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
                                 </a>
                             {% else %}
                                 <span class="stretched-link">
                                     <i class="fa fa-lock" aria-hidden="true"></i>
-                                    <span data-subject-target="commentsCounter">{{ entry.commentCount }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
+                                    <span data-subject-target="commentsCounter">{{ entry.commentCount|abbreviateNumber }}</span> {{ 'comments_count'|trans({'%count%': entry.commentCount}) }}
                                 </span>
                             {% endif %}
                         </li>
