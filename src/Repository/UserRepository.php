@@ -153,6 +153,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->andWhere('u.applicationStatus = :status')
+            ->andWhere('u.isVerified = true')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
@@ -178,6 +179,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
         $builder
+            ->andWhere('u.isVerified = true')
             ->andWhere('u.isBanned = true')
             ->andWhere('u.isDeleted = false');
 
@@ -188,6 +190,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
         $builder
+            ->andWhere('u.isVerified = true')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED);
@@ -198,6 +201,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findForDeletionPaginated(int $page): PagerfantaInterface
     {
         $builder = $this->createBasicQueryBuilder(onlyLocal: true, searchTerm: null)
+            ->andWhere('u.isVerified = true')
             ->andWhere('u.visibility = :visibility')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED);
 
@@ -208,8 +212,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
-            $builder->where('u.apId IS NULL')
-                ->andWhere('u.isVerified = true');
+            $builder->where('u.apId IS NULL');
         } else {
             $builder->where('u.apId IS NOT NULL');
         }
