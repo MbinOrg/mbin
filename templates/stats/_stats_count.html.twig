@@ -5,27 +5,27 @@
     <div class="stats-count">
         <div>
             <h3>{{ 'users'|trans|upper }}</h3>
-            <p>{{ users }}</p>
+            <p>{{ users|abbreviateNumber }}</p>
         </div>
         <div>
             <h3>{{ 'magazines'|trans|upper }}</h3>
-            <p>{{ magazines }}</p>
+            <p>{{ magazines|abbreviateNumber }}</p>
         </div>
         <div>
             <h3>{{ 'votes'|trans|upper }}</h3>
-            <p>{{ votes }}</p>
+            <p>{{ votes|abbreviateNumber }}</p>
         </div>
         <div>
             <h3>{{ 'threads'|trans|upper }}</h3>
-            <p>{{ entries }}</p>
+            <p>{{ entries|abbreviateNumber }}</p>
         </div>
         <div>
             <h3>{{ 'comments'|trans|upper }}</h3>
-            <p>{{ comments }}</p>
+            <p>{{ comments|abbreviateNumber }}</p>
         </div>
         <div>
             <h3>{{ 'posts'|trans|upper }}</h3>
-            <p>{{ posts }}</p>
+            <p>{{ posts|abbreviateNumber }}</p>
         </div>
     </div>
 </div>

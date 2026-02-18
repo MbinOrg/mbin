@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
+use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -15,12 +16,13 @@ class InstanceFactory
         private readonly ApHttpClientInterface $client,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextProvider,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
     public function create(bool $includeContext = true): array
     {
-        $actor = 'https://'.$this->kbinDomain.'/i/actor';
+        $actor = $this->urlGenerator->generate('ap_instance', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $result = [
             '@context' => $this->contextProvider->referencedContexts(),
@@ -36,6 +38,7 @@ class InstanceFactory
                 'owner' => $actor,
                 'publicKeyPem' => $this->client->getInstancePublicKey(),
             ],
+            'published' => ($this->userRepository->findOldestUser()?->createdAt ?? new \DateTimeImmutable())->format(DATE_ATOM),
         ];
 
         if (!$includeContext) {

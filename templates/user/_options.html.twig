@@ -10,52 +10,52 @@
         <li>
             <a href="{{ path('user_entries', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_entries')}) }}">
-                {{ 'threads'|trans }} ({{ user.entries|length }})
+                {{ 'threads'|trans }} ({{ user.entries|length|abbreviateNumber }})
             </a>
         </li>
         <li>
             <a href="{{ path('user_comments', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_comments')}) }}">
-                {{ 'comments'|trans }} ({{ user.entryComments|length }})
+                {{ 'comments'|trans }} ({{ user.entryComments|length|abbreviateNumber }})
             </a>
         </li>
         <li>
             <a href="{{ path('user_posts', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_posts')}) }}">
-                {{ 'posts'|trans }} ({{ user.posts|length }})
+                {{ 'posts'|trans }} ({{ user.posts|length|abbreviateNumber }})
             </a>
         </li>
         <li>
             <a href="{{ path('user_replies', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_replies')}) }}">
-                {{ 'replies'|trans }} ({{ user.postComments|length }})
+                {{ 'replies'|trans }} ({{ user.postComments|length|abbreviateNumber }})
             </a>
         </li>
         <li>
             <a href="{{ path('user_boosts', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_boosts')}) }}">
-                {{ 'boosts'|trans }} ({{ count_user_boosts(user) }})
+                {{ 'boosts'|trans }} ({{ count_user_boosts(user)|abbreviateNumber }})
             </a>
         </li>
         {% if user.getShowProfileFollowings or app.user is same as user %}
             <li>
                 <a href="{{ path('user_following', {username: user.username}) }}"
                    class="{{ html_classes({'active': is_route_name('user_following'), 'opacity-50': not user.getShowProfileFollowings}) }}">
-                    {{ 'following'|trans }} ({{ user.follows|length }})
+                    {{ 'following'|trans }} ({{ user.follows|length|abbreviateNumber }})
                 </a>
             </li>
         {% endif %}
         <li>
             <a href="{{ path('user_followers', {username: user.username}) }}"
                class="{{ html_classes({'active': is_route_name('user_followers')}) }}">
-                {{ 'followers'|trans }} ({{ user.followers|length }})
+                {{ 'followers'|trans }} ({{ user.followers|length|abbreviateNumber }})
             </a>
         </li>
         {% if user.getShowProfileSubscriptions or app.user is same as user %}
             <li>
                 <a href="{{ path('user_subscriptions', {username: user.username}) }}"
                    class="{{ html_classes({'active': is_route_name('user_subscriptions'), 'opacity-50': not user.getShowProfileSubscriptions}) }}">
-                    {{ 'subscriptions'|trans }} ({{ user.subscriptions|length }})
+                    {{ 'subscriptions'|trans }} ({{ user.subscriptions|length|abbreviateNumber }})
                 </a>
             </li>
         {% endif %}
@@ -63,7 +63,7 @@
             {%- set TYPE_ENTRY = constant('App\\Repository\\ReputationRepository::TYPE_ENTRY') -%}
             <a href="{{ path('user_reputation', {username: user.username, reputationType: TYPE_ENTRY}) }}"
                class="{{ html_classes({'active': is_route_name('user_reputation')}) }}">
-                {{ 'reputation'|trans }} ({{ get_reputation_total(user) }})
+                {{ 'reputation'|trans }} ({{ get_reputation_total(user)|abbreviateNumber }})
             </a>
         </li>
     </menu>

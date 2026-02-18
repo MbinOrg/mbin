@@ -145,17 +145,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/TheVillageGuy">
-                    <img src="https://avatars.githubusercontent.com/u/47496248?v=4" width="100;" alt="TheVillageGuy"/>
-                    <br />
-                    <sub><b>TheVillageGuy</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/blued-gear">
                     <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
                     <br />
                     <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/TheVillageGuy">
+                    <img src="https://avatars.githubusercontent.com/u/47496248?v=4" width="100;" alt="TheVillageGuy"/>
+                    <br />
+                    <sub><b>TheVillageGuy</b></sub>
                 </a>
             </td>
 		</tr>

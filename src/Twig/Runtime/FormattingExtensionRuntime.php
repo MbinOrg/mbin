@@ -86,4 +86,18 @@ class FormattingExtensionRuntime implements RuntimeExtensionInterface
 
         return $formatter->format($query);
     }
+
+    public function abbreviateNumber(int|float $value): string
+    {
+        // this implementation is offly simple, but therefore fast
+        if ($value < 1000) {
+            return ''.$value;
+        } elseif ($value < 1000000) {
+            return round($value / 1000, 2).'K';
+        } elseif ($value < 1000000000) {
+            return round($value / 1000000, 2).'M';
+        } else {
+            return round($value / 1000000000, 2).'B';
+        }
+    }
 }

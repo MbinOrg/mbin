@@ -18,6 +18,7 @@ final class FormattingExtension extends AbstractExtension
             new TwigFilter('bool', fn ($value) => (bool) $value),
             new TwigFilter('uuidEnd', [FormattingExtensionRuntime::class, 'uuidEnd']),
             new TwigFilter('formatQuery', [FormattingExtensionRuntime::class, 'formatQuery']),
+            new TwigFilter('abbreviateNumber', [FormattingExtensionRuntime::class, 'abbreviateNumber']),
         ];
     }
 

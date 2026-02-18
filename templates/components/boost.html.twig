@@ -6,6 +6,6 @@
             type="submit"
             data-action="subject#favourite">
         {{ 'up_vote'|trans }} <span class="{{ html_classes({'hidden': not subject.apShareCount and not subject.countUpvotes}) }}"
-                                          data-subject-target="upvoteCounter">({{ subject.apShareCount ?? subject.countUpvotes }})</span>
+                                          data-subject-target="upvoteCounter">({{ (subject.apShareCount ?? subject.countUpvotes)|abbreviateNumber }})</span>
     </button>
 </form>
