@@ -193,7 +193,7 @@ class StatsContentRepository extends StatsRepository
 
     public function countUsers(?\DateTime $startDate = null): int
     {
-        $users = $this->_em->createQueryBuilder()
+        $users = $this->entityManager->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from(User::class, 'u')
             ->where('u.apId IS NULL')

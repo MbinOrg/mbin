@@ -26,12 +26,12 @@ abstract class EnumType extends Type
         return 'ENUM('.implode(', ', $values).')';
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
         return $value;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (!\in_array($value, $this->getValues())) {
             throw new \InvalidArgumentException("Invalid '".$this->getName()."' value.");

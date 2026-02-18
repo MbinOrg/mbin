@@ -28,6 +28,7 @@ use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -60,6 +61,7 @@ class EntryRepository extends ServiceEntityRepository
         private readonly AdapterFactory $adapterFactory,
         private readonly SettingsManager $settingsManager,
         private readonly SqlHelpers $sqlHelpers,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Entry::class);
     }
@@ -271,7 +273,7 @@ class EntryRepository extends ServiceEntityRepository
 
     public function hydrate(Entry ...$entries): void
     {
-        $this->_em->createQueryBuilder()
+        $this->entityManager->createQueryBuilder()
             ->select('PARTIAL e.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -341,7 +343,8 @@ class EntryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.visibility != :visibility')
             ->andWhere('e.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->setParameter('user', $user)
             ->orderBy('e.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -365,10 +368,8 @@ class EntryRepository extends ServiceEntityRepository
             ->join('e.hashtags', 'hl')
             ->join('hl.hashtag', 'h')
             ->orderBy('e.createdAt', 'DESC')
-            ->setParameters([
-                'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
-                'tag' => $tag,
-            ])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('tag', $tag)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -396,9 +397,9 @@ class EntryRepository extends ServiceEntityRepository
             ->join('e.magazine', 'm')
             ->join('e.user', 'u')
             ->orderBy('e.createdAt', 'DESC')
-            ->setParameters(
-                ['name' => "%{$name}%", 'title' => "%{$name}%", 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
-            )
+            ->setParameter('name', "%{$name}%")
+            ->setParameter('title', "%{$name}%")
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -466,15 +467,16 @@ class EntryRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
+                    $query = $this->entityManager->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', 'visible');
                 } else {
-                    $query = $this->_em->createQuery(
+                    $query = $this->entityManager->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
-                        ->setParameters(['visibility' => 'visible', 'magazine' => $criteria->magazine]);
+                        ->setParameter('visibility', 'visible')
+                        ->setParameter('magazine', $criteria->magazine);
                 }
 
                 try {

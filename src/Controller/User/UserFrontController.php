@@ -42,8 +42,7 @@ class UserFrontController extends AbstractController
         #[MapEntity]
         User $user,
         Request $request,
-        UserRepository $repository,
-        SearchRepository $repository
+        SearchRepository $repository,
     ): Response {
         $response = new Response();
         if ($user->apId) {

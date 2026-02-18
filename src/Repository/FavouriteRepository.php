@@ -47,7 +47,8 @@ class FavouriteRepository extends ServiceEntityRepository
         $dql = 'SELECT f FROM '.EntryFavourite::class.' f WHERE f.entry = :entry AND f.user = :user';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['entry' => $entry, 'user' => $user])
+            ->setParameter('entry', $entry)
+            ->setParameter('user', $user)
             ->getOneOrNullResult();
     }
 
@@ -56,7 +57,8 @@ class FavouriteRepository extends ServiceEntityRepository
         $dql = 'SELECT f FROM '.EntryCommentFavourite::class.' f WHERE f.entryComment = :comment AND f.user = :user';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['comment' => $comment, 'user' => $user])
+            ->setParameter('comment', $comment)
+            ->setParameter('user', $user)
             ->getOneOrNullResult();
     }
 
@@ -65,7 +67,8 @@ class FavouriteRepository extends ServiceEntityRepository
         $dql = 'SELECT f FROM '.PostFavourite::class.' f WHERE f.post = :post AND f.user = :user';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['post' => $post, 'user' => $user])
+            ->setParameter('post', $post)
+            ->setParameter('user', $user)
             ->getOneOrNullResult();
     }
 
@@ -74,7 +77,8 @@ class FavouriteRepository extends ServiceEntityRepository
         $dql = 'SELECT f FROM '.PostCommentFavourite::class.' f WHERE f.postComment = :comment AND f.user = :user';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['comment' => $comment, 'user' => $user])
+            ->setParameter('comment', $comment)
+            ->setParameter('user', $user)
             ->getOneOrNullResult();
     }
 }

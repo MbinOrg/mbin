@@ -13,6 +13,7 @@ use App\Entity\PostComment;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -32,6 +33,7 @@ class ApActivityRepository extends ServiceEntityRepository
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, ApActivity::class);
     }
@@ -47,7 +49,7 @@ class ApActivityRepository extends ServiceEntityRepository
             return $local;
         }
 
-        $conn = $this->_em->getConnection();
+        $conn = $this->entityManager->getConnection();
         $tables = [
             ['table' => 'entry', 'class' => Entry::class],
             ['table' => 'entry_comment', 'class' => EntryComment::class],

@@ -307,7 +307,7 @@ trait FactoryTrait
             $magazine,
             $actor,
             $owner,
-            MagazineBanDto::create('test', new \DateTime('+1 day'))
+            MagazineBanDto::create('test', new \DateTimeImmutable('+1 day'))
         );
     }
 
