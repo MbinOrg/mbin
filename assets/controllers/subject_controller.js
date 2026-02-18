@@ -10,6 +10,7 @@ export default class extends Controller {
     static targets = ['loader', 'more', 'container', 'commentsCounter', 'favCounter', 'upvoteCounter', 'downvoteCounter'];
     static values = {
         loading: Boolean,
+        forceCombined: Boolean,
     };
     static sendBtnLabel = null;
 
@@ -437,7 +438,7 @@ export default class extends Controller {
     }
 
     isOnCombined() {
-        return location.pathname.endsWith('/combined') || location.pathname.includes('/combined/');
+        return this.forceCombinedValue || location.pathname.endsWith('/combined') || location.pathname.includes('/combined/');
     }
 
     filterClickEvent(e) {

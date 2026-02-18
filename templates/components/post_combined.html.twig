@@ -24,7 +24,8 @@
             })}).without('id') }}
             id="post-{{ post.id }}"
             data-controller="subject preview mentions html-refresh"
-            data-action="notifications:Notification@window->subject#notification">
+            data-action="notifications:Notification@window->subject#notification"
+            data-subject-force-combined-value="true">
             {% with %}
                 {% set hasTitle = post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                 {% set isAdult = post.isAdult %}
