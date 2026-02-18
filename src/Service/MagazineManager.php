@@ -227,7 +227,7 @@ class MagazineManager
             throw new UserCannotBeBanned();
         }
 
-        Assert::nullOrGreaterThan($dto->expiredAt, new \DateTime());
+        Assert::nullOrGreaterThan($dto->expiredAt, new \DateTimeImmutable());
 
         $ban = $magazine->addBan($user, $bannedBy, $dto->reason, $dto->expiredAt);
 

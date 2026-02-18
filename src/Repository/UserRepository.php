@@ -14,6 +14,7 @@ use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,6 +50,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function __construct(
         ManagerRegistry $registry,
         private readonly SettingsManager $settingsManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -260,8 +262,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         $user->setPassword($newHashedPassword);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     public function findOneByUsername(string $username): ?User
@@ -489,7 +491,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
-            ->setParameters(['query' => "{$query}%", 'status' => EApplicationStatus::Approved->value])
+            ->setParameter('query', "{$query}%")
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();

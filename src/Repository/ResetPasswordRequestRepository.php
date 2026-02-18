@@ -6,8 +6,7 @@ namespace App\Repository;
 
 use App\Entity\ResetPasswordRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordRequestRepositoryTrait;
@@ -23,32 +22,26 @@ class ResetPasswordRequestRepository extends ServiceEntityRepository implements 
 {
     use ResetPasswordRequestRepositoryTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct($registry, ResetPasswordRequest::class);
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function add(ResetPasswordRequest $entity, bool $flush = true): void
     {
-        $this->_em->persist($entity);
+        $this->entityManager->persist($entity);
         if ($flush) {
-            $this->_em->flush();
+            $this->entityManager->flush();
         }
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function remove(ResetPasswordRequest $entity, bool $flush = true): void
     {
-        $this->_em->remove($entity);
+        $this->entityManager->remove($entity);
         if ($flush) {
-            $this->_em->flush();
+            $this->entityManager->flush();
         }
     }
 

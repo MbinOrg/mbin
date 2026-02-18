@@ -26,7 +26,7 @@ class MagazineBanControllerTest extends WebTestCase
         $this->client->submit(
             $crawler->filter('#main form[name=magazine_ban]')->selectButton('Ban')->form([
                 'magazine_ban[reason]' => 'Reason test',
-                'magazine_ban[expiredAt]' => (new \DateTime('+2 weeks'))->format('Y-m-d H:i:s'),
+                'magazine_ban[expiredAt]' => (new \DateTimeImmutable('+2 weeks'))->format('Y-m-d H:i:s'),
             ])
         );
 
