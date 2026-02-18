@@ -19,6 +19,7 @@ use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
@@ -54,6 +55,7 @@ class MagazineRepository extends ServiceEntityRepository
         private readonly SqlHelpers $sqlHelpers,
         private readonly ContentPopulationTransformer $contentPopulationTransformer,
         private readonly CacheInterface $cache,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Magazine::class);
     }
@@ -238,7 +240,7 @@ class MagazineRepository extends ServiceEntityRepository
     public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->orderBy(['createdAt' => 'DESC']);
 
@@ -337,7 +339,7 @@ class MagazineRepository extends ServiceEntityRepository
         $parameters = [
             'magazineId' => $magazineId,
         ];
-        $adapter = new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->entityManager->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
 
         $pagerfanta = new Pagerfanta($adapter);
 
@@ -425,7 +427,8 @@ class MagazineRepository extends ServiceEntityRepository
             )
             ->orderBy('m.apId', 'DESC')
             ->orderBy('m.subscriptionsCount', 'DESC')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'q' => '%'.$magazine.'%']);
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('q', '%'.$magazine.'%');
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
