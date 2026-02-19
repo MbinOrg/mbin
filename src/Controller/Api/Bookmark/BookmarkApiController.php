@@ -15,7 +15,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class BookmarkApiController extends BaseApi
@@ -65,7 +65,7 @@ class BookmarkApiController extends BaseApi
     #[OA\Tag(name: 'bookmark')]
     #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
-    public function subjectBookmarkStandard(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function subjectBookmarkStandard(int $subject_id, string $subject_type, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -127,7 +127,7 @@ class BookmarkApiController extends BaseApi
     #[OA\Tag(name: 'bookmark')]
     #[Security(name: 'oauth2', scopes: ['bookmark:add'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK:ADD')]
-    public function subjectBookmarkToList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function subjectBookmarkToList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -193,7 +193,7 @@ class BookmarkApiController extends BaseApi
     #[OA\Tag(name: 'bookmark')]
     #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
-    public function subjectRemoveBookmarkFromList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function subjectRemoveBookmarkFromList(string $list_name, int $subject_id, string $subject_type, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -259,7 +259,7 @@ class BookmarkApiController extends BaseApi
     #[OA\Tag(name: 'bookmark')]
     #[Security(name: 'oauth2', scopes: ['bookmark:remove'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK:REMOVE')]
-    public function subjectRemoveBookmarks(int $subject_id, string $subject_type, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function subjectRemoveBookmarks(int $subject_id, string $subject_type, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);

@@ -41,7 +41,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
@@ -60,7 +60,7 @@ class EntryManager implements ContentManagerInterface
         private readonly BadgeManager $badgeManager,
         private readonly EntryFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactory $entryLimiter,
+        private readonly RateLimiterFactoryInterface $entryLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,

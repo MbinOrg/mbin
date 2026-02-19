@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -84,7 +84,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiPostLimiter,
+        RateLimiterFactoryInterface $apiPostLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiPostLimiter);
 
@@ -178,7 +178,7 @@ class PostsCreateApi extends PostsBaseApi
         Magazine $magazine,
         PostManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiImageLimiter,
+        RateLimiterFactoryInterface $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

@@ -28,7 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Webmozart\Assert\Assert;
 
 class EntryCommentManager implements ContentManagerInterface
@@ -39,7 +39,7 @@ class EntryCommentManager implements ContentManagerInterface
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentFactory $factory,
-        private readonly RateLimiterFactory $entryCommentLimiter,
+        private readonly RateLimiterFactoryInterface $entryCommentLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,

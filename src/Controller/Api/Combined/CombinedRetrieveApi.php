@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CombinedRetrieveApi extends BaseApi
@@ -115,8 +115,8 @@ class CombinedRetrieveApi extends BaseApi
     )]
     #[OA\Tag(name: 'combined')]
     public function collection(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
         #[MapQueryParameter] ?int $p,
@@ -217,8 +217,8 @@ class CombinedRetrieveApi extends BaseApi
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
     public function userCollection(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
         #[MapQueryParameter] ?int $p,
@@ -232,8 +232,8 @@ class CombinedRetrieveApi extends BaseApi
     }
 
     private function generateResponse(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         ?int $p,
         Security $security,
         ?string $sort,

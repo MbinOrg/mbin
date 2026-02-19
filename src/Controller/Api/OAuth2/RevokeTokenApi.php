@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class RevokeTokenApi extends BaseApi
@@ -49,7 +49,7 @@ class RevokeTokenApi extends BaseApi
     public function __invoke(
         EntityManagerInterface $entityManager,
         OAuthTokenRevoker $revoker,
-        RateLimiterFactory $apiOauthTokenRevokeLimiter,
+        RateLimiterFactoryInterface $apiOauthTokenRevokeLimiter,
     ) {
         $headers = $this->rateLimit($apiOauthTokenRevokeLimiter);
 

@@ -22,7 +22,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -76,7 +76,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
         InstanceManager $instanceManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -144,7 +144,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:federation:update'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function banInstance(
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
         string $domain,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
@@ -203,7 +203,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:federation:update'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function unbanInstance(
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
         #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
@@ -256,7 +256,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:federation:update'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function allowInstance(
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
         string $domain,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
@@ -315,7 +315,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:federation:update'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function denyInstance(
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
         #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);

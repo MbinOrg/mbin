@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class NotificationRetrieveApi extends NotificationBaseApi
@@ -70,7 +70,7 @@ class NotificationRetrieveApi extends NotificationBaseApi
     public function __invoke(
         #[MapEntity(id: 'notification_id')]
         Notification $notification,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 
@@ -152,7 +152,7 @@ class NotificationRetrieveApi extends NotificationBaseApi
     public function collection(
         string $status,
         NotificationRepository $repository,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 
@@ -224,7 +224,7 @@ class NotificationRetrieveApi extends NotificationBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:NOTIFICATION:READ')]
     public function count(
         NotificationRepository $repository,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 

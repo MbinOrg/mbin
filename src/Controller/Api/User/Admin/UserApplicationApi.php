@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserApplicationApi extends UserBaseApi
@@ -81,8 +81,8 @@ class UserApplicationApi extends UserBaseApi
     /** Retrieve users waiting for admin approval */
     public function retrieve(
         UserFactory $userFactory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapQueryParameter] int $p = 1,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -146,8 +146,8 @@ class UserApplicationApi extends UserBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function approve(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapEntity(id: 'user_id')] User $user,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -202,8 +202,8 @@ class UserApplicationApi extends UserBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function reject(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapEntity(id: 'user_id')] User $user,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);

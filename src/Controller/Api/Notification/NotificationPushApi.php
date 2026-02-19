@@ -22,7 +22,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -67,7 +67,7 @@ class NotificationPushApi extends NotificationBaseApi
      * Register a new push subscription.
      */
     public function createSubscription(
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
         UserPushSubscriptionRepository $repository,
         SettingsManager $settingsManager,
         UserPushSubscriptionManager $pushSubscriptionManager,
@@ -149,7 +149,7 @@ class NotificationPushApi extends NotificationBaseApi
      * Delete the existing push subscription.
      */
     public function deleteSubscription(
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
         $user = $this->getUserOrThrow();
@@ -211,7 +211,7 @@ class NotificationPushApi extends NotificationBaseApi
      * Send a test push notification.
      */
     public function testSubscription(
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
         UserPushSubscriptionRepository $repository,
         UserPushSubscriptionManager $pushSubscriptionManager,
         TranslatorInterface $translator,

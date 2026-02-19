@@ -33,7 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -44,7 +44,7 @@ class MagazineManager
     public function __construct(
         private readonly MagazineFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactory $magazineLimiter,
+        private readonly RateLimiterFactoryInterface $magazineLimiter,
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,

@@ -41,7 +41,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -57,7 +57,7 @@ readonly class UserManager
         private MessageBusInterface $bus,
         private EmailVerifier $verifier,
         private EntityManagerInterface $entityManager,
-        private RateLimiterFactory $userRegisterLimiter,
+        private RateLimiterFactoryInterface $userRegisterLimiter,
         private UserFollowRequestRepository $requestRepository,
         private UserFollowRepository $userFollowRepository,
         private UserRepository $userRepository,
