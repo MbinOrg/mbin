@@ -35,7 +35,7 @@ class Unique extends Constraint
         public array $fields,
         public array $idFields = [],
     ) {
-        parent::__construct([]);
+        parent::__construct();
 
         if (0 === \count($fields)) {
             throw new InvalidOptionsException('`fields` option must have at least one field', ['fields']);
