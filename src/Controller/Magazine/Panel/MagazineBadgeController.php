@@ -25,8 +25,12 @@ class MagazineBadgeController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function badges(Magazine $magazine, BadgeManager $manager, Request $request): Response
-    {
+    public function badges(
+        #[MapEntity]
+        Magazine $magazine,
+        BadgeManager $manager,
+        Request $request,
+    ): Response {
         $badges = $this->repository->findBadges($magazine);
 
         $dto = new BadgeDto();

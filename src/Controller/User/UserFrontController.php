@@ -22,6 +22,7 @@ use App\Repository\PostRepository;
 use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use App\Service\SubjectOverviewManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +38,12 @@ class UserFrontController extends AbstractController
     ) {
     }
 
-    public function front(User $user, Request $request, SearchRepository $repository): Response
-    {
+    public function front(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        SearchRepository $repository,
+    ): Response {
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -85,8 +90,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function entries(User $user, Request $request, EntryRepository $repository): Response
-    {
+    public function entries(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        EntryRepository $repository,
+    ): Response {
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -122,8 +131,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function comments(User $user, Request $request, EntryCommentRepository $repository): Response
-    {
+    public function comments(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        EntryCommentRepository $repository,
+    ): Response {
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -165,8 +178,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function posts(User $user, Request $request, PostRepository $repository): Response
-    {
+    public function posts(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        PostRepository $repository,
+    ): Response {
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -203,8 +220,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function replies(User $user, Request $request, PostCommentRepository $repository): Response
-    {
+    public function replies(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        PostCommentRepository $repository,
+    ): Response {
         $response = new Response();
         if ($user->apId) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
@@ -249,8 +270,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function moderated(User $user, MagazineRepository $repository, Request $request): Response
-    {
+    public function moderated(
+        #[MapEntity]
+        User $user,
+        MagazineRepository $repository,
+        Request $request,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
@@ -279,8 +304,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function subscriptions(User $user, MagazineRepository $repository, Request $request): Response
-    {
+    public function subscriptions(
+        #[MapEntity]
+        User $user,
+        MagazineRepository $repository,
+        Request $request,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
@@ -307,8 +336,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function followers(User $user, UserRepository $repository, Request $request): Response
-    {
+    public function followers(
+        #[MapEntity]
+        User $user,
+        UserRepository $repository,
+        Request $request,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
@@ -329,8 +362,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function following(User $user, UserRepository $manager, Request $request): Response
-    {
+    public function following(
+        #[MapEntity]
+        User $user,
+        UserRepository $manager,
+        Request $request,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();
@@ -357,8 +394,12 @@ class UserFrontController extends AbstractController
         );
     }
 
-    public function boosts(User $user, Request $request, SearchRepository $repository)
-    {
+    public function boosts(
+        #[MapEntity]
+        User $user,
+        Request $request,
+        SearchRepository $repository,
+    ): Response {
         $requestedByUser = $this->getUser();
         if ($user->isDeleted && (!$requestedByUser || (!$requestedByUser->isAdmin() && !$requestedByUser->isModerator()) || null === $user->markedForDeletionAt)) {
             throw $this->createNotFoundException();

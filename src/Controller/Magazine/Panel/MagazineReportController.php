@@ -26,8 +26,12 @@ class MagazineReportController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function reports(Magazine $magazine, Request $request, string $status): Response
-    {
+    public function reports(
+        #[MapEntity]
+        Magazine $magazine,
+        Request $request,
+        string $status,
+    ): Response {
         $reports = $this->repository->findReports($magazine, $this->getPageNb($request), status: $status);
         $this->notificationRepository->markReportNotificationsInMagazineAsRead($this->getUserOrThrow(), $magazine);
 

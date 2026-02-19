@@ -7,6 +7,7 @@ namespace App\Controller\Magazine;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -20,7 +21,7 @@ class MagazineOwnershipRequestController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function toggle(Magazine $magazine, Request $request): Response
+    public function toggle(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         // applying to be owner is only supported for local magazines
         if ($magazine->apId) {
@@ -35,7 +36,7 @@ class MagazineOwnershipRequestController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function accept(Magazine $magazine, Request $request): Response
+    public function accept(#[MapEntity] Magazine $magazine, Request $request): Response
     {
         $this->validateCsrf('magazine_ownership_request', $request->getPayload()->get('token'));
 

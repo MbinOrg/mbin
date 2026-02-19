@@ -98,4 +98,9 @@ class SqlHelpers
             ->setParameter('user', $user)
             ->getDql();
     }
+
+    public static function getRealClassName(EntityManagerInterface $entityManager, mixed $object): string
+    {
+        return $entityManager->getClassMetadata(\get_class($object))->getName();
+    }
 }

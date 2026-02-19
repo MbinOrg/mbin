@@ -26,8 +26,11 @@ class MagazineModeratorController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function moderators(Magazine $magazine, Request $request): Response
-    {
+    public function moderators(
+        #[MapEntity]
+        Magazine $magazine,
+        Request $request,
+    ): Response {
         $dto = new ModeratorDto($magazine);
 
         $form = $this->createForm(ModeratorType::class, $dto);

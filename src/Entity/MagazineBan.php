@@ -31,8 +31,8 @@ class MagazineBan
     public ?User $bannedBy;
     #[Column(type: 'text', length: 2048, nullable: true)]
     public ?string $reason = null;
-    #[Column(type: 'datetimetz', nullable: true)]
-    public ?\DateTimeInterface $expiredAt = null;
+    #[Column(type: 'datetimetz_immutable', nullable: true)]
+    public ?\DateTimeImmutable $expiredAt = null;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -43,7 +43,7 @@ class MagazineBan
         User $user,
         User $bannedBy,
         ?string $reason = null,
-        ?\DateTimeInterface $expiredAt = null,
+        ?\DateTimeImmutable $expiredAt = null,
     ) {
         $this->magazine = $magazine;
         $this->user = $user;

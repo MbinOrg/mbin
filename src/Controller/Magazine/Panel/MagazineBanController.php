@@ -12,6 +12,7 @@ use App\Form\MagazineBanType;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\MagazineManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -27,8 +28,12 @@ class MagazineBanController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function bans(Magazine $magazine, UserRepository $repository, Request $request): Response
-    {
+    public function bans(
+        #[MapEntity]
+        Magazine $magazine,
+        UserRepository $repository,
+        Request $request,
+    ): Response {
         return $this->render(
             'magazine/panel/bans.html.twig',
             [
@@ -40,8 +45,13 @@ class MagazineBanController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function ban(Magazine $magazine, Request $request, ?User $user = null): Response
-    {
+    public function ban(
+        #[MapEntity]
+        Magazine $magazine,
+        Request $request,
+        #[MapEntity]
+        ?User $user = null,
+    ): Response {
         if (!$user) {
             $user = $this->userRepository->findOneByUsername($request->query->get('username'));
         }
@@ -67,8 +77,13 @@ class MagazineBanController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function unban(Magazine $magazine, User $user, Request $request): Response
-    {
+    public function unban(
+        #[MapEntity]
+        Magazine $magazine,
+        #[MapEntity]
+        User $user,
+        Request $request,
+    ): Response {
         $this->validateCsrf('magazine_unban', $request->getPayload()->get('token'));
 
         $this->manager->unban($magazine, $user);

@@ -20,7 +20,7 @@ class MessageController extends AbstractController
     }
 
     public function __invoke(
-        #[MapEntity(mapping: ['uuid' => 'uuid'])]
+        #[MapEntity]
         Message $message,
         Request $request,
     ): Response {
