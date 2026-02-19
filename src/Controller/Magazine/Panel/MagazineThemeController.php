@@ -22,8 +22,11 @@ class MagazineThemeController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        Request $request,
+    ): Response {
         $dto = new MagazineThemeDto($magazine);
 
         $form = $this->createForm(MagazineThemeType::class, $dto);

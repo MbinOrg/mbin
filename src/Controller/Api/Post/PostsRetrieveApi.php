@@ -25,7 +25,7 @@ use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostsRetrieveApi extends PostsBaseApi
@@ -74,8 +74,8 @@ class PostsRetrieveApi extends PostsBaseApi
         Post $post,
         PostFactory $factory,
         EventDispatcherInterface $dispatcher,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -181,8 +181,8 @@ class PostsRetrieveApi extends PostsBaseApi
         PostRepository $repository,
         PostFactory $factory,
         RequestStack $request,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         #[MapQueryParameter] ?string $federation,
     ): JsonResponse {
@@ -308,8 +308,8 @@ class PostsRetrieveApi extends PostsBaseApi
     public function subscribed(
         ContentRepository $repository,
         PostFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
@@ -433,8 +433,8 @@ class PostsRetrieveApi extends PostsBaseApi
     public function moderated(
         ContentRepository $repository,
         PostFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
@@ -551,8 +551,8 @@ class PostsRetrieveApi extends PostsBaseApi
     public function favourited(
         ContentRepository $repository,
         PostFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
@@ -699,8 +699,8 @@ class PostsRetrieveApi extends PostsBaseApi
         Magazine $magazine,
         ContentRepository $repository,
         PostFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,

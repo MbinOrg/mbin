@@ -11,6 +11,7 @@ use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -542,7 +543,8 @@ class ContentRepository
     {
         $conn = $this->entityManager->getConnection();
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery(['uId' => $user->getId()]);
+        $stmt->bindValue('uId', $user->getId(), ParameterType::INTEGER);
+        $result = $stmt->executeQuery();
         $rows = $result->fetchAllAssociative();
         $result = [];
         foreach ($rows as $row) {
