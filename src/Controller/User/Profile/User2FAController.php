@@ -160,7 +160,7 @@ class User2FAController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function remove(#[MapEntity] User $user, Request $request): Response
+    public function remove(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
     {
         $this->validateCsrf('user_2fa_remove', $request->getPayload()->get('token'));
 

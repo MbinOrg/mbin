@@ -18,7 +18,7 @@ class UserBanController extends AbstractController
 {
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function ban(
-        #[MapEntity] User $user,
+        #[MapEntity(mapping: ['username' => 'username'])] User $user,
         UserManager $manager,
         Request $request,
     ): Response {
@@ -41,7 +41,7 @@ class UserBanController extends AbstractController
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function unban(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         UserManager $manager,
         Request $request,

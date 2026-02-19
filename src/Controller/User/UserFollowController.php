@@ -18,7 +18,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('follow', subject: 'following')]
     public function follow(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $following,
         UserManager $manager,
         Request $request,
@@ -35,7 +35,7 @@ class UserFollowController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('follow', subject: 'following')]
     public function unfollow(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $following,
         UserManager $manager,
         Request $request,

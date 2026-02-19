@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 class MagazineModController extends AbstractController
 {
     public function __invoke(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         MagazineRepository $repository,
         Request $request,

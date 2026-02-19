@@ -21,7 +21,7 @@ class MagazinePeopleFrontController extends AbstractController
     }
 
     public function __invoke(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         ?string $category,
         Request $request,

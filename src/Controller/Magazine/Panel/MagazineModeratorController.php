@@ -27,7 +27,7 @@ class MagazineModeratorController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
     public function moderators(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         Request $request,
     ): Response {

@@ -39,7 +39,7 @@ class UserFrontController extends AbstractController
     }
 
     public function front(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         SearchRepository $repository,
@@ -91,7 +91,7 @@ class UserFrontController extends AbstractController
     }
 
     public function entries(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         EntryRepository $repository,
@@ -132,7 +132,7 @@ class UserFrontController extends AbstractController
     }
 
     public function comments(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         EntryCommentRepository $repository,
@@ -179,7 +179,7 @@ class UserFrontController extends AbstractController
     }
 
     public function posts(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         PostRepository $repository,
@@ -221,7 +221,7 @@ class UserFrontController extends AbstractController
     }
 
     public function replies(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         PostCommentRepository $repository,
@@ -271,7 +271,7 @@ class UserFrontController extends AbstractController
     }
 
     public function moderated(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         MagazineRepository $repository,
         Request $request,
@@ -305,7 +305,7 @@ class UserFrontController extends AbstractController
     }
 
     public function subscriptions(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         MagazineRepository $repository,
         Request $request,
@@ -337,7 +337,7 @@ class UserFrontController extends AbstractController
     }
 
     public function followers(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         UserRepository $repository,
         Request $request,
@@ -363,7 +363,7 @@ class UserFrontController extends AbstractController
     }
 
     public function following(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         UserRepository $manager,
         Request $request,
@@ -395,7 +395,7 @@ class UserFrontController extends AbstractController
     }
 
     public function boosts(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
         SearchRepository $repository,

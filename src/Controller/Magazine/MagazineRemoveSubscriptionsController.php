@@ -19,7 +19,7 @@ class MagazineRemoveSubscriptionsController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function __invoke(#[MapEntity] Magazine $magazine, Request $request): Response
+    public function __invoke(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->validateCsrf('magazine_remove_subscriptions', $request->getPayload()->get('token'));
 

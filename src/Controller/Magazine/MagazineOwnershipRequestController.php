@@ -21,7 +21,7 @@ class MagazineOwnershipRequestController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('subscribe', subject: 'magazine')]
-    public function toggle(#[MapEntity] Magazine $magazine, Request $request): Response
+    public function toggle(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         // applying to be owner is only supported for local magazines
         if ($magazine->apId) {
@@ -36,7 +36,7 @@ class MagazineOwnershipRequestController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    public function accept(#[MapEntity] Magazine $magazine, Request $request): Response
+    public function accept(#[MapEntity(mapping: ['name' => 'name'])] Magazine $magazine, Request $request): Response
     {
         $this->validateCsrf('magazine_ownership_request', $request->getPayload()->get('token'));
 

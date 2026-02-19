@@ -113,7 +113,7 @@ class InstanceDetailsApi extends InstanceBaseApi
     #[OA\Tag('admin/instance')]
     public function retrieveRemoteInstanceDetails(
         RateLimiterFactory $apiReadLimiter,
-        #[MapEntity] Instance $instance,
+        #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 

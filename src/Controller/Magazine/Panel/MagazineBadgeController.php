@@ -26,7 +26,7 @@ class MagazineBadgeController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function badges(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         BadgeManager $manager,
         Request $request,

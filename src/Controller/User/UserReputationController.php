@@ -25,7 +25,7 @@ class UserReputationController extends AbstractController
     }
 
     public function __invoke(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         ?string $reputationType,
         Request $request,

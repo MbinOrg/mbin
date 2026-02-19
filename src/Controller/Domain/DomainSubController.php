@@ -21,7 +21,7 @@ class DomainSubController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function subscribe(#[MapEntity] Domain $domain, Request $request): Response
+    public function subscribe(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->subscribe($domain, $this->getUserOrThrow());
 
@@ -33,7 +33,7 @@ class DomainSubController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function unsubscribe(#[MapEntity] Domain $domain, Request $request): Response
+    public function unsubscribe(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->unsubscribe($domain, $this->getUserOrThrow());
 

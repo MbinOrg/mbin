@@ -119,7 +119,7 @@ class UserRetrieveApi extends UserBaseApi
     )]
     #[OA\Tag(name: 'user')]
     public function username(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         UserFactory $factory,
         RateLimiterFactory $apiReadLimiter,

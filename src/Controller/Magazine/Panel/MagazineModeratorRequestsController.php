@@ -24,7 +24,7 @@ class MagazineModeratorRequestsController extends AbstractController
 
     #[IsGranted('edit', subject: 'magazine')]
     public function requests(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         Request $request,
     ): Response {
@@ -37,9 +37,9 @@ class MagazineModeratorRequestsController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
     public function accept(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
     ): Response {
@@ -53,9 +53,9 @@ class MagazineModeratorRequestsController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
     public function reject(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         Request $request,
     ): Response {

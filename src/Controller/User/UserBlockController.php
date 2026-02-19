@@ -17,7 +17,7 @@ class UserBlockController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
     public function block(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $blocked,
         UserManager $manager,
         Request $request,
@@ -33,7 +33,7 @@ class UserBlockController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     public function unblock(
-        #[MapEntity]
+        #[MapEntity(mapping: ['username' => 'username'])]
         User $blocked,
         UserManager $manager,
         Request $request,

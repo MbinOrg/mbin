@@ -21,7 +21,7 @@ class DomainBlockController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function block(#[MapEntity] Domain $domain, Request $request): Response
+    public function block(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->block($domain, $this->getUserOrThrow());
 
@@ -33,7 +33,7 @@ class DomainBlockController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    public function unblock(#[MapEntity] Domain $domain, Request $request): Response
+    public function unblock(#[MapEntity(mapping: ['name' => 'name'])] Domain $domain, Request $request): Response
     {
         $this->manager->unblock($domain, $this->getUserOrThrow());
 

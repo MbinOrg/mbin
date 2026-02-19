@@ -27,7 +27,7 @@ class MagazineReportController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function reports(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         Request $request,
         string $status,

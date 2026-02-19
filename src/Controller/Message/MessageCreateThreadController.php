@@ -24,7 +24,7 @@ class MessageCreateThreadController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('message', subject: 'receiver')]
-    public function __invoke(#[MapEntity] User $receiver, Request $request): Response
+    public function __invoke(#[MapEntity(mapping: ['username' => 'username'])] User $receiver, Request $request): Response
     {
         $threads = $this->threadRepository->findByParticipants([$this->getUserOrThrow(), $receiver]);
         if ($threads && \sizeof($threads) > 0) {

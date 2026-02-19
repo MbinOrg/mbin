@@ -23,7 +23,7 @@ class MagazineEditController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('edit', subject: 'magazine')]
     public function __invoke(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         Request $request,
     ): Response {

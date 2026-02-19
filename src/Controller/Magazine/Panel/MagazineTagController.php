@@ -24,7 +24,7 @@ class MagazineTagController extends AbstractController
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
     public function __invoke(
-        #[MapEntity]
+        #[MapEntity(mapping: ['name' => 'name'])]
         Magazine $magazine,
         BadgeManager $manager,
         Request $request,

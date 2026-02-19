@@ -204,7 +204,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function unbanInstance(
         RateLimiterFactory $apiModerateLimiter,
-        #[MapEntity] Instance $instance,
+        #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         try {
@@ -316,7 +316,7 @@ class InstanceUpdateFederationApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:UPDATE')]
     public function denyInstance(
         RateLimiterFactory $apiModerateLimiter,
-        #[MapEntity] Instance $instance,
+        #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
         try {
