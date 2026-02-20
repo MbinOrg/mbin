@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Twig\Runtime;
 
 use App\Markdown\MarkdownConverter;
+use Doctrine\SqlFormatter\NullHighlighter;
+use Doctrine\SqlFormatter\SqlFormatter;
+use Symfony\Component\Uid\Uuid;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class FormattingExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private readonly MarkdownConverter $markdownConverter)
-    {
+    public function __construct(
+        private readonly MarkdownConverter $markdownConverter,
+        // private readonly SqlFormatter $sqlFormatter,
+    ) {
     }
 
     public function convertToHtml(?string $value, string $sourceType = ''): string
@@ -79,5 +84,20 @@ class FormattingExtensionRuntime implements RuntimeExtensionInterface
         } else {
             return round($value / 1000000000, 2).'B';
         }
+    }
+
+    public function uuidEnd(?Uuid $uuid): string
+    {
+        $string = $uuid->toString();
+        $parts = explode('-', $string);
+
+        return end($parts);
+    }
+
+    public function formatQuery(string $query): string
+    {
+        $formatter = new SqlFormatter(new NullHighlighter());
+
+        return $formatter->format($query);
     }
 }
