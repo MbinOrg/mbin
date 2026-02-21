@@ -196,7 +196,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         name: 'sort',
         description: 'Sort method to use when retrieving magazines',
         in: 'query',
-        schema: new OA\Schema(type: 'string', default: MagazinePageView::SORT_HOT, enum: MagazineRepository::SORT_OPTIONS)
+        schema: new OA\Schema(type: 'string', default: MagazinePageView::SORT_HOT, enum: [...MagazineRepository::SORT_OPTIONS, MagazinePageView::SORT_OWNER_LAST_ACTIVE])
     )]
     #[OA\Parameter(
         name: 'federation',
@@ -209,6 +209,12 @@ class MagazineRetrieveApi extends MagazineBaseApi
         description: 'Options for retrieving adult magazines',
         in: 'query',
         schema: new OA\Schema(type: 'string', default: MagazinePageView::ADULT_HIDE, enum: MagazinePageView::ADULT_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'abandoned',
+        description: 'Options for retrieving abandoned magazines (federation must be \''.Criteria::AP_LOCAL.'\')',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
     )]
     #[OA\Tag(name: 'magazine')]
     public function collection(
@@ -225,6 +231,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
             $request->get('sort', MagazinePageView::SORT_HOT),
             $request->get('federation', Criteria::AP_ALL),
             $request->get('hide_adult', MagazinePageView::ADULT_HIDE),
+            filter_var($request->get('abandoned', 'false'), FILTER_VALIDATE_BOOL),
         );
         $criteria->perPage = self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE));
 
