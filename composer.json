@@ -83,7 +83,7 @@
         "symfony/mercure-bundle": "0.3.*",
         "symfony/messenger": "*",
         "symfony/mime": "*",
-        "symfony/monolog-bundle": "^3.10.0",
+        "symfony/monolog-bundle": "^4.0.1",
         "symfony/property-access": "*",
         "symfony/property-info": "*",
         "symfony/rate-limiter": "*",
