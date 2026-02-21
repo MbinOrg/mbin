@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Search;
 
+use App\ActivityPub\ActorHandle;
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\Entity\Contracts\ContentInterface;
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
 use App\Repository\SearchRepository;
@@ -136,6 +139,7 @@ class SearchRetrieveApi extends BaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
+        /** @var string $q */
         $q = $request->get('q');
         if (null === $q) {
             throw new BadRequestHttpException();
@@ -155,46 +159,104 @@ class SearchRetrieveApi extends BaseApi
         $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage, authorId: $authorId, magazineId: $magazineId, specificType: $type);
         $dtos = [];
         foreach ($items->getCurrentPageResults() as $value) {
-            \assert($value instanceof ContentInterface);
-            array_push($dtos, $this->serializeContentInterface($value));
+            // TODO here we have two options
+            //  A: skip non-content values
+            //  B: add User and Magazine to the schema of the response; this might be a breaking API change
+            if ($value instanceof ContentInterface) {
+                $dtos[] = $this->serializeContentInterface($value);
+            } elseif ($value instanceof User) {
+                $dtos[] = $this->serializeUser($userFactory->createDto($value));
+            } elseif ($value instanceof Magazine) {
+                $dtos[] = $this->serializeMagazine($magazineFactory->createDto($value));
+            } else {
+                $this->logger->error('Unexpected result type: '.\get_class($value));
+            }
         }
 
         $response = $this->serializePaginated($dtos, $items);
 
         $response['apActors'] = [];
         $response['apObjects'] = [];
-        $actors = [];
-        $objects = [];
-        if (!$settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN') || $this->getUser()) {
-            $actors = $manager->findActivityPubActorsByUsername($q);
-            $objects = $manager->findActivityPubObjectsByURL($q);
-        }
-
-        foreach ($actors as $actor) {
-            switch ($actor['type']) {
-                case 'user':
-                    $response['apActors'][] = [
-                        'type' => 'user',
-                        'object' => $this->serializeUser($userFactory->createDto($actor['object'])),
-                    ];
-                    break;
-                case 'magazine':
-                    $response['apActors'][] = [
-                        'type' => 'magazine',
-                        'object' => $this->serializeMagazine($magazineFactory->createDto($actor['object'])),
-                    ];
-                    break;
+        if ($this->federatedSearchAllowed()) {
+            if ($handle = ActorHandle::parse($q)) {
+                $actors = $manager->findActivityPubActorsByUsername($handle);
+                $response['apActors'] = $this->transformActors($actors, $userFactory, $magazineFactory);
             }
-        }
 
-        foreach ($objects as $object) {
-            \assert($object instanceof ContentInterface);
-            $response['apObjects'][] = $this->serializeContentInterface($object);
+            $objects = $manager->findActivityPubObjectsByURL($q);
+            foreach ($objects['errors'] as $error) {
+                /** @var \Exception $error */
+                $this->logger->warning(
+                    'Exception while resolving URL {url}: {type}: {msg}',
+                    [
+                        'url' => $q,
+                        'type' => \get_class($error),
+                        'msg' => $error->getMessage(),
+                    ]
+                );
+            }
+
+            $transformedObjects = $this->transformObjects($objects['results'], $userFactory, $magazineFactory);
+            $response['apActors'] = [...$response['apActors'], ...$transformedObjects['actors']];
+            $response['apObjects'] = $transformedObjects['content'];
         }
 
         return new JsonResponse(
             $response,
             headers: $headers
         );
+    }
+
+    private function federatedSearchAllowed(): bool
+    {
+        return !$this->settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN')
+            || $this->getUser();
+    }
+
+    private function transformActors(array $actors, UserFactory $userFactory, MagazineFactory $magazineFactory): array
+    {
+        $ret = [];
+        foreach ($actors as $actor) {
+            $ret[] = $this->transformActor($actor, $userFactory, $magazineFactory);
+        }
+
+        return $ret;
+    }
+
+    private function transformActor(array $actor, UserFactory $userFactory, MagazineFactory $magazineFactory): array
+    {
+        return match ($actor['type']) {
+            'user' => [
+                'type' => 'user',
+                'object' => $this->serializeUser($userFactory->createDto($actor['object'])),
+            ],
+            'magazine' => [
+                'type' => 'magazine',
+                'object' => $this->serializeMagazine($magazineFactory->createDto($actor['object'])),
+            ],
+            default => throw new \LogicException('Unexpected actor type: '.$actor['type']),
+        };
+    }
+
+    private function transformObjects(array $objects, UserFactory $userFactory, MagazineFactory $magazineFactory): array
+    {
+        $actors = [];
+        $content = [];
+        foreach ($objects as $object) {
+            if ('user' === $object['type'] || 'magazine' === $object['type']) {
+                $actors[] = $this->transformActor($object, $userFactory, $magazineFactory);
+            } elseif ('subject' === $object['type']) {
+                $subject = $object['object'];
+                \assert($subject instanceof ContentInterface);
+                $content[] = $this->serializeContentInterface($subject);
+            } else {
+                throw new \LogicException('Unexpected actor type: '.$object['type']);
+            }
+        }
+
+        return [
+            'actors' => $actors,
+            'content' => $content,
+        ];
     }
 }
