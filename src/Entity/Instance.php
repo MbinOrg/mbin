@@ -19,7 +19,7 @@ class Instance
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
     use UpdatedAtTrait;
-    public const NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD = 10;
+    public const int NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD = 10;
 
     public static function getDateBeforeDead(): \DateTimeImmutable
     {
