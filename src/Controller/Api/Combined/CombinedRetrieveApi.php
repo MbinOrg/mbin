@@ -16,6 +16,7 @@ use App\Repository\Criteria;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -242,6 +243,7 @@ class CombinedRetrieveApi extends BaseApi
         ?int $perPage,
         ContentRepository $contentRepository,
         ?string $collectionType = null,
+        SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = new ContentPageView($p ?? 1, $security);
@@ -253,7 +255,7 @@ class CombinedRetrieveApi extends BaseApi
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($contentRepository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         switch ($collectionType) {
