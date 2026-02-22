@@ -153,7 +153,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.isBanned = false')
             ->andWhere('u.applicationStatus = :status')
-            ->andWhere('u.isVerified = true')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
 
@@ -162,7 +161,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findAllInactivePaginated(int $page, bool $onlyLocal = true, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, needToBeVerified: false);
 
         $builder->andWhere('u.visibility = :visibility')
             ->andWhere('u.isVerified = false')
@@ -179,7 +178,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
         $builder
-            ->andWhere('u.isVerified = true')
             ->andWhere('u.isBanned = true')
             ->andWhere('u.isDeleted = false');
 
@@ -190,7 +188,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
         $builder
-            ->andWhere('u.isVerified = true')
             ->andWhere('u.visibility = :visibility')
             ->andWhere('u.isDeleted = false')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_TRASHED);
@@ -201,18 +198,23 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findForDeletionPaginated(int $page): PagerfantaInterface
     {
         $builder = $this->createBasicQueryBuilder(onlyLocal: true, searchTerm: null)
-            ->andWhere('u.isVerified = true')
             ->andWhere('u.visibility = :visibility')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED);
 
         return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', 'ASC'));
     }
 
-    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm): QueryBuilder
+    /**
+     * @param bool|null $needToBeVerified this is only relevant if $onlyLocal is true, requires the user to be verified
+     */
+    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm, ?bool $needToBeVerified = true): QueryBuilder
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
             $builder->where('u.apId IS NULL');
+            if ($needToBeVerified) {
+                $builder->andWhere('u.isVerified = true');
+            }
         } else {
             $builder->where('u.apId IS NOT NULL');
         }
