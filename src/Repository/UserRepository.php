@@ -12,6 +12,7 @@ use App\Enums\EApplicationStatus;
 use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -687,5 +688,22 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $stmt->bindValue('status', EApplicationStatus::Approved->value);
 
         return $stmt->executeQuery()->fetchAllAssociative();
+    }
+  
+    public function findOldestUser(): ?User
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.apId IS NULL')
+            ->orderBy('u.createdAt', Order::Ascending->value);
+
+        $result = $qb->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
+
+        if (0 === \count($result)) {
+            return null;
+        }
+
+        return $result[0];
     }
 }
