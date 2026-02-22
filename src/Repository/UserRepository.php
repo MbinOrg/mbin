@@ -162,7 +162,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findAllInactivePaginated(int $page, bool $onlyLocal = true, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, needToBeVerified: false);
 
         $builder->andWhere('u.visibility = :visibility')
             ->andWhere('u.isVerified = false')
@@ -205,12 +205,17 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', 'ASC'));
     }
 
-    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm): QueryBuilder
+    /**
+     * @param bool|null $needToBeVerified this is only relevant if $onlyLocal is true, requires the user to be verified
+     */
+    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm, ?bool $needToBeVerified = true): QueryBuilder
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
-            $builder->where('u.apId IS NULL')
-                ->andWhere('u.isVerified = true');
+            $builder->where('u.apId IS NULL');
+            if ($needToBeVerified) {
+                $builder->andWhere('u.isVerified = true');
+            }
         } else {
             $builder->where('u.apId IS NOT NULL');
         }
