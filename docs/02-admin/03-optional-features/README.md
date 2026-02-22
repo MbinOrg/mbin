@@ -11,3 +11,4 @@ Like setting-up:
 - [Image metadata cleaning](05-image_metadata_cleaning.md) - Clean-up and remove metadata from images using `exiftool`.
 - [S3 storage](06-s3_storage.md) - Configure an object storage service (S3) compatible bucket for storing images.
 - [Anubis](07-anubis.md) - A service for weighing the incoming requests and may present them with a proof-of-work challenge. It is useful if your instance gets hit a lot of bot traffic that you're tired of filtering through
+- [Monitoring](08-monitoring.md) - Internal monitoring of requests and messengers
