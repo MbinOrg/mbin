@@ -689,7 +689,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
-  
+
     public function findOldestUser(): ?User
     {
         $qb = $this->createQueryBuilder('u')
