@@ -236,8 +236,8 @@ class ImageManager implements ImageManagerInterface
             }
 
             if ($content->isFile() && $content instanceof FileAttributes) {
-                $internalImagePath = $this->getInternalImagePath($content);
-                $image = $repository->findOneBy(['filePath' => $internalImagePath]);
+                [$internalImagePath, $fileName] = $this->getInternalImagePathAndName($content);
+                $image = $repository->findOneBy(['fileName' => $fileName, 'filePath' => $internalImagePath]);
                 if (!$image) {
                     try {
                         if (!$dryRun) {
@@ -296,10 +296,15 @@ class ImageManager implements ImageManagerInterface
         }
     }
 
-    private function getInternalImagePath(StorageAttributes $flySystemFile): string
+    /**
+     * @return array{0: string, 1: string} 0=path 1=name
+     */
+    private function getInternalImagePathAndName(StorageAttributes $flySystemFile): array
     {
         if (!$flySystemFile->isFile()) {
-            return $flySystemFile->path();
+            $parts = explode('/', $flySystemFile->path());
+
+            return [$flySystemFile->path(), end($parts)];
         }
 
         $path = $flySystemFile->path();
@@ -320,8 +325,9 @@ class ImageManager implements ImageManagerInterface
                 }
             }
         }
+        $parts = explode('/', $path);
 
-        return $path;
+        return [$path, end($parts)];
     }
 
     private function shouldNodeBeIgnored(array $ignoredPaths, StorageAttributes $content): bool

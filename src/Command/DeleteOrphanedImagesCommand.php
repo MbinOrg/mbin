@@ -56,7 +56,9 @@ class DeleteOrphanedImagesCommand extends Command
             fn (string $item) => '' !== $item
         );
 
-        $io->info(\sprintf('Ignoring files in: %s', implode(', ', $ignoredPaths)));
+        if (\sizeof($ignoredPaths)) {
+            $io->info(\sprintf('Ignoring files in: %s', implode(', ', $ignoredPaths)));
+        }
 
         try {
             foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $deletedImage) {
