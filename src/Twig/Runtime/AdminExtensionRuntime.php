@@ -18,6 +18,7 @@ readonly class AdminExtensionRuntime implements RuntimeExtensionInterface
         private TagRepository $tagRepository,
         private SettingsManager $settingsManager,
         private UserRepository $userRepository,
+        private bool $monitoringEnabled,
     ) {
     }
 
@@ -39,5 +40,10 @@ readonly class AdminExtensionRuntime implements RuntimeExtensionInterface
     {
         // show the signup requests page even if they are deactivated if there are any remaining
         return $this->settingsManager->getNewUsersNeedApproval() || $this->userRepository->findAllSignupRequestsPaginated()->count() > 0;
+    }
+
+    public function isMonitoringEnabled(): bool
+    {
+        return $this->monitoringEnabled;
     }
 }

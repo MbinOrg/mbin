@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Utils;
 
 use App\Entity\Entry;
+use App\Event\ActivityPub\CurlRequestBeginningEvent;
+use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use Embed\Embed as BaseEmbed;
 use Embed\Extractor;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -25,6 +28,7 @@ class Embed
         private CacheInterface $cache,
         private SettingsManager $settings,
         private LoggerInterface $logger,
+        private EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -33,6 +37,7 @@ class Embed
         unset($this->cache);
         unset($this->settings);
         unset($this->logger);
+        unset($this->dispatcher);
     }
 
     public function fetch($url): self
@@ -57,11 +62,14 @@ class Embed
             'embed_'.md5($url),
             function (ItemInterface $item) use ($url) {
                 $item->expiresAfter(3600);
+                $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
 
                 try {
                     $embed = $this->fetchEmbed($url);
                     $oembed = $embed->getOEmbed();
+                    $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true));
                 } catch (\Exception $e) {
+                    $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, false, exception: $e));
                     $this->logger->info('[Embed::fetch] Fetch failed: '.$e->getMessage());
                     $c = clone $this;
 

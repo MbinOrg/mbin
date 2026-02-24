@@ -17,6 +17,8 @@ final class FormattingExtension extends AbstractExtension
             new TwigFilter('markdown', [FormattingExtensionRuntime::class, 'convertToHtml']),
             new TwigFilter('bool', fn ($value) => (bool) $value),
             new TwigFilter('abbreviateNumber', [FormattingExtensionRuntime::class, 'abbreviateNumber']),
+            new TwigFilter('uuidEnd', [FormattingExtensionRuntime::class, 'uuidEnd']),
+            new TwigFilter('formatQuery', [FormattingExtensionRuntime::class, 'formatQuery']),
         ];
     }
 

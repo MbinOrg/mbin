@@ -1146,3 +1146,60 @@ magazine_rules_deprecated: the rules field is deprecated and will be removed in 
 reached_end: You've reached the end
 next_page: Next page
 previous_page: Previous page
+monitoring: Monitoring
+monitoring_queries: '{0}SQL Queries|{1}SQL Query|]1,Inf[ SQL Queries'
+monitoring_duration_min: min
+monitoring_duration_mean: mean
+monitoring_duration_max: max
+monitoring_query_count: count
+monitoring_query_total: total
+monitoring_duration: Duration
+monitoring_dont_group_similar: don't group similar queries
+monitoring_group_similar: group similar queries
+monitoring_http_method: HTTP Method
+monitoring_url: URL
+monitoring_request_successful: Successful
+monitoring_user_type: User Type
+monitoring_path: Route/Message class
+monitoring_handler: Controller/Transport
+monitoring_started: Started
+monitoring_twig_renders: Twig Renders
+monitoring_curl_requests: Curl Requests
+monitoring_route_overview: Spend execution time summed per route
+monitoring_route_overview_description: This graph shows the summed milliseconds spent grouped by the route/message
+  being computed
+monitoring_duration_overall: Other
+monitoring_duration_query: Query
+monitoring_duration_twig_render: Twit Render
+monitoring_duration_curl_request: Curl Request
+monitoring_duration_sending_response: Sending Response
+monitoring_dont_format_query: don't format query
+monitoring_format_query: format query
+monitoring_dont_show_parameters: don't show parameters
+monitoring_show_parameters: show parameters
+monitoring_execution_type: Execution Type
+monitoring_request: HTTP Request
+monitoring_messenger: Messenger
+monitoring_anonymous: Anonymous
+monitoring_user: User
+monitoring_activity_pub: ActivityPub
+monitoring_ajax: AJAX
+monitoring_created_from: Started after
+monitoring_created_to: Started before
+monitoring_duration_minimum: Minimum duration
+monitoring_submit: Filter
+monitoring_has_exception: Has exception
+monitoring_chart_ordering: Chart ordering
+monitoring_total_duration: Total duration
+monitoring_mean_duration: Mean duration
+monitoring_twig_compare_to_total: Compare to total duration
+monitoring_twig_compare_to_parent: Compare to parent duration
+monitoring_queries_enabled_persisted: Query monitoring is enabled.
+monitoring_queries_enabled_not_persisted: Query monitoring is enabled, but only the execution time.
+monitoring_queries_disabled: Query monitoring is disabled.
+monitoring_twig_renders_enabled_persisted: Twig render monitoring is enabled.
+monitoring_twig_renders_enabled_not_persisted: Twig rendering is enabled, but only the execution time.
+monitoring_twig_renders_disabled: Twig render monitoring is disabled.
+monitoring_curl_requests_enabled_persisted: Curl request monitoring is enabled.
+monitoring_curl_requests_enabled_not_persisted: Curl request monitoring is enabled, but only the execution time.
+monitoring_curl_requests_disabled: Curl request monitoring is disabled.
