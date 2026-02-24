@@ -3,10 +3,12 @@
 We have a few environment variables that can enable monitoring of the mbin server, 
 specifically the executed database queries, rendered html components and requested web resources during the execution of
 an HTTP request or a message handler (a background job).
+This allows the admin to collect performance metrics for optimizing the server settings,
+or developers to optimize the code.  
 
 Enabling monitoring on your server will have a performance impact. It is not necessarily noticeable for your users, 
-but it will increase the resource consumption .  
-During an execution context (request or messenger) we will collect monitoring information according to your settings.
+but it will increase the resource consumption.  
+During an execution context (request or messenger) the server will collect monitoring information according to your settings.
 After the execution is finished the collected information will be saved to the DB according to your settings
 (which is the main performance impact and happens after a request is finished).
 
