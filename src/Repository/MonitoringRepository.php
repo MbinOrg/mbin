@@ -24,6 +24,7 @@ class MonitoringRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
+        private readonly bool $monitoringEnabled,
         private readonly bool $monitoringQueryParametersEnabled,
         private readonly bool $monitoringQueriesEnabled,
         private readonly bool $monitoringQueriesPersistingEnabled,
@@ -100,6 +101,7 @@ class MonitoringRepository extends ServiceEntityRepository
 
     /**
      * @return array{
+     *     monitoringEnabled: bool,
      *     monitoringQueryParametersEnabled: bool,
      *     monitoringQueriesEnabled: bool,
      *     monitoringQueriesPersistingEnabled: bool,
@@ -112,6 +114,7 @@ class MonitoringRepository extends ServiceEntityRepository
     public function getConfiguration(): array
     {
         return [
+            'monitoringEnabled' => $this->monitoringEnabled,
             'monitoringQueryParametersEnabled' => $this->monitoringQueryParametersEnabled,
             'monitoringQueriesEnabled' => $this->monitoringQueriesEnabled,
             'monitoringQueriesPersistingEnabled' => $this->monitoringQueriesPersistingEnabled,
