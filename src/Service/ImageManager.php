@@ -223,7 +223,7 @@ class ImageManager implements ImageManagerInterface
     }
 
     /**
-     * @return iterable<array{path: string, internalPath: string, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     * @return iterable<array{path: string, internalPath: string, deleted: bool, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
      *
      * @throws FilesystemException
      */
@@ -246,6 +246,7 @@ class ImageManager implements ImageManagerInterface
                         yield [
                             'path' => $content->path(),
                             'internalPath' => $internalImagePath,
+                            'deleted' => true,
                             'successful' => true,
                             'fileSize' => $content->fileSize(),
                             'exception' => null,
@@ -254,11 +255,21 @@ class ImageManager implements ImageManagerInterface
                         yield [
                             'path' => $content->path(),
                             'internalPath' => $internalImagePath,
+                            'deleted' => true,
                             'successful' => false,
                             'fileSize' => $content->fileSize(),
                             'exception' => $e,
                         ];
                     }
+                } else {
+                    yield [
+                        'path' => $content->path(),
+                        'internalPath' => $internalImagePath,
+                        'deleted' => false,
+                        'successful' => true,
+                        'fileSize' => $content->fileSize(),
+                        'exception' => null,
+                    ];
                 }
             } elseif ($content->isDir()) {
                 foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths, $content->path()) as $deletedPath) {

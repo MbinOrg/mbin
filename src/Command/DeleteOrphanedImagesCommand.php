@@ -45,7 +45,7 @@ class DeleteOrphanedImagesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $io->progressStart();
+        $totalImages = 0;
         $totalDeletedSize = 0;
         $totalDeletedImages = 0;
         $errors = 0;
@@ -60,41 +60,48 @@ class DeleteOrphanedImagesCommand extends Command
             $io->info(\sprintf('Ignoring files in: %s', implode(', ', $ignoredPaths)));
         }
 
+        $progress = $io->createProgressBar();
+        $progress->start();
+
         try {
-            foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $deletedImage) {
-                if ($deletedImage['successful']) {
-                    $io->progressAdvance();
-                    if ($dryRun) {
-                        $io->text(\sprintf('Would have deleted "%s"', $deletedImage['path']));
+            foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $file) {
+                $totalImages++;
+                $progress->setMaxSteps($totalImages);
+                if ($file['deleted']) {
+                    if ($file['successful']) {
+                        $progress->advance();
+                        if ($dryRun) {
+                            $progress->setMessage(\sprintf('Would have deleted "%s"', $file['path']));
+                        } else {
+                            $progress->setMessage(\sprintf('Deleted "%s"', $file['path']));
+                        }
+                        if ($file['fileSize']) {
+                            $totalDeletedSize += $file['fileSize'];
+                        }
+                        ++$totalDeletedImages;
                     } else {
-                        $io->text(\sprintf('Deleted "%s"', $deletedImage['path']));
+                        if (null !== $file['exception']) {
+                            $io->warning(\sprintf('Failed to delete "%s". Message: "%s"', $file['path'], $file['exception']->getMessage()));
+                        } else {
+                            $io->warning(\sprintf('Failed to delete "%s".', $file['path']));
+                        }
+                        ++$errors;
                     }
-                    if ($deletedImage['fileSize']) {
-                        $totalDeletedSize += $deletedImage['fileSize'];
-                    }
-                    ++$totalDeletedImages;
-                } else {
-                    if (null !== $deletedImage['exception']) {
-                        $io->warning(\sprintf('Failed to delete "%s". Message: "%s"', $deletedImage['path'], $deletedImage['exception']->getMessage()));
-                    } else {
-                        $io->warning(\sprintf('Failed to delete "%s".', $deletedImage['path']));
-                    }
-                    ++$errors;
                 }
             }
         } catch (\Exception $e) {
-            $io->progressFinish();
+            $progress->finish();
             $io->error(\sprintf('There was an error deleting the files: "%s" - %s', \get_class($e), $e->getMessage()));
 
             return Command::FAILURE;
         }
 
-        $io->progressFinish();
+        $progress->finish();
         $megaBytes = round($totalDeletedSize / pow(1000, 2), 2);
         if ($dryRun) {
-            $io->info(\sprintf('Would have deleted %s images, and freed up %sMB', $totalDeletedImages, $megaBytes));
+            $io->info(\sprintf('Would have deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalImages, $megaBytes));
         } else {
-            $io->info(\sprintf('Deleted %s images, and freed up %sMB', $totalDeletedImages, $megaBytes));
+            $io->info(\sprintf('Deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalImages, $megaBytes));
         }
         if ($errors) {
             $io->warning(\sprintf('There were %s errors', $errors));

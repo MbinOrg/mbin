@@ -36,7 +36,7 @@ interface ImageManagerInterface
     /**
      * @param string[] $ignoredPaths
      *
-     * @return iterable<array{path: string, internalPath: string, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     * @return iterable<array{path: string, internalPath: string, deleted: bool, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
      *
      * @throws FilesystemException
      */
