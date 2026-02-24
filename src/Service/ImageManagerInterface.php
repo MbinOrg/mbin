@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Repository\ImageRepository;
+use League\Flysystem\FilesystemException;
+
 interface ImageManagerInterface
 {
     /**
@@ -29,4 +32,13 @@ interface ImageManagerInterface
     public function getUrl(?\App\Entity\Image $image): ?string;
 
     public function getMimetype(\App\Entity\Image $image): string;
+
+    /**
+     * @param string[] $ignoredPaths
+     *
+     * @return iterable<array{path: string, internalPath: string, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     *
+     * @throws FilesystemException
+     */
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable;
 }
