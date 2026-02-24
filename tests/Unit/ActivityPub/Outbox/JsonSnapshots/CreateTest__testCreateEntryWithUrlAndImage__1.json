@@ -47,6 +47,10 @@
         },
         "attachment": [
             {
+                "href": "https://joinmbin.org",
+                "type": "Link"
+            },
+            {
                 "type": "Image",
                 "mediaType": "image/png",
                 "url": "https://kbin.test/media/a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png",
@@ -58,10 +62,6 @@
                 ],
                 "width": 96,
                 "height": 96
-            },
-            {
-                "href": "https://joinmbin.org",
-                "type": "Link"
             }
         ],
         "image": {
