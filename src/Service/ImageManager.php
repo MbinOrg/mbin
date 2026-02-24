@@ -6,7 +6,11 @@ namespace App\Service;
 
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Repository\ImageRepository;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -209,5 +213,127 @@ class ImageManager implements ImageManagerInterface
         } catch (\Throwable $e) {
             return 'none';
         }
+    }
+
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable
+    {
+        foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths, '/') as $deletedPath) {
+            yield $deletedPath;
+        }
+    }
+
+    /**
+     * @return iterable<array{path: string, internalPath: string, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     *
+     * @throws FilesystemException
+     */
+    private function deleteOrphanedFilesIntern(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths, string $path): iterable
+    {
+        $contents = $this->publicUploadsFilesystem->listContents($path);
+        foreach ($contents as $content) {
+            if ($this->shouldNodeBeIgnored($ignoredPaths, $content)) {
+                continue;
+            }
+
+            if ($content->isFile() && $content instanceof FileAttributes) {
+                $internalImagePath = $this->getInternalImagePath($content);
+                $image = $repository->findOneBy(['filePath' => $internalImagePath]);
+                if (!$image) {
+                    try {
+                        if (!$dryRun) {
+                            $this->publicUploadsFilesystem->delete($content->path());
+                        }
+                        yield [
+                            'path' => $content->path(),
+                            'internalPath' => $internalImagePath,
+                            'successful' => true,
+                            'fileSize' => $content->fileSize(),
+                            'exception' => null,
+                        ];
+                    } catch (\Throwable $e) {
+                        yield [
+                            'path' => $content->path(),
+                            'internalPath' => $internalImagePath,
+                            'successful' => false,
+                            'fileSize' => $content->fileSize(),
+                            'exception' => $e,
+                        ];
+                    }
+                }
+            } elseif ($content->isDir()) {
+                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths, $content->path()) as $deletedPath) {
+                    yield $deletedPath;
+                }
+            }
+        }
+
+        if ($deleteEmptyDirectories) {
+            $contents = $this->publicUploadsFilesystem->listContents($path);
+            $length = 0;
+            foreach ($contents as $content) {
+                ++$length;
+            }
+            if (0 === $length) {
+                try {
+                    $this->publicUploadsFilesystem->deleteDirectory($path);
+                    yield [
+                        'path' => $path,
+                        'internalPath' => $path,
+                        'successful' => true,
+                        'fileSize' => null,
+                        'exception' => null,
+                    ];
+                } catch (\Throwable $e) {
+                    yield [
+                        'path' => $path,
+                        'internalPath' => $path,
+                        'successful' => false,
+                        'fileSize' => null,
+                        'exception' => $e,
+                    ];
+                }
+            }
+        }
+    }
+
+    private function getInternalImagePath(StorageAttributes $flySystemFile): string
+    {
+        if (!$flySystemFile->isFile()) {
+            return $flySystemFile->path();
+        }
+
+        $path = $flySystemFile->path();
+        if (str_starts_with($path, '/')) {
+            $path = substr($path, 1);
+        }
+
+        if (str_starts_with($path, 'cache')) {
+            $parts = explode('/', $path);
+            $newParts = \array_slice($parts, 2);
+            $path = implode('/', $newParts);
+
+            $doubleExtensions = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
+            foreach ($doubleExtensions as $extension) {
+                if (str_ends_with($path, ".$extension.webp")) {
+                    $path = str_replace(".$extension.webp", ".$extension", $path);
+                    break;
+                }
+            }
+        }
+
+        return $path;
+    }
+
+    private function shouldNodeBeIgnored(array $ignoredPaths, StorageAttributes $content): bool
+    {
+        $isIgnored = false;
+        foreach ($ignoredPaths as $ignoredPath) {
+            if (str_starts_with($content->path(), $ignoredPath) || str_starts_with('/'.$content->path(), $ignoredPath)) {
+                $isIgnored = true;
+                break;
+            }
+        }
+
+        return $isIgnored;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Entity\Image;
+use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
 use App\Service\SettingsManager;
@@ -92,5 +93,12 @@ class TestingImageManager implements ImageManagerInterface
     public function getMimetype(Image $image): string
     {
         return $this->innerImageManager->getMimetype($image);
+    }
+
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable
+    {
+        foreach ($this->innerImageManager->deleteOrphanedFiles($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $deletedPath) {
+            yield $deletedPath;
+        }
     }
 }

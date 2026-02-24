@@ -350,6 +350,19 @@ Options:
 - `--noActivity`: delete images that doesn't have recorded activity. Like comments, updates and/or boosts. (default: `false`)
 - `--batchSize`: the number of images to delete for each type at a time. (default: `800`)
 
+### Remove orphaned media
+
+This command iterates over your media filesystem and deletes all files that do not appear in the database.
+
+```bash
+php bin/console mbin:images:remove-orphaned
+```
+
+Options:
+- `--ignored-paths=IGNORED-PATHS`: A comma seperated list of paths to be ignored in this process. If the path starts with one of the supplied string it will be skipped. e.g. "/cache" [default: ""]
+- `--dry-run`: Dry run, don't delete anything
+- `--delete-empty-directories`: Delete empty directories, this can cause the operation to take a lot longer
+
 ### Rebuild image cache
 
 This command allows you to rebuild image thumbnail cache.
