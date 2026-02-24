@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\DTO\UserDto;
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Instance;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Enums\EApplicationStatus;
@@ -31,6 +32,8 @@ use App\Repository\UserFollowRequestRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -727,6 +730,44 @@ readonly class UserManager
             ->getScalarResult();
 
         return array_filter(array_map(fn ($row) => $row[0], $result));
+    }
+
+    /**
+     * @return string[]
+     *
+     * @throws Exception
+     */
+    public function findAllKnownInboxesNotBannedNotDead(): array
+    {
+        $sql = '
+            SELECT ap_inbox_url FROM (
+                SELECT u.ap_inbox_url, u.ap_id, u.ap_domain FROM "user" u
+                UNION ALL
+                SELECT m.ap_inbox_url, m.ap_id, m.ap_domain FROM magazine m
+            ) inn
+                LEFT JOIN instance i ON ap_domain = i.domain
+                WHERE
+                    (
+                        -- either no instance found, or instance not banned and not dead
+                        i IS NULL
+                        OR (
+                            i.is_banned = false
+                            -- not dead
+                            AND NOT (
+                                i.failed_delivers >= :numToDead
+                                AND (i.last_successful_deliver < :dateBeforeDead OR i.last_successful_deliver IS NULL)
+                                AND (i.last_successful_receive < :dateBeforeDead OR i.last_successful_receive IS NULL)
+                            )
+                        )
+                    )
+                    AND ap_id IS NOT NULL AND ap_inbox_url IS NOT NULL
+                GROUP BY ap_inbox_url';
+        $stmt = $this->entityManager->getConnection()->prepare($sql);
+        $stmt->bindValue(':numToDead', Instance::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD, ParameterType::INTEGER);
+        $stmt->bindValue(':dateBeforeDead', Instance::getDateBeforeDead(), 'datetime_immutable');
+        $results = $stmt->executeQuery()->fetchAllAssociative();
+
+        return array_map(fn ($item) => $item['ap_inbox_url'], $results);
     }
 
     /**

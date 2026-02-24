@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Entity\UserFollow;
@@ -712,39 +711,5 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         return $result[0];
-    }
-
-    /**
-     * @return string[]
-     *
-     * @throws Exception
-     */
-    public function findAllKnownInboxesNotBannedNotDead(): array
-    {
-        $sql = '
-            SELECT u.ap_inbox_url FROM "user" u
-                LEFT JOIN instance i ON u.ap_domain = i.domain
-                WHERE
-                    (
-                        -- either no instance found, or instance not banned and not dead
-                        i IS NULL
-                        OR (
-                            i.is_banned = false
-                            -- not dead
-                            AND NOT (
-                                i.failed_delivers >= :numToDead
-                                AND (i.last_successful_deliver < :dateBeforeDead OR i.last_successful_deliver IS NULL)
-                                AND (i.last_successful_receive < :dateBeforeDead OR i.last_successful_receive IS NULL)
-                            )
-                        )
-                    )
-                    AND u.ap_id IS NOT NULL AND u.ap_inbox_url IS NOT NULL
-                GROUP BY u.ap_inbox_url';
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->bindValue(':numToDead', Instance::NUMBER_OF_FAILED_DELIVERS_UNTIL_DEAD);
-        $stmt->bindValue(':dateBeforeDead', Instance::getDateBeforeDead());
-        $results = $stmt->executeQuery()->fetchAllAssociative();
-
-        return array_map(fn ($item) => $item['ap_inbox_url'], $results);
     }
 }
