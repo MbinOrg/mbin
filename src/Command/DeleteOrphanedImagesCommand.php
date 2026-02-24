@@ -8,6 +8,7 @@ use App\Repository\ImageRepository;
 use App\Service\ImageManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,7 +46,7 @@ class DeleteOrphanedImagesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $totalImages = 0;
+        $totalFiles = 0;
         $totalDeletedSize = 0;
         $totalDeletedImages = 0;
         $errors = 0;
@@ -60,13 +61,17 @@ class DeleteOrphanedImagesCommand extends Command
             $io->info(\sprintf('Ignoring files in: %s', implode(', ', $ignoredPaths)));
         }
 
+        ProgressBar::setFormatDefinition('custom_orphaned', '%current% deleted file(s) | %checked% checked file(s) (in %elapsed%) - %message%');
+
         $progress = $io->createProgressBar();
+        $progress->setFormat('custom_orphaned');
+        $progress->setMessage('');
         $progress->start();
 
         try {
             foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $file) {
-                $totalImages++;
-                $progress->setMaxSteps($totalImages);
+                ++$totalFiles;
+                $progress->setMessage($totalFiles.'', 'checked');
                 if ($file['deleted']) {
                     if ($file['successful']) {
                         $progress->advance();
@@ -75,6 +80,7 @@ class DeleteOrphanedImagesCommand extends Command
                         } else {
                             $progress->setMessage(\sprintf('Deleted "%s"', $file['path']));
                         }
+                        $progress->display();
                         if ($file['fileSize']) {
                             $totalDeletedSize += $file['fileSize'];
                         }
@@ -99,9 +105,9 @@ class DeleteOrphanedImagesCommand extends Command
         $progress->finish();
         $megaBytes = round($totalDeletedSize / pow(1000, 2), 2);
         if ($dryRun) {
-            $io->info(\sprintf('Would have deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalImages, $megaBytes));
+            $io->info(\sprintf('Would have deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalFiles, $megaBytes));
         } else {
-            $io->info(\sprintf('Deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalImages, $megaBytes));
+            $io->info(\sprintf('Deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalFiles, $megaBytes));
         }
         if ($errors) {
             $io->warning(\sprintf('There were %s errors', $errors));
