@@ -273,8 +273,8 @@ class ImageManager implements ImageManagerInterface
                     ];
                 }
             } elseif ($content->isDir()) {
-                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, $content->path()) as $deletedPath) {
-                    yield $deletedPath;
+                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, $content->path()) as $file) {
+                    yield $file;
                 }
             }
         }

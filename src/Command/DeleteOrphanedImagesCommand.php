@@ -47,7 +47,7 @@ class DeleteOrphanedImagesCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $totalFiles = 0;
         $totalDeletedSize = 0;
-        $totalDeletedImages = 0;
+        $totalDeletedFiles = 0;
         $errors = 0;
         $dryRun = $input->getOption('dry-run');
         $ignoredPaths = array_filter(
@@ -64,7 +64,6 @@ class DeleteOrphanedImagesCommand extends Command
         $progress = $io->createProgressBar();
         $progress->setFormat('custom_orphaned');
         $progress->setMessage('');
-        $progress->minSecondsBetweenRedraws(.5);
         $progress->start();
 
         try {
@@ -80,8 +79,8 @@ class DeleteOrphanedImagesCommand extends Command
                         if ($file['fileSize']) {
                             $totalDeletedSize += $file['fileSize'];
                         }
-                        ++$totalDeletedImages;
-                        $progress->setMessage($totalDeletedImages.'', 'deleted');
+                        ++$totalDeletedFiles;
+                        $progress->setMessage($totalDeletedFiles.'', 'deleted');
                         $progress->display();
                     } else {
                         if (null !== $file['exception']) {
@@ -103,9 +102,9 @@ class DeleteOrphanedImagesCommand extends Command
         $progress->finish();
         $megaBytes = round($totalDeletedSize / pow(1000, 2), 2);
         if ($dryRun) {
-            $io->info(\sprintf('Would have deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalFiles, $megaBytes));
+            $io->info(\sprintf('Would have deleted %s of %s images, and freed up %sMB', $totalDeletedFiles, $totalFiles, $megaBytes));
         } else {
-            $io->info(\sprintf('Deleted %s of %s images, and freed up %sMB', $totalDeletedImages, $totalFiles, $megaBytes));
+            $io->info(\sprintf('Deleted %s of %s images, and freed up %sMB', $totalDeletedFiles, $totalFiles, $megaBytes));
         }
         if ($errors) {
             $io->warning(\sprintf('There were %s errors', $errors));
