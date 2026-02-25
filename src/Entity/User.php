@@ -336,11 +336,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->username;
     }
 
-    public function getDisplayname(): ?string {
+    public function getDisplayname(): ?string
+    {
         return $this->displayname;
     }
 
-    public function setDisplayname(?string $displayname): void {
+    public function setDisplayname(?string $displayname): void
+    {
         $this->displayname = $displayname;
     }
 

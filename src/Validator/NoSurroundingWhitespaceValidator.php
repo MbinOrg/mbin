@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Validator;
 
 use Symfony\Component\Validator\Constraint;
@@ -31,7 +33,7 @@ class NoSurroundingWhitespaceValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if(\trim($value) !== $value) {
+        if (trim($value) !== $value) {
             $this->context->buildViolation($constraint->message)
                 ->setCode(NoSurroundingWhitespace::NOT_UNIQUE_ERROR)
                 ->addViolation();

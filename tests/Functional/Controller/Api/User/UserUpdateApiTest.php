@@ -91,7 +91,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertSame($testUser->getId(), $jsonData['userId']);
         self::assertNull($jsonData['displayname']);
 
-        //region set displayname
+        // region set displayname
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [
@@ -117,9 +117,9 @@ class UserUpdateApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
         self::assertEquals('Custom user-name', $jsonData['displayname']);
-        //endregion
+        // endregion
 
-        //region reset displayname
+        // region reset displayname
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [],
@@ -143,10 +143,11 @@ class UserUpdateApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
         self::assertNull($jsonData['displayname']);
-        //endregion
+        // endregion
     }
 
-    public function testApiCannotUpdateCurrentUserDisplaynameWithWhitespaces() {
+    public function testApiCannotUpdateCurrentUserDisplaynameWithWhitespaces()
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
