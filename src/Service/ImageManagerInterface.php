@@ -40,5 +40,5 @@ interface ImageManagerInterface
      *
      * @throws FilesystemException
      */
-    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable;
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable;
 }

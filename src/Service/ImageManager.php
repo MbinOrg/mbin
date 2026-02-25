@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
 use App\Repository\ImageRepository;
+use App\Utils\GeneralUtil;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -215,9 +216,9 @@ class ImageManager implements ImageManagerInterface
         }
     }
 
-    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable
     {
-        foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths, '/') as $deletedPath) {
+        foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, '/') as $deletedPath) {
             yield $deletedPath;
         }
     }
@@ -227,11 +228,11 @@ class ImageManager implements ImageManagerInterface
      *
      * @throws FilesystemException
      */
-    private function deleteOrphanedFilesIntern(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths, string $path): iterable
+    private function deleteOrphanedFilesIntern(ImageRepository $repository, bool $dryRun, array $ignoredPaths, string $path): iterable
     {
-        $contents = $this->publicUploadsFilesystem->listContents($path);
+        $contents = $this->publicUploadsFilesystem->listContents($path, deep: true);
         foreach ($contents as $content) {
-            if ($this->shouldNodeBeIgnored($ignoredPaths, $content)) {
+            if (GeneralUtil::shouldPathBeIgnored($ignoredPaths, $content->path())) {
                 continue;
             }
 
@@ -272,36 +273,8 @@ class ImageManager implements ImageManagerInterface
                     ];
                 }
             } elseif ($content->isDir()) {
-                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths, $content->path()) as $deletedPath) {
+                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, $content->path()) as $deletedPath) {
                     yield $deletedPath;
-                }
-            }
-        }
-
-        if ($deleteEmptyDirectories) {
-            $contents = $this->publicUploadsFilesystem->listContents($path);
-            $length = 0;
-            foreach ($contents as $content) {
-                ++$length;
-            }
-            if (0 === $length) {
-                try {
-                    $this->publicUploadsFilesystem->deleteDirectory($path);
-                    yield [
-                        'path' => $path,
-                        'internalPath' => $path,
-                        'successful' => true,
-                        'fileSize' => null,
-                        'exception' => null,
-                    ];
-                } catch (\Throwable $e) {
-                    yield [
-                        'path' => $path,
-                        'internalPath' => $path,
-                        'successful' => false,
-                        'fileSize' => null,
-                        'exception' => $e,
-                    ];
                 }
             }
         }
@@ -339,18 +312,5 @@ class ImageManager implements ImageManagerInterface
         $parts = explode('/', $path);
 
         return [$path, end($parts)];
-    }
-
-    private function shouldNodeBeIgnored(array $ignoredPaths, StorageAttributes $content): bool
-    {
-        $isIgnored = false;
-        foreach ($ignoredPaths as $ignoredPath) {
-            if (str_starts_with($content->path(), $ignoredPath) || str_starts_with('/'.$content->path(), $ignoredPath)) {
-                $isIgnored = true;
-                break;
-            }
-        }
-
-        return $isIgnored;
     }
 }
