@@ -59,30 +59,30 @@ class DeleteOrphanedImagesCommand extends Command
             $io->info(\sprintf('Ignoring files in: %s', implode(', ', $ignoredPaths)));
         }
 
-        ProgressBar::setFormatDefinition('custom_orphaned', '%current% deleted file(s) | %checked% checked file(s) (in %elapsed%) - %message%');
+        ProgressBar::setFormatDefinition('custom_orphaned', '%deleted% deleted file(s) | %current% checked file(s) (in %elapsed%) - %message%');
 
         $progress = $io->createProgressBar();
         $progress->setFormat('custom_orphaned');
         $progress->setMessage('');
+        $progress->minSecondsBetweenRedraws(.5);
         $progress->start();
 
         try {
             foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $ignoredPaths) as $file) {
-                ++$totalFiles;
-                $progress->setMessage($totalFiles.'', 'checked');
+                $progress->advance();
                 if ($file['deleted']) {
                     if ($file['successful']) {
-                        $progress->advance();
                         if ($dryRun) {
                             $progress->setMessage(\sprintf('Would have deleted "%s"', $file['path']));
                         } else {
                             $progress->setMessage(\sprintf('Deleted "%s"', $file['path']));
                         }
-                        $progress->display();
                         if ($file['fileSize']) {
                             $totalDeletedSize += $file['fileSize'];
                         }
                         ++$totalDeletedImages;
+                        $progress->setMessage($totalDeletedImages.'', 'deleted');
+                        $progress->display();
                     } else {
                         if (null !== $file['exception']) {
                             $io->warning(\sprintf('Failed to delete "%s". Message: "%s"', $file['path'], $file['exception']->getMessage()));
