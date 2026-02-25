@@ -31,7 +31,7 @@ class PersonFactory
             $person ?? [], [
                 'id' => $this->getActivityPubId($user),
                 'type' => $user->type,
-                'name' => $user->username,
+                'name' => $user->getDisplayname() ?: $user->getUsername(),
                 'preferredUsername' => $user->username,
                 'inbox' => $this->urlGenerator->generate(
                     'ap_user_inbox',

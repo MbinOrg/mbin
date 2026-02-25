@@ -7,7 +7,7 @@
     }) }}
 {% else %}
     <a href="{{ path('user_overview', {username: user.username}) }}" title="{{ user.username|username(true) }}">
-        @{{- user.username|username -}}
+        @{{- user.displayname ?? user.username|username -}}
         {%- if fullName -%}
             @{{- user.username|apDomain -}}
         {%- endif -%}

@@ -27,6 +27,20 @@
         <div class="container">
             <h1 hidden>{{ 'profile'|trans }}</h1>
             {{ form_start(form) }}
+            {{ form_row(form.username, {label: 'username', attr: {
+                'data-controller': 'input-length autogrow',
+                'data-entry-link-create-target': 'user_about',
+                'data-action' : 'input-length#updateDisplay',
+                'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_USERNAME_LENGTH')
+            }}) }}
+
+            {{ form_row(form.displayname, {label: 'displayname', attr: {
+                'data-controller': 'input-length autogrow',
+                'data-entry-link-create-target': 'user_about',
+                'data-action' : 'input-length#updateDisplay',
+                'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_USERNAME_LENGTH')
+            }}) }}
+
             {{ component('editor_toolbar', {id: 'user_basic_about'}) }}
             {{ form_row(form.about, {label: false, attr: {
                 placeholder: 'about',
@@ -35,12 +49,7 @@
                 'data-action' : 'input-length#updateDisplay',
                 'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_ABOUT_LENGTH')
                 }}) }}
-            {{ form_row(form.username, {label: 'username', attr: {
-                'data-controller': 'input-length autogrow',
-                'data-entry-link-create-target': 'user_about',
-                'data-action' : 'input-length#updateDisplay',
-                'data-input-length-max-value' : constant('App\\DTO\\UserDto::MAX_USERNAME_LENGTH')
-            }}) }}
+
             {{ form_row(form.avatar, {label: 'avatar'}) }}
             {% if app.user.avatar is not same as null %}
                 <div class="actions">
@@ -59,6 +68,7 @@
                     </ul>
                 </div>
             {% endif %}
+
             {{ form_row(form.cover, {label: 'cover'}) }}
             {% if app.user.cover is not same as null %}
                 <div class="actions">
@@ -77,6 +87,7 @@
                     </ul>
                 </div>
             {% endif %}
+
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
             </div>

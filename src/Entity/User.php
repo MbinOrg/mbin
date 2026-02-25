@@ -102,6 +102,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $email;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $username;
+    #[Column(type: 'string', unique: false, nullable: true)]
+    private ?string $displayname = null;//TODO don't forget ts
     #[Column(type: 'json', nullable: false, options: ['jsonb' => true])]
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
@@ -329,6 +331,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function getUsername(): string
     {
         return $this->username;
+    }
+
+    public function getDisplayname(): ?string {
+        return $this->displayname;
+    }
+
+    public function setDisplayname(?string $displayname): void {
+        $this->displayname = $displayname;
     }
 
     public function getEmail(): string

@@ -10,7 +10,7 @@
              src="{{ user.avatar.filePath ? (asset(user.avatar.filePath) | imagine_filter('avatar_thumb')) : user.avatar.sourceUrl }}"
              alt="{{ user.username ~' '~ 'avatar'|trans|lower }}">
     {% endif %}
-    {{ user.apPreferredUsername ?? user.username|username -}}
+    {{ user.displayname ?? user.apPreferredUsername ?? user.username|username -}}
     {%- if fullName is defined and fullName is same as true -%}
         @{{- user.username|apDomain -}}
     {%- endif -%}

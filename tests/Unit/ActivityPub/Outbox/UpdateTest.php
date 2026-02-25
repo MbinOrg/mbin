@@ -14,6 +14,10 @@ class UpdateTest extends ActivityPubTestCase
 
     public function testUpdateUser(): void
     {
+        $this->user->setDisplayname('Test User');
+        $this->entityManager->persist($this->user);
+        $this->entityManager->flush();
+
         $json = $this->activityJsonBuilder->buildActivityJson($this->getUpdateUserActivity());
 
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());
