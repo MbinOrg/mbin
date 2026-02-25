@@ -71,3 +71,14 @@
     color: var(--kbin-alert-danger-text-color);
   }
 }
+
+.cursor-pagination .section {
+  text-align: center;
+  padding: .25rem;
+
+  a {
+    display: inline-block;
+    width: 25%;
+    min-width: 250px;
+  }
+}

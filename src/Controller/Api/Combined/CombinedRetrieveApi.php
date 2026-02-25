@@ -11,14 +11,17 @@ use App\Entity\Entry;
 use App\Entity\Post;
 use App\Entity\User;
 use App\PageView\ContentPageView;
+use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
+use App\Schema\CursorPaginationSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Schema\PaginationSchema;
 use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -125,8 +128,14 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        SqlHelpers $sqlHelpers,
     ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository);
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria($p, $security, $sort, $time, $federation, $perPage, $sqlHelpers, null);
+
+        $content = $contentRepository->findByCriteria($criteria);
+
+        return $this->serializeContent($content, $headers);
     }
 
     #[OA\Response(
@@ -228,30 +237,241 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         string $collectionType,
-    ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository, $collectionType);
-    }
-
-    private function generateResponse(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
-        ?int $p,
-        Security $security,
-        ?string $sort,
-        ?string $time,
-        ?string $federation,
-        ?int $perPage,
-        ContentRepository $contentRepository,
-        ?string $collectionType = null,
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria($p, $security, $sort, $time, $federation, $perPage, $sqlHelpers, $collectionType);
+
+        $content = $contentRepository->findByCriteria($criteria);
+
+        return $this->serializeContent($content, $headers);
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'A cursor paginated list of combined entries and posts filtered by the query parameters',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'items',
+                    type: 'array',
+                    items: new OA\Items(ref: new Model(type: ContentResponseDto::class))
+                ),
+                new OA\Property(
+                    property: 'pagination',
+                    ref: new Model(type: CursorPaginationSchema::class)
+                ),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'cursor',
+        description: 'The cursor',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
+        name: 'perPage',
+        description: 'Number of content items to retrieve per page',
+        in: 'query',
+        schema: new OA\Schema(type: 'integer', default: ContentRepository::PER_PAGE, maximum: self::MAX_PER_PAGE, minimum: self::MIN_PER_PAGE)
+    )]
+    #[OA\Parameter(
+        name: 'sort',
+        description: 'Sort method to use when retrieving content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::SORT_HOT, enum: Criteria::SORT_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'time',
+        description: 'Max age of retrieved content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
+    )]
+    #[OA\Parameter(
+        name: 'lang[]',
+        description: 'Language(s) of content to return',
+        in: 'query',
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'string', default: null, maxLength: 3, minLength: 2)
+        ),
+        explode: true,
+        allowReserved: true
+    )]
+    #[OA\Parameter(
+        name: 'usePreferredLangs',
+        description: 'Filter by a user\'s preferred languages? (Requires authentication and takes precedence over lang[])',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false),
+    )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
+    #[OA\Tag(name: 'combined')]
+    public function cursorCollection(
+        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
+        ContentRepository $contentRepository,
+        #[MapQueryParameter] ?string $cursor,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
+        SqlHelpers $sqlHelpers,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $perPage, $sqlHelpers, null);
+        $currentCursor = $this->getCursor($contentRepository, $criteria, $cursor);
+
+        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor);
+
+        return $this->serializeContentCursored($content, $headers);
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'A cursor paginated list of combined entries and posts from subscribed magazines and users filtered by the query parameters',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'items',
+                    type: 'array',
+                    items: new OA\Items(ref: new Model(type: ContentResponseDto::class))
+                ),
+                new OA\Property(
+                    property: 'pagination',
+                    ref: new Model(type: CursorPaginationSchema::class)
+                ),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'cursor',
+        description: 'The cursor',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
+        name: 'perPage',
+        description: 'Number of content items to retrieve per page',
+        in: 'query',
+        schema: new OA\Schema(type: 'integer', default: ContentRepository::PER_PAGE, maximum: self::MAX_PER_PAGE, minimum: self::MIN_PER_PAGE)
+    )]
+    #[OA\Parameter(
+        name: 'sort',
+        description: 'Sort method to use when retrieving content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::SORT_HOT, enum: Criteria::SORT_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'time',
+        description: 'Max age of retrieved content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
+    )]
+    #[OA\Parameter(
+        name: 'lang[]',
+        description: 'Language(s) of content to return',
+        in: 'query',
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'string', default: null, maxLength: 3, minLength: 2)
+        ),
+        explode: true,
+        allowReserved: true
+    )]
+    #[OA\Parameter(
+        name: 'usePreferredLangs',
+        description: 'Filter by a user\'s preferred languages? (Requires authentication and takes precedence over lang[])',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false),
+    )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
+    #[OA\Tag(name: 'combined')]
+    #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
+    #[IsGranted('ROLE_OAUTH2_READ')]
+    public function cursorUserCollection(
+        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactory $anonymousApiReadLimiter,
+        Security $security,
+        ContentRepository $contentRepository,
+        #[MapQueryParameter] ?string $cursor,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
+        string $collectionType,
+        SqlHelpers $sqlHelpers,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $perPage, $sqlHelpers, $collectionType);
+        $currentCursor = $this->getCursor($contentRepository, $criteria, $cursor);
+
+        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor);
+
+        return $this->serializeContentCursored($content, $headers);
+    }
+
+    private function getCriteria(?int $p, Security $security, ?string $sort, ?string $time, ?string $federation, ?int $perPage, SqlHelpers $sqlHelpers, ?string $collectionType): ContentPageView
+    {
         $criteria = new ContentPageView($p ?? 1, $security);
         $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
         $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $this->handleLanguageCriteria($criteria);
-        $criteria->content = Criteria::CONTENT_THREADS;
+        $criteria->content = Criteria::CONTENT_COMBINED;
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
@@ -270,11 +490,13 @@ class CombinedRetrieveApi extends BaseApi
                 break;
         }
 
-        $content = $contentRepository->findByCriteria($criteria);
-        $this->handleLanguageCriteria($criteria);
+        return $criteria;
+    }
 
+    private function serializeContent(PagerfantaInterface $content, array $headers): JsonResponse
+    {
         $result = [];
-        foreach ($content->getCurrentPageResults() as $item) {
+        foreach ($content as $item) {
             if ($item instanceof Entry) {
                 $this->handlePrivateContent($item);
                 $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
@@ -285,5 +507,38 @@ class CombinedRetrieveApi extends BaseApi
         }
 
         return new JsonResponse($this->serializePaginated($result, $content), headers: $headers);
+    }
+
+    private function serializeContentCursored(CursorPaginationInterface $content, array $headers): JsonResponse
+    {
+        $result = [];
+        foreach ($content as $item) {
+            if ($item instanceof Entry) {
+                $this->handlePrivateContent($item);
+                $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            } elseif ($item instanceof Post) {
+                $this->handlePrivateContent($item);
+                $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            }
+        }
+
+        return new JsonResponse($this->serializeCursorPaginated($result, $content), headers: $headers);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    private function getCursor(ContentRepository $contentRepository, ContentPageView $criteria, ?string $cursor): int|\DateTime|\DateTimeImmutable
+    {
+        $initialCursor = $contentRepository->guessInitialCursor($criteria);
+        if ($initialCursor instanceof \DateTime || $initialCursor instanceof \DateTimeImmutable) {
+            $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $initialCursor;
+        } elseif (\is_int($initialCursor)) {
+            $currentCursor = null !== $cursor ? \intval($cursor) : $initialCursor;
+        } else {
+            throw new \LogicException(\get_class($initialCursor).' is not accounted for');
+        }
+
+        return $currentCursor;
     }
 }
