@@ -359,9 +359,8 @@ php bin/console mbin:images:remove-orphaned
 ```
 
 Options:
-- `--ignored-paths=IGNORED-PATHS`: A comma seperated list of paths to be ignored in this process. If the path starts with one of the supplied string it will be skipped. e.g. "/cache" [default: ""]
+- `--ignored-paths=IGNORED-PATHS`: A comma seperated list of paths to be ignored in this process. If the path starts with one of the supplied strings it will be skipped. e.g. "/cache" [default: ""]
 - `--dry-run`: Dry run, don't delete anything
-- `--delete-empty-directories`: Delete empty directories, this can cause the operation to take a lot longer
 
 ### Rebuild image cache
 

@@ -39,7 +39,6 @@ class DeleteOrphanedImagesCommand extends Command
                 ''
             )
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run, don\'t delete anything')
-            ->addOption('delete-empty-directories', null, InputOption::VALUE_NONE, 'Delete empty directories, this can cause the operation to take a lot longer')
         ;
     }
 
@@ -51,7 +50,6 @@ class DeleteOrphanedImagesCommand extends Command
         $totalDeletedImages = 0;
         $errors = 0;
         $dryRun = $input->getOption('dry-run');
-        $deleteEmptyDirectories = $input->getOption('delete-empty-directories');
         $ignoredPaths = array_filter(
             array_map(fn (string $item) => trim($item), explode(',', $input->getOption('ignored-paths'))),
             fn (string $item) => '' !== $item
@@ -69,7 +67,7 @@ class DeleteOrphanedImagesCommand extends Command
         $progress->start();
 
         try {
-            foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $file) {
+            foreach ($this->imageManager->deleteOrphanedFiles($this->imageRepository, $dryRun, $ignoredPaths) as $file) {
                 ++$totalFiles;
                 $progress->setMessage($totalFiles.'', 'checked');
                 if ($file['deleted']) {

@@ -95,9 +95,9 @@ class TestingImageManager implements ImageManagerInterface
         return $this->innerImageManager->getMimetype($image);
     }
 
-    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, bool $deleteEmptyDirectories, array $ignoredPaths): iterable
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable
     {
-        foreach ($this->innerImageManager->deleteOrphanedFiles($repository, $dryRun, $deleteEmptyDirectories, $ignoredPaths) as $deletedPath) {
+        foreach ($this->innerImageManager->deleteOrphanedFiles($repository, $dryRun, $ignoredPaths) as $deletedPath) {
             yield $deletedPath;
         }
     }
