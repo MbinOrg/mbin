@@ -42,6 +42,13 @@ trait ValidationTrait
                 case 'log_unban':
                     self::assertArrayKeysMatch(WebTestCase::BAN_RESPONSE_KEYS, $item['subject']);
                     break;
+                case 'log_entry_purged':
+                case 'log_entry_comment_purged':
+                case 'log_post_purged':
+                case 'log_post_comment_purged':
+                    self::assertTrue(\is_string($item['subject']));
+                    self::assertNotNull($item['subjectAuthor']);
+                    break;
                 default:
                     self::assertTrue(false, 'This should not be reached');
                     break;
