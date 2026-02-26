@@ -10,7 +10,6 @@ use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Statement;
-use Doctrine\DBAL\Types\Types;
 use Pagerfanta\Adapter\AdapterInterface;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
