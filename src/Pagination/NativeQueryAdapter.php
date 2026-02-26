@@ -72,7 +72,7 @@ class NativeQueryAdapter implements AdapterInterface
         $sql2 = 'SELECT COUNT(*) as cnt FROM ('.$sql.') sub';
         $stmt2 = $this->conn->prepare($sql2);
         foreach ($parameters as $key => $value) {
-            $stmt2->bindValue($key, $value, $this->getSqlType($value));
+            $stmt2->bindValue($key, $value, SqlHelpers::getSqlType($value));
         }
         $result = $stmt2->executeQuery()->fetchAllAssociative();
 
