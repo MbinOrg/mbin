@@ -63,7 +63,7 @@ class DeleteUserHandler extends MbinMessageHandler
         $privateKey = $user->getPrivateKey();
         $publicKey = $user->getPublicKey();
 
-        $inboxes = $this->getInboxes($user);
+        $inboxes = $this->userManager->findAllKnownInboxesNotBannedNotDead();
 
         // note: email cannot be null. For remote accounts email is set to their 'handle@domain.tld' who knows why...
         $userDto = UserDto::create($user->username, email: $user->username, createdAt: $user->createdAt);
@@ -122,11 +122,6 @@ class DeleteUserHandler extends MbinMessageHandler
 
             throw $e;
         }
-    }
-
-    private function getInboxes(?User $user): array
-    {
-        return array_unique(array_filter($this->userManager->getAllInboxesOfInteractions($user)));
     }
 
     private function sendDeleteMessages(array $targetInboxes, User $deletedUser): void

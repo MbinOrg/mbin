@@ -8,14 +8,15 @@
         </button>
     </div>
 
-    <div class="flex mobile" style="align-items: center; margin-bottom: 0">
+    <div class="flex mobile" style="align-items: end; margin-bottom: 0">
         {{ form_widget(form.magazine, {label: false, 'attr': {'class': 'form-control'}}) }}
         {{ form_widget(form.user, {label: false, 'attr': {'class': 'form-control'}}) }}
         <div class="form-control">
             {{ form_widget(form.type, {label: false, 'attr': {'class': 'form-control', 'style': 'padding: 1rem .5rem;'}}) }}
         </div>
         <div class="form-control">
-            {{ form_widget(form.since, {label: false, 'attr': {'class': 'form-control', 'style': 'padding: 1rem .5rem;', 'title': 'created_at'|trans}}) }}
+            {{ form_label(form.since, 'created_since') }}
+            {{ form_widget(form.since, {'attr': {'class': 'form-control', 'style': 'padding: 1rem .5rem;', 'title': 'created_since'|trans}}) }}
         </div>
     </div>
 

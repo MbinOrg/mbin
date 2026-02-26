@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command\Update;
 
 use App\Entity\User;
+use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -18,8 +19,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class UserLastActiveUpdateCommand extends Command
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SearchRepository $searchRepository,
+    ) {
         parent::__construct();
     }
 
@@ -30,7 +33,7 @@ class UserLastActiveUpdateCommand extends Command
         $hideAdult = false;
 
         foreach ($repo->findAll() as $user) {
-            $activity = $repo->findPublicActivity(1, $user, $hideAdult);
+            $activity = $this->searchRepository->findUserPublicActivity(1, $user, $hideAdult);
             if ($activity->count()) {
                 $user->lastActive = $activity->getCurrentPageResults()[0]->lastActive;
             }

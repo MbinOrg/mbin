@@ -16,7 +16,7 @@ when@dev:
                 channels: ['!event']
             stderr:
                 type: stream
-                path: 'php://stderr'
+                path: '%kernel.logs_dir%/%kernel.environment%.log'
                 level: info
                 channels: ['!event']
             # uncomment to get logging in your browser
@@ -81,3 +81,8 @@ when@prod:
                 type: console
                 process_psr_3_messages: false
                 channels: ['!event', '!doctrine']
+            deprecation:
+                type: stream
+                channels: [deprecation]
+                path: php://stderr
+                formatter: monolog.formatter.json

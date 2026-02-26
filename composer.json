@@ -114,7 +114,8 @@
         "twig/intl-extra": "^3.10.0",
         "twig/twig": "^3.15.0",
         "webmozart/assert": "^1.11.0",
-        "wohali/oauth2-discord-new": "^1.2.1"
+        "wohali/oauth2-discord-new": "^1.2.1",
+        "firebase/php-jwt": "7.0.2 as 6.11.1"
     },
     "require-dev": {
         "brianium/paratest": "^7.10.1",
@@ -167,7 +168,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.3.*"
+            "require": "7.4.*"
         }
     },
     "scripts": {

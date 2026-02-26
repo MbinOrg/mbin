@@ -2,24 +2,24 @@
 {%- set DOWNVOTES_ENABLED = constant('App\\Utils\\DownvotesMode::Enabled') %}
 <aside id="activity" class="options options-activity">
     <div class="options__title">
-        <h2>{{ 'activity'|trans }} ({{ entry.countVotes + entry.favouriteCount }})</h2>
+        <h2>{{ 'activity'|trans }} ({{ (entry.countVotes + entry.favouriteCount)|abbreviateNumber }})</h2>
     </div>
     <menu class="options__main">
         <li>
             <a href="{{ entry_voters_url(entry, 'up') }}"
                class="{{ html_classes({'active': is_route_name('entry_voters') and route_has_param('type', 'up')}) }}">
-                {{ 'up_votes'|trans }} ({{ entry.countUpVotes }})
+                {{ 'up_votes'|trans }} ({{ entry.countUpVotes|abbreviateNumber }})
             </a>
         </li>
         <li>
             <a href="{{ entry_favourites_url(entry) }}"
                class="{{ html_classes({'active': is_route_name('entry_fav')}) }}">
-                {{ 'favourites'|trans }} ({{ entry.apLikeCount ?? entry.favouriteCount }})
+                {{ 'favourites'|trans }} ({{ (entry.apLikeCount ?? entry.favouriteCount)|abbreviateNumber }})
             </a>
         </li>
         {% if downvoteMode is same as DOWNVOTES_ENABLED %}
             <li>
-                <span class="options__nolink">{{ 'down_votes'|trans }} ({{ entry.countDownVotes }})</span>
+                <span class="options__nolink">{{ 'down_votes'|trans }} ({{ entry.countDownVotes|abbreviateNumber }})</span>
             </li>
         {% endif %}
     </menu>

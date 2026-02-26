@@ -280,6 +280,8 @@ POST /api/client
         - Allows an admin to move an entry to another magazine
       - `admin:magazine:purge`
         - Allows an admin to completely purge a magazine from the instance
+      - `admin:magazine:moderate`
+        - Allows an admin to accept or reject moderator and ownership requests of magazines
     - `admin:user`
       - `admin:user:ban`
         - Allows the admin to ban or unban users from the instance

@@ -36,6 +36,7 @@ class SearchController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $dto = new SearchDto();
+        $dto->since = new \DateTimeImmutable('@0');
         $form = $this->createForm(SearchType::class, $dto, ['csrf_protection' => false]);
         try {
             $form = $form->handleRequest($request);

@@ -40,7 +40,7 @@ front_magazine:
 
 front_magazine_short:
   controller: App\Controller\Entry\EntryFrontController::magazine
-  defaults: &front_magazine_defaults
+  defaults: *front_magazine_defaults
   path: /m/{name}/{sortBy}/{time}/{federation}
   methods: [GET]
   requirements: *front_requirement

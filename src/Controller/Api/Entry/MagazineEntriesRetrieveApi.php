@@ -15,6 +15,7 @@ use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -134,6 +135,7 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
         RateLimiterFactory $apiReadLimiter,
         RateLimiterFactory $anonymousApiReadLimiter,
         Security $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -155,7 +157,7 @@ class MagazineEntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);

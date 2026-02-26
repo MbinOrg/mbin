@@ -187,3 +187,21 @@ api_user_post_comments_retrieve:
   path: /api/users/{user_id}/post-comments
   methods: [ GET ]
   format: json
+
+api_user_content_retrieve:
+    controller: App\Controller\Api\User\UserContentApi::getUserContent
+    path: /api/users/{user_id}/content
+    methods: [ GET ]
+    format: json
+
+api_user_boosts_retrieve:
+    controller: App\Controller\Api\User\UserContentApi::getBoostedContent
+    path: /api/users/{user_id}/boosts
+    methods: [ GET ]
+    format: json
+
+api_user_moderated_retrieve:
+    controller: App\Controller\Api\User\UserModeratesApi
+    path: /api/users/{user_id}/moderatedMagazines
+    methods: [ GET ]
+    format: json
