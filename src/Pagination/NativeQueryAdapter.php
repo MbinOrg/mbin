@@ -6,9 +6,9 @@ namespace App\Pagination;
 
 use App\Pagination\Transformation\ResultTransformer;
 use App\Pagination\Transformation\VoidTransformer;
+use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
 use Doctrine\DBAL\Types\Types;
 use Pagerfanta\Adapter\AdapterInterface;
@@ -42,7 +42,7 @@ class NativeQueryAdapter implements AdapterInterface
 
         $this->statement = $this->conn->prepare($sql.' LIMIT :limit OFFSET :offset');
         foreach ($this->parameters as $key => $value) {
-            $this->statement->bindValue($key, $value, $this->getSqlType($value));
+            $this->statement->bindValue($key, $value, SqlHelpers::getSqlType($value));
         }
     }
 
@@ -91,18 +91,5 @@ class NativeQueryAdapter implements AdapterInterface
         $this->statement->bindValue('limit', $length);
 
         return $this->transformer->transform($this->statement->executeQuery()->fetchAllAssociative());
-    }
-
-    private function getSqlType(mixed $value): mixed
-    {
-        if ($value instanceof \DateTimeImmutable) {
-            return Types::DATETIMETZ_IMMUTABLE;
-        } elseif ($value instanceof \DateTime) {
-            return Types::DATETIMETZ_MUTABLE;
-        } elseif (\is_int($value)) {
-            return Types::INTEGER;
-        }
-
-        return ParameterType::STRING;
     }
 }

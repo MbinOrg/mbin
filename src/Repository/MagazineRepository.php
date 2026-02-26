@@ -55,7 +55,6 @@ class MagazineRepository extends ServiceEntityRepository
         private readonly SqlHelpers $sqlHelpers,
         private readonly ContentPopulationTransformer $contentPopulationTransformer,
         private readonly CacheInterface $cache,
-        private readonly SqlHelpers $sqlHelper,
     ) {
         parent::__construct($registry, Magazine::class);
     }
@@ -449,7 +448,10 @@ class MagazineRepository extends ServiceEntityRepository
         $whereString = SqlHelpers::makeWhereString($whereClauses);
         $sql = SqlHelpers::rewriteArrayParameters($parameters, "SELECT m.id FROM magazine m $whereString ORDER BY random() LIMIT 5");
         $stmt = $conn->prepare($sql['sql']);
-        $stmt = $stmt->executeQuery($sql['parameters']);
+        foreach ($sql['parameters'] as $param => $value) {
+            $stmt->bindValue($param, $value, SqlHelpers::getSqlType($value));
+        }
+        $stmt = $stmt->executeQuery();
         $ids = $stmt->fetchAllAssociative();
 
         return $this->createQueryBuilder('m')
