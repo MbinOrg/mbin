@@ -15,6 +15,7 @@ use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
+use App\Utils\SqlHelpers;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -29,6 +30,7 @@ class EntryFrontController extends AbstractController
         private readonly ContentRepository $contentRepository,
         private readonly MagazineRepository $magazineRepository,
         private readonly Security $security,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -58,7 +60,7 @@ class EntryFrontController extends AbstractController
         $this->setUserPreferences($user, $criteria);
 
         if (null !== $user) {
-            $criteria->fetchCachedItems($this->contentRepository, $user);
+            $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
         $entities = $this->contentRepository->findByCriteria($criteria);
@@ -126,7 +128,7 @@ class EntryFrontController extends AbstractController
 
         $this->setUserPreferences($user, $criteria);
         if (null !== $user) {
-            $criteria->fetchCachedItems($this->contentRepository, $user);
+            $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
         return $this->renderResponse(
