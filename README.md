@@ -138,17 +138,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/kkoyung">
-                    <img src="https://avatars.githubusercontent.com/u/11942650?v=4" width="100;" alt="kkoyung"/>
-                    <br />
-                    <sub><b>Kingsley Yung</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/blued-gear">
                     <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
                     <br />
                     <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/kkoyung">
+                    <img src="https://avatars.githubusercontent.com/u/11942650?v=4" width="100;" alt="kkoyung"/>
+                    <br />
+                    <sub><b>Kingsley Yung</b></sub>
                 </a>
             </td>
             <td align="center">
