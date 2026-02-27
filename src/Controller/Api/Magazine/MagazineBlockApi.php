@@ -13,7 +13,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineBlockApi extends MagazineBaseApi
@@ -63,7 +63,7 @@ class MagazineBlockApi extends MagazineBaseApi
         Magazine $magazine,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -120,7 +120,7 @@ class MagazineBlockApi extends MagazineBaseApi
         Magazine $magazine,
         MagazineManager $manager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

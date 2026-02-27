@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class NotificationPurgeApi extends NotificationBaseApi
@@ -67,7 +67,7 @@ class NotificationPurgeApi extends NotificationBaseApi
     public function purge(
         #[MapEntity(id: 'notification_id')]
         Notification $notification,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 
@@ -115,7 +115,7 @@ class NotificationPurgeApi extends NotificationBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:NOTIFICATION:DELETE')]
     public function purgeAll(
         NotificationManager $manager,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 

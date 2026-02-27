@@ -11,7 +11,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InstanceRetrieveSettingsApi extends InstanceBaseApi
@@ -52,7 +52,7 @@ class InstanceRetrieveSettingsApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:INSTANCE:SETTINGS:READ')]
     public function __invoke(
         SettingsManager $settings,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

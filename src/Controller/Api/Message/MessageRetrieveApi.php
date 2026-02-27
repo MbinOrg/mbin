@@ -22,7 +22,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageRetrieveApi extends MessageBaseApi
@@ -72,8 +72,8 @@ class MessageRetrieveApi extends MessageBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:MESSAGE:READ')]
     public function __invoke(
         MessageRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $message = $repository->find((int) $this->request->getCurrentRequest()->get('message_id'));
         if (null === $message) {
@@ -152,7 +152,7 @@ class MessageRetrieveApi extends MessageBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:MESSAGE:READ')]
     public function collection(
         MessageThreadRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -265,7 +265,7 @@ class MessageRetrieveApi extends MessageBaseApi
         MessageThread $thread,
         MessageRepository $repository,
         UserFactory $userFactory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 

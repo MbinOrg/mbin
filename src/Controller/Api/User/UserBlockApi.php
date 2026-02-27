@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserBlockApi extends UserBaseApi
@@ -68,7 +68,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -133,7 +133,7 @@ class UserBlockApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

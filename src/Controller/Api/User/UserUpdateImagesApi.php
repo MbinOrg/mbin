@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserUpdateImagesApi extends UserBaseApi
@@ -69,7 +69,7 @@ class UserUpdateImagesApi extends UserBaseApi
     public function avatar(
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiImageLimiter,
+        RateLimiterFactoryInterface $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -139,7 +139,7 @@ class UserUpdateImagesApi extends UserBaseApi
     public function cover(
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiImageLimiter,
+        RateLimiterFactoryInterface $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

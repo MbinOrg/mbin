@@ -17,7 +17,7 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserRetrieveOAuthConsentsApi extends UserBaseApi
@@ -73,7 +73,7 @@ class UserRetrieveOAuthConsentsApi extends UserBaseApi
         #[MapEntity(id: 'consent_id')]
         OAuth2UserConsent $consent,
         ClientConsentsFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -148,7 +148,7 @@ class UserRetrieveOAuthConsentsApi extends UserBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:OAUTH_CLIENTS:READ')]
     public function collection(
         ClientConsentsFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 

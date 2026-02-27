@@ -7,6 +7,7 @@ namespace App\Controller\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Service\UserManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class UserSuspendController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function suspend(User $user, Request $request): Response
+    public function suspend(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
     {
         $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 
@@ -32,7 +33,7 @@ class UserSuspendController extends AbstractController
     }
 
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
-    public function unsuspend(User $user, Request $request): Response
+    public function unsuspend(#[MapEntity(mapping: ['username' => 'username'])] User $user, Request $request): Response
     {
         $this->validateCsrf('user_suspend', $request->getPayload()->get('token'));
 

@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageReadApi extends MessageBaseApi
@@ -61,7 +61,7 @@ class MessageReadApi extends MessageBaseApi
         #[MapEntity(id: 'message_id')]
         Message $message,
         MessageManager $manager,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         if (!$this->isGranted('show', $message->thread)) {
             throw new AccessDeniedHttpException();
@@ -120,7 +120,7 @@ class MessageReadApi extends MessageBaseApi
         #[MapEntity(id: 'message_id')]
         Message $message,
         MessageManager $manager,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         if (!$this->isGranted('show', $message->thread)) {
             throw new AccessDeniedHttpException();

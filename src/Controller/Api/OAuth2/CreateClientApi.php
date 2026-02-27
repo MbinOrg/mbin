@@ -22,7 +22,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -90,7 +90,7 @@ class CreateClientApi extends BaseApi
         SettingsManager $settingsManager,
         ValidatorInterface $validator,
         SerializerInterface $serializer,
-        RateLimiterFactory $apiOauthClientLimiter,
+        RateLimiterFactoryInterface $apiOauthClientLimiter,
     ): JsonResponse {
         if ($settingsManager->get('KBIN_ADMIN_ONLY_OAUTH_CLIENTS') && !$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedHttpException('This instance only allows admins to create oauth clients');
@@ -225,7 +225,7 @@ class CreateClientApi extends BaseApi
         UserRepository $userRepository,
         SettingsManager $settingsManager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiOauthClientLimiter,
+        RateLimiterFactoryInterface $apiOauthClientLimiter,
     ): JsonResponse {
         if ($settingsManager->get('KBIN_ADMIN_ONLY_OAUTH_CLIENTS') && !$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedHttpException('This instance only allows admins to create oauth clients');

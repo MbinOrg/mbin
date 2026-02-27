@@ -21,7 +21,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class UserContentApi extends UserBaseApi
 {
@@ -83,8 +83,8 @@ class UserContentApi extends UserBaseApi
         #[MapQueryParameter]
         ?int $p,
         SearchRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): Response {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -163,8 +163,8 @@ class UserContentApi extends UserBaseApi
         #[MapQueryParameter]
         ?int $p,
         SearchRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): Response {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

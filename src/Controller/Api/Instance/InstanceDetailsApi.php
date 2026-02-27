@@ -18,7 +18,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InstanceDetailsApi extends InstanceBaseApi
@@ -54,8 +54,8 @@ class InstanceDetailsApi extends InstanceBaseApi
      */
     public function __invoke(
         SiteRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -112,7 +112,7 @@ class InstanceDetailsApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_ADMIN:FEDERATION:READ')]
     #[OA\Tag('admin/instance')]
     public function retrieveRemoteInstanceDetails(
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         #[MapEntity(mapping: ['domain' => 'domain'])] Instance $instance,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
