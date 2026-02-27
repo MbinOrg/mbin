@@ -7,13 +7,18 @@ namespace App\Controller\Magazine;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\MagazineRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MagazineModController extends AbstractController
 {
-    public function __invoke(Magazine $magazine, MagazineRepository $repository, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        MagazineRepository $repository,
+        Request $request,
+    ): Response {
         $moderators = $repository->findModerators($magazine, $this->getPageNb($request));
 
         return $this->render(

@@ -9,6 +9,7 @@ use App\Entity\MessageThread;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -62,21 +63,22 @@ class MessageThreadRepository extends ServiceEntityRepository
     {
         $this->logger->debug('looking for thread with participants: {p}', ['p' => array_map(fn (User $u) => $u->username, $participants)]);
         $whereString = '';
-        $parameters = [':ctn' => \sizeof($participants)];
+        $parameters = ['ctn' => [\sizeof($participants), ParameterType::INTEGER]];
         $i = 0;
         foreach ($participants as $participant) {
             $whereString .= "AND EXISTS(SELECT * FROM message_thread_participants mtp WHERE mtp.message_thread_id = mt.id AND mtp.user_id = :p$i)";
-            $parameters["p$i"] = $participant->getId();
+            $parameters["p$i"] = [$participant->getId(), ParameterType::INTEGER];
             ++$i;
         }
         $sql = "SELECT mt.id FROM message_thread mt
                 WHERE (SELECT COUNT(*) FROM message_thread_participants mtp WHERE mtp.message_thread_id = mt.id) = :ctn $whereString
                 ORDER BY mt.updated_at DESC";
         $em = $this->getEntityManager();
-        $results = $em->getConnection()
-            ->prepare($sql)
-            ->executeQuery($parameters)
-            ->fetchAllAssociative();
+        $stmt = $em->getConnection()->prepare($sql);
+        foreach ($parameters as $param => $value) {
+            $stmt->bindValue($param, $value[0], $value[1]);
+        }
+        $results = $stmt->executeQuery()->fetchAllAssociative();
 
         $this->logger->debug('got results for query {q}: {r}', ['q' => $sql, 'r' => $results]);
         if (\sizeof($results) > 0) {

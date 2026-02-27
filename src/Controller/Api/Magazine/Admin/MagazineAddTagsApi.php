@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineAddTagsApi extends MagazineBaseApi
@@ -85,7 +85,7 @@ class MagazineAddTagsApi extends MagazineBaseApi
         string $tag,
         EntityManagerInterface $entityManager,
         MagazineFactory $factory,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

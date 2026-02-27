@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostsPurgeApi extends PostsBaseApi
@@ -70,7 +70,7 @@ class PostsPurgeApi extends PostsBaseApi
         #[MapEntity(id: 'post_id')]
         Post $post,
         PostManager $manager,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

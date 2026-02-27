@@ -18,7 +18,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class EntryCommentsRetrieveApi extends EntriesBaseApi
 {
@@ -133,8 +133,8 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
         EntryCommentRepository $commentsRepository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -205,8 +205,8 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
         #[MapEntity(id: 'comment_id')]
         EntryComment $comment,
         EntryCommentRepository $commentsRepository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);

@@ -14,7 +14,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserRetrieveBannedApi extends UserBaseApi
@@ -88,7 +88,7 @@ class UserRetrieveBannedApi extends UserBaseApi
     public function collection(
         UserRepository $userRepository,
         UserFactory $factory,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

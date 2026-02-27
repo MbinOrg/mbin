@@ -16,7 +16,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -67,7 +67,7 @@ class InstanceUpdateSettingsApi extends InstanceBaseApi
         SettingsManager $settings,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

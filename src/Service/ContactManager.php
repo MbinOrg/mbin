@@ -9,7 +9,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContactManager
@@ -18,7 +18,7 @@ class ContactManager
         private readonly SettingsManager $settings,
         private readonly MailerInterface $mailer,
         private readonly TranslatorInterface $translator,
-        private readonly RateLimiterFactory $contactLimiter,
+        private readonly RateLimiterFactoryInterface $contactLimiter,
     ) {
     }
 

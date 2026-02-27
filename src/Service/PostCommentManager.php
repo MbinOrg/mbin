@@ -28,7 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Webmozart\Assert\Assert;
 
 class PostCommentManager implements ContentManagerInterface
@@ -41,7 +41,7 @@ class PostCommentManager implements ContentManagerInterface
         private readonly PostCommentFactory $factory,
         private readonly ImageRepository $imageRepository,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactory $postCommentLimiter,
+        private readonly RateLimiterFactoryInterface $postCommentLimiter,
         private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager,

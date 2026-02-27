@@ -74,7 +74,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Image as BaseImageConstraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -130,8 +130,8 @@ class BaseApi extends AbstractController
     /**
      * Rate limit an API request and return rate limit status headers.
      *
-     * @param ?RateLimiterFactory $limiterFactory     A limiter factory to use when the user is authenticated
-     * @param ?RateLimiterFactory $anonLimiterFactory A limiter factory to use when the user is anonymous
+     * @param ?RateLimiterFactoryInterface $limiterFactory     A limiter factory to use when the user is authenticated
+     * @param ?RateLimiterFactoryInterface $anonLimiterFactory A limiter factory to use when the user is anonymous
      *
      * @return array<string, int> An array of headers describing the current rate limit status to the client
      *
@@ -139,8 +139,8 @@ class BaseApi extends AbstractController
      * @throws TooManyRequestsHttpException If the limit is hit, rate limit the connection
      */
     protected function rateLimit(
-        ?RateLimiterFactory $limiterFactory = null,
-        ?RateLimiterFactory $anonLimiterFactory = null,
+        ?RateLimiterFactoryInterface $limiterFactory = null,
+        ?RateLimiterFactoryInterface $anonLimiterFactory = null,
     ): array {
         $this->logAccess();
         if (null === $limiterFactory && null === $anonLimiterFactory) {

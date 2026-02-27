@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class InstanceRetrieveStatsApi extends InstanceBaseApi
 {
@@ -95,8 +95,8 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
      */
     public function votes(
         StatsVotesRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $request = $this->request->getCurrentRequest();
@@ -216,8 +216,8 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
      */
     public function content(
         StatsContentRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $request = $this->request->getCurrentRequest();

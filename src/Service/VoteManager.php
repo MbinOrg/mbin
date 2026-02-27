@@ -18,13 +18,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class VoteManager
 {
     public function __construct(
         private readonly VoteFactory $factory,
-        private readonly RateLimiterFactory $voteLimiter,
+        private readonly RateLimiterFactoryInterface $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,

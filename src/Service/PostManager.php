@@ -29,12 +29,13 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
@@ -50,7 +51,7 @@ class PostManager implements ContentManagerInterface
         private readonly TagExtractor $tagExtractor,
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactory $postLimiter,
+        private readonly RateLimiterFactoryInterface $postLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,
@@ -218,7 +219,7 @@ class PostManager implements ContentManagerInterface
 
         $image = $post->image?->getId();
 
-        $sort = new Criteria(null, ['createdAt' => Criteria::DESC]);
+        $sort = new Criteria(null, ['createdAt' => Order::Descending]);
         foreach ($post->comments->matching($sort) as $comment) {
             $this->postCommentManager->purge($user, $comment);
         }

@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -89,7 +89,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter,
+        RateLimiterFactoryInterface $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -168,7 +168,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter,
+        RateLimiterFactoryInterface $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -242,7 +242,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         EntryManager $manager,
-        RateLimiterFactory $apiEntryLimiter,
+        RateLimiterFactoryInterface $apiEntryLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiEntryLimiter);
 
@@ -328,7 +328,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         Magazine $magazine,
         ValidatorInterface $validator,
         EntryManager $manager,
-        RateLimiterFactory $apiImageLimiter,
+        RateLimiterFactoryInterface $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 
@@ -439,7 +439,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ?Magazine $magazine,
         ValidatorInterface $validator,
         EntryManager $manager,
-        RateLimiterFactory $apiImageLimiter,
+        RateLimiterFactoryInterface $apiImageLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiImageLimiter);
 

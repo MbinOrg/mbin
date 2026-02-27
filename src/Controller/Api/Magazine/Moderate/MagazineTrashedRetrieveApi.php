@@ -15,7 +15,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineTrashedRetrieveApi extends MagazineBaseApi
@@ -98,7 +98,7 @@ class MagazineTrashedRetrieveApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         MagazineRepository $repository,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

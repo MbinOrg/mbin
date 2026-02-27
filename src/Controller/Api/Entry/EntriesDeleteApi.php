@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntriesDeleteApi extends EntriesBaseApi
@@ -66,7 +66,7 @@ class EntriesDeleteApi extends EntriesBaseApi
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
         EntryManager $manager,
-        RateLimiterFactory $apiDeleteLimiter,
+        RateLimiterFactoryInterface $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

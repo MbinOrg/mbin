@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class UserEntriesRetrieveApi extends EntriesBaseApi
 {
@@ -128,8 +128,8 @@ class UserEntriesRetrieveApi extends EntriesBaseApi
         EntryRepository $repository,
         EntryFactory $factory,
         RequestStack $request,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);

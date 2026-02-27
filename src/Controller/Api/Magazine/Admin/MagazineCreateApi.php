@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineCreateApi extends MagazineBaseApi
@@ -54,7 +54,7 @@ class MagazineCreateApi extends MagazineBaseApi
     #[Security(name: 'oauth2', scopes: ['moderate:magazine_admin:create'])]
     #[IsGranted('ROLE_OAUTH2_MODERATE:MAGAZINE_ADMIN:CREATE')]
     public function __invoke(
-        RateLimiterFactory $apiMagazineLimiter,
+        RateLimiterFactoryInterface $apiMagazineLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiMagazineLimiter);
 

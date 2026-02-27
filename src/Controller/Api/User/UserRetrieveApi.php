@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserRetrieveApi extends UserBaseApi
@@ -68,8 +68,8 @@ class UserRetrieveApi extends UserBaseApi
         #[MapEntity(id: 'user_id')]
         User $user,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -122,8 +122,8 @@ class UserRetrieveApi extends UserBaseApi
         #[MapEntity(mapping: ['username' => 'username'])]
         User $user,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -165,7 +165,7 @@ class UserRetrieveApi extends UserBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:READ')]
     public function me(
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
         $user = $this->getUserOrThrow();
@@ -208,7 +208,7 @@ class UserRetrieveApi extends UserBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:READ')]
     public function settings(
         UserSettingsManager $manager,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -292,8 +292,8 @@ class UserRetrieveApi extends UserBaseApi
     public function collection(
         UserRepository $userRepository,
         UserFactory $userFactory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -396,7 +396,7 @@ class UserRetrieveApi extends UserBaseApi
         User $user,
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -492,7 +492,7 @@ class UserRetrieveApi extends UserBaseApi
         User $user,
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -581,7 +581,7 @@ class UserRetrieveApi extends UserBaseApi
     public function followedByCurrent(
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -665,7 +665,7 @@ class UserRetrieveApi extends UserBaseApi
     public function followersOfCurrent(
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -744,7 +744,7 @@ class UserRetrieveApi extends UserBaseApi
     public function blocked(
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -802,8 +802,8 @@ class UserRetrieveApi extends UserBaseApi
     public function admins(
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -853,8 +853,8 @@ class UserRetrieveApi extends UserBaseApi
     public function moderators(
         UserRepository $repository,
         UserFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 

@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Repository\MagazineRepository;
 use App\Service\BadgeManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,8 +21,12 @@ class MagazineTrashController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('moderate', subject: 'magazine')]
-    public function __invoke(Magazine $magazine, BadgeManager $manager, Request $request): Response
-    {
+    public function __invoke(
+        #[MapEntity(mapping: ['name' => 'name'])]
+        Magazine $magazine,
+        BadgeManager $manager,
+        Request $request,
+    ): Response {
         return $this->render(
             'magazine/panel/trash.html.twig',
             [
