@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\DTO\UserDto;
+use App\DTO\UserSignupResponseDto;
 use App\DTO\UserSmallResponseDto;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
@@ -63,6 +64,13 @@ class UserFactory
         $dto = $user instanceof User ? $this->createDto($user) : $user;
 
         return new UserSmallResponseDto($dto);
+    }
+
+    public function createSignupResponseDto(User|UserDto $user): UserSignupResponseDto
+    {
+        $dto = $user instanceof User ? $this->createDto($user) : $user;
+
+        return new UserSignupResponseDto($dto);
     }
 
     public function createDtoFromAp($apProfileId, $apId): UserDto

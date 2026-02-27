@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\User\Admin;
 
 use App\Controller\Api\User\UserBaseApi;
-use App\DTO\UserResponseDto;
+use App\DTO\UserSignupResponseDto;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Schema\Errors\ForbiddenErrorSchema;
@@ -38,7 +38,7 @@ class UserApplicationApi extends UserBaseApi
                 new OA\Property(
                     property: 'items',
                     type: 'array',
-                    items: new OA\Items(ref: new Model(type: UserResponseDto::class))
+                    items: new OA\Items(ref: new Model(type: UserSignupResponseDto::class))
                 ),
                 new OA\Property(
                     property: 'pagination',
@@ -91,7 +91,7 @@ class UserApplicationApi extends UserBaseApi
         $dtos = [];
         foreach ($users->getCurrentPageResults() as $value) {
             \assert($value instanceof User);
-            $dtos[] = $this->serializeUser($userFactory->createDto($value));
+            $dtos[] = $userFactory->createSignupResponseDto($value);
         }
 
         return new JsonResponse(
