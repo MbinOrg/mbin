@@ -1,0 +1,73 @@
+.page-admin-monitoring {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+  .monitoring-twig-render {
+    .children {
+      margin-left: 2rem;
+    }
+  }
+
+  .more {
+    background: var(--kbin-bg);
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+
+    // bigger button for touch devices
+    @media (pointer:none), (pointer:coarse) {
+      margin-top: 2rem;
+      padding: 0.5rem;
+    }
+
+    i {
+      padding: .35rem;
+      pointer-events: none;
+    }
+
+    .rounded-edges & {
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+  }
+
+  input[type=text],
+  input[type=datetime-local],
+  select {
+    padding: 0.65rem;
+    width: 100%;
+  }
+
+  form div {
+    margin-bottom: .25rem;
+  }
+
+  table tr {
+    vertical-align: top;
+    td.query * {
+      margin: 0;
+      overflow: hidden;
+    }
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+
+    .col {
+      flex: 1 1;
+      margin-bottom: 0;
+      padding: 0 .25rem;
+    }
+
+    .col-auto {
+      flex: 0 0 auto;
+      margin-bottom: 0;
+    }
+
+    .btn-col {
+      text-align: right;
+      margin: auto;
+    }
+  }
+}

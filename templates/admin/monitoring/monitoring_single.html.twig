@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'pages'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-admin-monitoring{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'admin/_options.html.twig' %}
+    {% include 'admin/monitoring/_monitoring_single_options.html.twig' %}
+
+    <div class="section" id="content">
+        <div class="container">
+            {% if page is same as 'overview' %}
+                {{ include('admin/monitoring/_monitoring_single_overview.html.twig') }}
+            {% elseif page is same as 'queries' %}
+                {{ include('admin/monitoring/_monitoring_single_queries.html.twig') }}
+            {% elseif page is same as 'twig' %}
+                {{ include('admin/monitoring/_monitoring_single_twig.html.twig') }}
+            {% elseif page is same as 'requests' %}
+                {{ include('admin/monitoring/_monitoring_single_requests.html.twig') }}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
