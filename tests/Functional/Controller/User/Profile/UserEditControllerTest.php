@@ -29,7 +29,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .options__main a.active', 'General');
     }
 
-    public function testUserCanEditProfile(): void
+    public function testUserCanEditProfileAbout(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
@@ -44,6 +44,48 @@ class UserEditControllerTest extends WebTestCase
 
         $this->client->followRedirect();
         $this->assertSelectorTextContains('#main .user-box', 'test about');
+
+        $this->client->request('GET', '/people');
+
+        $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
+    }
+
+    public function testUserCanEditProfileDisplayname(): void
+    {
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+
+        $crawler = $this->client->request('GET', '/settings/profile');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
+
+        $this->client->submit(
+            $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form([
+                'user_basic[displayname]' => 'custom name',
+            ])
+        );
+
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('#main .user-box h1', 'custom name');
+
+        $this->client->request('GET', '/people');
+
+        $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
+    }
+
+    public function testUserEditProfileDisplaynameTrimsWhitespace(): void
+    {
+        $this->client->loginUser($this->getUserByUsername('JohnDoe'));
+
+        $crawler = $this->client->request('GET', '/settings/profile');
+        $this->assertSelectorTextContains('#main .options__main a.active', 'Profile');
+
+        $this->client->submit(
+            $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form([
+                'user_basic[displayname]' => "  custom name\t",
+            ])
+        );
+
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('#main .user-box h1', 'custom name');
 
         $this->client->request('GET', '/people');
 

@@ -7,6 +7,7 @@ namespace App\DTO;
 use App\DTO\Contracts\UserDtoInterface;
 use App\Entity\User;
 use App\Utils\RegPatterns;
+use App\Validator\NoSurroundingWhitespace;
 use App\Validator\Unique;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,6 +24,9 @@ class UserDto implements UserDtoInterface
     #[Assert\Length(min: 2, max: self::MAX_USERNAME_LENGTH)]
     #[Assert\Regex(pattern: RegPatterns::USERNAME, match: true)]
     public ?string $username = null;
+    #[Assert\Length(min: 2, max: self::MAX_USERNAME_LENGTH)]
+    #[NoSurroundingWhitespace]
+    public ?string $displayname = null;
     #[Assert\NotBlank]
     #[Assert\Email]
     public ?string $email = null;
@@ -99,6 +103,7 @@ class UserDto implements UserDtoInterface
         ?int $reputationPoints = null,
         ?bool $discoverable = null,
         ?bool $indexable = null,
+        ?string $displayname = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -119,6 +124,7 @@ class UserDto implements UserDtoInterface
         $dto->reputationPoints = $reputationPoints;
         $dto->discoverable = $discoverable;
         $dto->indexable = $indexable;
+        $dto->displayname = $displayname;
 
         return $dto;
     }

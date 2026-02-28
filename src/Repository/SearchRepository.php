@@ -213,8 +213,8 @@ class SearchRepository
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
 
-        $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
-            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true OR u.username LIKE :likeQuery)
+        $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.displayname_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
+            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.displayname_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true OR u.username LIKE :likeQuery)
                 AND u.visibility = :visibility
                 AND u.is_deleted = false
                 AND u.marked_for_deletion_at IS NULL

@@ -1,5 +1,5 @@
 <section class="section user-info">
-    <h3>{{ user.username|username }}</h3>
+    <h3>{{ user.displayname ?? user.username|username }}</h3>
     {% if is_route_name_starts_with('user_settings') %}
         <div class="row">
             {% if user.avatar %}
@@ -12,7 +12,7 @@
                 </figure>
             {% endif %}
             <h4><a href="{{ path('user_overview', {username:user.username}) }}"
-                   class="stretched-link">{{ user.username|username(false) }}</a></h4>
+                   class="stretched-link">{{ user.displayname ?? user.username|username(false) }}</a></h4>
             <p class="user__name">
                 {{ user.username|username }}{% if not user.apId %}@{{ kbin_domain() }}{% endif %}
                 {% if user.apManuallyApprovesFollowers is same as true %}

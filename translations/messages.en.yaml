@@ -91,6 +91,7 @@ to: to
 in: in
 from: from
 username: Username
+displayname: Display Name
 email: Email
 repeat_password: Repeat password
 agree_terms: Consent to %terms_link_start%Terms and Conditions%terms_link_end% 
