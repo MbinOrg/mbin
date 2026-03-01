@@ -20,15 +20,19 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 #[OA\Schema()]
 class MagazineLogResponseDto implements \JsonSerializable
 {
-    public const LOG_TYPES = [
+    public const array LOG_TYPES = [
         'log_entry_deleted',
         'log_entry_restored',
+        'log_entry_purged',
         'log_entry_comment_deleted',
         'log_entry_comment_restored',
+        'log_entry_comment_purged',
         'log_post_deleted',
         'log_post_restored',
+        'log_post_purged',
         'log_post_comment_deleted',
         'log_post_comment_restored',
+        'log_post_comment_purged',
         'log_ban',
         'log_unban',
         'log_entry_pinned',
@@ -48,11 +52,17 @@ class MagazineLogResponseDto implements \JsonSerializable
      * - PostCommentResponseDto when type is 'log_post_comment_deleted' or 'log_post_comment_restored'
      * - MagazineBanResponseDto when type is 'log_ban' or 'log_unban'
      * - UserSmallResponseDto when type is 'log_moderator_add' or 'log_moderator_remove'
+     * - string when type is 'log_entry_purged', 'log_entry_comment_purged', 'log_post_purged' or 'log_post_comment_purged'
      */
     #[OA\Property('subject')]
     // If this property is named 'subject' the api doc generator will not pick it up.
     // It is still serialized as 'subject', see the jsonSerialize method.
-    public EntryResponseDto|EntryCommentResponseDto|PostResponseDto|PostCommentResponseDto|MagazineBanResponseDto|UserSmallResponseDto|null $subject2 = null;
+    public EntryResponseDto|EntryCommentResponseDto|PostResponseDto|PostCommentResponseDto|MagazineBanResponseDto|UserSmallResponseDto|string|null $subject2 = null;
+
+    /**
+     * Only set if the subject is a string, otherwise the author information is contained within the subject.
+     */
+    public ?UserSmallResponseDto $subjectAuthor = null;
 
     public static function create(
         MagazineSmallResponseDto $magazine,
@@ -139,7 +149,8 @@ class MagazineLogResponseDto implements \JsonSerializable
             'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
             'magazine' => $this->magazine,
             'moderator' => $this->moderator,
-            'subject' => $this->subject2?->jsonSerialize(),
+            'subject' => \is_string($this->subject2) ? $this->subject2 : $this->subject2?->jsonSerialize(),
+            'subjectAuthor' => $this->subjectAuthor?->jsonSerialize(),
         ];
     }
 }

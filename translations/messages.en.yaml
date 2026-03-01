@@ -1143,3 +1143,11 @@ magazine_name_as_tag_help: The tags of a magazine are used to match microblog po
   containing "#fediverse" will be put in this magazine.
 magazine_rules_deprecated: the rules field is deprecated and will be removed in the future.
   Please put your rules in the description box.
+purged_thread_by: purged thread by
+purged_comment_by: purged comment by
+purged_post_by: purged microblog by
+former_title: Former title
+modlog_type_entry_purged: Thread purged
+modlog_type_entry_comment_purged: Thread comment purged
+modlog_type_post_purged: Microblog purged
+modlog_type_post_comment_purged: Microblog reply purged
