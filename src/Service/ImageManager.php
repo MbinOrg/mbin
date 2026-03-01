@@ -6,7 +6,12 @@ namespace App\Service;
 
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Repository\ImageRepository;
+use App\Utils\GeneralUtil;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -209,5 +214,103 @@ class ImageManager implements ImageManagerInterface
         } catch (\Throwable $e) {
             return 'none';
         }
+    }
+
+    public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable
+    {
+        foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, '/') as $deletedPath) {
+            yield $deletedPath;
+        }
+    }
+
+    /**
+     * @return iterable<array{path: string, internalPath: string, deleted: bool, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     *
+     * @throws FilesystemException
+     */
+    private function deleteOrphanedFilesIntern(ImageRepository $repository, bool $dryRun, array $ignoredPaths, string $path): iterable
+    {
+        $contents = $this->publicUploadsFilesystem->listContents($path, deep: true);
+        foreach ($contents as $content) {
+            if (GeneralUtil::shouldPathBeIgnored($ignoredPaths, $content->path())) {
+                continue;
+            }
+
+            if ($content->isFile() && $content instanceof FileAttributes) {
+                [$internalImagePath, $fileName] = $this->getInternalImagePathAndName($content);
+                $image = $repository->findOneBy(['fileName' => $fileName, 'filePath' => $internalImagePath]);
+                if (!$image) {
+                    try {
+                        if (!$dryRun) {
+                            $this->publicUploadsFilesystem->delete($content->path());
+                        }
+                        yield [
+                            'path' => $content->path(),
+                            'internalPath' => $internalImagePath,
+                            'deleted' => true,
+                            'successful' => true,
+                            'fileSize' => $content->fileSize(),
+                            'exception' => null,
+                        ];
+                    } catch (\Throwable $e) {
+                        yield [
+                            'path' => $content->path(),
+                            'internalPath' => $internalImagePath,
+                            'deleted' => true,
+                            'successful' => false,
+                            'fileSize' => $content->fileSize(),
+                            'exception' => $e,
+                        ];
+                    }
+                } else {
+                    yield [
+                        'path' => $content->path(),
+                        'internalPath' => $internalImagePath,
+                        'deleted' => false,
+                        'successful' => true,
+                        'fileSize' => $content->fileSize(),
+                        'exception' => null,
+                    ];
+                }
+            } elseif ($content->isDir()) {
+                foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, $content->path()) as $file) {
+                    yield $file;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array{0: string, 1: string} 0=path 1=name
+     */
+    private function getInternalImagePathAndName(StorageAttributes $flySystemFile): array
+    {
+        if (!$flySystemFile->isFile()) {
+            $parts = explode('/', $flySystemFile->path());
+
+            return [$flySystemFile->path(), end($parts)];
+        }
+
+        $path = $flySystemFile->path();
+        if (str_starts_with($path, '/')) {
+            $path = substr($path, 1);
+        }
+
+        if (str_starts_with($path, 'cache')) {
+            $parts = explode('/', $path);
+            $newParts = \array_slice($parts, 2);
+            $path = implode('/', $newParts);
+
+            $doubleExtensions = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
+            foreach ($doubleExtensions as $extension) {
+                if (str_ends_with($path, ".$extension.webp")) {
+                    $path = str_replace(".$extension.webp", ".$extension", $path);
+                    break;
+                }
+            }
+        }
+        $parts = explode('/', $path);
+
+        return [$path, end($parts)];
     }
 }
