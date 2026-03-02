@@ -21,7 +21,7 @@ class MessageThreadController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('show', subject: 'thread', statusCode: 403)]
-    public function __invoke(#[MapEntity(id: 'id')] MessageThread $thread, Request $request): Response
+    public function show(#[MapEntity(id: 'id')] MessageThread $thread, Request $request): Response
     {
         $form = $this->createForm(MessageType::class);
         $form->handleRequest($request);
@@ -41,6 +41,17 @@ class MessageThreadController extends AbstractController
                 'thread' => $thread,
                 'form' => $form->createView(),
             ]
+        );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[IsGranted('show', subject: 'thread', statusCode: 403)]
+    public function remove(#[MapEntity(id: 'id')] MessageThread $thread): Response
+    {
+        $this->manager->removeUserFromThread($thread, $this->getUserOrThrow());
+
+        return $this->redirectToRoute(
+            'messages_front'
         );
     }
 }
