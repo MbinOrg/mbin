@@ -29,7 +29,7 @@ class EntryCommentCreateSubscriber implements EventSubscriberInterface
     {
         $this->cache->invalidateTags(['entry_comment_'.$event->comment->root?->getId() ?? $event->comment->getId()]);
 
-        $threshold = new \DateTimeImmutable('now - 1 day');
+        $threshold = new \DateTimeImmutable('now - 2 days');
         if ($event->comment->createdAt > $threshold) {
             $this->bus->dispatch(new EntryCommentCreatedNotificationMessage($event->comment->getId()));
         }

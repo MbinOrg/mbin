@@ -40,7 +40,7 @@ class EntryCreateSubscriber implements EventSubscriberInterface
 
         $this->manager->extract($event->entry);
         $this->bus->dispatch(new EntryEmbedMessage($event->entry->getId()));
-        $threshold = new \DateTimeImmutable('now - 1 day');
+        $threshold = new \DateTimeImmutable('now - 2 days');
         if ($event->entry->createdAt > $threshold) {
             $this->bus->dispatch(new EntryCreatedNotificationMessage($event->entry->getId()));
         }
