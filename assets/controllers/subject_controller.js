@@ -445,17 +445,20 @@ export default class extends Controller {
             return true;
         }
 
-        // ignore clicks on links
-        if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
-            return true;
-        }
-
-        // ignore clicks on spoilers
-        if (
-            'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
-            || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
-        ) {
-            return true;
+        const filteredElementTypes = [
+            'a',
+            'button',
+            'select',
+            'option',
+            'input',
+            'textarea',
+            'details',
+            'summary',
+        ];
+        for (const type of filteredElementTypes) {
+            if (e.target.nodeName?.toLowerCase() === type || e.target.tagName?.toLowerCase() === type) {
+                return true;
+            }
         }
 
         // ignore click on images

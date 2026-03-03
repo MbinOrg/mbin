@@ -15,7 +15,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -54,7 +54,7 @@ class UserUpdateApi extends UserBaseApi
         UserManager $manager,
         ValidatorInterface $validator,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -111,7 +111,7 @@ class UserUpdateApi extends UserBaseApi
     public function settings(
         UserSettingsManager $manager,
         ValidatorInterface $validator,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

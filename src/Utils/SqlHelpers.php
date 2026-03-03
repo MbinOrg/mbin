@@ -8,6 +8,8 @@ use App\Entity\MagazineBlock;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -92,6 +94,19 @@ class SqlHelpers
             'parameters' => $newParameters,
             'sql' => $newSql,
         ];
+    }
+
+    public static function getSqlType(mixed $value): string|int
+    {
+        if ($value instanceof \DateTimeImmutable) {
+            return Types::DATETIMETZ_IMMUTABLE;
+        } elseif ($value instanceof \DateTime) {
+            return Types::DATETIMETZ_MUTABLE;
+        } elseif (\is_int($value)) {
+            return Types::INTEGER;
+        }
+
+        return ParameterType::STRING;
     }
 
     public function getBlockedMagazinesDql(User $user): string
@@ -344,7 +359,8 @@ class SqlHelpers
     {
         $conn = $this->entityManager->getConnection();
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery(['uId' => $user->getId()]);
+        $stmt->bindValue('uId', $user->getId(), ParameterType::INTEGER);
+        $result = $stmt->executeQuery();
         $rows = $result->fetchAllAssociative();
         $result = [];
         foreach ($rows as $row) {

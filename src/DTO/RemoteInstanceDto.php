@@ -11,18 +11,18 @@ use OpenApi\Attributes as OA;
 class RemoteInstanceDto implements \JsonSerializable
 {
     public function __construct(
+        public string $domain,
+        public int $id,
+        public int $magazines,
+        public int $users,
         public ?string $software = null,
         public ?string $version = null,
-        public string $domain,
         public ?\DateTimeImmutable $lastSuccessfulDeliver = null,
         public ?\DateTimeImmutable $lastFailedDeliver = null,
         public ?\DateTimeImmutable $lastSuccessfulReceive = null,
         public int $failedDelivers = 0,
         public bool $isBanned = false,
         public bool $isExplicitlyAllowed = false,
-        public int $id,
-        public int $magazines,
-        public int $users,
         #[OA\Property(description: 'Amount of users from our instance following users on their instance')]
         public int $ourUserFollows,
         #[OA\Property(description: 'Amount of users from their instance following users on our instance')]
@@ -40,18 +40,18 @@ class RemoteInstanceDto implements \JsonSerializable
     public static function create(Instance $instance, array $instanceCounts): RemoteInstanceDto
     {
         return new self(
+            $instance->domain,
+            $instance->getId(),
+            $instanceCounts['magazines'],
+            $instanceCounts['users'],
             $instance->software,
             $instance->version,
-            $instance->domain,
             $instance->getLastSuccessfulDeliver(),
             $instance->getLastFailedDeliver(),
             $instance->getLastSuccessfulReceive(),
             $instance->getFailedDelivers(),
             $instance->isBanned,
             $instance->isExplicitlyAllowed,
-            $instance->getId(),
-            $instanceCounts['magazines'],
-            $instanceCounts['users'],
             $instanceCounts['ourUserFollows'],
             $instanceCounts['theirUserFollows'],
             $instanceCounts['ourSubscriptions'],

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\MessageType;
 use App\Repository\MessageThreadRepository;
 use App\Service\MessageManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -23,7 +24,7 @@ class MessageCreateThreadController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('message', subject: 'receiver')]
-    public function __invoke(User $receiver, Request $request): Response
+    public function __invoke(#[MapEntity(mapping: ['username' => 'username'])] User $receiver, Request $request): Response
     {
         $threads = $this->threadRepository->findByParticipants([$this->getUserOrThrow(), $receiver]);
         if ($threads && \sizeof($threads) > 0) {

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,7 +24,7 @@ class AccountDeletionController extends AbstractController
     public function __construct(
         private readonly Security $security,
         private readonly UserManager $userManager,
-        private readonly RateLimiterFactory $userDeleteLimiter,
+        private readonly RateLimiterFactoryInterface $userDeleteLimiter,
         private readonly IpResolver $ipResolver,
         private readonly LoggerInterface $logger,
         private readonly UserPasswordHasherInterface $userPasswordHasher,

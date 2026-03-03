@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntriesTrashApi extends EntriesBaseApi
@@ -71,7 +71,7 @@ class EntriesTrashApi extends EntriesBaseApi
         Entry $entry,
         EntryManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -148,7 +148,7 @@ class EntriesTrashApi extends EntriesBaseApi
         Entry $entry,
         EntryManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 

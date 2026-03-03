@@ -13,7 +13,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class NotificationReadApi extends NotificationBaseApi
@@ -68,7 +68,7 @@ class NotificationReadApi extends NotificationBaseApi
     public function read(
         #[MapEntity(id: 'notification_id')]
         Notification $notification,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 
@@ -121,7 +121,7 @@ class NotificationReadApi extends NotificationBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:NOTIFICATION:READ')]
     public function readAll(
         NotificationManager $manager,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 
@@ -181,7 +181,7 @@ class NotificationReadApi extends NotificationBaseApi
     public function unread(
         #[MapEntity(id: 'notification_id')]
         Notification $notification,
-        RateLimiterFactory $apiNotificationLimiter,
+        RateLimiterFactoryInterface $apiNotificationLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiNotificationLimiter);
 

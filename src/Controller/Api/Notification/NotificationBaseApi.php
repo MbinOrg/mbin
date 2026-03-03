@@ -130,7 +130,7 @@ class NotificationBaseApi extends BaseApi
             case 'new_signup':
                 /** @var NewSignupNotification $n */
                 $n = $dto;
-                $toReturn['subject'] = $this->userFactory->createDto($n->getSubject());
+                $toReturn['subject'] = $this->userFactory->createSignupResponseDto($n->getSubject());
                 break;
         }
 

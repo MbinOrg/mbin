@@ -14,7 +14,7 @@ use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class InstanceRetrieveFederationApi extends InstanceBaseApi
 {
@@ -44,8 +44,8 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
      */
     public function getDeFederated(
         InstanceRepository $instanceRepository,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $dto = new InstancesDto($instanceRepository->getBannedInstanceUrls());
@@ -81,8 +81,8 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
      * Get de-federated instances.
      */
     public function getDeFederatedV2(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         InstanceRepository $instanceRepository,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -120,8 +120,8 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
      * Get federated instances.
      */
     public function getFederated(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         InstanceRepository $instanceRepository,
         SettingsManager $settingsManager,
     ): JsonResponse {
@@ -160,8 +160,8 @@ class InstanceRetrieveFederationApi extends InstanceBaseApi
      * Get dead instances.
      */
     public function getDead(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         InstanceRepository $instanceRepository,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
