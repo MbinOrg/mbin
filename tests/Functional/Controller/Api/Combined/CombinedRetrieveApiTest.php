@@ -95,7 +95,7 @@ class CombinedRetrieveApiTest extends WebTestCase
         self::assertNull($data['items'][1]['entry']);
         assertEquals($this->generatedPosts[0]->getId(), $data['items'][1]['post']['postId']);
 
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest&cursor=' . urlencode($data['pagination']['nextCursor']));
+        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest&cursor='.urlencode($data['pagination']['nextCursor']));
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
 
