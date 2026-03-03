@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Combined;
 
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Tests\WebTestCase;
 
 use function PHPUnit\Framework\assertEquals;
@@ -12,6 +13,7 @@ use function PHPUnit\Framework\assertEquals;
 class CombinedRetrieveApiTest extends WebTestCase
 {
     private Magazine $magazine;
+    private User $user;
     private array $generatedEntries = [];
     private array $generatedPosts = [];
 
@@ -19,6 +21,8 @@ class CombinedRetrieveApiTest extends WebTestCase
     {
         parent::setUp();
         $this->magazine = $this->getMagazineByName('acme');
+        $this->user = $this->getUserByUsername('user');
+        $this->magazineManager->subscribe($this->magazine, $this->user);
         for ($i = 0; $i < 10; ++$i) {
             $entry = $this->getEntryByTitle("Test Entry $i", magazine: $this->magazine);
             $entry->createdAt = new \DateTimeImmutable("now - $i minutes");
@@ -58,6 +62,24 @@ class CombinedRetrieveApiTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
+        $this->assertCursorDataShape($data);
+    }
+
+    public function testUserCombinedCursored(): void
+    {
+        $this->client->loginUser($this->user);
+        self::createOAuth2PublicAuthCodeClient();
+        $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+        $this->client->request('GET', '/api/combined/2.0/subscribed?perPage=2&sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
+
+        self::assertResponseIsSuccessful();
+        $data = self::getJsonResponse($this->client);
+        $this->assertCursorDataShape($data);
+    }
+
+    private function assertCursorDataShape(array $data): void
+    {
         self::assertArrayKeysMatch(WebTestCase::PAGINATED_KEYS, $data);
 
         self::assertCount(2, $data['items']);
@@ -73,7 +95,7 @@ class CombinedRetrieveApiTest extends WebTestCase
         self::assertNull($data['items'][1]['entry']);
         assertEquals($this->generatedPosts[0]->getId(), $data['items'][1]['post']['postId']);
 
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest&cursor='.urlencode($data['pagination']['nextCursor']));
+        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest&cursor=' . urlencode($data['pagination']['nextCursor']));
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
 

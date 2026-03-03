@@ -65,7 +65,6 @@ class EntryFrontController extends AbstractController
         }
 
         $entities = $this->contentRepository->findByCriteriaCursored($criteria, $this->getCursorByCriteria($criteria, $cursor));
-        $page = $entities->getCurrentPageResults();
         $templatePath = 'content/';
         $dataKey = 'results';
 
@@ -313,7 +312,6 @@ class EntryFrontController extends AbstractController
         $guessedCursor = $this->contentRepository->guessInitialCursor($criteria);
         if ($guessedCursor instanceof \DateTimeImmutable) {
             $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $guessedCursor;
-        // $currentCursor = null !== $cursor ? (new \DateTimeImmutable)->setTimestamp(intval($cursor)) : $guessedCursor;
         } elseif (\is_int($guessedCursor)) {
             $currentCursor = null !== $cursor ? \intval($cursor) : $guessedCursor;
         } else {
