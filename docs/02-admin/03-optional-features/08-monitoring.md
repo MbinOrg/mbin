@@ -29,6 +29,9 @@ but you cannot inspect the executed queries.
 Depending on your persistence settings the monitoring can take up a lot of space. 
 The largest amount will come from the queries, then the twig renders and at last the curl requests.
 
+> [!TIP]
+> To delete you monitoring data see [cli docs](../04-running-mbin/05-cli.md#delete-monitoring-data).
+
 ## UI
 
 At `/admin/monitoring` is the overview of the monitoring. There you can see a chart of the longest taking execution contexts.
