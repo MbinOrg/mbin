@@ -19,7 +19,6 @@ use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
@@ -55,7 +54,6 @@ class MagazineRepository extends ServiceEntityRepository
         private readonly SqlHelpers $sqlHelpers,
         private readonly ContentPopulationTransformer $contentPopulationTransformer,
         private readonly CacheInterface $cache,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Magazine::class);
     }
@@ -339,7 +337,7 @@ class MagazineRepository extends ServiceEntityRepository
         $parameters = [
             'magazineId' => $magazineId,
         ];
-        $adapter = new NativeQueryAdapter($this->entityManager->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
 
         $pagerfanta = new Pagerfanta($adapter);
 

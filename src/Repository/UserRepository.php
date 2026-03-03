@@ -14,7 +14,6 @@ use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,7 +49,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function __construct(
         ManagerRegistry $registry,
         private readonly SettingsManager $settingsManager,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -262,8 +260,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         $user->setPassword($newHashedPassword);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByUsername(string $username): ?User
@@ -653,7 +651,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
      */
     public function findForMagazineUsersByContentCount(Magazine $magazine, ?bool $federated, int $limit, bool $limitTime, bool $requireAvatar): array
     {
-        $conn = $this->_em->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $userWhere = [
             'u.is_banned = false',
             'u.is_deleted = false',

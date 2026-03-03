@@ -27,7 +27,6 @@ use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -57,7 +56,6 @@ class PostRepository extends ServiceEntityRepository
         private readonly AdapterFactory $adapterFactory,
         private readonly SettingsManager $settingsManager,
         private readonly SqlHelpers $sqlHelpers,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Post::class);
     }
@@ -245,7 +243,7 @@ class PostRepository extends ServiceEntityRepository
 
     public function hydrate(Post ...$posts): void
     {
-        $this->entityManager->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL p.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -472,12 +470,12 @@ class PostRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->entityManager->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
                 } else {
-                    $query = $this->entityManager->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
                         ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)

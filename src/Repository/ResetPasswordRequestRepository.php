@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\ResetPasswordRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordRequestRepositoryTrait;
@@ -24,24 +23,23 @@ class ResetPasswordRequestRepository extends ServiceEntityRepository implements 
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, ResetPasswordRequest::class);
     }
 
     public function add(ResetPasswordRequest $entity, bool $flush = true): void
     {
-        $this->entityManager->persist($entity);
+        $this->getEntityManager()->persist($entity);
         if ($flush) {
-            $this->entityManager->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
     public function remove(ResetPasswordRequest $entity, bool $flush = true): void
     {
-        $this->entityManager->remove($entity);
+        $this->getEntityManager()->remove($entity);
         if ($flush) {
-            $this->entityManager->flush();
+            $this->getEntityManager()->flush();
         }
     }
 

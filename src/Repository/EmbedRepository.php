@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\Embed;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -22,7 +21,6 @@ class EmbedRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly LoggerInterface $logger,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Embed::class);
     }
@@ -34,10 +32,10 @@ class EmbedRepository extends ServiceEntityRepository
         if (null === $this->findOneByUrl($entity->url)) {
             // Do not exceed URL length limit defined by db schema
             try {
-                $this->entityManager->persist($entity);
+                $this->getEntityManager()->persist($entity);
 
                 if ($flush) {
-                    $this->entityManager->flush();
+                    $this->getEntityManager()->flush();
                 }
             } catch (\Exception $e) {
                 $this->logger->warning('Embed URL exceeds allowed length: {url, length}', ['url' => $entity->url, \strlen($entity->url)]);
@@ -47,9 +45,9 @@ class EmbedRepository extends ServiceEntityRepository
 
     public function remove(Embed $entity, bool $flush = true): void
     {
-        $this->entityManager->remove($entity);
+        $this->getEntityManager()->remove($entity);
         if ($flush) {
-            $this->entityManager->flush();
+            $this->getEntityManager()->flush();
         }
     }
 }

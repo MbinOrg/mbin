@@ -7,13 +7,11 @@ namespace App\Repository;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
-use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
@@ -33,9 +31,7 @@ class ReputationRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly SettingsManager $settingsManager,
-        private readonly ContentPopulationTransformer $contentPopulationTransformer,
         private readonly CacheInterface $cache,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Site::class);
     }
@@ -54,7 +50,7 @@ class ReputationRepository extends ServiceEntityRepository
             SELECT f.created_at, 1 as choice FROM favourite f INNER JOIN $table s ON f.$idColumn = s.id WHERE s.user_id = :userId --upvotes -> 1x
         ) as interactions GROUP BY day ORDER BY day DESC";
 
-        $adapter = new NativeQueryAdapter($this->entityManager->getConnection(), $sql, ['userId' => $user->getId()], cache: $this->cache);
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, ['userId' => $user->getId()], cache: $this->cache);
         $pagerfanta = new Pagerfanta($adapter);
 
         try {
