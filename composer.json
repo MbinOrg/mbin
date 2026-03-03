@@ -23,6 +23,7 @@
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
         "doctrine/orm": "^3.6.2",
+        "doctrine/instantiator": "2.0.0",
         "embed/embed": "^4.4.12",
         "endroid/qr-code": "^6.0.3",
         "friendsofsymfony/jsrouting-bundle": "^3.5.0",
