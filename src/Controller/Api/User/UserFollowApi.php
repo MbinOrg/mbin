@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserFollowApi extends UserBaseApi
@@ -69,7 +69,7 @@ class UserFollowApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
@@ -135,7 +135,7 @@ class UserFollowApi extends UserBaseApi
         User $user,
         UserManager $manager,
         UserFactory $factory,
-        RateLimiterFactory $apiUpdateLimiter,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 

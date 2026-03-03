@@ -11,7 +11,7 @@ use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class InstanceRetrieveInfoApi extends InstanceBaseApi
 {
@@ -42,8 +42,8 @@ class InstanceRetrieveInfoApi extends InstanceBaseApi
     public function __invoke(
         SettingsManager $settings,
         ProjectInfoService $projectInfo,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         PersonFactory $userFactory,
     ): JsonResponse {
         $userToJson = function (User $admin) use ($userFactory) {

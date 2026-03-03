@@ -6,6 +6,7 @@ namespace App\Command\Update;
 
 use App\Repository\DomainRepository;
 use App\Service\SettingsManager;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -42,19 +43,24 @@ class RemoveRemoteEntriesFromLocalDomainCommand extends Command
 
         $countBeforeSql = 'SELECT COUNT(*) as ctn FROM entry WHERE domain_id = :dId';
         $stmt1 = $this->entityManager->getConnection()->prepare($countBeforeSql);
-        $countBefore = \intval($stmt1->executeQuery(['dId' => $domain->getId()])->fetchOne());
+        $stmt1->bindValue('dId', $domain->getId(), ParameterType::INTEGER);
+        $countBefore = \intval($stmt1->executeQuery()->fetchOne());
 
         $sql = 'UPDATE entry SET domain_id = NULL WHERE domain_id = :dId AND ap_id IS NOT NULL';
         $stmt2 = $this->entityManager->getConnection()->prepare($sql);
-        $stmt2->executeStatement(['dId' => $domain->getId()]);
+        $stmt2->bindValue('dId', $domain->getId(), ParameterType::INTEGER);
+        $stmt2->executeStatement();
 
         $countAfterSql = 'SELECT COUNT(*) as ctn FROM entry WHERE domain_id = :dId';
         $stmt3 = $this->entityManager->getConnection()->prepare($countAfterSql);
-        $countAfter = \intval($stmt3->executeQuery(['dId' => $domain->getId()])->fetchOne());
+        $stmt3->bindValue('dId', $domain->getId(), ParameterType::INTEGER);
+        $countAfter = \intval($stmt3->executeQuery()->fetchOne());
 
         $sql = 'UPDATE domain SET entry_count = :c WHERE id = :dId';
         $stmt4 = $this->entityManager->getConnection()->prepare($sql);
-        $stmt4->executeStatement(['c' => $countAfter, 'dId' => $domain->getId()]);
+        $stmt4->bindValue('dId', $domain->getId(), ParameterType::INTEGER);
+        $stmt4->bindValue('c', $countAfter, ParameterType::INTEGER);
+        $stmt4->executeStatement();
 
         $io->success(\sprintf('Removed %d entries from the domain %s, now only %d entries are left', $countBefore - $countAfter, $domainName, $countAfter));
 

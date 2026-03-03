@@ -23,8 +23,13 @@ class EntryCommentFrontController extends AbstractController
     ) {
     }
 
-    public function front(?Magazine $magazine, ?string $sortBy, ?string $time, Request $request, #[MapQueryParameter] ?string $federation): Response
-    {
+    public function front(
+        ?Magazine $magazine,
+        ?string $sortBy,
+        ?string $time,
+        Request $request,
+        #[MapQueryParameter] ?string $federation,
+    ): Response {
         $params = [];
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy ?? Criteria::SORT_DEFAULT))

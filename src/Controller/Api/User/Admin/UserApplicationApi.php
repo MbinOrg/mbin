@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\User\Admin;
 
 use App\Controller\Api\User\UserBaseApi;
-use App\DTO\UserResponseDto;
+use App\DTO\UserSignupResponseDto;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Schema\Errors\ForbiddenErrorSchema;
@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserApplicationApi extends UserBaseApi
@@ -38,7 +38,7 @@ class UserApplicationApi extends UserBaseApi
                 new OA\Property(
                     property: 'items',
                     type: 'array',
-                    items: new OA\Items(ref: new Model(type: UserResponseDto::class))
+                    items: new OA\Items(ref: new Model(type: UserSignupResponseDto::class))
                 ),
                 new OA\Property(
                     property: 'pagination',
@@ -81,8 +81,8 @@ class UserApplicationApi extends UserBaseApi
     /** Retrieve users waiting for admin approval */
     public function retrieve(
         UserFactory $userFactory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapQueryParameter] int $p = 1,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -91,7 +91,7 @@ class UserApplicationApi extends UserBaseApi
         $dtos = [];
         foreach ($users->getCurrentPageResults() as $value) {
             \assert($value instanceof User);
-            $dtos[] = $this->serializeUser($userFactory->createDto($value));
+            $dtos[] = $userFactory->createSignupResponseDto($value);
         }
 
         return new JsonResponse(
@@ -146,8 +146,8 @@ class UserApplicationApi extends UserBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function approve(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapEntity(id: 'user_id')] User $user,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
@@ -202,8 +202,8 @@ class UserApplicationApi extends UserBaseApi
     #[Security(name: 'oauth2', scopes: ['admin:user:application'])]
     #[IsGranted('ROLE_OAUTH2_ADMIN:USER:APPLICATION')]
     public function reject(
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapEntity(id: 'user_id')] User $user,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);

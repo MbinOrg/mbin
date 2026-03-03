@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class RetrieveClientApi extends BaseApi
@@ -75,7 +75,7 @@ class RetrieveClientApi extends BaseApi
     public function __invoke(
         #[MapEntity(mapping: ['client_identifier' => 'identifier'])]
         Client $client,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -154,7 +154,7 @@ class RetrieveClientApi extends BaseApi
     public function collection(
         EntityManagerInterface $manager,
         Request $request,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
