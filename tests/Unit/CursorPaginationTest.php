@@ -51,6 +51,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(3, $i);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertFalse($this->cursorPagination->hasPreviousPage());
@@ -63,6 +64,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(6, $i);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -75,6 +77,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(9, $i);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -87,6 +90,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(10, $i);
 
         self::assertFalse($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -99,6 +103,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(9, $i);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -111,6 +116,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(6, $i);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -123,6 +129,7 @@ class CursorPaginationTest extends WebTestCase
             self::assertEquals($i, $result['value']);
             ++$i;
         }
+        self::assertEquals(3, $i);
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertFalse($this->cursorPagination->hasPreviousPage());
     }
