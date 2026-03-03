@@ -17,7 +17,6 @@ use App\PageView\PostCommentPageView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -40,7 +39,6 @@ class PostCommentRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, PostComment::class);
     }
@@ -202,7 +200,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
     public function hydrate(PostComment ...$comment): void
     {
-        $this->entityManager->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL c.{id}')
             ->addSelect('u')
             ->addSelect('m')

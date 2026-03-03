@@ -13,7 +13,6 @@ use App\Entity\PostComment;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -33,7 +32,6 @@ class ApActivityRepository extends ServiceEntityRepository
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, ApActivity::class);
     }
@@ -49,7 +47,7 @@ class ApActivityRepository extends ServiceEntityRepository
             return $local;
         }
 
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $tables = [
             ['table' => 'entry', 'class' => Entry::class],
             ['table' => 'entry_comment', 'class' => EntryComment::class],
@@ -164,7 +162,7 @@ class ApActivityRepository extends ServiceEntityRepository
 
     public function getLocalUrlOfActivity(string $type, int $id): ?string
     {
-        $repo = $this->_em->getRepository($type);
+        $repo = $this->getEntityManager()->getRepository($type);
         $entity = $repo->find($id);
 
         return $this->getLocalUrlOfEntity($entity);

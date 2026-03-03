@@ -28,7 +28,6 @@ use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,7 +60,6 @@ class EntryRepository extends ServiceEntityRepository
         private readonly AdapterFactory $adapterFactory,
         private readonly SettingsManager $settingsManager,
         private readonly SqlHelpers $sqlHelpers,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, Entry::class);
     }
@@ -273,7 +271,7 @@ class EntryRepository extends ServiceEntityRepository
 
     public function hydrate(Entry ...$entries): void
     {
-        $this->entityManager->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL e.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -472,12 +470,12 @@ class EntryRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->entityManager->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', 'visible');
                 } else {
-                    $query = $this->entityManager->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Entry p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
                         ->setParameter('visibility', 'visible')
