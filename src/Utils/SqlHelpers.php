@@ -106,7 +106,7 @@ class SqlHelpers
             return Types::INTEGER;
         }
 
-        return ParameterType::STRING;
+        return Types::STRING;
     }
 
     public function getBlockedMagazinesDql(User $user): string
