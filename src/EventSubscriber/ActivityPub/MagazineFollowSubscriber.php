@@ -6,7 +6,7 @@ namespace App\EventSubscriber\ActivityPub;
 
 use App\Event\Magazine\MagazineSubscribedEvent;
 use App\Message\ActivityPub\Outbox\FollowMessage;
-use App\Repository\ContentRepository;
+use App\Utils\SqlHelpers;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -15,7 +15,7 @@ class MagazineFollowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly ContentRepository $contentRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -29,7 +29,7 @@ class MagazineFollowSubscriber implements EventSubscriberInterface
 
     public function onMagazineFollow(MagazineSubscribedEvent $event): void
     {
-        $this->contentRepository->clearCachedUserSubscribedMagazines($event->user);
+        $this->sqlHelpers->clearCachedUserSubscribedMagazines($event->user);
 
         if ($event->magazine->apId && !$event->user->apId) {
             $this->bus->dispatch(

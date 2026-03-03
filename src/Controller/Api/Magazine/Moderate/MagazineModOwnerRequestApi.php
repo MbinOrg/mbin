@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -66,7 +66,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     public function toggleModRequest(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -133,7 +133,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
         Magazine $magazine,
         #[MapEntity(id: 'user_id')]
         User $user,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -199,7 +199,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
         Magazine $magazine,
         #[MapEntity(id: 'user_id')]
         User $user,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -258,7 +258,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     public function getModRequests(
         #[MapQueryParameter(name: 'magazine')]
         ?int $magazineId,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -328,7 +328,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     public function toggleOwnerRequest(
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -395,7 +395,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
         Magazine $magazine,
         #[MapEntity(id: 'user_id')]
         User $user,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -461,7 +461,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
         Magazine $magazine,
         #[MapEntity(id: 'user_id')]
         User $user,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 
@@ -520,7 +520,7 @@ class MagazineModOwnerRequestApi extends MagazineBaseApi
     public function getOwnerRequests(
         #[MapQueryParameter(name: 'magazine')]
         ?int $magazineId,
-        RateLimiterFactory $apiModerateLimiter,
+        RateLimiterFactoryInterface $apiModerateLimiter,
     ): Response {
         $headers = $this->rateLimit($apiModerateLimiter);
 

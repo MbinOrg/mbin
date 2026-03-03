@@ -17,7 +17,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntriesVoteApi extends EntriesBaseApi
@@ -80,7 +80,7 @@ class EntriesVoteApi extends EntriesBaseApi
         int $choice,
         VoteManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiVoteLimiter,
+        RateLimiterFactoryInterface $apiVoteLimiter,
         SettingsManager $settingsManager,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);

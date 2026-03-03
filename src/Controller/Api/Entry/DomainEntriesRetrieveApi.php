@@ -15,6 +15,7 @@ use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -22,7 +23,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class DomainEntriesRetrieveApi extends EntriesBaseApi
 {
@@ -131,9 +132,10 @@ class DomainEntriesRetrieveApi extends EntriesBaseApi
         ContentRepository $repository,
         EntryFactory $factory,
         RequestStack $request,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
@@ -148,7 +150,7 @@ class DomainEntriesRetrieveApi extends EntriesBaseApi
         $this->handleLanguageCriteria($criteria);
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $criteria->perPage = self::constrainPerPage($perPage ?? ContentRepository::PER_PAGE);

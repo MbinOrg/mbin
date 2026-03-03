@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DomainRetrieveApi extends DomainBaseApi
@@ -68,8 +68,8 @@ class DomainRetrieveApi extends DomainBaseApi
         #[MapEntity(id: 'domain_id')]
         Domain $domain,
         DomainFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -141,8 +141,8 @@ class DomainRetrieveApi extends DomainBaseApi
     public function collection(
         DomainRepository $repository,
         SearchManager $searchManager,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -225,7 +225,7 @@ class DomainRetrieveApi extends DomainBaseApi
     #[IsGranted('ROLE_OAUTH2_DOMAIN:SUBSCRIBE')]
     public function subscribed(
         DomainRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -321,7 +321,7 @@ class DomainRetrieveApi extends DomainBaseApi
         #[MapEntity(id: 'user_id')]
         User $user,
         DomainRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -402,7 +402,7 @@ class DomainRetrieveApi extends DomainBaseApi
     #[IsGranted('ROLE_OAUTH2_DOMAIN:BLOCK')]
     public function blocked(
         DomainRepository $repository,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 

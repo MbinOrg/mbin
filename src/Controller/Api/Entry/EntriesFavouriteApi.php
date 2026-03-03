@@ -13,7 +13,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntriesFavouriteApi extends EntriesBaseApi
@@ -62,7 +62,7 @@ class EntriesFavouriteApi extends EntriesBaseApi
         Entry $entry,
         FavouriteManager $manager,
         EntryFactory $factory,
-        RateLimiterFactory $apiVoteLimiter,
+        RateLimiterFactoryInterface $apiVoteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiVoteLimiter);
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Schema;
 
 use App\DTO\MagazineBanResponseDto;
-use App\DTO\UserDto;
+use App\DTO\UserSignupResponseDto;
 use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -55,7 +55,7 @@ class NotificationSchema
         new OA\Schema(ref: '#/components/schemas/PostCommentResponseDto'),
         new OA\Schema(ref: '#/components/schemas/MessageResponseDto'),
         new OA\Schema(ref: new Model(type: MagazineBanResponseDto::class)),
-        new OA\Schema(ref: new Model(type: UserDto::class)),
+        new OA\Schema(ref: new Model(type: UserSignupResponseDto::class)),
     ])]
     public mixed $subject = null;
 
