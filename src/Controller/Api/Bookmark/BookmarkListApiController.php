@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class BookmarkListApiController extends BaseApi
@@ -143,7 +143,7 @@ class BookmarkListApiController extends BaseApi
         #[MapQueryParameter] ?string $type,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
     ): JsonResponse {
         $user = $this->getUserOrThrow();
@@ -207,7 +207,7 @@ class BookmarkListApiController extends BaseApi
     #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['bookmark_list:read'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:READ')]
-    public function list(RateLimiterFactory $apiReadLimiter): JsonResponse
+    public function list(RateLimiterFactoryInterface $apiReadLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiReadLimiter);
@@ -258,7 +258,7 @@ class BookmarkListApiController extends BaseApi
     #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:EDIT')]
-    public function makeDefault(string $list_name, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function makeDefault(string $list_name, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -311,7 +311,7 @@ class BookmarkListApiController extends BaseApi
     #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:EDIT')]
-    public function editList(string $list_name, #[MapRequestPayload] BookmarkListDto $dto, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function editList(string $list_name, #[MapRequestPayload] BookmarkListDto $dto, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -363,7 +363,7 @@ class BookmarkListApiController extends BaseApi
     #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['bookmark_list:edit'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:EDIT')]
-    public function createList(string $list_name, RateLimiterFactory $apiUpdateLimiter): JsonResponse
+    public function createList(string $list_name, RateLimiterFactoryInterface $apiUpdateLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -415,7 +415,7 @@ class BookmarkListApiController extends BaseApi
     #[OA\Tag(name: 'bookmark_list')]
     #[Security(name: 'oauth2', scopes: ['bookmark_list:delete'])]
     #[IsGranted('ROLE_OAUTH2_BOOKMARK_LIST:DELETE')]
-    public function deleteList(string $list_name, RateLimiterFactory $apiDeleteLimiter): JsonResponse
+    public function deleteList(string $list_name, RateLimiterFactoryInterface $apiDeleteLimiter): JsonResponse
     {
         $user = $this->getUserOrThrow();
         $headers = $this->rateLimit($apiDeleteLimiter);

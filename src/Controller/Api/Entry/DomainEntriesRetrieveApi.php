@@ -23,7 +23,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class DomainEntriesRetrieveApi extends EntriesBaseApi
 {
@@ -132,8 +132,8 @@ class DomainEntriesRetrieveApi extends EntriesBaseApi
         ContentRepository $repository,
         EntryFactory $factory,
         RequestStack $request,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,

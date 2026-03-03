@@ -24,7 +24,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -74,8 +74,8 @@ class EntriesRetrieveApi extends EntriesBaseApi
         Entry $entry,
         EntryFactory $factory,
         EventDispatcherInterface $dispatcher,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -186,8 +186,8 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function collection(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
         SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
@@ -308,7 +308,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function subscribed(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
         SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
@@ -430,7 +430,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function moderated(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
         SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
@@ -552,7 +552,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function favourited(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
         SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,

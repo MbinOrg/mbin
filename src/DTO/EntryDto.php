@@ -26,7 +26,7 @@ class EntryDto implements ContentVisibilityInterface
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $title = null;
-    #[Assert\Url]
+    #[Assert\Url(requireTld: true)]
     public ?string $url = null;
     #[Assert\Length(max: Entry::MAX_BODY_LENGTH, countUnit: Assert\Length::COUNT_GRAPHEMES)]
     public ?string $body = null;
