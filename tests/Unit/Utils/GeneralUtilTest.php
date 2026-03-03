@@ -23,9 +23,10 @@ class GeneralUtilTest extends TestCase
             [['/cache'], 'ca/fe/asdoihsd.png', false],
             [['/cache'], 'cache/ca/fe/asdoihsd.png', true],
             [['cache'], 'cache/ca/fe/asdoihsd.png', true],
-            [['/cache'], 'cache/ca/fe/asdoihsd.png', true],
+            [['cache/'], 'cache/ca/fe/asdoihsd.png', true],
             [['/fe'], 'ca/fe/asdoihsd.png', false],
             [['fe'], 'ca/fe/asdoihsd.png', false],
+            [['fe/'], 'ca/fe/asdoihsd.png', false],
             [['/fe', 'ca'], 'ca/fe/asdoihsd.png', true],
         ];
     }
