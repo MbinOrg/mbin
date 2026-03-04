@@ -25,6 +25,8 @@ use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -525,18 +527,20 @@ class CombinedRetrieveApi extends BaseApi
         return new JsonResponse($this->serializeCursorPaginated($result, $content), headers: $headers);
     }
 
-    /**
-     * @throws \DateMalformedStringException
-     */
     private function getCursor(ContentRepository $contentRepository, ContentPageView $criteria, ?string $cursor): int|\DateTime|\DateTimeImmutable
     {
         $initialCursor = $contentRepository->guessInitialCursor($criteria);
         if ($initialCursor instanceof \DateTime || $initialCursor instanceof \DateTimeImmutable) {
-            $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $initialCursor;
+            try {
+                $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $initialCursor;
+            } catch (\DateException) {
+                throw new BadRequestHttpException('The cursor is not a parsable datetime.');
+            }
         } elseif (\is_int($initialCursor)) {
             $currentCursor = null !== $cursor ? \intval($cursor) : $initialCursor;
         } else {
-            throw new \LogicException(\get_class($initialCursor).' is not accounted for');
+            $this->logger->critical('Could not get a cursor from class "{c}"', ['c' => \get_class($initialCursor)]);
+            throw new HttpException(500, 'Could not determine the cursor.');
         }
 
         return $currentCursor;
