@@ -27,17 +27,21 @@ abstract class MagazineLog
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
 
-    public const DISCRIMINATOR_MAP = [
+    public const array DISCRIMINATOR_MAP = [
         'entry_deleted' => MagazineLogEntryDeleted::class,
         'entry_restored' => MagazineLogEntryRestored::class,
+        'entry_purged' => MagazineLogEntryPurged::class,
         'entry_comment_deleted' => MagazineLogEntryCommentDeleted::class,
         'entry_comment_restored' => MagazineLogEntryCommentRestored::class,
+        'entry_comment_purged' => MagazineLogEntryCommentPurged::class,
         'entry_pinned' => MagazineLogEntryPinned::class,
         'entry_unpinned' => MagazineLogEntryUnpinned::class,
         'post_deleted' => MagazineLogPostDeleted::class,
         'post_restored' => MagazineLogPostRestored::class,
+        'post_purged' => MagazineLogPostPurged::class,
         'post_comment_deleted' => MagazineLogPostCommentDeleted::class,
         'post_comment_restored' => MagazineLogPostCommentRestored::class,
+        'post_comment_purged' => MagazineLogPostCommentPurged::class,
         'ban' => MagazineLogBan::class,
         'moderator_add' => MagazineLogModeratorAdd::class,
         'moderator_remove' => MagazineLogModeratorRemove::class,
@@ -47,17 +51,21 @@ abstract class MagazineLog
         'post_unlocked' => MagazineLogPostUnlocked::class,
     ];
 
-    public const CHOICES = [
+    public const array CHOICES = [
         'entry_deleted',
         'entry_restored',
+        'entry_purged',
         'entry_comment_deleted',
         'entry_comment_restored',
+        'entry_comment_purged',
         'entry_pinned',
         'entry_unpinned',
         'post_deleted',
         'post_restored',
+        'post_purged',
         'post_comment_deleted',
         'post_comment_restored',
+        'post_comment_purged',
         'ban',
         'moderator_add',
         'moderator_remove',

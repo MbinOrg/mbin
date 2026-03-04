@@ -23,7 +23,7 @@ class ModlogController extends AbstractController
     {
         $dto = new ModlogFilterDto();
         $dto->magazine = null;
-        $form = $this->createForm(ModlogFilterType::class, $dto, ['method' => 'GET']);
+        $form = $this->createForm(ModlogFilterType::class, $dto, ['method' => 'GET', 'csrf_protection' => false]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var ModlogFilterDto $dto */

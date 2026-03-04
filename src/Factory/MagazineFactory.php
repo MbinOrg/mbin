@@ -16,8 +16,12 @@ use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\MagazineLog;
 use App\Entity\MagazineLogBan;
+use App\Entity\MagazineLogEntryCommentPurged;
+use App\Entity\MagazineLogEntryPurged;
 use App\Entity\MagazineLogModeratorAdd;
 use App\Entity\MagazineLogModeratorRemove;
+use App\Entity\MagazineLogPostCommentPurged;
+use App\Entity\MagazineLogPostPurged;
 use App\Entity\Moderator;
 use App\Entity\User;
 use App\Repository\InstanceRepository;
@@ -136,6 +140,14 @@ class MagazineFactory
             }
 
             return MagazineLogResponseDto::createBanUnban($magazine, $moderator, $createdAt, $type, $banSubject);
+        } elseif ($log instanceof MagazineLogEntryPurged || $log instanceof MagazineLogEntryCommentPurged || $log instanceof MagazineLogPostPurged || $log instanceof MagazineLogPostCommentPurged) {
+            $moderator = $this->userFactory->createSmallDto($log->user);
+            $author = $this->userFactory->createSmallDto($log->author);
+            $dto = MagazineLogResponseDto::create($magazine, $moderator, $createdAt, $type);
+            $dto->subject2 = $log->title;
+            $dto->subjectAuthor = $author;
+
+            return $dto;
         } else {
             $moderator = $this->userFactory->createSmallDto($log->user);
 

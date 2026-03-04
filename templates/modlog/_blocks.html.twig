@@ -8,6 +8,11 @@
     <a href="{{ entry_url(log.entry) }}">{{ log.entry.shortTitle(300) }}</a>
 {% endblock %}
 
+{% block log_entry_purged %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'purged_thread_by'|trans|lower }} {{ component('user_inline', {user: log.author, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
+    {{ 'former_title'|trans }}: <i>{{ log.title }}</i>
+{% endblock %}
+
 {% block log_entry_comment_deleted %}
     {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
     <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
@@ -16,6 +21,11 @@
 {% block log_entry_comment_restored %}
     {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
     <a href="{{ entry_comment_view_url(log.comment) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
+{% endblock %}
+
+{% block log_entry_comment_purged %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'purged_comment_by'|trans|lower }} {{ component('user_inline', {user: log.author, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
+    {{ 'former_title'|trans }}: <i>{{ log.title }}</i>
 {% endblock %}
 
 {% block log_post_deleted %}
@@ -28,6 +38,11 @@
     <a href="{{ post_url(log.post) }}">{{ log.post.shortTitle(300) }}</a>
 {% endblock %}
 
+{% block log_post_purged %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'purged_post_by'|trans|lower }} {{ component('user_inline', {user: log.author, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
+    {{ 'former_title'|trans }}: <i>{{ log.title }}</i>
+{% endblock %}
+
 {% block log_post_comment_deleted %}
     {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'removed_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
     <a href="{{ post_url(log.comment.post) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
@@ -36,6 +51,11 @@
 {% block log_post_comment_restored %}
     {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'restored_comment_by'|trans|lower }} {{ component('user_inline', {user: log.comment.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.comment.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
     <a href="{{ post_url(log.comment.post) }}#{{ get_url_fragment(log.comment) }}">{{ log.comment.shortTitle(300) }}</a>
+{% endblock %}
+
+{% block log_post_comment_purged %}
+    {{ component('user_inline', {user: log.user, showAvatar: showAvatars, showNewIcon: showNewIcons}) }} {{ 'purged_comment_by'|trans|lower }} {{ component('user_inline', {user: log.author, showAvatar: showAvatars, showNewIcon: showNewIcons}) }}{% if showMagazine %} {{ 'in'|trans|lower }} {{ component('magazine_inline', {magazine: log.magazine, showAvatar: showIcons, showNewIcon: showNewIcons}) }}{% endif %} -
+    {{ 'former_title'|trans }}: <i>{{ log.title }}</i>
 {% endblock %}
 
 {% block log_ban %}
