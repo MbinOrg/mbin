@@ -48,7 +48,11 @@ class PostCreateSubscriber implements EventSubscriberInterface
             $this->handleMagazine($event->post);
         }
 
-        $this->bus->dispatch(new PostCreatedNotificationMessage($event->post->getId()));
+        $threshold = new \DateTimeImmutable('now - 2 days');
+        if ($event->post->createdAt > $threshold) {
+            $this->bus->dispatch(new PostCreatedNotificationMessage($event->post->getId()));
+        }
+
         if ($event->post->body) {
             $this->bus->dispatch(new LinkEmbedMessage($event->post->body));
         }
