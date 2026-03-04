@@ -24,7 +24,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             return $this->frontExtension->frontOptionsUrl(
                 'content', 'threads',
                 $magazine instanceof Magazine ? 'front_magazine' : 'front',
-                ['name' => $magazine?->name, 'p' => null],
+                ['name' => $magazine?->name, 'p' => null, 'cursor' => null],
             );
         }
 
@@ -61,7 +61,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             return $this->frontExtension->frontOptionsUrl(
                 'content', 'combined',
                 $magazine instanceof Magazine ? 'front_magazine' : 'front',
-                ['name' => $magazine?->name, 'p' => null],
+                ['name' => $magazine?->name, 'p' => null, 'cursor' => null],
             );
         }
 
@@ -99,7 +99,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             return $this->frontExtension->frontOptionsUrl(
                 'content', 'microblog',
                 $magazine instanceof Magazine ? 'front_magazine' : 'front',
-                ['name' => $magazine?->name, 'p' => null, 'type' => null],
+                ['name' => $magazine?->name, 'p' => null, 'cursor' => null, 'type' => null],
             );
         }
 
