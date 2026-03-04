@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\CreatedAtTrait;
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping\Cache;
 use Doctrine\ORM\Mapping\Column;
@@ -20,6 +21,9 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[Cache(usage: 'NONSTRICT_READ_WRITE')]
 class Image
 {
+    use CreatedAtTrait {
+        CreatedAtTrait::__construct as createdAtTraitConstruct;
+    }
     #[Column(type: 'string', nullable: true)]
     /**
      * If this is NULL it is only a remote image, probably because the image was too big.
@@ -39,6 +43,17 @@ class Image
     public ?string $altText = null;
     #[Column(type: 'text', nullable: true)]
     public ?string $sourceUrl = null;
+    #[Column(nullable: false, options: ['default' => false])]
+    public bool $isCompressed = false;
+    #[Column(nullable: false, options: ['default' => false])]
+    public bool $sourceTooBig = false;
+    #[Column(type: 'datetimetz_immutable', nullable: true, options: ['default' => null])]
+    public ?\DateTimeImmutable $downloadedAt;
+    #[Column(type: 'bigint', options: ['default' => 0])]
+    public int $localSize = 0;
+    #[Column(type: 'bigint', options: ['default' => 0])]
+    public int $originalSize = 0;
+
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -52,6 +67,7 @@ class Image
         ?int $height,
         ?string $blurhash,
     ) {
+        $this->createdAtTraitConstruct();
         $this->filePath = $filePath;
         $this->fileName = $fileName;
         $this->blurhash = $blurhash;
