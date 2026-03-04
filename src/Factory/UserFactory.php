@@ -42,7 +42,7 @@ class UserFactory
             reputationPoints: $reputationPoints,
             discoverable: $user->apDiscoverable,
             indexable: $user->apIndexable,
-            displayname: $user->getDisplayname(),
+            title: $user->title,
         );
 
         // Only return the user's vote if permission to control voting has been given

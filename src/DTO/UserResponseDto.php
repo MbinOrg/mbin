@@ -13,7 +13,7 @@ class UserResponseDto implements \JsonSerializable
     public ?ImageDto $avatar = null;
     public ?ImageDto $cover = null;
     public string $username;
-    public ?string $displayname;
+    public ?string $title;
     public int $followersCount = 0;
     public ?string $about = null;
     public ?\DateTimeImmutable $createdAt = null;
@@ -42,7 +42,7 @@ class UserResponseDto implements \JsonSerializable
     {
         $this->userId = $dto->getId();
         $this->username = $dto->username;
-        $this->displayname = $dto->displayname;
+        $this->title = $dto->title;
         $this->about = $dto->about;
         $this->avatar = $dto->avatar;
         $this->cover = $dto->cover;
@@ -68,7 +68,7 @@ class UserResponseDto implements \JsonSerializable
         return [
             'userId' => $this->userId,
             'username' => $this->username,
-            'displayname' => $this->displayname,
+            'title' => $this->title,
             'about' => $this->about,
             'avatar' => $this->avatar?->jsonSerialize(),
             'cover' => $this->cover?->jsonSerialize(),

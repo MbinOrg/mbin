@@ -16,5 +16,5 @@ class UserProfileRequestDto
 
     #[Assert\Length(min: 2, max: UserDto::MAX_USERNAME_LENGTH)]
     #[NoSurroundingWhitespace]
-    public ?string $displayname = null;
+    public ?string $title = null;
 }

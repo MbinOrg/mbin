@@ -14,7 +14,7 @@ class UpdateTest extends ActivityPubTestCase
 
     public function testUpdateUser(): void
     {
-        $this->user->setDisplayname('Test User');
+        $this->user->title = 'Test User';
         $this->entityManager->persist($this->user);
         $this->entityManager->flush();
 

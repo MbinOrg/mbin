@@ -74,7 +74,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals('Updated during test', $jsonData['about']);
     }
 
-    public function testApiCanUpdateCurrentUserDisplayname(): void
+    public function testApiCanUpdateCurrentUserTitle(): void
     {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
@@ -89,13 +89,13 @@ class UserUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
-        self::assertNull($jsonData['displayname']);
+        self::assertNull($jsonData['title']);
 
-        // region set displayname
+        // region set title
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [
-                'displayname' => 'Custom user-name',
+                'title' => 'Custom user-name',
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -106,7 +106,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
-        self::assertEquals('Custom user-name', $jsonData['displayname']);
+        self::assertEquals('Custom user-name', $jsonData['title']);
 
         $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
@@ -116,10 +116,10 @@ class UserUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
-        self::assertEquals('Custom user-name', $jsonData['displayname']);
+        self::assertEquals('Custom user-name', $jsonData['title']);
         // endregion
 
-        // region reset displayname
+        // region reset title
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [],
@@ -132,7 +132,7 @@ class UserUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
-        self::assertNull($jsonData['displayname']);
+        self::assertNull($jsonData['title']);
 
         $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
         self::assertResponseIsSuccessful();
@@ -142,11 +142,11 @@ class UserUpdateApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
         self::assertSame($testUser->getId(), $jsonData['userId']);
-        self::assertNull($jsonData['displayname']);
+        self::assertNull($jsonData['title']);
         // endregion
     }
 
-    public function testApiCannotUpdateCurrentUserDisplaynameWithWhitespaces()
+    public function testApiCannotUpdateCurrentUserTitleWithWhitespaces()
     {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
@@ -159,7 +159,7 @@ class UserUpdateApiTest extends WebTestCase
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [
-                'displayname' => "    \t",
+                'title' => "    \t",
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -168,7 +168,7 @@ class UserUpdateApiTest extends WebTestCase
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [
-                'displayname' => '',
+                'title' => '',
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -177,7 +177,7 @@ class UserUpdateApiTest extends WebTestCase
         $this->client->jsonRequest(
             'PUT', '/api/users/profile',
             parameters: [
-                'displayname' => '  .  ',
+                'title' => '  .  ',
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );

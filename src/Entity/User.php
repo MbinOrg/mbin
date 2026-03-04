@@ -44,7 +44,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
 #[Index(columns: ['username_ts'], name: 'user_username_ts')]
-#[Index(columns: ['displayname_ts'], name: 'user_displayname_ts')]
+#[Index(columns: ['title_ts'], name: 'user_title_ts')]
 #[Index(columns: ['about_ts'], name: 'user_about_ts')]
 #[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
@@ -103,8 +103,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $email;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $username;
-    #[Column(type: 'string', unique: false, nullable: true)]
-    private ?string $displayname = null;
     #[Column(type: 'json', nullable: false, options: ['jsonb' => true])]
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
@@ -268,7 +266,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $usernameTs;
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
-    private ?string $displaynameTs;
+    private ?string $titleTs;
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $aboutTs;
 
@@ -334,16 +332,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public function getUsername(): string
     {
         return $this->username;
-    }
-
-    public function getDisplayname(): ?string
-    {
-        return $this->displayname;
-    }
-
-    public function setDisplayname(?string $displayname): void
-    {
-        $this->displayname = $displayname;
     }
 
     public function getEmail(): string

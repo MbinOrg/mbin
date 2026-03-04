@@ -55,8 +55,6 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?Image $banner = null;
     #[Column(type: 'string', nullable: false)]
     public string $name;
-    #[Column(type: 'string')]
-    public ?string $title;
     #[Column(type: 'text', length: self::MAX_DESCRIPTION_LENGTH, nullable: true)]
     public ?string $description = null;
     #[Column(type: 'text', length: self::MAX_RULES_LENGTH, nullable: true)]

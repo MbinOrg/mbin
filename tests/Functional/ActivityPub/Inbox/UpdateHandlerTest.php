@@ -177,7 +177,7 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($user->lastKeyRotationDate);
     }
 
-    public function testUpdateRemoteUserDisplayname(): void
+    public function testUpdateRemoteUserTitle(): void
     {
         // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
 
@@ -187,7 +187,7 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertEquals('Test User', $user->getDisplayname());
+        self::assertEquals('Test User', $user->title);
 
         $object = $this->updateUser['object'];
         unset($object['name']);
@@ -195,7 +195,7 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertNull($user->getDisplayname());
+        self::assertNull($user->title);
     }
 
     public function testUpdateRemoteMagazine(): void

@@ -204,7 +204,7 @@ readonly class UserManager
         try {
             $user->about = $dto->about;
 
-            $user->setDisplayname($dto->displayname);
+            $user->title = $dto->title;
 
             $oldAvatar = $user->avatar;
             if ($dto->avatar) {

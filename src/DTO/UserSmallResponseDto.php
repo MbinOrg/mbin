@@ -11,7 +11,7 @@ class UserSmallResponseDto implements \JsonSerializable
 {
     public ?int $userId = null;
     public ?string $username = null;
-    public ?string $displayname = null;
+    public ?string $title = null;
     public ?bool $isBot = null;
     public ?bool $isFollowedByUser = null;
     public ?bool $isFollowerOfUser = null;
@@ -29,7 +29,7 @@ class UserSmallResponseDto implements \JsonSerializable
     {
         $this->userId = $dto->getId();
         $this->username = $dto->username;
-        $this->displayname = $dto->displayname;
+        $this->title = $dto->title;
         $this->isBot = $dto->isBot;
         $this->isFollowedByUser = $dto->isFollowedByUser;
         $this->isFollowerOfUser = $dto->isFollowerOfUser;
@@ -49,7 +49,7 @@ class UserSmallResponseDto implements \JsonSerializable
         return [
             'userId' => $this->userId,
             'username' => $this->username,
-            'displayname' => $this->displayname,
+            'title' => $this->title,
             'isBot' => $this->isBot,
             'isFollowedByUser' => $this->isFollowedByUser,
             'isFollowerOfUser' => $this->isFollowerOfUser,

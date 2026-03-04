@@ -26,7 +26,7 @@ class UserDto implements UserDtoInterface
     public ?string $username = null;
     #[Assert\Length(min: 2, max: self::MAX_USERNAME_LENGTH)]
     #[NoSurroundingWhitespace]
-    public ?string $displayname = null;
+    public ?string $title = null;
     #[Assert\NotBlank]
     #[Assert\Email]
     public ?string $email = null;
@@ -103,7 +103,7 @@ class UserDto implements UserDtoInterface
         ?int $reputationPoints = null,
         ?bool $discoverable = null,
         ?bool $indexable = null,
-        ?string $displayname = null,
+        ?string $title = null,
     ): self {
         $dto = new UserDto();
         $dto->id = $id;
@@ -124,7 +124,7 @@ class UserDto implements UserDtoInterface
         $dto->reputationPoints = $reputationPoints;
         $dto->discoverable = $discoverable;
         $dto->indexable = $indexable;
-        $dto->displayname = $displayname;
+        $dto->title = $title;
 
         return $dto;
     }

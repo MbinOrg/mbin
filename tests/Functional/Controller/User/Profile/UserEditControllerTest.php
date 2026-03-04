@@ -50,7 +50,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
     }
 
-    public function testUserCanEditProfileDisplayname(): void
+    public function testUserCanEditProfileTitle(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
@@ -59,7 +59,7 @@ class UserEditControllerTest extends WebTestCase
 
         $this->client->submit(
             $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form([
-                'user_basic[displayname]' => 'custom name',
+                'user_basic[title]' => 'custom name',
             ])
         );
 
@@ -71,7 +71,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .user-box', 'JohnDoe');
     }
 
-    public function testUserEditProfileDisplaynameTrimsWhitespace(): void
+    public function testUserEditProfileTitleTrimsWhitespace(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
 
@@ -80,7 +80,7 @@ class UserEditControllerTest extends WebTestCase
 
         $this->client->submit(
             $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form([
-                'user_basic[displayname]' => "  custom name\t",
+                'user_basic[title]' => "  custom name\t",
             ])
         );
 
