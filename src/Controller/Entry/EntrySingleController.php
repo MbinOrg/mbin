@@ -15,9 +15,12 @@ use App\Form\EntryCommentType;
 use App\PageView\EntryCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
+use App\Repository\ImageRepository;
 use App\Service\MentionManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\PagerfantaInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,17 +31,24 @@ class EntrySingleController extends AbstractController
 {
     use PrivateContentTrait;
 
+    public function __construct(
+        private readonly Security $security,
+        private readonly ImageRepository $imageRepository,
+        private readonly EntryCommentRepository $repository,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly MentionManager $mentionManager,
+        private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+    }
+
     public function __invoke(
         #[MapEntity(mapping: ['magazine_name' => 'name'])]
         Magazine $magazine,
         #[MapEntity(id: 'entry_id')]
         Entry $entry,
         ?string $sortBy,
-        EntryCommentRepository $repository,
-        EventDispatcherInterface $dispatcher,
-        MentionManager $mentionManager,
         Request $request,
-        Security $security,
     ): Response {
         if ($entry->magazine !== $magazine) {
             return $this->redirectToRoute(
@@ -55,7 +65,14 @@ class EntrySingleController extends AbstractController
 
         $this->handlePrivateContent($entry);
 
-        $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
+        $images = [];
+        if ($entry->image) {
+            $images[] = $entry->image;
+        }
+        $images = array_merge($images, $this->repository->findImagesByEntry($entry));
+        $this->imageRepository->redownloadImagesIfNecessary($images);
+
+        $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy));
         $criteria->entry = $entry;
 
@@ -67,13 +84,13 @@ class EntrySingleController extends AbstractController
             $criteria->onlyParents = false;
         }
 
-        $comments = $repository->findByCriteria($criteria);
+        $comments = $this->repository->findByCriteria($criteria);
 
         $commentObjects = [...$comments->getCurrentPageResults()];
-        $repository->hydrate(...$commentObjects);
-        $repository->hydrateChildren(...$commentObjects);
+        $this->repository->hydrate(...$commentObjects);
+        $this->repository->hydrateChildren(...$commentObjects);
 
-        $dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
+        $this->dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonResponse($magazine, $entry, $comments);
@@ -83,7 +100,7 @@ class EntrySingleController extends AbstractController
 
         $dto = new EntryCommentDto();
         if ($user && $user->addMentionsEntries && $entry->user !== $user) {
-            $dto->body = $mentionManager->addHandle([$entry->user->username])[0];
+            $dto->body = $this->mentionManager->addHandle([$entry->user->username])[0];
         }
 
         return $this->render(

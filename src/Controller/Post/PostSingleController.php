@@ -14,6 +14,7 @@ use App\Event\Post\PostHasBeenSeenEvent;
 use App\Form\PostCommentType;
 use App\PageView\PostCommentPageView;
 use App\Repository\Criteria;
+use App\Repository\ImageRepository;
 use App\Repository\PostCommentRepository;
 use App\Service\MentionManager;
 use Pagerfanta\PagerfantaInterface;
@@ -39,6 +40,7 @@ class PostSingleController extends AbstractController
         MentionManager $mentionManager,
         Request $request,
         Security $security,
+        ImageRepository $imageRepository,
     ): Response {
         if ($post->magazine !== $magazine) {
             return $this->redirectToRoute(
@@ -54,6 +56,13 @@ class PostSingleController extends AbstractController
         }
 
         $this->handlePrivateContent($post);
+
+        $images = [];
+        if ($post->image) {
+            $images[] = $post->image;
+        }
+        $images = array_merge($images, $repository->findImagesByPost($post));
+        $imageRepository->redownloadImagesIfNecessary($images);
 
         $criteria = new PostCommentPageView($this->getPageNb($request), $security);
         $criteria->showSortOption($criteria->resolveSort($sortBy));

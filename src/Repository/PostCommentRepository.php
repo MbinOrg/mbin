@@ -10,6 +10,8 @@ namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
+use App\Entity\Image;
+use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
@@ -186,6 +188,22 @@ class PostCommentRepository extends ServiceEntityRepository
 
         $qb->addOrderBy('c.createdAt', 'DESC');
         $qb->addOrderBy('c.id', 'DESC');
+    }
+
+    /**
+     * @return Image[]
+     */
+    public function findImagesByPost(Post $post): array
+    {
+        $results = $this->createQueryBuilder('c')
+            ->addSelect('i')
+            ->innerJoin('c.image', 'i')
+            ->andWhere('c.post = :post')
+            ->setParameter('post', $post)
+            ->getQuery()
+            ->getResult();
+
+        return array_filter($results, fn (PostComment $comment) => $comment->image);
     }
 
     public function hydrateChildren(PostComment ...$comments): void

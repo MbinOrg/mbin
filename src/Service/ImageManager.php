@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Image as MbinImage;
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
 use App\Repository\ImageRepository;
+use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
+use Doctrine\ORM\EntityManagerInterface;
+use Imagine\Gd\Imagine;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -21,12 +26,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ImageManager implements ImageManagerInterface
 {
-    public const IMAGE_MIMETYPES = [
+    public const array IMAGE_MIMETYPES = [
         'image/jpeg', 'image/jpg', 'image/gif', 'image/png',
         'image/jxl', 'image/heic', 'image/heif',
         'image/webp', 'image/avif',
     ];
-    public const IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
+    public const string IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
 
     public function __construct(
         private readonly string $storageUrl,
@@ -36,6 +41,10 @@ class ImageManager implements ImageManagerInterface
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
         private readonly SettingsManager $settings,
+        private readonly FormattingExtensionRuntime $formattingExtensionRuntime,
+        private readonly float $imageCompressionQuality,
+        private readonly CacheManager $imagineCacheManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -77,6 +86,61 @@ class ImageManager implements ImageManagerInterface
         } finally {
             \is_resource($fh) and fclose($fh);
         }
+    }
+
+    /**
+     * Tries to compress an image until its size is smaller than $maxBytes. This overwrites the existing image.
+     *
+     * @return bool whether the image was compressed
+     */
+    public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
+    {
+        if (-1 === $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
+            // don't compress images if disabled or smaller than max bytes
+            return false;
+        }
+        $imagine = new Imagine();
+        $image = $imagine->open($filePath);
+        $bytes = filesize($filePath);
+        $initialBytes = $bytes;
+        $tempPath = "{$filePath}_temp_compress.$extension";
+        $compressed = false;
+        $quality = 0.9;
+        if (0.1 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
+            $quality = $this->imageCompressionQuality;
+        }
+        while ($bytes > $maxBytes && $quality > 0.1) {
+            $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100]);
+            $image->save($tempPath, [
+                'jpeg_quality' => $quality * 100, // jpeg max value is 100
+                'png_compression_level' => \intval((1 - $quality) * 9), // png max is 9, but it is not quality, but compression
+                'webp_quality' => $quality * 100, // webp quality max is 100
+            ]);
+            $bytes = filesize($tempPath);
+            if ($initialBytes === $bytes) {
+                // there were no changes, so maybe it is in a format that cannot be compressed...
+                break;
+            }
+            $compressed = true;
+            $quality -= 0.05;
+        }
+        $copied = false;
+        if ($compressed) {
+            if (copy($tempPath, $filePath)) {
+                $copied = true;
+                $this->logger->debug('[ImageManager::compressUntilSize] successfully compressed "{path}" with {q}% quality: {bytesBefore} -> {bytesNow}', [
+                    'path' => $filePath,
+                    'q' => ($quality + 0.05) * 100, // re-add the last step, because it is always subtracted in the end if successful
+                    'bytesBefore' => $this->formattingExtensionRuntime->abbreviateNumber($initialBytes).'B',
+                    'bytesNow' => $this->formattingExtensionRuntime->abbreviateNumber($bytes).'B',
+                ]);
+            }
+        }
+        if (file_exists($tempPath)) {
+            unlink($tempPath);
+        }
+
+        return $compressed && $copied;
     }
 
     private function validate(string $filePath): bool
@@ -187,14 +251,15 @@ class ImageManager implements ImageManagerInterface
     public function remove(string $path): void
     {
         $this->publicUploadsFilesystem->delete($path);
+        $this->imagineCacheManager->remove($path);
     }
 
-    public function getPath(\App\Entity\Image $image): string
+    public function getPath(MbinImage $image): string
     {
         return $this->publicUploadsFilesystem->read($image->filePath);
     }
 
-    public function getUrl(?\App\Entity\Image $image): ?string
+    public function getUrl(?MbinImage $image): ?string
     {
         if (!$image) {
             return null;
@@ -207,7 +272,7 @@ class ImageManager implements ImageManagerInterface
         return $image->sourceUrl;
     }
 
-    public function getMimetype(\App\Entity\Image $image): string
+    public function getMimetype(MbinImage $image): string
     {
         try {
             return $this->publicUploadsFilesystem->mimeType($image->filePath);
@@ -312,5 +377,32 @@ class ImageManager implements ImageManagerInterface
         $parts = explode('/', $path);
 
         return [$path, end($parts)];
+    }
+
+    public function removeCachedImage(MbinImage $image): bool
+    {
+        if (!$image->filePath || !$image->sourceUrl) {
+            return false;
+        }
+
+        try {
+            $this->publicUploadsFilesystem->delete($image->filePath);
+            $this->imagineCacheManager->remove($image->filePath);
+            $image->filePath = null;
+            $image->downloadedAt = null;
+            $this->entityManager->persist($image);
+            $this->entityManager->flush();
+
+            return true;
+        } catch (\Exception|FilesystemException $e) {
+            $this->logger->error('Unable to remove cached images for "{path}": {ex} - {m}', [
+                'path' => $image->filePath,
+                'ex' => \get_class($e),
+                'm' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
     }
 }
