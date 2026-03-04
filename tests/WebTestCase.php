@@ -60,7 +60,6 @@ use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\Filesystem;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -69,11 +68,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -182,20 +178,14 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->client = static::createClient();
 
-        $this->testingApHttpClient = new TestingApHttpClient();
-        self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
+        $client = $this->getService(ApHttpClientInterface::class);
+        self::assertTrue($client instanceof TestingApHttpClient);
+        $this->testingApHttpClient = $client;
 
-        $this->imageManager = new TestingImageManager(
-            $this->getContainer()->getParameter('kbin_storage_url'),
-            $this->getService(Filesystem::class),
-            $this->getService(HttpClientInterface::class),
-            $this->getService(MimeTypesInterface::class),
-            $this->getService(ValidatorInterface::class),
-            $this->getService(LoggerInterface::class),
-            $this->getService(SettingsManager::class),
-        );
+        $imageManager = $this->getService(ImageManagerInterface::class);
+        self::assertTrue($imageManager instanceof TestingImageManager);
+        $this->imageManager = $imageManager;
         $this->imageManager->setKibbyPath($this->kibbyPath);
-        self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);
 
         $this->entityManager = $this->getService(EntityManagerInterface::class);
         $this->magazineManager = $this->getService(MagazineManager::class);
