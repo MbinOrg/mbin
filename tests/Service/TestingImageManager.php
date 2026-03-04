@@ -9,7 +9,10 @@ use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
 use App\Service\SettingsManager;
+use App\Twig\Runtime\FormattingExtensionRuntime;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Mime\MimeTypesInterface;
@@ -30,8 +33,12 @@ class TestingImageManager implements ImageManagerInterface
         ValidatorInterface $validator,
         LoggerInterface $logger,
         SettingsManager $settings,
+        FormattingExtensionRuntime $formattingExtensionRuntime,
+        float $imageCompressionQuality,
+        CacheManager $imagineCacheManager,
+        EntityManagerInterface $entityManager,
     ) {
-        $this->innerImageManager = new ImageManager($storageUrl, $publicUploadsFilesystem, $httpClient, $mimeTypeGuesser, $validator, $logger, $settings);
+        $this->innerImageManager = new ImageManager($storageUrl, $publicUploadsFilesystem, $httpClient, $mimeTypeGuesser, $validator, $logger, $settings, $formattingExtensionRuntime, $imageCompressionQuality, $imagineCacheManager, $entityManager);
     }
 
     public function setKibbyPath(string $kibbyPath): void

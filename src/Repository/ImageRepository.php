@@ -191,6 +191,7 @@ class ImageRepository extends ServiceEntityRepository
      * @param int $limit use a high limit, as this query takes a few seconds and the limit does not affect that, so we are using as high a number as we can -> we're limited by memory
      *
      * @return Pagerfanta<Image>
+     *
      * @throws Exception
      */
     public function findOldRemoteMediaPaginated(int $olderThanDays, int $limit = 10000): Pagerfanta
