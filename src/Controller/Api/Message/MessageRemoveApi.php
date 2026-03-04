@@ -5,39 +5,28 @@ declare(strict_types=1);
 namespace App\Controller\Api\Message;
 
 use App\Controller\Traits\PrivateContentTrait;
-use App\DTO\MessageDto;
-use App\DTO\MessageThreadResponseDto;
-use App\Entity\User;
+use App\Entity\MessageThread;
 use App\Service\MessageManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class MessageThreadCreateApi extends MessageBaseApi
+class MessageRemoveApi extends MessageBaseApi
 {
     use PrivateContentTrait;
 
     #[OA\Response(
-        response: 201,
-        description: 'Message thread created',
-        content: new Model(type: MessageThreadResponseDto::class),
+        response: 204,
+        description: 'The thread was deleted for the user',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
             new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
             new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
         ]
-    )]
-    #[OA\Response(
-        response: 400,
-        description: 'The request body was invalid',
-        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\BadRequestErrorSchema::class))
     )]
     #[OA\Response(
         response: 401,
@@ -46,12 +35,12 @@ class MessageThreadCreateApi extends MessageBaseApi
     )]
     #[OA\Response(
         response: 403,
-        description: 'You are not permitted to message this user',
+        description: 'You are not allowed to view the messages in this thread',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\ForbiddenErrorSchema::class))
     )]
     #[OA\Response(
         response: 404,
-        description: 'User not found',
+        description: 'Page not found',
         content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\NotFoundErrorSchema::class))
     )]
     #[OA\Response(
@@ -65,44 +54,25 @@ class MessageThreadCreateApi extends MessageBaseApi
         ]
     )]
     #[OA\Parameter(
-        name: 'user_id',
+        name: 'thread_id',
+        description: 'Thread from which to retrieve messages',
         in: 'path',
-        description: 'User being messaged',
         schema: new OA\Schema(type: 'integer')
     )]
-    #[OA\Parameter(
-        name: 'd',
-        in: 'query',
-        description: 'Number of replies returned',
-        schema: new OA\Schema(type: 'integer', default: self::REPLY_DEPTH, minimum: self::MIN_REPLY_DEPTH, maximum: self::MAX_REPLY_DEPTH)
-    )]
-    #[OA\RequestBody(content: new Model(type: MessageDto::class))]
     #[OA\Tag(name: 'message')]
-    #[Security(name: 'oauth2', scopes: ['user:message:create'])]
-    #[IsGranted('ROLE_OAUTH2_USER:MESSAGE:CREATE')]
-    #[IsGranted('message', subject: 'receiver', statusCode: 403)]
-    public function __invoke(
-        #[MapEntity(id: 'user_id')]
-        User $receiver,
+    #[Security(name: 'oauth2', scopes: ['user:message:read'])]
+    #[IsGranted('ROLE_OAUTH2_USER:MESSAGE:DELETE')]
+    #[IsGranted('show', subject: 'thread', statusCode: 403)]
+    public function removeThread(
+        #[MapEntity(id: 'thread_id')]
+        MessageThread $thread,
         MessageManager $manager,
-        ValidatorInterface $validator,
-        RateLimiterFactoryInterface $apiMessageLimiter,
-    ): JsonResponse {
-        $headers = $this->rateLimit($apiMessageLimiter);
+        RateLimiterFactoryInterface $apiReadLimiter,
+    ): Response {
+        $headers = $this->rateLimit($apiReadLimiter);
 
-        $dto = $this->deserializeMessage();
+        $manager->removeUserFromThread($thread, $this->getUserOrThrow());
 
-        $errors = $validator->validate($dto);
-        if (\count($errors) > 0) {
-            throw new BadRequestHttpException((string) $errors);
-        }
-
-        $thread = $manager->toThread($dto, $this->getUserOrThrow(), $receiver);
-
-        return new JsonResponse(
-            $this->serializeMessageThread($thread),
-            status: 201,
-            headers: $headers
-        );
+        return new Response(status: 204, headers: $headers);
     }
 }

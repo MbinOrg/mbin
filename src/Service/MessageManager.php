@@ -164,6 +164,19 @@ class MessageManager
         }
     }
 
+    public function removeUserFromThread(MessageThread $thread, User $user): void
+    {
+        if (!$thread->userIsParticipant($user)) {
+            throw new \InvalidArgumentException('user is not a participant of this message thread');
+        }
+        if ($thread->participants->count() > 1) {
+            $thread->participants->removeElement($user);
+        } else {
+            $this->entityManager->remove($thread);
+        }
+        $this->entityManager->flush();
+    }
+
     /** @return string[] */
     public function findAudience(MessageThread $thread): array
     {

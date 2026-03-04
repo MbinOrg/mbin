@@ -148,6 +148,7 @@ nelmio_api_doc:
                                 user:message: Read your messages and send messages to other users.
                                 user:message:read: Read your messages.
                                 user:message:create: Send messages to other users.
+                                user:message:delete: Delete your messages.
                                 user:notification: Read and clear your notifications.
                                 user:notification:read: Read your notifications, including message notifications.
                                 user:notification:delete: Clear notifications.
@@ -265,6 +266,7 @@ nelmio_api_doc:
                                 user:message: Read your messages and send messages to other users.
                                 user:message:read: Read your messages.
                                 user:message:create: Send messages to other users.
+                                user:message:delete: Delete your messages.
                                 user:notification: Read and clear your notifications.
                                 user:notification:read: Read your notifications, including message notifications.
                                 user:notification:delete: Clear notifications.
