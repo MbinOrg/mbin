@@ -24,7 +24,7 @@ parameters:
     kbin_js_enabled: '%env(bool:KBIN_JS_ENABLED)%'
     kbin_federation_enabled: '%env(KBIN_FEDERATION_ENABLED)%'
     kbin_registrations_enabled: '%env(KBIN_REGISTRATIONS_ENABLED)%'
-    kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
+    kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json", "application/ld+json;profile=https://www.w3.org/ns/activitystreams"]'
     kbin_storage_url: '%env(KBIN_STORAGE_URL)%'
 
     # Grab the default theme to use from the MBIN_DEFAULT_THEME env var

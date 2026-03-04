@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineRetrieveApi extends MagazineBaseApi
@@ -69,8 +69,8 @@ class MagazineRetrieveApi extends MagazineBaseApi
         #[MapEntity(id: 'magazine_id')]
         Magazine $magazine,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -123,8 +123,8 @@ class MagazineRetrieveApi extends MagazineBaseApi
         #[MapEntity(mapping: ['magazine_name' => 'name'])]
         Magazine $magazine,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -196,7 +196,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         name: 'sort',
         description: 'Sort method to use when retrieving magazines',
         in: 'query',
-        schema: new OA\Schema(type: 'string', default: MagazinePageView::SORT_HOT, enum: MagazineRepository::SORT_OPTIONS)
+        schema: new OA\Schema(type: 'string', default: MagazinePageView::SORT_HOT, enum: [...MagazineRepository::SORT_OPTIONS, MagazinePageView::SORT_OWNER_LAST_ACTIVE])
     )]
     #[OA\Parameter(
         name: 'federation',
@@ -210,12 +210,18 @@ class MagazineRetrieveApi extends MagazineBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: MagazinePageView::ADULT_HIDE, enum: MagazinePageView::ADULT_OPTIONS)
     )]
+    #[OA\Parameter(
+        name: 'abandoned',
+        description: 'Options for retrieving abandoned magazines (federation must be \''.Criteria::AP_LOCAL.'\')',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'magazine')]
     public function collection(
         MagazineRepository $repository,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -225,6 +231,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
             $request->get('sort', MagazinePageView::SORT_HOT),
             $request->get('federation', Criteria::AP_ALL),
             $request->get('hide_adult', MagazinePageView::ADULT_HIDE),
+            filter_var($request->get('abandoned', 'false'), FILTER_VALIDATE_BOOL),
         );
         $criteria->perPage = self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE));
 
@@ -301,7 +308,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
     public function subscribed(
         MagazineRepository $repository,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -398,7 +405,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         User $user,
         MagazineRepository $repository,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -481,7 +488,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
     public function moderated(
         MagazineRepository $repository,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
@@ -560,7 +567,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
     public function blocked(
         MagazineRepository $repository,
         MagazineFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
