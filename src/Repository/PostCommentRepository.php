@@ -205,7 +205,7 @@ class PostCommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        return array_filter($results, fn (PostComment $comment) => $comment->image);
+        return array_map(fn (PostComment $comment) => $comment->image, $results);
     }
 
     public function hydrateChildren(PostComment ...$comments): void
