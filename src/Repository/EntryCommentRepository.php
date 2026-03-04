@@ -282,7 +282,7 @@ class EntryCommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        return array_filter($results, fn (EntryComment $comment) => $comment->image);
+        return array_map(fn (EntryComment $comment) => $comment->image, $results);
     }
 
     public function hydrateChildren(EntryComment ...$comments): void

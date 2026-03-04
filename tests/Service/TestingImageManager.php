@@ -108,4 +108,9 @@ class TestingImageManager implements ImageManagerInterface
             yield $deletedPath;
         }
     }
+
+    public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
+    {
+        return $this->innerImageManager->compressUntilSize($filePath, $extension, $maxBytes);
+    }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\EventSubscriber\Image;
 
 use App\Event\ImagePostProcessEvent;
-use App\Service\ImageManager;
+use App\Service\ImageManagerInterface;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 readonly class ImageCompressSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private ImageManager $imageManager,
+        private ImageManagerInterface $imageManager,
         private SettingsManager $settingsManager,
         private LoggerInterface $logger,
     ) {
