@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\Magazine;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -15,7 +14,6 @@ class StatsContentRepository extends StatsRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry);
     }
@@ -153,7 +151,7 @@ class StatsContentRepository extends StatsRepository
         $sql = "SELECT COUNT(e.id) as count FROM $tableName e INNER JOIN public.user u ON e.user_id = u.id WHERE u.is_deleted = false $sinceDateCond $tilDateCond $federatedCond $magazineCond";
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('count', 0);
-        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
 
         if (null !== $sinceDate) {
             $query->setParameter(':date', $sinceDate);
@@ -193,7 +191,7 @@ class StatsContentRepository extends StatsRepository
 
     public function countUsers(?\DateTime $startDate = null): int
     {
-        $users = $this->_em->createQueryBuilder()
+        $users = $this->getEntityManager()->createQueryBuilder()
             ->select('COUNT(u.id)')
             ->from(User::class, 'u')
             ->where('u.apId IS NULL')

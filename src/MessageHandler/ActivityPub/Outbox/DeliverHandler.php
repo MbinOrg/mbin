@@ -55,9 +55,7 @@ class DeliverHandler extends MbinMessageHandler
     public function workWrapper(MessageInterface $message): void
     {
         $conn = $this->entityManager->getConnection();
-        if (!$conn->isConnected()) {
-            $conn->connect();
-        }
+        // it seems that it auto connects if the connection was closed previously
         $conn->beginTransaction();
         try {
             $this->doWork($message);
