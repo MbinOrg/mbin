@@ -7,9 +7,13 @@ namespace App\Repository;
 use App\Entity\Image;
 use App\Event\ImagePostProcessEvent;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Pagination\NativeQueryAdapter;
+use App\Pagination\Pagerfanta;
+use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\ImageManagerInterface;
 use App\Utils\ImageOrigin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use kornrunner\Blurhash\Blurhash;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -30,6 +34,7 @@ class ImageRepository extends ServiceEntityRepository
         private readonly ImageManagerInterface $imageManager,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly LoggerInterface $logger,
+        private readonly ContentPopulationTransformer $contentPopulationTransformer,
     ) {
         parent::__construct($registry, Image::class);
     }
@@ -93,10 +98,17 @@ class ImageRepository extends ServiceEntityRepository
             $image->setDimensions($width, $height);
         }
 
-        $this->dispatcher->dispatch(new ImagePostProcessEvent($source, $origin));
+        $previousFileSize = filesize($source);
+        $image->originalSize = $previousFileSize;
+        $this->dispatcher->dispatch(new ImagePostProcessEvent($source, $filePath, $origin));
+        $afterProcessFileSize = filesize($source);
+        if ($afterProcessFileSize < $previousFileSize) {
+            $image->isCompressed = true;
+        }
 
         try {
             $this->imageManager->store($source, $filePath);
+            $image->localSize = $afterProcessFileSize;
 
             return $image;
         } catch (ImageDownloadTooLargeException $e) {
@@ -106,6 +118,8 @@ class ImageRepository extends ServiceEntityRepository
                     ['origin' => $origin, 'type' => \gettype($e)],
                 );
                 $image->filePath = null;
+                $image->localSize = 0;
+                $image->sourceTooBig = true;
 
                 return $image;
             } else {
@@ -171,5 +185,112 @@ class ImageRepository extends ServiceEntityRepository
 
             return null;
         }
+    }
+
+    /**
+     * @param int $limit use a high limit, as this query takes a few seconds and the limit does not affect that, so we are using as high a number as we can -> we're limited by memory
+     *
+     * @return Pagerfanta<Image>
+     *
+     * @throws Exception
+     */
+    public function findOldRemoteMediaPaginated(int $olderThanDays, int $limit = 10000): Pagerfanta
+    {
+        $query = $this->createQueryBuilder('i')
+            ->andWhere('i.downloadedAt < :date')
+            ->andWhere('i.filePath IS NOT NULL')
+            ->andWhere('i.sourceUrl IS NOT NULL')
+            ->setParameter('date', new \DateTimeImmutable("now - $olderThanDays days"))
+            ->getQuery();
+        // this complicated looking query makes sure to not include avatars, covers, icons or banners
+        $sql = 'SELECT id, MAX(last_active) as last_active, MAX(downloaded_at) as downloaded_at, \'image\' as type FROM (
+            SELECT i.id, i.downloaded_at, e.last_active FROM image i
+                INNER JOIN entry e ON i.id = e.image_id
+                LEFT JOIN "user" u ON i.id = u.avatar_id
+                LEFT JOIN "user" u2 ON i.id = u2.cover_id
+                LEFT JOIN magazine m ON i.id = m.icon_id
+                LEFT JOIN magazine m2 ON i.id = m2.banner_id
+                WHERE u IS NULL AND u2 IS NULL AND m IS NULL AND m2 IS NULL AND i.file_path IS NOT NULL AND i.source_url IS NOT NULL
+            UNION ALL
+            SELECT i.id, i.downloaded_at, ec.last_active FROM image i
+                INNER JOIN entry_comment ec ON i.id = ec.image_id
+                LEFT JOIN "user" u ON i.id = u.avatar_id
+                LEFT JOIN "user" u2 ON i.id = u2.cover_id
+                LEFT JOIN magazine m ON i.id = m.icon_id
+                LEFT JOIN magazine m2 ON i.id = m2.banner_id
+                WHERE u IS NULL AND u2 IS NULL AND m IS NULL AND m2 IS NULL AND i.file_path IS NOT NULL AND i.source_url IS NOT NULL
+            UNION ALL
+            SELECT i.id, i.downloaded_at, p.last_active FROM image i
+                INNER JOIN post p ON i.id = p.image_id
+                LEFT JOIN "user" u ON i.id = u.avatar_id
+                LEFT JOIN "user" u2 ON i.id = u2.cover_id
+                LEFT JOIN magazine m ON i.id = m.icon_id
+                LEFT JOIN magazine m2 ON i.id = m2.banner_id
+                WHERE u IS NULL AND u2 IS NULL AND m IS NULL AND m2 IS NULL AND i.file_path IS NOT NULL AND i.source_url IS NOT NULL
+            UNION ALL
+            SELECT i.id, i.downloaded_at, pc.last_active FROM image i
+                INNER JOIN post_comment pc ON i.id = pc.image_id
+                LEFT JOIN "user" u ON i.id = u.avatar_id
+                LEFT JOIN "user" u2 ON i.id = u2.cover_id
+                LEFT JOIN magazine m ON i.id = m.icon_id
+                LEFT JOIN magazine m2 ON i.id = m2.banner_id
+                WHERE u IS NULL AND u2 IS NULL AND m IS NULL AND m2 IS NULL AND i.file_path IS NOT NULL AND i.source_url IS NOT NULL
+        ) images WHERE last_active < :date AND (downloaded_at < :date OR downloaded_at IS NULL) GROUP BY id';
+
+        $adapter = new NativeQueryAdapter($this->getEntityManager()->getConnection(), $sql, ['date' => new \DateTimeImmutable("now - $olderThanDays days")], transformer: $this->contentPopulationTransformer);
+        $fanta = new Pagerfanta($adapter);
+        $fanta->setCurrentPage(1);
+        $fanta->setMaxPerPage($limit);
+
+        return $fanta;
+    }
+
+    public function redownloadImage(Image $image): void
+    {
+        if ($image->filePath || !$image->sourceUrl || $image->sourceTooBig) {
+            return;
+        }
+
+        $tempFilePath = $this->imageManager->download($image->sourceUrl);
+        if (null === $tempFilePath) {
+            return;
+        }
+
+        [$filePath, $fileName] = $this->imageManager->getFilePathAndName($tempFilePath);
+
+        $previousFileSize = filesize($tempFilePath);
+        $image->originalSize = $previousFileSize;
+        $this->dispatcher->dispatch(new ImagePostProcessEvent($tempFilePath, $filePath, ImageOrigin::External));
+        $afterProcessFileSize = filesize($tempFilePath);
+        if ($afterProcessFileSize < $previousFileSize) {
+            $image->isCompressed = true;
+        }
+
+        try {
+            if ($this->imageManager->store($tempFilePath, $filePath)) {
+                $image->filePath = $filePath;
+                $image->localSize = $afterProcessFileSize;
+                $image->downloadedAt = new \DateTimeImmutable('now');
+            }
+        } catch (ImageDownloadTooLargeException) {
+            $image->localSize = 0;
+            $image->sourceTooBig = true;
+        } catch (\Exception) {
+        }
+    }
+
+    /**
+     * @param Image[] $images
+     */
+    public function redownloadImagesIfNecessary(array $images): void
+    {
+        foreach ($images as $image) {
+            $this->logger->debug('Maybe redownloading images {i}', ['i' => implode(', ', array_map(fn (Image $image) => $image->getId(), $images))]);
+            if ($image && null === $image->filePath && !$image->sourceTooBig && $image->sourceUrl) {
+                // there is an image, but not locally, and it was not too big, and we have the source URL -> try redownloading it
+                $this->redownloadImage($image);
+            }
+        }
+        $this->getEntityManager()->flush();
     }
 }

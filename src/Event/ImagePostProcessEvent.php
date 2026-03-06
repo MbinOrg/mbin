@@ -11,6 +11,7 @@ class ImagePostProcessEvent extends Event
 {
     public function __construct(
         public string $source,
+        public string $targetFilePath,
         public ImageOrigin $origin,
     ) {
     }
