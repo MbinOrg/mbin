@@ -715,8 +715,8 @@ oauth2.grant.moderate.post.change_language: Cambiar el idioma de las
 oauth2.grant.admin.instance.stats: Consultar las estadísticas de tu instancia.
 oauth2.grant.admin.user.all: Banear, verificar o eliminar completamente usuarios
   de tu instancia.
-oauth2.grant.post_comment.report: Reportar cualquier comentario en una 
-  publicación .
+oauth2.grant.post_comment.report: Reporta cualquier comentario en una 
+  publicación.
 magazine_theme_appearance_background_image: Imagen de fondo personalizada que se
   aplicará al visualizar el contenido dentro de su revista.
 oauth2.grant.moderate.post_comment.set_adult: Marcar como explícitos los 
