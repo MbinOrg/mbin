@@ -51,7 +51,8 @@ class RemoveRemoteMediaCommand extends Command
         GeneralUtil::useProgressbarFormatsWithMessage();
 
         $dryRun = \boolval($input->getOption('dry-run'));
-        $images = $this->imageRepository->findOldRemoteMediaPaginated($days, \intval($input->getOption('batch-size')));
+        $batchSize = \intval($input->getOption('batch-size'));
+        $images = $this->imageRepository->findOldRemoteMediaPaginated($days, $batchSize);
         $count = $images->count();
         $progressBar = $io->createProgressBar($count);
         $progressBar->setMessage('');
@@ -60,6 +61,8 @@ class RemoveRemoteMediaCommand extends Command
         $totalDeletedSize = 0;
 
         for ($i = 0; $i < $images->getNbPages(); ++$i) {
+            $progressBar->setMessage(\sprintf('Fetching images %s - %s', ($i * $batchSize) + 1, ($i + 1) * $batchSize));
+            $progressBar->display();
             foreach ($images->getCurrentPageResults() as $image) {
                 $progressBar->advance();
                 ++$totalDeletedFiles;
@@ -68,6 +71,7 @@ class RemoveRemoteMediaCommand extends Command
                 if (!$dryRun) {
                     if ($this->imageManager->removeCachedImage($image)) {
                         $progressBar->setMessage(\sprintf('Removed "%s" (%s)', $image->filePath, $image->getId()));
+                        $progressBar->display();
                         $this->logger->debug('Removed "{path}" ({id})', ['path' => $image->filePath, 'id' => $image->getId()]);
                     }
                 } else {

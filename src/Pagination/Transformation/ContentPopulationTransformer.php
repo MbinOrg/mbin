@@ -11,6 +11,7 @@ use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Utils\SqlHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ContentPopulationTransformer implements ResultTransformer
@@ -67,7 +68,7 @@ class ContentPopulationTransformer implements ResultTransformer
 
         $imageIds = $this->getOverviewIds((array) $input, 'image');
         if (\count($imageIds) > 0) {
-            $images = $imageRepository->findBy(['id' => $imageIds]);
+            $images = SqlHelpers::findByAdjusted($imageRepository, 'id', $imageIds);
         }
 
         return $this->applyPositions($positionsArray, $entries ?? [], $entryComments ?? [], $post ?? [], $postComment ?? [], $magazines ?? [], $users ?? [], $images ?? []);
