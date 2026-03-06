@@ -350,6 +350,21 @@ Options:
 - `--batch-size` (default `10000`): the number of images to retrieve per query from the DB. A higher number means less queries, but higher memory usage.
 - `--dry-run`: if set, no images will be deleted
 
+### Refresh the meta data of stored images
+
+This command allows you to refresh the filesize of the stored media, as well as the status.
+If an image is no longer present on storage this command adjusts it in the DB.
+
+Usage:
+
+```bash
+php bin/console mbin:images:refresh-meta [--batch-size] [--dry-run]
+```
+
+Options:
+- `--batch-size` (default `10000`): the number of images to retrieve per query from the DB. A higher number means less queries, but higher memory usage.
+- `--dry-run`: if set, no metadata will be changed
+
 ### Remove old federated images
 
 This command allows you to remove old federated images, without removing the content.  
