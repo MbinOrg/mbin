@@ -337,7 +337,7 @@ You can run this command as a cron job to only keep cached media from the last 3
 
 > [!NOTE]
 > User avatars and covers and magazine icons and banners are not affected by this command, 
-> only images from threads, microblogs and comments
+> only images from threads, microblogs and comments.
 
 Usage:
 

@@ -113,7 +113,7 @@ class ImageManager implements ImageManagerInterface
             $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100]);
             $image->save($tempPath, [
                 'jpeg_quality' => $quality * 100, // jpeg max value is 100
-                'png_compression_level' => \intval((1 - $quality) * 9), // png max is 9, but it is not quality, but compression
+                'png_compression_level' => 9, // this is lossless compression, so always use the max
                 'webp_quality' => $quality * 100, // webp quality max is 100
             ]);
             $bytes = filesize($tempPath);

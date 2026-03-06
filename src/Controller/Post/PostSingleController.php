@@ -29,18 +29,22 @@ class PostSingleController extends AbstractController
 {
     use PrivateContentTrait;
 
+    public function __construct(
+        private readonly PostCommentRepository $commentRepository,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly MentionManager $mentionManager,
+        private readonly Security $security,
+        private readonly ImageRepository $imageRepository,
+    ) {
+    }
+
     public function __invoke(
         #[MapEntity(mapping: ['magazine_name' => 'name'])]
         Magazine $magazine,
         #[MapEntity(id: 'post_id')]
         Post $post,
         ?string $sortBy,
-        PostCommentRepository $repository,
-        EventDispatcherInterface $dispatcher,
-        MentionManager $mentionManager,
         Request $request,
-        Security $security,
-        ImageRepository $imageRepository,
     ): Response {
         if ($post->magazine !== $magazine) {
             return $this->redirectToRoute(
@@ -61,10 +65,10 @@ class PostSingleController extends AbstractController
         if ($post->image) {
             $images[] = $post->image;
         }
-        $images = array_merge($images, $repository->findImagesByPost($post));
-        $imageRepository->redownloadImagesIfNecessary($images);
+        $images = array_merge($images, $this->commentRepository->findImagesByPost($post));
+        $this->imageRepository->redownloadImagesIfNecessary($images);
 
-        $criteria = new PostCommentPageView($this->getPageNb($request), $security);
+        $criteria = new PostCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy));
         $criteria->content = Criteria::CONTENT_MICROBLOG;
         $criteria->post = $post;
@@ -79,13 +83,13 @@ class PostSingleController extends AbstractController
             $criteria->onlyParents = false;
         }
 
-        $comments = $repository->findByCriteria($criteria);
+        $comments = $this->commentRepository->findByCriteria($criteria);
 
         $commentObjects = [...$comments->getCurrentPageResults()];
-        $repository->hydrate(...$commentObjects);
-        $repository->hydrateChildren(...$commentObjects);
+        $this->commentRepository->hydrate(...$commentObjects);
+        $this->commentRepository->hydrateChildren(...$commentObjects);
 
-        $dispatcher->dispatch(new PostHasBeenSeenEvent($post));
+        $this->dispatcher->dispatch(new PostHasBeenSeenEvent($post));
 
         if ($request->isXmlHttpRequest()) {
             return $this->getJsonResponse($magazine, $post, $comments);
@@ -93,7 +97,7 @@ class PostSingleController extends AbstractController
 
         $dto = new PostCommentDto();
         if ($this->getUser() && $this->getUser()->addMentionsPosts && $post->user !== $this->getUser()) {
-            $dto->body = $mentionManager->addHandle([$post->user->username])[0];
+            $dto->body = $this->mentionManager->addHandle([$post->user->username])[0];
         }
 
         return $this->render(
