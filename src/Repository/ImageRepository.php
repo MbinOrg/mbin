@@ -9,6 +9,7 @@ use App\Event\ImagePostProcessEvent;
 use App\Exception\ImageDownloadTooLargeException;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
+use App\Pagination\QueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\ImageManagerInterface;
 use App\Utils\ImageOrigin;
@@ -241,6 +242,23 @@ class ImageRepository extends ServiceEntityRepository
         $fanta = new Pagerfanta($adapter);
         $fanta->setCurrentPage(1);
         $fanta->setMaxPerPage($limit);
+
+        return $fanta;
+    }
+
+    /**
+     * @return Pagerfanta<Image>
+     */
+    public function findSavedImagesPaginated(int $pageSize): Pagerfanta
+    {
+        $query = $this->createQueryBuilder('i')
+            ->andWhere('i.filePath IS NOT NULL')
+            ->orderBy('i.filePath');
+
+        $adapter = new QueryAdapter($query);
+        $fanta = new Pagerfanta($adapter);
+        $fanta->setMaxPerPage($pageSize);
+        $fanta->setCurrentPage(1);
 
         return $fanta;
     }
