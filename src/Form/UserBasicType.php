@@ -30,6 +30,7 @@ class UserBasicType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, ['required' => false])
+            ->add('title', TextType::class, ['required' => false])
             ->add('about', TextareaType::class, ['required' => false])
             ->add('submit', SubmitType::class);
 
