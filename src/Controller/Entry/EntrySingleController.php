@@ -34,7 +34,7 @@ class EntrySingleController extends AbstractController
     public function __construct(
         private readonly Security $security,
         private readonly ImageRepository $imageRepository,
-        private readonly EntryCommentRepository $repository,
+        private readonly EntryCommentRepository $commentRepository,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MentionManager $mentionManager,
         private readonly LoggerInterface $logger,
@@ -69,7 +69,7 @@ class EntrySingleController extends AbstractController
         if ($entry->image) {
             $images[] = $entry->image;
         }
-        $images = array_merge($images, $this->repository->findImagesByEntry($entry));
+        $images = array_merge($images, $this->commentRepository->findImagesByEntry($entry));
         $this->imageRepository->redownloadImagesIfNecessary($images);
 
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
@@ -84,11 +84,11 @@ class EntrySingleController extends AbstractController
             $criteria->onlyParents = false;
         }
 
-        $comments = $this->repository->findByCriteria($criteria);
+        $comments = $this->commentRepository->findByCriteria($criteria);
 
         $commentObjects = [...$comments->getCurrentPageResults()];
-        $this->repository->hydrate(...$commentObjects);
-        $this->repository->hydrateChildren(...$commentObjects);
+        $this->commentRepository->hydrate(...$commentObjects);
+        $this->commentRepository->hydrateChildren(...$commentObjects);
 
         $this->dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
