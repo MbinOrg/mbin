@@ -837,7 +837,7 @@ ignore_magazines_custom_css: Ignorar el CSS personalitzat de les revistes
 errors.server404.title: 404 No trobat
 private_instance: Forçar a iniciar sessió abans de poder accedir a qualsevol 
   contingut
-oauth2.grant.user.notification.all: Llegir i esborrar les vostres notificacions.
+oauth2.grant.user.notification.all: Llegir i eliminar les vostres notificacions.
 oauth2.grant.write.general: Crear o editar qualsevol dels vostres fils, 
   publicacions o comentaris.
 oauth2.grant.admin.user.all: Vetar, verificar o suprimir completament comptes de
@@ -1119,10 +1119,10 @@ banner: Bàner
 magazine_theme_appearance_banner: Bàner personalitzat per a la revista. Es 
   mostra damunt de tots els fils de discussió i ha de tindre una relació 
   d'aspecte ampla (5:1 ó 1500 px * 300 px).
-delete_magazine_icon: Icona de suprimir revista
+delete_magazine_icon: Suprimix icona de la revista
 flash_magazine_theme_icon_detached_success: La icona de la revista s'ha suprimit
   correctament
-delete_magazine_banner: Suprimir el bàner de la revista
+delete_magazine_banner: Suprimix el bàner de la revista
 flash_magazine_theme_banner_detached_success: El bàner de la revista s'ha 
   suprimit correctament
 crosspost: Publicació creuada
