@@ -57,7 +57,7 @@ class ContentRepository
 
         $userClause = '';
         if ($criteria->user) {
-            $userClause = 'c.user = :user';
+            $userClause = 'c.user_id = :user';
             $parameters['user'] = $criteria->user->getId();
         }
 
