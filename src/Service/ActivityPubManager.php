@@ -384,6 +384,7 @@ class ActivityPubManager
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            $user->username = '@'.($actor['preferredUsername'] ?? $user->username).'@'.$user->apDomain;
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
