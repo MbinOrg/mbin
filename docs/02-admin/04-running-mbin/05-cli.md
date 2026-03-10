@@ -162,6 +162,23 @@ php bin/console mbin:user:unsub <username>
 Arguments:
 - `username`: the user from which to remove all local followers.
 
+### Fix user duplicates
+
+This command allows you to fix duplicate usernames. There is a unique index on the usernames, but it is case-sensitive.
+This command will go through all the users with duplicate case-insensitive usernames,
+where the username is not part of the public id (meaning the original URL) and update them from the remote server.
+After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs.
+
+Usage:
+
+```bash
+php bin/console mbin:users:fix-duplicates [--dry-run]
+```
+
+Options:
+- `--dry-run`: don't change anything in the DB
+
+
 ## Magazine Management
 
 ### Magazine-Create
