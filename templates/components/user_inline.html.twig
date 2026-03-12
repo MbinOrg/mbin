@@ -18,7 +18,4 @@
         {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
         <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
     {% endif %}
-    {% if user.isCakeDay() %}
-        <i class="fa-solid fa-cake-candles" title="Cake Day" aria-description="Cake Day"></i>
-    {% endif %}
 </a>
