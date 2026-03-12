@@ -119,7 +119,8 @@ class UserFrontControllerTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('#main .users ul li')->count());
     }
 
-    public function testNewIndicator(): void {
+    public function testNewIndicator(): void
+    {
         $user = $this->getUserByUsername('JohnDoe');
 
         $this->client->request('GET', '/u/JohnDoe');
@@ -131,7 +132,8 @@ class UserFrontControllerTest extends WebTestCase
         $this->assertSelectorNotExists('#content.user-main h1 i.fa-solid.fa-leaf.new-user-icon');
     }
 
-    public function testCakeDayIndicator(): void {
+    public function testCakeDayIndicator(): void
+    {
         $user = $this->getUserByUsername('JohnDoe');
 
         $this->client->request('GET', '/u/JohnDoe');
