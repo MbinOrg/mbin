@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\MessageDto;
+use App\Entity\Contracts\ContentInterface;
+use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\User;
@@ -15,13 +17,15 @@ use App\Exception\UserCannotReceiveDirectMessage;
 use App\Exception\UserDeletedException;
 use App\Message\ActivityPub\Outbox\CreateMessage;
 use App\Repository\MessageThreadRepository;
+use App\Service\Contracts\ContentManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class MessageManager
+class MessageManager implements SwitchableService, ContentManagerInterface
 {
     public function __construct(
         private readonly MessageThreadRepository $messageThreadRepository,
@@ -31,6 +35,31 @@ class MessageManager
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [Message::class];
+    }
+
+    public function delete(User $moderator, ContentInterface $subject): void
+    {
+        \assert($subject instanceof Message);
+
+        if ($moderator->apDomain && $moderator->apDomain !== parse_url($subject->apId ?? '', PHP_URL_HOST)) {
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted message', ['u' => $moderator->apId]);
+
+            return;
+        }
+
+        // we currently have no way to soft-delete messages, so just replace the content
+        $subject->body = '[deleted]';
+        $this->entityManager->flush();
+    }
+
+    public function restore(User $moderator, ContentVisibilityInterface $content): void
+    {
+        // not implemented, as we currently have no way to soft-delete messages
     }
 
     public function toThread(MessageDto $dto, User $sender, User ...$receivers): MessageThread

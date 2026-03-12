@@ -4,20 +4,37 @@ declare(strict_types=1);
 
 namespace App\Factory\ActivityPub;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Message;
 use App\Entity\User;
+use App\Factory\Contract\ActivityFactoryInterface;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
+use App\Service\Contracts\SwitchableService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class MessageFactory
+/**
+ * @implements SwitchableService
+ * @implements ActivityPubActivityInterface<Message>
+ */
+class MessageFactory implements SwitchableService, ActivityFactoryInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MarkdownConverter $markdownConverter,
         private readonly ContextsProvider $contextsProvider,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [Message::class];
+    }
+
+    public function create($subject, array $tags, bool $context = false): array
+    {
+        return $this->build($subject, $context);
     }
 
     public function build(Message $message, bool $includeContext = true): array

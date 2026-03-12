@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Hashtag;
@@ -32,7 +33,7 @@ class TagLinkRepository extends ServiceEntityRepository
     /**
      * @return string[]
      */
-    public function getTagsOfContent(Entry|EntryComment|Post|PostComment $content): array
+    public function getTagsOfContent(HashtagableInterface $content): array
     {
         if ($content instanceof Entry) {
             return $this->getTagsOfEntry($content);
@@ -43,7 +44,6 @@ class TagLinkRepository extends ServiceEntityRepository
         } elseif ($content instanceof PostComment) {
             return $this->getTagsOfPostComment($content);
         } else {
-            // this is unreachable because of the strict types
             throw new \LogicException('Cannot handle content of type '.\get_class($content));
         }
     }

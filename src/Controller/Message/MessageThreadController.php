@@ -7,6 +7,7 @@ namespace App\Controller\Message;
 use App\Controller\AbstractController;
 use App\Entity\MessageThread;
 use App\Form\MessageType;
+use App\Repository\NotificationRepository;
 use App\Service\MessageManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageThreadController extends AbstractController
 {
-    public function __construct(private readonly MessageManager $manager)
+    public function __construct(
+        private readonly MessageManager $manager,
+        private readonly NotificationRepository $notificationRepo,
+    )
     {
     }
 
@@ -32,7 +36,8 @@ class MessageThreadController extends AbstractController
             return $this->redirectToRoute('messages_single', ['id' => $thread->getId()]);
         }
 
-        $this->manager->readMessages($thread, $this->getUserOrThrow());
+        //$this->manager->readMessages($thread, $this->getUserOrThrow());
+        $this->notificationRepo->markMessageNotificationsAsRead($this->getUserOrThrow(), $thread);
 
         return $this->render(
             'messages/single.html.twig',

@@ -125,6 +125,11 @@ parameters:
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
 services:
+    _instanceof:
+        App\Service\Contracts\SwitchableService:
+            tags: ['switchable_service']
+            lazy: true
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -259,3 +264,7 @@ services:
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - '%env(DATABASE_URL)%'
+
+    App\Service\SwitchingServiceRegistry:
+        arguments:
+            - !tagged 'switchable_service'

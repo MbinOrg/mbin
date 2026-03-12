@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\CommentInterface;
 use App\Entity\Contracts\FavouriteInterface;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Contracts\RankingInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Contracts\VisibilityInterface;
@@ -40,7 +41,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['created_at'], name: 'post_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'post_last_active_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_body_ts_idx')]
-class Post implements VotableInterface, CommentInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
+class Post implements VotableInterface, CommentInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, HashtagableInterface
 {
     use VotableTrait;
     use RankingTrait;
@@ -50,6 +51,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+
+    public const string REPORT_TYPE = 'post_report';
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -350,6 +353,11 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function isAdult(): bool
     {
         return $this->isAdult || $this->magazine->isAdult;
+    }
+
+    public function getReportType(): string
+    {
+        return self::REPORT_TYPE;
     }
 
     public function __sleep()
