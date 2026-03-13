@@ -20,7 +20,7 @@ class DoctrineDriverMiddleware extends AbstractDriverMiddleware
         parent::__construct($wrappedDriver);
     }
 
-    public function connect(#[\SensitiveParameter] array $params)
+    public function connect(#[\SensitiveParameter] array $params): DoctrineConnectionMiddleware
     {
         $connection = parent::connect($params);
 
