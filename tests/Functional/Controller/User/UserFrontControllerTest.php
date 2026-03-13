@@ -119,6 +119,32 @@ class UserFrontControllerTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('#main .users ul li')->count());
     }
 
+    public function testNewIndicator(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorExists('#content.user-main h1 i.fa-solid.fa-leaf.new-user-icon');
+
+        $user->createdAt = new \DateTimeImmutable('now - 31days');
+        $this->entityManager->flush();
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorNotExists('#content.user-main h1 i.fa-solid.fa-leaf.new-user-icon');
+    }
+
+    public function testCakeDayIndicator(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorExists('#content.user-main h1 i.fa-solid.fa-cake-candles');
+
+        $user->createdAt = new \DateTimeImmutable('now - 1days');
+        $this->entityManager->flush();
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorNotExists('#content.user-main h1 i.fa-solid.fa-cake-candles');
+    }
+
     private function prepareEntries(): KernelBrowser
     {
         $entry1 = $this->getEntryByTitle(
