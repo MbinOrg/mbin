@@ -140,7 +140,7 @@ class ImageManager implements ImageManagerInterface
             unlink($tempPath);
         }
 
-        return $compressed && $copied;
+        return $copied;
     }
 
     private function validate(string $filePath): bool
