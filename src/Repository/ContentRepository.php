@@ -34,6 +34,9 @@ class ContentRepository
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
+        $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
             'private' => VisibilityInterface::VISIBILITY_PRIVATE,
@@ -63,9 +66,13 @@ class ContentRepository
 
         $hashtagClauseEntry = '';
         $hashtagClausePost = '';
+        $hashtagClauseEntryComment = '';
+        $hashtagClausePostComment = '';
         if ($criteria->tag) {
             $hashtagClauseEntry = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.entry_id = c.id AND h.tag = :hashtag)';
             $hashtagClausePost = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.post_id = c.id AND h.tag = :hashtag)';
+            $hashtagClauseEntryComment = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.entry_comment_id = c.id AND h.tag = :hashtag)';
+            $hashtagClausePostComment = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.post_comment_id = c.id AND h.tag = :hashtag)';
             $parameters['hashtag'] = $criteria->tag;
         }
 
@@ -116,18 +123,40 @@ class ContentRepository
 
         $subClausePost = '';
         $subClauseEntry = '';
+        $subClauseEntryComment = '';
+        $subClausePostComment = '';
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
-                    ' OR EXISTS (SELECT * FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
+                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
                     ' OR m.id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
-                    ' OR EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id)' :
+                    ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                     ' OR c.user_id IN (:cachedUserFollows)');
             $subClauseEntry = $subClausePost
                 .(null === $criteria->cachedUserSubscribedDomains ?
-                    ' OR EXISTS (SELECT * FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
+                    ' OR EXISTS (SELECT 1 FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
                     ' OR c.domain_id IN (:cachedUserSubscribedDomains)');
+
+            if ($criteria->includeBoosts) {
+                $subClauseEntryComment = $subClausePost.
+                    (null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                $subClausePostComment = $subClausePost.
+                    (null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+
+                $subClausePost = $subClausePost
+                    .(null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                $subClauseEntry = $subClauseEntry
+                    .(null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+            }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
                 $parameters['cachedUserSubscribedMagazines'] = $criteria->cachedUserSubscribedMagazines;
@@ -157,9 +186,13 @@ class ContentRepository
 
         $favClauseEntry = '';
         $favClausePost = '';
+        $favClauseEntryComment = '';
+        $favClausePostComment = '';
         if ($user && $criteria->favourite) {
             $favClauseEntry = 'EXISTS (SELECT * FROM favourite f WHERE f.entry_id = c.id AND f.user_id = :loggedInUser)';
             $favClausePost = 'EXISTS (SELECT * FROM favourite f WHERE f.post_id = c.id AND f.user_id = :loggedInUser)';
+            $favClauseEntryComment = 'EXISTS (SELECT * FROM favourite f WHERE f.entry_comment_id = c.id AND f.user_id = :loggedInUser)';
+            $favClausePostComment = 'EXISTS (SELECT * FROM favourite f WHERE f.post_comment_id = c.id AND f.user_id = :loggedInUser)';
         }
 
         $blockingClausePost = '';
@@ -198,7 +231,7 @@ class ContentRepository
 
         $visibilityClauseM = 'm.visibility = :visible';
         if (null === $criteria->cachedUserFollows) {
-            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id))';
+            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id))';
         } else {
             $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND c.user_id IN (:cachedUserFollows))';
         }
@@ -239,6 +272,45 @@ class ContentRepository
             $subClausePost,
             $modClause,
             $favClausePost,
+            $blockingClausePost,
+            $hideAdultClause,
+            $visibilityClauseM,
+            $visibilityClauseC,
+            $allClause,
+        ]);
+
+        $entryCommentWhere = SqlHelpers::makeWhereString([
+            $contentClauseEntry,
+            $timeClause,
+            $magazineClause,
+            $userClause,
+            $hashtagClauseEntryComment,
+            $federationClause,
+            $domainClausePost,
+            $languagesClause,
+            $subClauseEntryComment,
+            $modClause,
+            $favClauseEntryComment,
+            $blockingClausePost,
+            $hideAdultClause,
+            $visibilityClauseM,
+            $visibilityClauseC,
+            $allClause,
+        ]);
+
+        $postCommentWhere = SqlHelpers::makeWhereString([
+            $contentClausePost,
+            $timeClause,
+            $magazineClause,
+            $userClause,
+            $hashtagClausePostComment,
+            $federationClause,
+            $domainClausePost,
+            $languagesClause,
+            $contentTypeClausePost,
+            $subClausePostComment,
+            $modClause,
+            $favClausePostComment,
             $blockingClausePost,
             $hideAdultClause,
             $visibilityClauseM,
@@ -294,14 +366,34 @@ class ContentRepository
         $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postWhere";
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $entryCommentWhere";
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $postCommentWhere";
 
         $innerSql = '';
         if (Criteria::CONTENT_THREADS === $criteria->content) {
-            $innerSql = "$entrySql $orderBy";
+            if ($includeEntryComments) {
+                $innerSql = "$entrySql UNION ALL $entryCommentSql";
+            } else {
+                $innerSql = "$entrySql $orderBy";
+            }
         } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
-            $innerSql = "$postSql $orderBy";
+            if ($includePostComments) {
+                $innerSql = "$postSql UNION ALL $postCommentSql";
+            } else {
+                $innerSql = "$postSql $orderBy";
+            }
         } else {
             $innerSql = "$entrySql UNION ALL $postSql";
+            if($includeEntryComments) {
+                $innerSql .= " UNION ALL $entryCommentSql";
+            }
+            if($includePostComments) {
+                $innerSql .= " UNION ALL $postCommentSql";
+            }
         }
 
         $sql = "SELECT content.* FROM ($innerSql) content
