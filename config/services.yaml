@@ -265,6 +265,11 @@ services:
                   event: kernel.controller_arguments,
               }
 
+    # Monolog handlers
+    log_filter_handler:
+      class: App\Service\MonologFilterHandler
+      public: false
+
     # Feeds
     debril.rss_atom.provider:
         class: App\Feed\Provider
