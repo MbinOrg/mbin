@@ -83,6 +83,73 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertEmpty($jsonData['items'][0]['bookmarks']);
     }
 
+    public function testApiCanGetSubscribedPostsWithBoosts(): void
+    {
+        $user = $this->getUserByUsername('user');
+        $userFollowing = $this->getUserByUsername('user2');
+        $user3 = $this->getUserByUsername('user3');
+
+        $this->userManager->follow($user, $userFollowing, false);
+
+        $postFollowed = $this->createPost('a post', user: $userFollowing);
+        $postBoosted = $this->createPost('third user post', user: $user3);
+        $this->createPost('unrelated post', user: $user3);
+        $commentFollowed = $this->createPostComment('a comment', $postBoosted, $userFollowing);
+        $commentBoosted = $this->createPostComment('a boosted comment', $postBoosted, $user3);
+        $this->createPostComment('unrelated comment', $postBoosted, $user3);
+
+        $this->voteManager->upvote($postBoosted, $userFollowing);
+        $this->voteManager->upvote($commentBoosted, $userFollowing);
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($user);
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/posts/subscribedWithBoosts', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::PAGINATED_KEYS, $jsonData);
+
+        self::assertIsArray($jsonData['items']);
+        self::assertCount(4, $jsonData['items']);
+        self::assertIsArray($jsonData['pagination']);
+        self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
+        self::assertSame(4, $jsonData['pagination']['count']);
+
+        $retrievedPostIds = array_map(function ($item) {
+            if($item['post'] !== null) {
+                self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $item['post']);
+                return $item['post']['postId'];
+            } else {
+                return null;
+            }
+        }, $jsonData['items']);
+        $retrievedPostIds = \array_filter($retrievedPostIds, function ($item) { return $item !== null; });
+        \sort($retrievedPostIds);
+
+        $retrievedPostCommentIds = array_map(function ($item) {
+            if($item['postComment'] !== null) {
+                self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $item['postComment']);
+                return $item['postComment']['commentId'];
+            } else {
+                return null;
+            }
+        }, $jsonData['items']);
+        $retrievedPostCommentIds = \array_filter($retrievedPostCommentIds, function ($item) { return $item !== null; });
+        \sort($retrievedPostCommentIds);
+
+        $expectedPostIds = [$postFollowed->getId(), $postBoosted->getId()];
+        \sort($expectedPostIds);
+        $expectedPostCommentIds = [$commentFollowed->getId(), $commentBoosted->getId()];
+        \sort($expectedPostCommentIds);
+        self::assertEquals($retrievedPostIds, $expectedPostIds);
+        self::assertEquals($expectedPostCommentIds, $expectedPostCommentIds);
+    }
+
     public function testApiCannotGetModeratedPostsAnonymous(): void
     {
         $this->client->request('GET', '/api/posts/moderated');

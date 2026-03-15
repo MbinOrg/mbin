@@ -201,9 +201,15 @@ class EntryFrontController extends AbstractController
         }
     }
 
-    private function setUserPreferences(?User $user, &$criteria)
+    private function setUserPreferences(?User $user, Criteria &$criteria): void
     {
-        if (null !== $user && 0 < \count($user->preferredLanguages)) {
+        if(null === $user) {
+            return;
+        }
+
+        $criteria->includeBoosts = $user->showBoostsOfFollowing;
+
+        if (0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;
         }
     }
