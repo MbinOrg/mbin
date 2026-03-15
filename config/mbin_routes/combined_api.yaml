@@ -6,8 +6,8 @@ api_combined:
 
 api_combined_user:
   controller: App\Controller\Api\Combined\CombinedRetrieveApi::userCollection
-  path: /api/combined/{contentType}
+  path: /api/combined/{collectionType}
   requirements:
-    contentType: subscribed|moderated|favourited
-  methods: [ PUT ]
+    $collectionType: subscribed|moderated|favourited
+  methods: [ GET ]
   format: json

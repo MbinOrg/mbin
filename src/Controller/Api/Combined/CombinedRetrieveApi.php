@@ -120,13 +120,15 @@ class CombinedRetrieveApi extends BaseApi
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
     ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository);
+        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $contentRepository, $sqlHelpers);
     }
 
     #[OA\Response(
@@ -166,6 +168,12 @@ class CombinedRetrieveApi extends BaseApi
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
         content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'collectionType',
+        description: 'the type of collection to get',
+        in: 'path',
+        schema: new OA\Schema(type: 'string', enum: ['subscribed', 'moderated', 'favourited'])
     )]
     #[OA\Parameter(
         name: 'p',
@@ -222,14 +230,16 @@ class CombinedRetrieveApi extends BaseApi
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
         string $collectionType,
     ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository, $collectionType);
+        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $contentRepository, $sqlHelpers, $collectionType);
     }
 
     private function generateResponse(
@@ -240,10 +250,11 @@ class CombinedRetrieveApi extends BaseApi
         ?string $sort,
         ?string $time,
         ?string $federation,
+        ?bool $includeBoosts,
         ?int $perPage,
         ContentRepository $contentRepository,
-        ?string $collectionType = null,
         SqlHelpers $sqlHelpers,
+        ?string $collectionType = null,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = new ContentPageView($p ?? 1, $security);
@@ -251,7 +262,7 @@ class CombinedRetrieveApi extends BaseApi
         $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $this->handleLanguageCriteria($criteria);
-        $criteria->content = Criteria::CONTENT_THREADS;
+        $criteria->content = Criteria::CONTENT_COMBINED;
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
