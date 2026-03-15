@@ -388,10 +388,10 @@ class ContentRepository
             }
         } else {
             $innerSql = "$entrySql UNION ALL $postSql";
-            if($includeEntryComments) {
+            if ($includeEntryComments) {
                 $innerSql .= " UNION ALL $entryCommentSql";
             }
-            if($includePostComments) {
+            if ($includePostComments) {
                 $innerSql .= " UNION ALL $postCommentSql";
             }
         }

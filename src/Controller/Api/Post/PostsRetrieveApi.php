@@ -485,10 +485,10 @@ class PostsRetrieveApi extends PostsBaseApi
         $dtos = [];
         foreach ($posts->getCurrentPageResults() as $value) {
             try {
-                if($value instanceof Post) {
+                if ($value instanceof Post) {
                     $this->handlePrivateContent($value);
                     $dtos[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
-                } else if ($value instanceof PostComment) {
+                } elseif ($value instanceof PostComment) {
                     $this->handlePrivateContent($value);
                     $dtos[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
                 } else {

@@ -307,10 +307,10 @@ class CombinedRetrieveApi extends BaseApi
             } elseif ($item instanceof Post) {
                 $this->handlePrivateContent($item);
                 $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } else if ($item instanceof EntryComment) {
+            } elseif ($item instanceof EntryComment) {
                 $this->handlePrivateContent($item);
                 $result[] = new ContentResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } else if ($item instanceof PostComment) {
+            } elseif ($item instanceof PostComment) {
                 $this->handlePrivateContent($item);
                 $result[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
             }

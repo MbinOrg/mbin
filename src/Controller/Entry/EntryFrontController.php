@@ -203,7 +203,7 @@ class EntryFrontController extends AbstractController
 
     private function setUserPreferences(?User $user, Criteria &$criteria): void
     {
-        if(null === $user) {
+        if (null === $user) {
             return;
         }
 

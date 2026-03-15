@@ -121,31 +121,33 @@ class PostRetrieveApiTest extends WebTestCase
         self::assertSame(4, $jsonData['pagination']['count']);
 
         $retrievedPostIds = array_map(function ($item) {
-            if($item['post'] !== null) {
+            if (null !== $item['post']) {
                 self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $item['post']);
+
                 return $item['post']['postId'];
             } else {
                 return null;
             }
         }, $jsonData['items']);
-        $retrievedPostIds = \array_filter($retrievedPostIds, function ($item) { return $item !== null; });
-        \sort($retrievedPostIds);
+        $retrievedPostIds = array_filter($retrievedPostIds, function ($item) { return null !== $item; });
+        sort($retrievedPostIds);
 
         $retrievedPostCommentIds = array_map(function ($item) {
-            if($item['postComment'] !== null) {
+            if (null !== $item['postComment']) {
                 self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $item['postComment']);
+
                 return $item['postComment']['commentId'];
             } else {
                 return null;
             }
         }, $jsonData['items']);
-        $retrievedPostCommentIds = \array_filter($retrievedPostCommentIds, function ($item) { return $item !== null; });
-        \sort($retrievedPostCommentIds);
+        $retrievedPostCommentIds = array_filter($retrievedPostCommentIds, function ($item) { return null !== $item; });
+        sort($retrievedPostCommentIds);
 
         $expectedPostIds = [$postFollowed->getId(), $postBoosted->getId()];
-        \sort($expectedPostIds);
+        sort($expectedPostIds);
         $expectedPostCommentIds = [$commentFollowed->getId(), $commentBoosted->getId()];
-        \sort($expectedPostCommentIds);
+        sort($expectedPostCommentIds);
         self::assertEquals($retrievedPostIds, $expectedPostIds);
         self::assertEquals($expectedPostCommentIds, $expectedPostCommentIds);
     }
