@@ -2,7 +2,7 @@
     <div class="action"
         title="{{ user.followersCount ~ ' ' ~ 'followers_count'|trans({'%count%': user.followersCount}) }}"
         aria-label="{{ user.followersCount ~ ' ' ~ 'followers_count'|trans({'%count%': user.followersCount}) }}">
-        <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ user.followersCount }}</span>
+        <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ user.followersCount|abbreviateNumber }}</span>
     </div>
     {% if not app.user or app.user is not same as user and not is_instance_of_user_banned(user) %}
         <form action="{{ path('user_' ~ (is_user_followed(user) ? 'unfollow' : 'follow'), {username: user.username}) }}"

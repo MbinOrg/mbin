@@ -51,11 +51,15 @@ class CrosspostController extends AbstractController
             ++$tagNum;
         }
 
-        $entryUrl = $this->urlGenerator->generate(
-            'ap_entry',
-            ['magazine_name' => $entry->magazine->name, 'entry_id' => $entry->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        if (null !== $entry->apId) {
+            $entryUrl = $entry->apId;
+        } else {
+            $entryUrl = $this->urlGenerator->generate(
+                'ap_entry',
+                ['magazine_name' => $entry->magazine->name, 'entry_id' => $entry->getId()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
         $body = 'Crossposted from ['.$entryUrl.']('.$entryUrl.')';
         if (null !== $entry->body && '' !== $entry->body) {
             $bodyLines = explode("\n", $entry->body);

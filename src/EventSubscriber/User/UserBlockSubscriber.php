@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\EventSubscriber\User;
 
 use App\Event\User\UserBlockEvent;
-use App\Repository\ContentRepository;
+use App\Utils\SqlHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UserBlockSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -24,6 +24,6 @@ class UserBlockSubscriber implements EventSubscriberInterface
 
     public function onUserBlock(UserBlockEvent $event): void
     {
-        $this->contentRepository->clearCachedUserBlocks($event->blocker);
+        $this->sqlHelpers->clearCachedUserBlocks($event->blocker);
     }
 }

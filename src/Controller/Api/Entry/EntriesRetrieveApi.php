@@ -15,6 +15,7 @@ use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -23,7 +24,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -73,8 +74,8 @@ class EntriesRetrieveApi extends EntriesBaseApi
         Entry $entry,
         EntryFactory $factory,
         EventDispatcherInterface $dispatcher,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
@@ -185,9 +186,10 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function collection(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
-        RateLimiterFactory $anonymousApiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -204,7 +206,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -306,8 +308,9 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function subscribed(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -325,7 +328,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -427,8 +430,9 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function moderated(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -446,7 +450,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);
@@ -548,8 +552,9 @@ class EntriesRetrieveApi extends EntriesBaseApi
     public function favourited(
         ContentRepository $repository,
         EntryFactory $factory,
-        RateLimiterFactory $apiReadLimiter,
+        RateLimiterFactoryInterface $apiReadLimiter,
         SymfonySecurity $security,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -566,7 +571,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($repository, $user);
+            $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
         $entries = $repository->findByCriteria($criteria);

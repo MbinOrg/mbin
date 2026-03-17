@@ -85,16 +85,18 @@ class EntryPageFactory
             $entry->lang => $page['content'],
         ];
 
-        if ($entry->image) {
-            $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
-        }
-
         if ($entry->url) {
             $page['source'] = $entry->url;
             $page['attachment'][] = [
                 'href' => $entry->url,
                 'type' => 'Link',
             ];
+        }
+
+        if ($entry->image) {
+            // We do not know whether the image comes from an embed.
+            // Even if $entry->hasEmbed is true that does not mean that the image is from the embed
+            $page = $this->imageWrapper->build($page, $entry->image, $entry->title);
         }
 
         if ($entry->body) {

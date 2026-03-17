@@ -13,7 +13,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostCommentsDeleteApi extends PostsBaseApi
@@ -69,7 +69,7 @@ class PostCommentsDeleteApi extends PostsBaseApi
         #[MapEntity(id: 'comment_id')]
         PostComment $comment,
         PostCommentManager $manager,
-        RateLimiterFactory $apiDeleteLimiter,
+        RateLimiterFactoryInterface $apiDeleteLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiDeleteLimiter);
 

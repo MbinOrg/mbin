@@ -147,6 +147,120 @@ class MagazineModOwnerRequestApiTest extends WebTestCase
         self::assertFalse($magazine->userIsModerator($user));
     }
 
+    public function testApiCannotListModRequestsAnonymously(): void
+    {
+        $this->client->request('GET', '/api/moderate/modRequest/list');
+
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    public function testApiCannotListModRequestsWithoutScope(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
+        $token = $codes['token_type'].' '.$codes['access_token'];
+        $this->client->request('GET', '/api/moderate/modRequest/list', server: ['HTTP_AUTHORIZATION' => $token]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCannotListModRequestsForInvalidMagazineId(): void
+    {
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/modRequest/list?magazine=a', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testApiCannotListModRequestsForMissingMagazine(): void
+    {
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/modRequest/list?magazine=99', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testApiCanListModRequestsForMagazine(): void
+    {
+        $magazine1 = $this->getMagazineByName('Magazine 1');
+        $magazine2 = $this->getMagazineByName('Magazine 2');
+        $magazine3 = $this->getMagazineByName('Magazine 3');
+        $user1 = $this->getUserByUsername('User 1');
+        $user2 = $this->getUserByUsername('User 2');
+
+        $this->magazineManager->toggleModeratorRequest($magazine1, $user1);
+        $this->magazineManager->toggleModeratorRequest($magazine1, $user2);
+        $this->magazineManager->toggleModeratorRequest($magazine2, $user2);
+
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', "/api/moderate/modRequest/list?magazine={$magazine1->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+
+        self::assertCount(2, $jsonData);
+        self::assertTrue(array_all($jsonData, function ($item) use ($magazine1, $user1, $user2) {
+            return $item['magazine']['magazineId'] === $magazine1->getId()
+                && ($item['user']['userId'] === $user1->getId() || $item['user']['userId'] === $user2->getId());
+        }));
+        self::assertNotSame($jsonData[0]['user']['userId'], $jsonData[1]['user']['userId']);
+    }
+
+    public function testApiCanListModRequestsForAllMagazines(): void
+    {
+        $magazine1 = $this->getMagazineByName('Magazine 1');
+        $magazine2 = $this->getMagazineByName('Magazine 2');
+        $magazine3 = $this->getMagazineByName('Magazine 3');
+        $user1 = $this->getUserByUsername('User 1');
+        $user2 = $this->getUserByUsername('User 2');
+
+        $this->magazineManager->toggleModeratorRequest($magazine1, $user1);
+        $this->magazineManager->toggleModeratorRequest($magazine1, $user2);
+        $this->magazineManager->toggleModeratorRequest($magazine2, $user2);
+
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/modRequest/list', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+
+        self::assertCount(3, $jsonData);
+        self::assertTrue(array_all($jsonData, function ($item) use ($magazine1, $magazine2, $user1, $user2) {
+            return ($item['magazine']['magazineId'] === $magazine1->getId() && $item['user']['userId'] === $user1->getId())
+                || ($item['magazine']['magazineId'] === $magazine1->getId() && $item['user']['userId'] === $user2->getId())
+                || ($item['magazine']['magazineId'] === $magazine2->getId() && $item['user']['userId'] === $user2->getId());
+        }));
+    }
+
     public function testApiCannotToggleOwnerRequestAnonymously(): void
     {
         $magazine = $this->getMagazineByName('test');
@@ -283,5 +397,119 @@ class MagazineModOwnerRequestApiTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['id' => $user->getId()]);
         self::assertFalse($magazine->userIsOwner($user));
         self::assertFalse($magazine->userIsModerator($user));
+    }
+
+    public function testApiCannotListOwnerRequestsAnonymously(): void
+    {
+        $this->client->request('GET', '/api/moderate/ownerRequest/list');
+
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    public function testApiCannotListOwnerRequestsWithoutScope(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($user);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client);
+        $token = $codes['token_type'].' '.$codes['access_token'];
+        $this->client->request('GET', '/api/moderate/ownerRequest/list', server: ['HTTP_AUTHORIZATION' => $token]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCannotListOwnerRequestsForInvalidMagazineId(): void
+    {
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/ownerRequest/list?magazine=a', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testApiCannotListOwnerRequestsForMissingMagazine(): void
+    {
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/ownerRequest/list?magazine=99', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testApiCanListOwnerRequestsForMagazine(): void
+    {
+        $magazine1 = $this->getMagazineByName('Magazine 1');
+        $magazine2 = $this->getMagazineByName('Magazine 2');
+        $magazine3 = $this->getMagazineByName('Magazine 3');
+        $user1 = $this->getUserByUsername('User 1');
+        $user2 = $this->getUserByUsername('User 2');
+
+        $this->magazineManager->toggleOwnershipRequest($magazine1, $user1);
+        $this->magazineManager->toggleOwnershipRequest($magazine1, $user2);
+        $this->magazineManager->toggleOwnershipRequest($magazine2, $user2);
+
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', "/api/moderate/ownerRequest/list?magazine={$magazine1->getId()}", server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+
+        self::assertCount(2, $jsonData);
+        self::assertTrue(array_all($jsonData, function ($item) use ($magazine1, $user1, $user2) {
+            return $item['magazine']['magazineId'] === $magazine1->getId()
+                && ($item['user']['userId'] === $user1->getId() || $item['user']['userId'] === $user2->getId());
+        }));
+        self::assertNotSame($jsonData[0]['user']['userId'], $jsonData[1]['user']['userId']);
+    }
+
+    public function testApiCanListOwnerRequestsForAllMagazines(): void
+    {
+        $magazine1 = $this->getMagazineByName('Magazine 1');
+        $magazine2 = $this->getMagazineByName('Magazine 2');
+        $magazine3 = $this->getMagazineByName('Magazine 3');
+        $user1 = $this->getUserByUsername('User 1');
+        $user2 = $this->getUserByUsername('User 2');
+
+        $this->magazineManager->toggleOwnershipRequest($magazine1, $user1);
+        $this->magazineManager->toggleOwnershipRequest($magazine1, $user2);
+        $this->magazineManager->toggleOwnershipRequest($magazine2, $user2);
+
+        $adminUser = $this->getUserByUsername('Admin');
+        $this->setAdmin($adminUser);
+        $this->client->loginUser($adminUser);
+        self::createOAuth2AuthCodeClient();
+
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:magazine:moderate');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+
+        $this->client->request('GET', '/api/moderate/ownerRequest/list', server: ['HTTP_AUTHORIZATION' => $token]);
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+        self::assertIsArray($jsonData);
+
+        self::assertCount(3, $jsonData);
+        self::assertTrue(array_all($jsonData, function ($item) use ($magazine1, $magazine2, $user1, $user2) {
+            return ($item['magazine']['magazineId'] === $magazine1->getId() && $item['user']['userId'] === $user1->getId())
+                || ($item['magazine']['magazineId'] === $magazine1->getId() && $item['user']['userId'] === $user2->getId())
+                || ($item['magazine']['magazineId'] === $magazine2->getId() && $item['user']['userId'] === $user2->getId());
+        }));
     }
 }

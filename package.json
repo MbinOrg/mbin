@@ -12,7 +12,7 @@
         "@symfony/stimulus-bundle": "file:vendor/symfony/stimulus-bundle/assets",
         "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
         "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets",
-        "@symfony/webpack-encore": "^5.0.0",
+        "@symfony/webpack-encore": "^5.3.1",
         "chart.js": "^3.8.0 <3.9",
         "core-js": "^3.38.0",
         "emoji-picker-element": "^1.26.3",

@@ -1,4 +1,4 @@
-import './bootstrap.js';
+import './stimulus_bootstrap.js';
 import './styles/app.scss';
 import './utils/popover.js';
 import '@github/markdown-toolbar-element';

@@ -29,4 +29,12 @@ trait CreatedAtTrait
 
         return $this->getCreatedAt() >= new \DateTime("now -$days days");
     }
+
+    public function isCakeDay(): bool
+    {
+        $now = new \DateTime();
+
+        return $this->getCreatedAt()->format('d') === $now->format('d')
+            && $this->getCreatedAt()->format('m') === $now->format('m');
+    }
 }

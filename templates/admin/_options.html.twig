@@ -67,5 +67,13 @@
                 {{ 'deletion'|trans }}
             </a>
         </li>
+        {% if is_monitoring_enabled() %}
+            <li>
+                <a href="{{ path('admin_monitoring') }}"
+                    class="{{ html_classes({'active': is_route_name('admin_monitoring')}) }}">
+                    {{ 'monitoring'|trans }}
+                </a>
+            </li>
+        {% endif %}
     </menu>
 </aside>

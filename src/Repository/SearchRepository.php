@@ -10,10 +10,13 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class SearchRepository
 {
@@ -22,6 +25,7 @@ class SearchRepository
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ContentPopulationTransformer $transformer,
+        private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -82,6 +86,52 @@ class SearchRepository
     }
 
     /**
+     * @throws Exception
+     */
+    private function getUserPublicActivityQueryAdapter(User $user, bool $hideAdult): AdapterInterface
+    {
+        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
+        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
+        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'post' AS type FROM post
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        UNION ALL
+        SELECT id, created_at, 'post_comment' AS type FROM post_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
+        ORDER BY created_at DESC";
+
+        $parameters = [
+            'userId' => $user->getId(),
+            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+        ];
+
+        return new NativeQueryAdapter(
+            $this->entityManager->getConnection(),
+            $sql,
+            $parameters,
+            transformer: $this->transformer,
+            cache: $this->cache
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findUserPublicActivity(int $page, User $user, bool $hideAdult): PagerfantaInterface
+    {
+        $pagerfanta = new Pagerfanta($this->getUserPublicActivityQueryAdapter($user, $hideAdult));
+        $pagerfanta->setMaxPerPage(self::PER_PAGE);
+        $pagerfanta->setCurrentPage($page);
+
+        return $pagerfanta;
+    }
+
+    /**
      * @param 'entry'|'post'|'magazine'|'user'|'users+magazines'|'entry+post'|null $specificType
      */
     public function search(
@@ -106,8 +156,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true OR e.title_ts @@ plainto_tsquery( :query ) = true OR e.title LIKE :likeQuery)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
@@ -119,8 +169,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
@@ -132,8 +182,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
@@ -145,8 +195,8 @@ class SearchRepository
             WHERE (e.body_ts @@ plainto_tsquery( :query ) = true)
                 AND e.visibility = :visibility
                 AND u.is_deleted = false
-                AND u.ap_discoverable = true
-                AND m.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
@@ -158,7 +208,7 @@ class SearchRepository
                 AND m.visibility = :visibility
                 AND m.ap_deleted_at IS NULL
                 AND m.marked_for_deletion_at IS NULL
-                AND m.ap_discoverable = true
+                AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
@@ -169,7 +219,7 @@ class SearchRepository
                 AND u.is_deleted = false
                 AND u.marked_for_deletion_at IS NULL
                 AND u.ap_deleted_at IS NULL
-                AND u.ap_discoverable = true
+                AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 $createdWhereUser $blockMagazineAndUserResult
         ";

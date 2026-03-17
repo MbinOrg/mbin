@@ -920,7 +920,7 @@ oauth2.grant.post_comment.create: Crear comentaris nous a les publicacions.
 oauth2.grant.post.create: Crear publicacions noves.
 oauth2.grant.moderate.entry.change_language: Canviar l'idioma dels fils a les 
   revistes que modereu.
-oauth2.grant.user.notification.all: Llegir i esborrar les vostres notificacions.
+oauth2.grant.user.notification.all: Llegir i eliminar les vostres notificacions.
 oauth2.grant.user.oauth_clients.all: Veure i editar els permisos que heu 
   concedit a altres aplicacions OAuth2.
 oauth2.grant.user.follow: Seguir o deixar de seguir comptes i veure una llista 
@@ -1122,10 +1122,10 @@ banner: Bàner
 magazine_theme_appearance_banner: Bàner personalitzat per a la revista. Es 
   mostra a sobre de tots els fils de discussió i ha de tenir una relació 
   d'aspecte ampla (5:1 o 1500 px * 300 px).
-delete_magazine_icon: Icona de suprimir revista
+delete_magazine_icon: Suprimeix icona de la revista
 flash_magazine_theme_icon_detached_success: La icona de la revista s'ha suprimit
   correctament
-delete_magazine_banner: Suprimir el bàner de la revista
+delete_magazine_banner: Suprimeix el bàner de la revista
 flash_magazine_theme_banner_detached_success: El bàner de la revista s'ha 
   suprimit correctament
 federation_page_use_allowlist_help: Si s'utilitza una llista de permesos, 
@@ -1221,3 +1221,4 @@ magazine_name_as_tag_help: Les etiquetes d'una revista s'utilitzen per fer
   revista.
 magazine_rules_deprecated: el camp de regles està obsolet i s'eliminarà en el 
   futur. Si us plau, poseu les vostres regles al quadre de descripció.
+created_since: Creat des de

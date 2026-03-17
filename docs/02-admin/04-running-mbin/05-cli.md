@@ -326,6 +326,7 @@ Arguments:
 
 ## Images
 
+
 ### Remove old federated images
 
 This command allows you to remove old federated images, without removing the content.  
@@ -350,6 +351,18 @@ Options:
 - `--noActivity`: delete images that doesn't have recorded activity. Like comments, updates and/or boosts. (default: `false`)
 - `--batchSize`: the number of images to delete for each type at a time. (default: `800`)
 
+### Remove orphaned media
+
+This command iterates over your media filesystem and deletes all files that do not appear in the database.
+
+```bash
+php bin/console mbin:images:remove-orphaned
+```
+
+Options:
+- `--ignored-paths=IGNORED-PATHS`: A comma seperated list of paths to be ignored in this process. If the path starts with one of the supplied strings it will be skipped. e.g. "/cache" [default: ""]
+- `--dry-run`: Dry run, don't delete anything
+
 ### Rebuild image cache
 
 This command allows you to rebuild image thumbnail cache.
@@ -365,6 +378,32 @@ php bin/console mbin:cache:build
 ```
 
 ## Miscellaneous
+
+### Delete monitoring data
+
+> [!HINT]
+> For information about monitoring see [Optional Features/Monitoring](../03-optional-features/08-monitoring.md).
+
+This command allows you to delete monitoring data according to the passed parameters.
+
+Usage:
+
+```bash
+php bin/console mbin:monitoring:delete-data [-a|--all] [--queries] [--twig] [--requests] [--before [BEFORE]]
+```
+
+Options:
+- `-a`|`--all`: delete all contexts, including all linked data (queries, twig renders and curl requests)
+- `--queries`: delete all query data (this is the most space consuming data)
+- `--twig`: delete all twig rendering data (this is the second most space consuming data)
+- `--requests`: delete all curl request data
+- `--before [BEFORE]]`: if you want to limit the data deleted by their creation date, including via the `-a|--all` option. You can pass something like _"now - 1 day"_
+
+As an example you could delete all query data by running
+`php bin/console mbin:monitoring:delete-data --queries --before "now - 8 hours"`.
+This way you could still view the average request times without the query data for every request older than 8 hours
+and the newer requests would not be affected at all. This way you can limit the space consumed by query data.
+You can also mix and match the `--queries`, `--twig` and `--requests` options.
 
 ### Search for duplicate magazines or users and remove them
 

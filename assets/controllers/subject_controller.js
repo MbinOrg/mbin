@@ -10,6 +10,7 @@ export default class extends Controller {
     static targets = ['loader', 'more', 'container', 'commentsCounter', 'favCounter', 'upvoteCounter', 'downvoteCounter'];
     static values = {
         loading: Boolean,
+        isOnCombined: Boolean,
     };
     static sendBtnLabel = null;
 
@@ -390,7 +391,7 @@ export default class extends Controller {
     }
 
     wireTouchEvent() {
-        if (this.isOnCombined()) {
+        if (this.isOnCombinedValue) {
             this.wireTouchEventCombined();
         } else {
             this.wireTouchEventRegular();
@@ -436,26 +437,25 @@ export default class extends Controller {
         });
     }
 
-    isOnCombined() {
-        return location.pathname.endsWith('/combined') || location.pathname.includes('/combined/');
-    }
-
     filterClickEvent(e) {
         if (e.defaultPrevented) {
             return true;
         }
 
-        // ignore clicks on links
-        if ('a' === e.target.nodeName?.toLowerCase() || 'a' === e.target.tagName?.toLowerCase()) {
-            return true;
-        }
-
-        // ignore clicks on spoilers
-        if (
-            'details' === e.target.nodeName?.toLowerCase() || 'details' === e.target.tagName?.toLowerCase()
-            || 'summary' === e.target.nodeName?.toLowerCase() || 'summary' === e.target.tagName?.toLowerCase()
-        ) {
-            return true;
+        const filteredElementTypes = [
+            'a',
+            'button',
+            'select',
+            'option',
+            'input',
+            'textarea',
+            'details',
+            'summary',
+        ];
+        for (const type of filteredElementTypes) {
+            if (e.target.nodeName?.toLowerCase() === type || e.target.tagName?.toLowerCase() === type) {
+                return true;
+            }
         }
 
         // ignore click on images

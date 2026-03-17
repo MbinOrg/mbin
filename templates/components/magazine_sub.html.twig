@@ -2,7 +2,7 @@
     <div class="action"
         title="{{ magazine.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': magazine.subscriptionsCount}) }}"
         aria-label="{{ magazine.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': magazine.subscriptionsCount}) }}">
-        <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ magazine.subscriptionsCount }}</span>
+        <i class="fa-solid fa-users" aria-hidden="true"></i><span>{{ magazine.subscriptionsCount|abbreviateNumber }}</span>
     </div>
     {% if not is_instance_of_magazine_blocked(magazine) %}
         <form action="{{ path('magazine_' ~ (is_magazine_subscribed(magazine) ? 'unsubscribe' : 'subscribe'), {name: magazine.name}) }}"

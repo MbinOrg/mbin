@@ -3,6 +3,14 @@ framework:
         mapping:
             paths: ['%kernel.project_dir%/config/mbin_serialization']
 
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+# See also https://symfony.com/doc/current/service_container/import.html
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     kbin_domain: '%env(KBIN_DOMAIN)%'
     kbin_title: '%env(KBIN_TITLE)%'
@@ -16,7 +24,7 @@ parameters:
     kbin_js_enabled: '%env(bool:KBIN_JS_ENABLED)%'
     kbin_federation_enabled: '%env(KBIN_FEDERATION_ENABLED)%'
     kbin_registrations_enabled: '%env(KBIN_REGISTRATIONS_ENABLED)%'
-    kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json"]'
+    kbin_ap_route_condition: 'request.getAcceptableContentTypes() and request.getAcceptableContentTypes()[0] in ["application/activity+json", "application/ld+json", "application/json", "application/ld+json;profile=https://www.w3.org/ns/activitystreams"]'
     kbin_storage_url: '%env(KBIN_STORAGE_URL)%'
 
     # Grab the default theme to use from the MBIN_DEFAULT_THEME env var
@@ -116,10 +124,20 @@ parameters:
     mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
+    trueVal: 'true'
+    mbin_monitoring_enabled: '%env(bool:default::MBIN_MONITORING_ENABLED)%'
+    mbin_monitoring_query_parameters_enabled: '%env(bool:default::MBIN_MONITORING_QUERY_PARAMETERS_ENABLED)%'
+    mbin_monitoring_queries_enabled: '%env(bool:default:trueVal:MBIN_MONITORING_QUERIES_ENABLED)%'
+    mbin_monitoring_query_persisting_enabled: '%env(bool:default::MBIN_MONITORING_QUERY_PERSISTING_ENABLED)%'
+    mbin_monitoring_twig_renders_enabled: '%env(bool:default:trueVal:MBIN_MONITORING_TWIG_RENDERS_ENABLED)%'
+    mbin_monitoring_twig_render_persisting_enabled: '%env(bool:default::MBIN_MONITORING_TWIG_RENDER_PERSISTING_ENABLED)%'
+    mbin_monitoring_curl_requests_enabled: '%env(bool:default:trueVal:MBIN_MONITORING_CURL_REQUESTS_ENABLED)%'
+    mbin_monitoring_curl_request_persisting_enabled: '%env(bool:default::MBIN_MONITORING_CURL_REQUEST_PERSISTING_ENABLED)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true # Automatically injects dependencies in your services.
+        autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $kbinDomain: '%kbin_domain%'
@@ -130,6 +148,14 @@ services:
             $kbinApiItemsPerPage: '%kbin_api_items_per_page%'
             $storageUrl: '%kbin_storage_url%'
             $publicDir: '%kernel.project_dir%/public'
+            $monitoringEnabled: '%mbin_monitoring_enabled%'
+            $monitoringQueryParametersEnabled: '%mbin_monitoring_query_parameters_enabled%'
+            $monitoringQueriesEnabled: '%mbin_monitoring_queries_enabled%'
+            $monitoringQueriesPersistingEnabled: '%mbin_monitoring_query_persisting_enabled%'
+            $monitoringTwigRendersEnabled: '%mbin_monitoring_twig_renders_enabled%'
+            $monitoringTwigRendersPersistingEnabled: '%mbin_monitoring_twig_render_persisting_enabled%'
+            $monitoringCurlRequestsEnabled: '%mbin_monitoring_curl_requests_enabled%'
+            $monitoringCurlRequestPersistingEnabled: '%mbin_monitoring_curl_request_persisting_enabled%'
 
     kbin.s3_client:
         class: Aws\S3\S3Client

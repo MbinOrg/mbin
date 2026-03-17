@@ -9,15 +9,14 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Entity\UserFollow;
 use App\Enums\EApplicationStatus;
-use App\Pagination\NativeQueryAdapter;
-use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\SettingsManager;
+use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -28,7 +27,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -51,8 +49,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function __construct(
         ManagerRegistry $registry,
         private readonly SettingsManager $settingsManager,
-        private readonly CacheInterface $cache,
-        private readonly ContentPopulationTransformer $contentPopulationTransformer,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -79,46 +75,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->setParameter('email', mb_strtolower($val))
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function getPublicActivityQueryAdapter(User $user, bool $hideAdult): AdapterInterface
-    {
-        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
-        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
-        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'post' AS type FROM post
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'post_comment' AS type FROM post_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        ORDER BY created_at DESC";
-
-        $parameters = [
-            'userId' => $user->getId(),
-            'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
-        ];
-
-        return new NativeQueryAdapter($this->_em->getConnection(), $sql, $parameters, transformer: $this->contentPopulationTransformer, cache: $this->cache);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function findPublicActivity(int $page, User $user, bool $hideAdult): PagerfantaInterface
-    {
-        $pagerfanta = new Pagerfanta($this->getPublicActivityQueryAdapter($user, $hideAdult));
-        $pagerfanta->setMaxPerPage(self::PER_PAGE);
-        $pagerfanta->setCurrentPage($page);
-
-        return $pagerfanta;
     }
 
     public function findFollowing(int $page, User $user, int $perPage = self::PER_PAGE): PagerfantaInterface
@@ -207,7 +163,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findAllInactivePaginated(int $page, bool $onlyLocal = true, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
-        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, needToBeVerified: false);
 
         $builder->andWhere('u.visibility = :visibility')
             ->andWhere('u.isVerified = false')
@@ -250,12 +206,17 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', 'ASC'));
     }
 
-    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm): QueryBuilder
+    /**
+     * @param bool|null $needToBeVerified this is only relevant if $onlyLocal is true, requires the user to be verified
+     */
+    private function createBasicQueryBuilder(bool $onlyLocal, ?string $searchTerm, ?bool $needToBeVerified = true): QueryBuilder
     {
         $builder = $this->createQueryBuilder('u');
         if ($onlyLocal) {
-            $builder->where('u.apId IS NULL')
-                ->andWhere('u.isVerified = true');
+            $builder->where('u.apId IS NULL');
+            if ($needToBeVerified) {
+                $builder->andWhere('u.isVerified = true');
+            }
         } else {
             $builder->where('u.apId IS NOT NULL');
         }
@@ -536,64 +497,12 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
     public function findUsersForMagazine(Magazine $magazine, ?bool $federated = false, int $limit = 200, bool $limitTime = false, bool $requireAvatar = false): array
     {
-        $conn = $this->_em->getConnection();
-        $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
-        $sql = "
-        (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
-        UNION ALL
-        (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
-        UNION ALL
-        (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
-        UNION ALL
-        (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
-        ";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue('magazineId', $magazine->getId());
-        $stmt->bindValue('limit', $limit);
-        $counter = $stmt->executeQuery()->fetchAllAssociative();
-
-        $output = [];
-        foreach ($counter as $item) {
-            $user_id = $item['user_id'];
-            $count = $item['count'];
-            if (isset($output[$user_id])) {
-                $output[$user_id]['count'] += $count;
-            } else {
-                $output[$user_id] = ['count' => $count, 'user_id' => $user_id];
-            }
-        }
-
-        // sort the array after the counts from the different table are added up
-        usort($output, fn ($a, $b) => $b['count'] - $a['count']);
-
-        $user = array_map(fn ($item) => $item['user_id'], $output);
+        $output = $this->findForMagazineUsersByContentCount($magazine, $federated, $limit, $limitTime, $requireAvatar);
+        $userIds = array_map(fn ($item) => $item['user_id'], $output);
 
         $qb = $this->createQueryBuilder('u', 'u.id');
-        $qb->andWhere($qb->expr()->in('u.id', $user))
-            ->andWhere('u.isBanned = false')
-            ->andWhere('u.isDeleted = false')
-            ->andWhere('u.applicationStatus = :status')
-            ->andWhere('u.visibility = :visibility')
-            ->andWhere('u.apDiscoverable = true')
-            ->andWhere('u.apDeletedAt IS NULL')
-            ->andWhere('u.apTimeoutAt IS NULL');
-
-        if (true === $requireAvatar) {
-            $qb->andWhere('u.avatar IS NOT NULL');
-        }
-
-        if (null !== $federated) {
-            if ($federated) {
-                $qb->andWhere('u.apId IS NOT NULL');
-            } else {
-                $qb->andWhere('u.apId IS NULL');
-            }
-        }
-
-        $qb->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->setParameter('status', EApplicationStatus::Approved->value)
-            ->setMaxResults($limit);
+        $qb->andWhere($qb->expr()->in('u.id', $userIds));
+        $qb->setMaxResults($limit);
 
         try {
             $users = $qb->getQuery()->getResult(); // @todo
@@ -602,11 +511,13 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
 
         $res = [];
+        $i = 0;
         foreach ($output as $item) {
             if (isset($users[$item['user_id']])) {
                 $res[] = $users[$item['user_id']];
+                ++$i;
             }
-            if (\count($res) >= $limit) {
+            if ($i >= $limit) {
                 break;
             }
         }
@@ -614,12 +525,18 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $res;
     }
 
-    public function findActiveUsers(?Magazine $magazine = null)
+    /**
+     * @return array<array{user_id: int, sum: ?int}>
+     *
+     * @throws Exception
+     * @throws \DateMalformedStringException
+     */
+    public function findActiveUsers(?Magazine $magazine = null): array
     {
         if ($magazine) {
-            $results = $this->findUsersForMagazine($magazine, null, 35, true, true);
+            $results = $this->findUsersForMagazine($magazine, null, 35, $magazine->getContentCount() > 1000, true);
         } else {
-            $results = $this->createQueryBuilder('u')
+            $qb = $this->createQueryBuilder('u')
                 ->andWhere('u.applicationStatus = :status')
                 ->andWhere('u.lastActive >= :lastActive')
                 ->andWhere('u.isBanned = false')
@@ -630,15 +547,18 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->andWhere('u.apTimeoutAt IS NULL')
                 ->andWhere('u.avatar IS NOT NULL');
             if ($this->settingsManager->get('MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY')) {
-                $results = $results->andWhere('u.apId IS NULL');
+                $qb->andWhere('u.apId IS NULL');
             }
 
-            $results = $results->join('u.avatar', 'a')
+            $queryResult = $qb->join('u.avatar', 'a')
                 ->orderBy('u.lastActive', 'DESC')
-                ->setParameters(['lastActive' => (new \DateTime())->modify('-7 days'), 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'status' => EApplicationStatus::Approved->value])
+                ->setParameter('lastActive', (new \DateTime())->modify('-7 days'))
+                ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+                ->setParameter('status', EApplicationStatus::Approved->value)
                 ->setMaxResults(35)
                 ->getQuery()
                 ->getResult();
+            $results = array_map(fn (User $user) => ['user_id' => $user->getId(), 'sum' => null], $queryResult);
         }
 
         shuffle($results);
@@ -721,5 +641,75 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->setParameter('username', $username)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return array<array{user_id:int, sum:int}>
+     *
+     * @throws Exception
+     */
+    public function findForMagazineUsersByContentCount(Magazine $magazine, ?bool $federated, int $limit, bool $limitTime, bool $requireAvatar): array
+    {
+        $conn = $this->_em->getConnection();
+        $userWhere = [
+            'u.is_banned = false',
+            'u.is_deleted = false',
+            'u.application_status = :status',
+            'u.visibility = :visibility',
+            'u.ap_discoverable = true',
+            'u.ap_deleted_at IS NULL',
+            'u.ap_timeout_at IS NULL',
+        ];
+        if ($requireAvatar) {
+            $userWhere[] = 'u.avatar_id IS NOT NULL';
+        }
+        if (true === $federated) {
+            $userWhere[] = 'u.ap_id IS NOT NULL';
+        } elseif (false === $federated) {
+            $userWhere[] = 'u.ap_id IS NULL';
+        }
+        $userWhereString = SqlHelpers::makeWhereString($userWhere);
+        $timeWhere = $limitTime ? "AND created_at > now() - '30 days'::interval" : '';
+        $sql = "
+            SELECT user_id, SUM(count) FROM (
+                (SELECT count(id), user_id FROM entry WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+                UNION ALL
+                (SELECT count(id), user_id FROM entry_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+                UNION ALL
+                (SELECT count(id), user_id FROM post WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+                UNION ALL
+                (SELECT count(id), user_id FROM post_comment WHERE magazine_id = :magazineId $timeWhere GROUP BY user_id ORDER BY count DESC LIMIT :limit)
+            ) grouping
+            INNER JOIN \"user\" u ON u.id = user_id
+            $userWhereString
+            GROUP BY user_id
+            ORDER BY sum DESC
+            LIMIT :limit
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('magazineId', $magazine->getId());
+        $stmt->bindValue('limit', $limit);
+        $stmt->bindValue('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+        $stmt->bindValue('status', EApplicationStatus::Approved->value);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    public function findOldestUser(): ?User
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.apId IS NULL')
+            ->orderBy('u.createdAt', Order::Ascending->value);
+
+        $result = $qb->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
+
+        if (0 === \count($result)) {
+            return null;
+        }
+
+        return $result[0];
     }
 }

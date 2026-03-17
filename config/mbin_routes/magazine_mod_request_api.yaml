@@ -16,6 +16,12 @@ api_magazine_modrequest_reject:
     methods: [ PUT ]
     format: json
 
+api_magazine_modrequest_list:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::getModRequests
+    path: /api/moderate/modRequest/list
+    methods: [ GET ]
+    format: json
+
 api_magazine_ownerrequest_toggle:
     controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::toggleOwnerRequest
     path: /api/moderate/magazine/{magazine_id}/ownerRequest/toggle
@@ -32,4 +38,10 @@ api_magazine_ownerrequest_reject:
     controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::rejectOwnerRequest
     path: /api/moderate/magazine/{magazine_id}/ownerRequest/reject/{user_id}
     methods: [ PUT ]
+    format: json
+
+api_magazine_ownerrequest_list:
+    controller: App\Controller\Api\Magazine\Moderate\MagazineModOwnerRequestApi::getOwnerRequests
+    path: /api/moderate/ownerRequest/list
+    methods: [ GET ]
     format: json

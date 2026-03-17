@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\PageView\EntryPageView;
 use App\Repository\ContentRepository;
 use App\Repository\DomainRepository;
+use App\Utils\SqlHelpers;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,7 @@ class DomainFrontController extends AbstractController
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly DomainRepository $domainRepository,
+        private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
@@ -46,7 +48,7 @@ class DomainFrontController extends AbstractController
 
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->fetchCachedItems($this->contentRepository, $user);
+            $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
         $listing = $this->contentRepository->findByCriteria($criteria);

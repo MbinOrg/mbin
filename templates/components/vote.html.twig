@@ -31,7 +31,7 @@
                 title="{{ 'favourite'|trans }}"
                 aria-label="{{ 'favourite'|trans }}"
                 data-action="subject#vote">
-            <span data-subject-target="favCounter">{{ subject.apLikeCount ?? subject.favouriteCount }}</span> <span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></span>
+            <span data-subject-target="favCounter">{{ (subject.apLikeCount ?? subject.favouriteCount)|abbreviateNumber }}</span> <span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></span>
         </button>
     </form>
     {% set downvoteMode = mbin_downvotes_mode() %}
@@ -46,7 +46,7 @@
                     aria-label="{{ 'down_vote'|trans }}"
                     data-action="subject#vote">
                 {% if downvoteMode is not same as DOWNVOTES_HIDDEN %}
-                    <span data-subject-target="downvoteCounter">{{ subject.apDislikeCount ?? subject.countDownvotes }}</span>
+                    <span data-subject-target="downvoteCounter">{{ (subject.apDislikeCount ?? subject.countDownvotes)|abbreviateNumber }}</span>
                 {% endif %}
                 <span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
             </button>

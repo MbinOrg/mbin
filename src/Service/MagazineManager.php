@@ -33,7 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -44,7 +44,7 @@ class MagazineManager
     public function __construct(
         private readonly MagazineFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactory $magazineLimiter,
+        private readonly RateLimiterFactoryInterface $magazineLimiter,
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
@@ -400,6 +400,30 @@ class MagazineManager
         $this->entityManager->flush();
     }
 
+    public function userRequestedOwnership(Magazine $magazine, User $user): bool
+    {
+        $ownerRequest = $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        return null !== $ownerRequest;
+    }
+
+    /**
+     * @return MagazineOwnershipRequest[]
+     */
+    public function listOwnershipRequests(?Magazine $magazine): array
+    {
+        if ($magazine) {
+            return $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findBy([
+                'magazine' => $magazine,
+            ]);
+        } else {
+            return $this->entityManager->getRepository(MagazineOwnershipRequest::class)->findAll();
+        }
+    }
+
     public function toggleModeratorRequest(Magazine $magazine, User $user): void
     {
         $request = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
@@ -431,5 +455,29 @@ class MagazineManager
 
         $this->entityManager->remove($request);
         $this->entityManager->flush();
+    }
+
+    public function userRequestedModerator(Magazine $magazine, User $user): bool
+    {
+        $modRequest = $this->entityManager->getRepository(ModeratorRequest::class)->findOneBy([
+            'magazine' => $magazine,
+            'user' => $user,
+        ]);
+
+        return null !== $modRequest;
+    }
+
+    /**
+     * @return ModeratorRequest[]
+     */
+    public function listModeratorRequests(?Magazine $magazine): array
+    {
+        if ($magazine) {
+            return $this->entityManager->getRepository(ModeratorRequest::class)->findBy([
+                'magazine' => $magazine,
+            ]);
+        } else {
+            return $this->entityManager->getRepository(ModeratorRequest::class)->findAll();
+        }
     }
 }
