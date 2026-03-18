@@ -32,6 +32,7 @@ class UserSettingsDto implements \JsonSerializable
         public ?string $frontDefaultSort = null,
         #[OA\Property(type: 'string', enum: EntryCommentPageView::SORT_OPTIONS)]
         public ?string $commentDefaultSort = null,
+        public ?bool $showFollowingBoosts = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $featuredMagazines = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]

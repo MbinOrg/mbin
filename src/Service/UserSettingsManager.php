@@ -31,6 +31,7 @@ class UserSettingsManager
             $user->homepage,
             $user->frontDefaultSort,
             $user->commentDefaultSort,
+            $user->showBoostsOfFollowing,
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
@@ -54,6 +55,7 @@ class UserSettingsManager
         $user->homepage = $dto->homepage;
         $user->frontDefaultSort = $dto->frontDefaultSort;
         $user->commentDefaultSort = $dto->commentDefaultSort;
+        $user->showBoostsOfFollowing = $dto->showFollowingBoosts ?? false;
         $user->hideAdult = $dto->hideAdult;
         $user->showProfileSubscriptions = $dto->showProfileSubscriptions;
         $user->showProfileFollowings = $dto->showProfileFollowings;

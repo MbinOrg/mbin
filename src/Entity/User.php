@@ -109,6 +109,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public int $followersCount = 0;
     #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $showBoostsOfFollowing = false;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $frontDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'enumFrontContentOptions', nullable: true)]
