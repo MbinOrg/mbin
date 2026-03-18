@@ -106,7 +106,7 @@ class SqlHelpers
             return Types::INTEGER;
         }
 
-        return ParameterType::STRING;
+        return Types::STRING;
     }
 
     public function getBlockedMagazinesDql(User $user): string
@@ -370,5 +370,10 @@ class SqlHelpers
         $this->logger->debug('Fetching single column row from {sql}: {res}', ['sql' => $sql, 'res' => $result]);
 
         return $result;
+    }
+
+    public static function getRealClassName(EntityManagerInterface $entityManager, mixed $object): string
+    {
+        return $entityManager->getClassMetadata(\get_class($object))->getName();
     }
 }

@@ -19,7 +19,6 @@ use App\Entity\User;
 use App\Pagination\Pagerfanta;
 use App\Pagination\QueryAdapter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -34,10 +33,8 @@ use Pagerfanta\PagerfantaInterface;
  */
 class ActivityRepository extends ServiceEntityRepository
 {
-    public function __construct(
-        ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
-    ) {
+    public function __construct(ManagerRegistry $registry)
+    {
         parent::__construct($registry, Activity::class);
     }
 
@@ -181,8 +178,8 @@ class ActivityRepository extends ServiceEntityRepository
             $activity->setObject($object);
         }
 
-        $this->entityManager->persist($activity);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($activity);
+        $this->getEntityManager()->flush();
 
         return $activity;
     }
@@ -204,8 +201,8 @@ class ActivityRepository extends ServiceEntityRepository
             $activity->setObject($object);
         }
 
-        $this->entityManager->persist($activity);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($activity);
+        $this->getEntityManager()->flush();
 
         return $activity;
     }

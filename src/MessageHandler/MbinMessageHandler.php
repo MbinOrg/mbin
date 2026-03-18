@@ -26,9 +26,7 @@ abstract class MbinMessageHandler
         // when we are in the test environment this would throw: ConnectionException: There is no active transaction.
         if ('test' !== $this->kernel->getEnvironment()) {
             $conn = $this->entityManager->getConnection();
-            if (!$conn->isConnected()) {
-                $conn->connect();
-            }
+            $conn->getNativeConnection(); // calls connect() internally
 
             $conn->transactional(fn () => $this->doWork($message));
 

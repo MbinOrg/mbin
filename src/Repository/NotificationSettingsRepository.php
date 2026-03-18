@@ -18,7 +18,6 @@ use App\Entity\User;
 use App\Enums\ENotificationStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -32,7 +31,6 @@ class NotificationSettingsRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
     ) {
         parent::__construct($registry, NotificationSettings::class);
@@ -67,8 +65,8 @@ class NotificationSettingsRepository extends ServiceEntityRepository
         } else {
             $setting->setStatus($status);
         }
-        $this->entityManager->persist($setting);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($setting);
+        $this->getEntityManager()->flush();
     }
 
     /**

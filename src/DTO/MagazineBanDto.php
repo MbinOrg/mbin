@@ -11,13 +11,13 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 class MagazineBanDto
 {
     public ?string $reason = null;
-    public ?\DateTimeInterface $expiredAt = null;
+    public ?\DateTimeImmutable $expiredAt = null;
     #[Ignore]
     private ?int $id = null;
 
     public static function create(
         ?string $reason = null,
-        ?\DateTimeInterface $expiredAt = null,
+        ?\DateTimeImmutable $expiredAt = null,
         ?int $id = null,
     ): self {
         $dto = new MagazineBanDto();

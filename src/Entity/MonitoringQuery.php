@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\MonitoringPerformanceTrait;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -26,7 +27,7 @@ class MonitoringQuery
     #[Column(type: 'integer')]
     private int $id;
 
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $parameters = null;
 
     #[ManyToOne(targetEntity: MonitoringExecutionContext::class, inversedBy: 'queries')]
