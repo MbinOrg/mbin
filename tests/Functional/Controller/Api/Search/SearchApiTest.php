@@ -15,7 +15,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 class SearchApiTest extends WebTestCase
 {
     // These tests do work, but we should not do requests to a remote server when running tests
-    private const RUN_AP_SEARCHES = true;
+    private const RUN_AP_SEARCHES = false;
 
     public const SEARCH_PAGINATED_KEYS = ['items', 'pagination', 'apResults'];
     public const SEARCH_ITEM_KEYS = ['entry', 'entryComment', 'post', 'postComment', 'magazine', 'user'];
