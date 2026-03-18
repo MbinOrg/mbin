@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Entity\Magazine;
@@ -8,12 +10,12 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 
 class ApHttpClientProxy implements ApHttpClientInterface
 {
-
     public ?ApHttpClientInterface $replacement = null;
 
     public function __construct(
-        private ApHttpClientInterface $defaultClient
-    ){}
+        private ApHttpClientInterface $defaultClient,
+    ) {
+    }
 
     private function client(): ApHttpClientInterface
     {

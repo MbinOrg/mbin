@@ -7,23 +7,16 @@ namespace App\Controller\Api\Search;
 use App\ActivityPub\ActorHandle;
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
-use App\DTO\ContentResponseDto;
 use App\DTO\SearchResponseDto;
-use App\Entity\Contracts\ContentInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
-use App\Factory\MagazineFactory;
-use App\Factory\UserFactory;
 use App\Repository\SearchRepository;
-use App\Schema\ContentSchema;
 use App\Schema\PaginationSchema;
-use App\Schema\SearchActorSchema;
 use App\Service\SearchManager;
-use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -198,25 +191,31 @@ class SearchRetrieveApi extends BaseApi
             || $this->getUser();
     }
 
-    private function serializeItem(object $item): ?SearchResponseDto {
+    private function serializeItem(object $item): ?SearchResponseDto
+    {
         if ($item instanceof Entry) {
             $this->handlePrivateContent($item);
+
             return new SearchResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof Post) {
             $this->handlePrivateContent($item);
+
             return new SearchResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof EntryComment) {
             $this->handlePrivateContent($item);
+
             return new SearchResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof PostComment) {
             $this->handlePrivateContent($item);
+
             return new SearchResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-        } elseif($item instanceof Magazine) {
+        } elseif ($item instanceof Magazine) {
             return new SearchResponseDto(magazine: $this->serializeMagazine($this->magazineFactory->createDto($item)));
-        } elseif($item instanceof User) {
+        } elseif ($item instanceof User) {
             return new SearchResponseDto(user: $this->serializeUser($this->userFactory->createDto($item)));
         } else {
             $this->logger->error('Unexpected result type: '.\get_class($item));
+
             return null;
         }
     }

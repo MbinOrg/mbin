@@ -6,8 +6,6 @@ namespace App\Tests\Functional\Controller\Api\Search;
 
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\ApHttpClientInterface;
-use App\Service\SettingsManager;
-use App\Tests\Service\ApHttpClientProxy;
 use App\Tests\WebTestCase;
 use phpseclib3\Crypt\RSA;
 use Psr\Log\LoggerInterface;
@@ -16,7 +14,6 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class SearchApiTest extends WebTestCase
 {
-
     // These tests do work, but we should not do requests to a remote server when running tests
     private const RUN_AP_SEARCHES = true;
 
@@ -67,7 +64,7 @@ class SearchApiTest extends WebTestCase
         self::validateResponseOuterData($jsonData, 2, 0);
 
         foreach ($jsonData['items'] as $item) {
-            if($item['entry'] !== null) {
+            if (null !== $item['entry']) {
                 $type = 'entry';
                 $id = $entry->getId();
             } else {
@@ -94,7 +91,7 @@ class SearchApiTest extends WebTestCase
         self::validateResponseOuterData($jsonData, 2, 0);
 
         foreach ($jsonData['items'] as $item) {
-            if($item['entryComment'] !== null) {
+            if (null !== $item['entryComment']) {
                 $type = 'entryComment';
                 $id = $entryComment->getId();
             } else {
@@ -142,7 +139,9 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteUserByHandleAnonymous(): void
     {
-        if(!self::RUN_AP_SEARCHES) return;
+        if (!self::RUN_AP_SEARCHES) {
+            return;
+        }
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
@@ -151,7 +150,7 @@ class SearchApiTest extends WebTestCase
         $this->getUserByUsername('test');
         $this->setCacheKeysForApHttpClient($domain);
 
-        $this->client->request('GET', "/api/search?q=@eugen@mastodon.social");
+        $this->client->request('GET', '/api/search?q=@eugen@mastodon.social');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -166,7 +165,9 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteMagazineByHandleAnonymous(): void
     {
-        if(!self::RUN_AP_SEARCHES) return;
+        if (!self::RUN_AP_SEARCHES) {
+            return;
+        }
 
         // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
         $this->getUserByUsername('admin', isAdmin: true);
@@ -178,7 +179,7 @@ class SearchApiTest extends WebTestCase
         $this->setCacheKeysForApHttpClient($domain, $this->logger);
         $this->getMagazineByName('testMag');
 
-        $this->client->request('GET', "/api/search?q=!technology@lemmy.world");
+        $this->client->request('GET', '/api/search?q=!technology@lemmy.world');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -193,7 +194,9 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteUserByUrl(): void
     {
-        if(!self::RUN_AP_SEARCHES) return;
+        if (!self::RUN_AP_SEARCHES) {
+            return;
+        }
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
@@ -204,7 +207,7 @@ class SearchApiTest extends WebTestCase
 
         $this->client->loginUser($this->getUserByUsername('user'));
 
-        $this->client->request('GET', "/api/search?q=https%3A%2F%2Fmastodon.social%2F%40eugen");
+        $this->client->request('GET', '/api/search?q=https%3A%2F%2Fmastodon.social%2F%40eugen');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -219,7 +222,9 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteMagazineByUrl(): void
     {
-        if(!self::RUN_AP_SEARCHES) return;
+        if (!self::RUN_AP_SEARCHES) {
+            return;
+        }
 
         $this->getUserByUsername('admin', isAdmin: true);
 
@@ -233,7 +238,7 @@ class SearchApiTest extends WebTestCase
 
         $this->getMagazineByName('testMag');
 
-        $this->client->request('GET', "/api/search?q=https%3A%2F%2Flemmy.world%2Fc%2Ftechnology");
+        $this->client->request('GET', '/api/search?q=https%3A%2F%2Flemmy.world%2Fc%2Ftechnology');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -248,7 +253,9 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemotePostByUrl(): void
     {
-        if(!self::RUN_AP_SEARCHES) return;
+        if (!self::RUN_AP_SEARCHES) {
+            return;
+        }
 
         $this->getUserByUsername('admin', isAdmin: true);
 
@@ -262,7 +269,7 @@ class SearchApiTest extends WebTestCase
 
         $this->getMagazineByName('testMag');
 
-        $this->client->request('GET', "/api/search?q=https%3A%2F%2Flemmy.world%2Fpost%2F44358216");
+        $this->client->request('GET', '/api/search?q=https%3A%2F%2Flemmy.world%2Fpost%2F44358216');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -275,7 +282,8 @@ class SearchApiTest extends WebTestCase
         self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
-    private static function validateResponseOuterData(array $data, int $expectedLength, int $expectedApLength): void {
+    private static function validateResponseOuterData(array $data, int $expectedLength, int $expectedApLength): void
+    {
         self::assertIsArray($data);
         self::assertArrayKeysMatch(self::SEARCH_PAGINATED_KEYS, $data);
         self::assertIsArray($data['items']);
@@ -287,7 +295,8 @@ class SearchApiTest extends WebTestCase
         self::assertCount($expectedApLength, $data['apResults']);
     }
 
-    private static function validateResponseItemData(array $data, string $expectedType, ?int $expectedId = null, ?string $expectedApId = null): void {
+    private static function validateResponseItemData(array $data, string $expectedType, ?int $expectedId = null, ?string $expectedApId = null): void
+    {
         self::assertIsArray($data);
         self::assertArrayKeysMatch(self::SEARCH_ITEM_KEYS, $data);
 
@@ -300,7 +309,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['magazine']);
                 self::assertNull($data['user']);
                 self::assertArrayKeysMatch(self::ENTRY_RESPONSE_KEYS, $data['entry']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['entry']['entryId']);
                 } else {
                     self::assertSame($expectedApId, $data['entry']['apId']);
@@ -314,7 +323,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['magazine']);
                 self::assertNull($data['user']);
                 self::assertArrayKeysMatch(self::ENTRY_COMMENT_RESPONSE_KEYS, $data['entryComment']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['entryComment']['commentId']);
                 } else {
                     self::assertSame($expectedApId, $data['entryComment']['apId']);
@@ -328,7 +337,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['magazine']);
                 self::assertNull($data['user']);
                 self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $data['post']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['post']['postId']);
                 } else {
                     self::assertSame($expectedApId, $data['post']['apId']);
@@ -342,7 +351,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['magazine']);
                 self::assertNull($data['user']);
                 self::assertArrayKeysMatch(self::POST_COMMENT_RESPONSE_KEYS, $data['postComment']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['postComment']['commentId']);
                 } else {
                     self::assertSame($expectedApId, $data['postComment']['apId']);
@@ -356,7 +365,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['postComment']);
                 self::assertNull($data['user']);
                 self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $data['magazine']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['magazine']['magazineId']);
                 } else {
                     self::assertSame($expectedApId, $data['magazine']['apId']);
@@ -370,7 +379,7 @@ class SearchApiTest extends WebTestCase
                 self::assertNull($data['postComment']);
                 self::assertNull($data['magazine']);
                 self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $data['user']);
-                if($expectedId !== null) {
+                if (null !== $expectedId) {
                     self::assertSame($expectedId, $data['user']['userId']);
                 } else {
                     self::assertSame($expectedApId, $data['user']['apId']);
