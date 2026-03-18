@@ -260,8 +260,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 
         $user->setPassword($newHashedPassword);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByUsername(string $username): ?User
@@ -489,7 +489,8 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.isBanned = false')
             ->andWhere('u.isDeleted = false')
             ->andWhere('u.applicationStatus = :status')
-            ->setParameters(['query' => "{$query}%", 'status' => EApplicationStatus::Approved->value])
+            ->setParameter('query', "{$query}%")
+            ->setParameter('status', EApplicationStatus::Approved->value)
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();
@@ -650,7 +651,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
      */
     public function findForMagazineUsersByContentCount(Magazine $magazine, ?bool $federated, int $limit, bool $limitTime, bool $requireAvatar): array
     {
-        $conn = $this->_em->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $userWhere = [
             'u.is_banned = false',
             'u.is_deleted = false',

@@ -9,7 +9,6 @@ use App\Entity\Hashtag;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -29,7 +28,6 @@ class TagRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly ContentPopulationTransformer $populationTransformer,
     ) {
@@ -46,7 +44,7 @@ class TagRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
 
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT e.id, e.created_at, 'entry' AS type FROM entry e
                 INNER JOIN hashtag_link l ON e.id = l.entry_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
@@ -88,8 +86,8 @@ class TagRepository extends ServiceEntityRepository
     {
         $entity = new Hashtag();
         $entity->tag = $tag;
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
         return $entity;
     }
@@ -102,7 +100,7 @@ class TagRepository extends ServiceEntityRepository
     ])]
     public function getCounts(string $tag): ?array
     {
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare('SELECT COUNT(entry_id) as entry, COUNT(entry_comment_id) as entry_comment, COUNT(post_id) as post, COUNT(post_comment_id) as post_comment
             FROM hashtag_link INNER JOIN public.hashtag h ON h.id = hashtag_link.hashtag_id AND h.tag = :tag GROUP BY h.tag');
         $stmt->bindValue('tag', $tag);
