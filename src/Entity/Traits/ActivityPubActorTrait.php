@@ -39,6 +39,9 @@ trait ActivityPubActorTrait
     #[Column(type: 'string', nullable: true)]
     public ?string $apPreferredUsername = null;
 
+    #[Column(type: 'string')]
+    public ?string $title = null;
+
     #[Column(type: 'boolean', nullable: true)]
     public ?bool $apDiscoverable = null;
 

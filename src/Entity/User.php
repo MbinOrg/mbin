@@ -45,6 +45,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
 #[Index(columns: ['username_ts'], name: 'user_username_ts')]
+#[Index(columns: ['title_ts'], name: 'user_title_ts')]
 #[Index(columns: ['about_ts'], name: 'user_about_ts')]
 #[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
@@ -267,6 +268,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $usernameTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $titleTs;
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $aboutTs;
 

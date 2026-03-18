@@ -15,7 +15,7 @@
     "object": {
         "id": "SCRUBBED_ID",
         "type": "Person",
-        "name": "user",
+        "name": "Test User",
         "preferredUsername": "user",
         "inbox": "https://kbin.test/u/user/inbox",
         "outbox": "https://kbin.test/u/user/outbox",

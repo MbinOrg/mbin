@@ -74,6 +74,116 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals('Updated during test', $jsonData['about']);
     }
 
+    public function testApiCanUpdateCurrentUserTitle(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
+
+        $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
+        self::assertSame($testUser->getId(), $jsonData['userId']);
+        self::assertNull($jsonData['title']);
+
+        // region set title
+        $this->client->jsonRequest(
+            'PUT', '/api/users/profile',
+            parameters: [
+                'title' => 'Custom user-name',
+            ],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
+        self::assertSame($testUser->getId(), $jsonData['userId']);
+        self::assertEquals('Custom user-name', $jsonData['title']);
+
+        $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
+        self::assertSame($testUser->getId(), $jsonData['userId']);
+        self::assertEquals('Custom user-name', $jsonData['title']);
+        // endregion
+
+        // region reset title
+        $this->client->jsonRequest(
+            'PUT', '/api/users/profile',
+            parameters: [],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
+        self::assertSame($testUser->getId(), $jsonData['userId']);
+        self::assertNull($jsonData['title']);
+
+        $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_RESPONSE_KEYS, $jsonData);
+        self::assertSame($testUser->getId(), $jsonData['userId']);
+        self::assertNull($jsonData['title']);
+        // endregion
+    }
+
+    public function testApiCannotUpdateCurrentUserTitleWithWhitespaces()
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
+
+        $this->client->request('GET', '/api/users/'.$testUser->getId(), server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/profile',
+            parameters: [
+                'title' => "    \t",
+            ],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(400);
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/profile',
+            parameters: [
+                'title' => '',
+            ],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(400);
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/profile',
+            parameters: [
+                'title' => '  .  ',
+            ],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(400);
+    }
+
     public function testApiCannotUpdateCurrentUserSettingsWithoutScope(): void
     {
         self::createOAuth2AuthCodeClient();
