@@ -7,8 +7,14 @@ namespace App\Controller\Api\Search;
 use App\ActivityPub\ActorHandle;
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
+use App\DTO\ContentResponseDto;
+use App\DTO\SearchResponseDto;
 use App\Entity\Contracts\ContentInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
@@ -30,34 +36,23 @@ class SearchRetrieveApi extends BaseApi
 
     #[OA\Response(
         response: 200,
-        description: 'Returns a paginated list of content, along with any ActivityPub actors that matched the query by username, or ActivityPub objects that matched the query by URL. Actors and objects are not paginated',
+        description: 'Returns a paginated list of content, along with any ActivityPub actors that matched the query by username, or ActivityPub objects that matched the query by URL. AP-Objects are not paginated.',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
                 new OA\Property(
                     property: 'items',
                     type: 'array',
-                    items: new OA\Items(
-                        ref: new Model(type: ContentSchema::class)
-                    )
+                    items: new OA\Items(ref: new Model(type: SearchResponseDto::class))
                 ),
                 new OA\Property(
                     property: 'pagination',
                     ref: new Model(type: PaginationSchema::class)
                 ),
                 new OA\Property(
-                    property: 'apActors',
+                    property: 'apResults',
                     type: 'array',
-                    items: new OA\Items(
-                        ref: new Model(type: SearchActorSchema::class)
-                    )
-                ),
-                new OA\Property(
-                    property: 'apObjects',
-                    type: 'array',
-                    items: new OA\Items(
-                        ref: new Model(type: ContentSchema::class)
-                    )
+                    items: new OA\Items(ref: new Model(type: SearchResponseDto::class))
                 ),
             ]
         ),
@@ -130,9 +125,6 @@ class SearchRetrieveApi extends BaseApi
     #[OA\Tag(name: 'search')]
     public function __invoke(
         SearchManager $manager,
-        UserFactory $userFactory,
-        MagazineFactory $magazineFactory,
-        SettingsManager $settingsManager,
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
@@ -156,50 +148,43 @@ class SearchRetrieveApi extends BaseApi
             throw new BadRequestHttpException();
         }
 
+        /** @var ?SearchResponseDto $searchResults */
+        $searchResults = [];
         $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage, authorId: $authorId, magazineId: $magazineId, specificType: $type);
-        $dtos = [];
-        foreach ($items->getCurrentPageResults() as $value) {
-            // TODO here we have two options
-            //  A: skip non-content values
-            //  B: add User and Magazine to the schema of the response; this might be a breaking API change
-            if ($value instanceof ContentInterface) {
-                $dtos[] = $this->serializeContentInterface($value);
-            } elseif ($value instanceof User) {
-                $dtos[] = $this->serializeUser($userFactory->createDto($value));
-            } elseif ($value instanceof Magazine) {
-                $dtos[] = $this->serializeMagazine($magazineFactory->createDto($value));
-            } else {
-                $this->logger->error('Unexpected result type: '.\get_class($value));
-            }
+        foreach ($items->getCurrentPageResults() as $item) {
+            $searchResults[] = $this->serializeItem($item);
         }
 
-        $response = $this->serializePaginated($dtos, $items);
-
-        $response['apActors'] = [];
-        $response['apObjects'] = [];
+        /** @var ?SearchResponseDto $apResults */
+        $apResults = [];
         if ($this->federatedSearchAllowed()) {
             if ($handle = ActorHandle::parse($q)) {
                 $actors = $manager->findActivityPubActorsByUsername($handle);
-                $response['apActors'] = $this->transformActors($actors, $userFactory, $magazineFactory);
-            }
+                foreach ($actors as $actor) {
+                    $apResults[] = $this->serializeItem($actor['object']);
+                }
+            } else {
+                $objects = $manager->findActivityPubObjectsByURL($q);
+                foreach ($objects['errors'] as $error) {
+                    /** @var \Exception $error */
+                    $this->logger->warning(
+                        'Exception while resolving URL {url}: {type}: {msg}',
+                        [
+                            'url' => $q,
+                            'type' => \get_class($error),
+                            'msg' => $error->getMessage(),
+                        ]
+                    );
+                }
 
-            $objects = $manager->findActivityPubObjectsByURL($q);
-            foreach ($objects['errors'] as $error) {
-                /** @var \Exception $error */
-                $this->logger->warning(
-                    'Exception while resolving URL {url}: {type}: {msg}',
-                    [
-                        'url' => $q,
-                        'type' => \get_class($error),
-                        'msg' => $error->getMessage(),
-                    ]
-                );
+                foreach ($objects['results'] as $object) {
+                    $apResults[] = $this->serializeItem($object['object']);
+                }
             }
-
-            $transformedObjects = $this->transformObjects($objects['results'], $userFactory, $magazineFactory);
-            $response['apActors'] = [...$response['apActors'], ...$transformedObjects['actors']];
-            $response['apObjects'] = $transformedObjects['content'];
         }
+
+        $response = $this->serializePaginated($searchResults, $items);
+        $response['apResults'] = $apResults;
 
         return new JsonResponse(
             $response,
@@ -213,50 +198,26 @@ class SearchRetrieveApi extends BaseApi
             || $this->getUser();
     }
 
-    private function transformActors(array $actors, UserFactory $userFactory, MagazineFactory $magazineFactory): array
-    {
-        $ret = [];
-        foreach ($actors as $actor) {
-            $ret[] = $this->transformActor($actor, $userFactory, $magazineFactory);
+    private function serializeItem(object $item): ?SearchResponseDto {
+        if ($item instanceof Entry) {
+            $this->handlePrivateContent($item);
+            return new SearchResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+        } elseif ($item instanceof Post) {
+            $this->handlePrivateContent($item);
+            return new SearchResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+        } elseif ($item instanceof EntryComment) {
+            $this->handlePrivateContent($item);
+            return new SearchResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+        } elseif ($item instanceof PostComment) {
+            $this->handlePrivateContent($item);
+            return new SearchResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+        } elseif($item instanceof Magazine) {
+            return new SearchResponseDto(magazine: $this->serializeMagazine($this->magazineFactory->createDto($item)));
+        } elseif($item instanceof User) {
+            return new SearchResponseDto(user: $this->serializeUser($this->userFactory->createDto($item)));
+        } else {
+            $this->logger->error('Unexpected result type: '.\get_class($item));
+            return null;
         }
-
-        return $ret;
-    }
-
-    private function transformActor(array $actor, UserFactory $userFactory, MagazineFactory $magazineFactory): array
-    {
-        return match ($actor['type']) {
-            'user' => [
-                'type' => 'user',
-                'object' => $this->serializeUser($userFactory->createDto($actor['object'])),
-            ],
-            'magazine' => [
-                'type' => 'magazine',
-                'object' => $this->serializeMagazine($magazineFactory->createDto($actor['object'])),
-            ],
-            default => throw new \LogicException('Unexpected actor type: '.$actor['type']),
-        };
-    }
-
-    private function transformObjects(array $objects, UserFactory $userFactory, MagazineFactory $magazineFactory): array
-    {
-        $actors = [];
-        $content = [];
-        foreach ($objects as $object) {
-            if ('user' === $object['type'] || 'magazine' === $object['type']) {
-                $actors[] = $this->transformActor($object, $userFactory, $magazineFactory);
-            } elseif ('subject' === $object['type']) {
-                $subject = $object['object'];
-                \assert($subject instanceof ContentInterface);
-                $content[] = $this->serializeContentInterface($subject);
-            } else {
-                throw new \LogicException('Unexpected actor type: '.$object['type']);
-            }
-        }
-
-        return [
-            'actors' => $actors,
-            'content' => $content,
-        ];
     }
 }

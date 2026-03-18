@@ -7,6 +7,7 @@ namespace App\Service;
 use App\ActivityPub\ActorHandle;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
@@ -59,7 +60,7 @@ class SearchManager
         ?string $specificType = null,
         ?\DateTimeImmutable $sinceDate = null,
     ): PagerfantaInterface {
-        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType, sinceDate: $sinceDate);
+        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType, sinceDate: $sinceDate, perPage: $perPage);
     }
 
     public function findByApId(string $url): array
