@@ -16,7 +16,6 @@ use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
@@ -31,7 +30,6 @@ class BookmarkRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly ContentPopulationTransformer $transformer,
     ) {
@@ -67,7 +65,7 @@ class BookmarkRepository extends ServiceEntityRepository
         }
 
         $sql = "DELETE FROM bookmark WHERE user_id = :u AND $contentWhere";
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('u', $user->getId());
         $stmt->bindValue('id', $content->getId());
@@ -89,7 +87,7 @@ class BookmarkRepository extends ServiceEntityRepository
         }
 
         $sql = "DELETE FROM bookmark WHERE user_id = :u AND list_id = :l AND $contentWhere";
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('u', $user->getId());
         $stmt->bindValue('l', $list->getId());
@@ -162,7 +160,7 @@ class BookmarkRepository extends ServiceEntityRepository
 
         $this->logger->info('bookmark list sql: {sql}', ['sql' => $sql]);
 
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);
 
         return Pagerfanta::createForCurrentPageWithMaxPerPage($adapter, $criteria->page, $perPage ?? EntryRepository::PER_PAGE);

@@ -1070,6 +1070,7 @@ everyone: Everyone
 nobody: Nobody
 followers_only: Followers only
 direct_message_setting_label: Who can send you a direct message
+show_boost_following_label: Show boosted content in Microblog and Combined view
 delete_magazine_icon: Delete magazine icon
 flash_magazine_theme_icon_detached_success: Magazine icon deleted successfully
 delete_magazine_banner: Delete magazine banner
