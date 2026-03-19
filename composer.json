@@ -128,7 +128,7 @@
         "spatie/phpunit-snapshot-assertions": "^5.2",
         "symfony/browser-kit": "*",
         "symfony/debug-bundle": "*",
-        "symfony/maker-bundle": "1.63.0",
+        "symfony/maker-bundle": "1.67.0",
         "symfony/phpunit-bridge": "*",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*"
