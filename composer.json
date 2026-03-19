@@ -41,7 +41,7 @@
         "league/oauth2-server-bundle": "^1.0.0",
         "liip/imagine-bundle": "^2.13.1",
         "meteo-concept/hcaptcha-bundle": "^4.1.0",
-        "minishlink/web-push": "^9.0.1",
+        "minishlink/web-push": "^10.0.3",
         "neitanod/forceutf8": "^2.0.4",
         "nelmio/api-doc-bundle": "^5.7.0",
         "nelmio/cors-bundle": "^2.5.0",
