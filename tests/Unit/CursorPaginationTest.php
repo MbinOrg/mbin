@@ -117,71 +117,72 @@ class CursorPaginationTest extends WebTestCase
         $this->cursorPagination->setCurrentPage(-1);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
-        $i = 0;
-        foreach ($currentPage as $result) {
-            self::assertEquals(($i - ($i % 5)) / 5, $result['value']);
-            self::assertEquals($i % 5, $result['value2']);
-            ++$i;
-        }
-        self::assertEquals(3, $i);
+        self::assertEquals(0, $currentPage[0]['value']);
+        self::assertEquals(0, $currentPage[0]['value2']);
+        self::assertEquals(0, $currentPage[1]['value']);
+        self::assertEquals(1, $currentPage[1]['value2']);
+        self::assertEquals(0, $currentPage[2]['value']);
+        self::assertEquals(2, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertFalse($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getNextPage();
+        self::assertEquals([0, 2], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
-        foreach ($currentPage as $result) {
-            self::assertEquals(($i - ($i % 5)) / 5, $result['value']);
-            self::assertEquals($i % 5, $result['value2']);
-            ++$i;
-        }
-        self::assertEquals(6, $i);
+        self::assertEquals(0, $currentPage[0]['value']);
+        self::assertEquals(3, $currentPage[0]['value2']);
+        self::assertEquals(0, $currentPage[1]['value']);
+        self::assertEquals(4, $currentPage[1]['value2']);
+        self::assertEquals(1, $currentPage[2]['value']);
+        self::assertEquals(0, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getNextPage();
+        self::assertEquals([1, 0], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
-        foreach ($currentPage as $result) {
-            self::assertEquals(($i - ($i % 5)) / 5, $result['value']);
-            self::assertEquals($i % 5, $result['value2']);
-            ++$i;
-        }
-        self::assertEquals(9, $i);
+        self::assertEquals(1, $currentPage[0]['value']);
+        self::assertEquals(1, $currentPage[0]['value2']);
+        self::assertEquals(1, $currentPage[1]['value']);
+        self::assertEquals(2, $currentPage[1]['value2']);
+        self::assertEquals(1, $currentPage[2]['value']);
+        self::assertEquals(3, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getPreviousPage();
+        self::assertEquals([0, 2], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
-        $i = 3;
-        foreach ($currentPage as $result) {
-            self::assertEquals(($i - ($i % 5)) / 5, $result['value']);
-            self::assertEquals($i % 5, $result['value2']);
-            ++$i;
-        }
-        self::assertEquals(6, $i);
+        self::assertEquals(0, $currentPage[0]['value']);
+        self::assertEquals(3, $currentPage[0]['value2']);
+        self::assertEquals(0, $currentPage[1]['value']);
+        self::assertEquals(4, $currentPage[1]['value2']);
+        self::assertEquals(1, $currentPage[2]['value']);
+        self::assertEquals(0, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getPreviousPage();
+        self::assertEquals([-1, 0], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
-        $i = 0;
-        foreach ($currentPage as $result) {
-            self::assertEquals(($i - ($i % 5)) / 5, $result['value']);
-            self::assertEquals($i % 5, $result['value2']);
-            ++$i;
-        }
-        self::assertEquals(3, $i);
+        self::assertEquals(0, $currentPage[0]['value']);
+        self::assertEquals(0, $currentPage[0]['value2']);
+        self::assertEquals(0, $currentPage[1]['value']);
+        self::assertEquals(1, $currentPage[1]['value2']);
+        self::assertEquals(0, $currentPage[2]['value']);
+        self::assertEquals(2, $currentPage[2]['value2']);
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertFalse($this->cursorPagination->hasPreviousPage());
     }
