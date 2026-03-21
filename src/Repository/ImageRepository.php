@@ -197,12 +197,6 @@ class ImageRepository extends ServiceEntityRepository
      */
     public function findOldRemoteMediaPaginated(int $olderThanDays, int $limit = 10000): Pagerfanta
     {
-        $query = $this->createQueryBuilder('i')
-            ->andWhere('i.downloadedAt < :date')
-            ->andWhere('i.filePath IS NOT NULL')
-            ->andWhere('i.sourceUrl IS NOT NULL')
-            ->setParameter('date', new \DateTimeImmutable("now - $olderThanDays days"))
-            ->getQuery();
         // this complicated looking query makes sure to not include avatars, covers, icons or banners
         $sql = 'SELECT id, MAX(last_active) as last_active, MAX(downloaded_at) as downloaded_at, \'image\' as type FROM (
             SELECT i.id, i.downloaded_at, e.last_active FROM image i
