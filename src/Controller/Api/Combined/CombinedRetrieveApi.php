@@ -316,6 +316,12 @@ class CombinedRetrieveApi extends BaseApi
         schema: new OA\Schema(type: 'string', default: null)
     )]
     #[OA\Parameter(
+        name: 'cursor2',
+        description: 'The secondary cursor, always a datetime',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
         name: 'perPage',
         description: 'Number of content items to retrieve per page',
         in: 'query',
@@ -369,6 +375,7 @@ class CombinedRetrieveApi extends BaseApi
         Security $security,
         ContentRepository $contentRepository,
         #[MapQueryParameter] ?string $cursor,
+        #[MapQueryParameter] ?string $cursor2,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -378,9 +385,10 @@ class CombinedRetrieveApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
-        $currentCursor = $this->getCursor($contentRepository, $criteria, $cursor);
+        $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
+        $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
-        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor);
+        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor, $currentCursor2);
 
         return $this->serializeContentCursored($content, $headers);
     }
@@ -426,6 +434,12 @@ class CombinedRetrieveApi extends BaseApi
     #[OA\Parameter(
         name: 'cursor',
         description: 'The cursor',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
+        name: 'cursor2',
+        description: 'The secondary cursor, always a datetime',
         in: 'query',
         schema: new OA\Schema(type: 'string', default: null)
     )]
@@ -485,6 +499,7 @@ class CombinedRetrieveApi extends BaseApi
         Security $security,
         ContentRepository $contentRepository,
         #[MapQueryParameter] ?string $cursor,
+        #[MapQueryParameter] ?string $cursor2,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
@@ -495,9 +510,10 @@ class CombinedRetrieveApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
-        $currentCursor = $this->getCursor($contentRepository, $criteria, $cursor);
+        $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
+        $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
-        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor);
+        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor, $currentCursor2);
 
         return $this->serializeContentCursored($content, $headers);
     }
@@ -570,9 +586,9 @@ class CombinedRetrieveApi extends BaseApi
         return new JsonResponse($this->serializeCursorPaginated($result, $content), headers: $headers);
     }
 
-    private function getCursor(ContentRepository $contentRepository, ContentPageView $criteria, ?string $cursor): int|\DateTime|\DateTimeImmutable
+    private function getCursor(ContentRepository $contentRepository, string $sortOption, ?string $cursor): int|\DateTime|\DateTimeImmutable
     {
-        $initialCursor = $contentRepository->guessInitialCursor($criteria);
+        $initialCursor = $contentRepository->guessInitialCursor($sortOption);
         if ($initialCursor instanceof \DateTime || $initialCursor instanceof \DateTimeImmutable) {
             try {
                 $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $initialCursor;

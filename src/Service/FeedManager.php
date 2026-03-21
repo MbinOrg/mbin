@@ -46,7 +46,7 @@ class FeedManager
         $criteria = $this->getCriteriaFromRequest($request);
         $feed = $this->createFeed($criteria);
 
-        $content = $this->contentRepository->findByCriteriaCursored($criteria, $this->contentRepository->guessInitialCursor($criteria));
+        $content = $this->contentRepository->findByCriteriaCursored($criteria, $this->contentRepository->guessInitialCursor($criteria->sortOption));
 
         foreach ($this->getItems($content->getCurrentPageResults()) as $item) {
             $feed->add($item);

@@ -63,11 +63,13 @@ class ContentRepository
      *
      * @throws Exception
      */
-    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor): CursorPaginationInterface
+    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null): CursorPaginationInterface
     {
         $query = $this->getQueryAndParameters($criteria, true);
         $conn = $this->entityManager->getConnection();
         $orderings = $this->getOrderings($criteria);
+        $start = new \DateTimeImmutable();
+        $start = $start->setTimestamp(0);
 
         $fanta = new CursorPagination(
             new NativeQueryCursorAdapter(
@@ -78,12 +80,18 @@ class ContentRepository
                 join(',', $orderings),
                 join(',', SqlHelpers::invertOrderings($orderings)),
                 $query['parameters'],
+                $this->getSecondaryCursorWhereFromCriteria($criteria),
+                $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
+                'c.created_at DESC',
+                'c.created_at',
                 transformer: $this->contentPopulationTransformer,
             ),
             $this->getCursorFieldFromCriteria($criteria),
             $criteria->perPage ?? self::PER_PAGE,
+            'createdAt',
+            $start,
         );
-        $fanta->setCurrentPage($currentCursor ?? $this->guessInitialCursor($criteria));
+        $fanta->setCurrentPage($currentCursor ?? $this->guessInitialCursor($criteria->sortOption), $currentCursor2 ?? new \DateTimeImmutable('now + 1 minute'));
 
         return $fanta;
     }
@@ -317,7 +325,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor ? 'c.%cursor%' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -338,7 +346,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor ? 'c.%cursor%' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
         $entryCommentWhere = SqlHelpers::makeWhereString([
@@ -384,10 +392,10 @@ class ContentRepository
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
-            $addCursor ? 'content.%cursor%' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
-        $orderings = $addCursor ? ['%cursorSort%'] : $this->getOrderings($criteria);
+        $orderings = $addCursor ? ['%cursorSort%', '%cursorSort2%'] : $this->getOrderings($criteria);
 
         $orderBy = 'ORDER BY '.join(', ', $orderings);
         // only join domain if we are explicitly looking at one
@@ -431,8 +439,8 @@ class ContentRepository
             }
         }
 
-        $sql = "SELECT content.* FROM ($innerSql) content
-            INNER JOIN \"user\" u ON content.user_id = u.id
+        $sql = "SELECT c.* FROM ($innerSql) c
+            INNER JOIN \"user\" u ON c.user_id = u.id
             $outerWhere
             $orderBy";
 
@@ -462,30 +470,52 @@ class ContentRepository
     private function getCursorWhereFromCriteria(Criteria $criteria): string
     {
         return match ($criteria->sortOption) {
-            Criteria::SORT_TOP => 'score < :cursor',
-            Criteria::SORT_HOT => 'ranking < :cursor',
-            Criteria::SORT_COMMENTED => 'comment_count < :cursor',
-            Criteria::SORT_ACTIVE => 'last_active < :cursor',
-            Criteria::SORT_OLD => 'created_at > :cursor',
-            default => 'created_at < :cursor',
+            Criteria::SORT_TOP => 'c.score < :cursor',
+            Criteria::SORT_HOT => 'c.ranking < :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
+            Criteria::SORT_OLD => 'c.created_at > :cursor',
+            default => 'c.created_at < :cursor',
         };
     }
 
     private function getCursorWhereInvertedFromCriteria(Criteria $criteria): string
     {
         return match ($criteria->sortOption) {
-            Criteria::SORT_TOP => 'score >= :cursor',
-            Criteria::SORT_HOT => 'ranking >= :cursor',
-            Criteria::SORT_COMMENTED => 'comment_count >= :cursor',
-            Criteria::SORT_ACTIVE => 'last_active >= :cursor',
-            Criteria::SORT_OLD => 'created_at <= :cursor',
-            default => 'created_at >= :cursor',
+            Criteria::SORT_TOP => 'c.score > :cursor',
+            Criteria::SORT_HOT => 'c.ranking > :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
+            Criteria::SORT_OLD => 'c.created_at < :cursor',
+            default => 'c.created_at >= :cursor',
         };
     }
 
-    public function guessInitialCursor(Criteria $criteria): mixed
+    private function getSecondaryCursorWhereFromCriteria(Criteria $criteria): string
     {
         return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at < :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    private function getSecondaryCursorWhereFromCriteriaInverted(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at >= :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    public function guessInitialCursor(string $sortOption): mixed
+    {
+        return match ($sortOption) {
             Criteria::SORT_TOP, Criteria::SORT_HOT, Criteria::SORT_COMMENTED => 2147483647, // postgresql max int
             Criteria::SORT_OLD => (new \DateTimeImmutable())->setTimestamp(0),
             default => new \DateTimeImmutable('now + 1 minute'),

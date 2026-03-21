@@ -235,6 +235,54 @@ class CombinedRetrieveApiTest extends WebTestCase
         $this->assertCursorDataShape($data);
     }
 
+    public function testCombinedCursoredPagination(): void
+    {
+        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented');
+
+        self::assertResponseIsSuccessful();
+        $data1 = self::getJsonResponse($this->client);
+
+        self::assertCount(2, $data1['items']);
+        self::assertArrayKeysMatch(WebTestCase::CURSOR_PAGINATION_KEYS, $data1['pagination']);
+        self::assertNotNull($data1['pagination']['nextCursor']);
+        self::assertNotNull($data1['pagination']['nextCursor2']);
+        self::assertNotNull($data1['pagination']['currentCursor']);
+        self::assertNotNull($data1['pagination']['currentCursor2']);
+        self::assertNull($data1['pagination']['previousCursor']);
+        self::assertNull($data1['pagination']['previousCursor2']);
+
+        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented&cursor='.urlencode($data1['pagination']['nextCursor']).'&cursor2='.urlencode($data1['pagination']['nextCursor2']));
+
+        self::assertResponseIsSuccessful();
+        $data2 = self::getJsonResponse($this->client);
+
+        self::assertCount(2, $data2['items']);
+        self::assertArrayKeysMatch(WebTestCase::CURSOR_PAGINATION_KEYS, $data2['pagination']);
+        self::assertNotNull($data2['pagination']['nextCursor']);
+        self::assertNotNull($data2['pagination']['nextCursor2']);
+        self::assertNotNull($data2['pagination']['currentCursor']);
+        self::assertNotNull($data2['pagination']['currentCursor2']);
+        self::assertNotNull($data2['pagination']['previousCursor']);
+        self::assertNotNull($data2['pagination']['previousCursor2']);
+
+        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented&cursor='.urlencode($data2['pagination']['previousCursor']).'&cursor2='.urlencode($data2['pagination']['previousCursor2']));
+
+        self::assertResponseIsSuccessful();
+        $data3 = self::getJsonResponse($this->client);
+
+        self::assertCount(2, $data3['items']);
+        self::assertArrayKeysMatch(WebTestCase::CURSOR_PAGINATION_KEYS, $data3['pagination']);
+        self::assertNotNull($data3['pagination']['nextCursor']);
+        self::assertNotNull($data3['pagination']['nextCursor2']);
+        self::assertNotNull($data3['pagination']['currentCursor']);
+        self::assertNotNull($data3['pagination']['currentCursor2']);
+        self::assertNull($data3['pagination']['previousCursor']);
+        self::assertNull($data3['pagination']['previousCursor2']);
+
+        self::assertEquals($data1['items'][0]['entry']['entryId'], $data3['items'][0]['entry']['entryId']);
+        self::assertEquals($data1['items'][1]['post']['postId'], $data3['items'][1]['post']['postId']);
+    }
+
     private function assertCursorDataShape(array $data): void
     {
         self::assertArrayKeysMatch(WebTestCase::PAGINATED_KEYS, $data);
@@ -242,8 +290,11 @@ class CombinedRetrieveApiTest extends WebTestCase
         self::assertCount(2, $data['items']);
         self::assertArrayKeysMatch(WebTestCase::CURSOR_PAGINATION_KEYS, $data['pagination']);
         self::assertNotNull($data['pagination']['nextCursor']);
+        self::assertNotNull($data['pagination']['nextCursor2']);
         self::assertNotNull($data['pagination']['currentCursor']);
+        self::assertNotNull($data['pagination']['currentCursor2']);
         self::assertNull($data['pagination']['previousCursor']);
+        self::assertNull($data['pagination']['previousCursor2']);
 
         self::assertArrayKeysMatch(WebTestCase::ENTRY_RESPONSE_KEYS, $data['items'][0]['entry']);
         self::assertNull($data['items'][0]['post']);
@@ -259,8 +310,11 @@ class CombinedRetrieveApiTest extends WebTestCase
         self::assertCount(2, $data['items']);
         self::assertArrayKeysMatch(WebTestCase::CURSOR_PAGINATION_KEYS, $data['pagination']);
         self::assertNotNull($data['pagination']['nextCursor']);
+        self::assertNotNull($data['pagination']['nextCursor2']);
         self::assertNotNull($data['pagination']['currentCursor']);
+        self::assertNotNull($data['pagination']['currentCursor2']);
         self::assertNotNull($data['pagination']['previousCursor']);
+        self::assertNotNull($data['pagination']['previousCursor2']);
 
         self::assertArrayKeysMatch(WebTestCase::ENTRY_RESPONSE_KEYS, $data['items'][0]['entry']);
         self::assertNull($data['items'][0]['post']);

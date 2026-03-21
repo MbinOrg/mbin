@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Pagination\Cursor;
 
-use App\Pagination\T;
 use Pagerfanta\Exception\LogicException;
 
 /**
  * @template-covariant T
  * @template-covariant TCursor
+ * @template-covariant TCursor2
  *
  * @extends \IteratorAggregate<T>
  *
@@ -25,9 +25,10 @@ interface CursorPaginationInterface extends \IteratorAggregate
     public function setMaxPerPage(int $maxPerPage): self;
 
     /**
-     * @param TCursor $cursor
+     * @param TCursor  $cursor
+     * @param TCursor2 $cursor2
      */
-    public function setCurrentPage(mixed $cursor): self;
+    public function setCurrentPage(mixed $cursor, mixed $cursor2 = null): self;
 
     public function getMaxPerPage(): int;
 
@@ -41,23 +42,23 @@ interface CursorPaginationInterface extends \IteratorAggregate
     public function hasNextPage(): bool;
 
     /**
-     * @return TCursor
+     * @return array{0:TCursor, 1:TCursor2}
      *
      * @throws LogicException if there is no next page
      */
-    public function getNextPage(): mixed;
+    public function getNextPage(): array;
 
     public function hasPreviousPage(): bool;
 
     /**
-     * @return TCursor
+     * @return array{0:TCursor, 1:TCursor2}
      *
      * @throws LogicException if there is no previous page
      */
-    public function getPreviousPage(): mixed;
+    public function getPreviousPage(): array;
 
     /**
-     * @return TCursor
+     * @return array{0:TCursor, 1:TCursor2}
      */
-    public function getCurrentCursor(): mixed;
+    public function getCurrentCursor(): array;
 }

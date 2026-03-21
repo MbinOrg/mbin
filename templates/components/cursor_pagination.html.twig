@@ -2,7 +2,8 @@
     {% if isForward is same as true %}
         <div class="section">
             {% if pagination.hasNextPage() %}
-                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(pagination.getNextPage())) }}">
+                {% set cursors = pagination.getNextPage() %}
+                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
                     {{ 'next_page'|trans|capitalize }}
                 </a>
             {% else %}
@@ -11,8 +12,9 @@
         </div>
     {% else %}
         {% if pagination.hasPreviousPage() %}
+            {% set cursors = pagination.getPreviousPage() %}
             <div class="section">
-                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(pagination.getPreviousPage())) }}">
+                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
                     {{ 'previous_page'|trans|capitalize }}
                 </a>
             </div>
