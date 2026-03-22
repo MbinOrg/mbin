@@ -25,7 +25,7 @@ export default class extends Controller {
             const cursorPaginationElement = this.paginationTarget.getElementsByClassName('cursor-pagination');
             let paginationElem = null;
             if (cursorPaginationElement.length) {
-                const button = cursorPaginationElement[0].getElementsByTagName('a');
+                const button = cursorPaginationElement[0].getElementsByClassName('next');
                 if (!button.length) {
                     throw new Error('No more pages');
                 }

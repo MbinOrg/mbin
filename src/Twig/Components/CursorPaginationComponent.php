@@ -10,7 +10,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent('cursor_pagination')]
 class CursorPaginationComponent
 {
-    public bool $isForward = true;
-
     public CursorPaginationInterface $pagination;
 }

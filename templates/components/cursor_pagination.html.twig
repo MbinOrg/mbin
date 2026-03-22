@@ -1,23 +1,30 @@
 <div class="cursor-pagination">
-    {% if isForward is same as true %}
-        <div class="section">
-            {% if pagination.hasNextPage() %}
-                {% set cursors = pagination.getNextPage() %}
-                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
-                    {{ 'next_page'|trans|capitalize }}
-                </a>
-            {% else %}
-                {{ 'reached_end'|trans }}
-            {% endif %}
-        </div>
-    {% else %}
-        {% if pagination.hasPreviousPage() %}
-            {% set cursors = pagination.getPreviousPage() %}
-            <div class="section">
-                <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
-                    {{ 'previous_page'|trans|capitalize }}
-                </a>
+    <div class="section">
+        <div class="container">
+            <div class="col">
+                {% if pagination.hasPreviousPage() %}
+                    {% set cursors = pagination.getPreviousPage() %}
+                    <a class="btn btn__primary btn-link" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
+                        <i class="fa fa-solid fa-angle-left" title="{{ 'previous_page'|trans|capitalize }}"></i>
+                    </a>
+                {% else %}
+                    <div></div>
+                {% endif %}
             </div>
-        {% endif %}
+
+            <div class="col">
+                {% if pagination.hasNextPage() %}
+                    {% set cursors = pagination.getNextPage() %}
+                    <a class="btn btn__primary btn-link next" href="{{ options_url('cursor', get_cursor_url_value(cursors[0]), null, {'cursor2': get_cursor_url_value(cursors[1])}) }}">
+                        <i class="fa fa-solid fa-angle-right" title="{{ 'next_page'|trans|capitalize }}"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% if not pagination.hasNextPage() %}
+        <aside class="section section--muted">
+            <p>{{ 'reached_end'|trans }}</p>
+        </aside>
     {% endif %}
 </div>
