@@ -55,9 +55,7 @@ class DeliverHandler extends MbinMessageHandler
     public function workWrapper(MessageInterface $message): void
     {
         $conn = $this->entityManager->getConnection();
-        if (!$conn->isConnected()) {
-            $conn->connect();
-        }
+        $conn->getNativeConnection(); // calls connect() internally
         $conn->beginTransaction();
         try {
             $this->doWork($message);

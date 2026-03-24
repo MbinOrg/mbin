@@ -82,6 +82,11 @@ class UserSettingsType extends AbstractType
                 'autocomplete' => true,
                 'choices' => $directMessageSettingChoices,
             ])
+            ->add(
+                'showFollowingBoosts',
+                CheckboxType::class,
+                ['required' => false]
+            )
             ->add('discoverable', CheckboxType::class, [
                 'required' => false,
                 'help' => 'user_discoverable_help',

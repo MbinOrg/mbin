@@ -93,7 +93,7 @@ class DomainRepository extends ServiceEntityRepository
                 'LOWER(d.name) LIKE LOWER(:q)'
             )
             ->orderBy('d.entryCount', 'DESC')
-            ->setParameters(['q' => '%'.$domain.'%']);
+            ->setParameter('q', '%'.$domain.'%');
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(

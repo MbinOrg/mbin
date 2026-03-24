@@ -36,13 +36,11 @@ class PostCommentRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 15;
 
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+    ) {
         parent::__construct($registry, PostComment::class);
-
-        $this->security = $security;
     }
 
     public function findByCriteria(PostCommentPageView $criteria)
@@ -202,7 +200,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
     public function hydrate(PostComment ...$comment): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL c.{id}')
             ->addSelect('u')
             ->addSelect('m')

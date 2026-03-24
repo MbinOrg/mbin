@@ -17,7 +17,6 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -31,7 +30,6 @@ class BookmarkListRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
         private readonly Security $security,
     ) {
         parent::__construct($registry, BookmarkList::class);
@@ -55,8 +53,8 @@ class BookmarkListRepository extends ServiceEntityRepository
         $list = $this->findOneBy(['user' => $user, 'isDefault' => true]);
         if (null === $list) {
             $list = new BookmarkList($user, 'Default', true);
-            $this->entityManager->persist($list);
-            $this->entityManager->flush();
+            $this->getEntityManager()->persist($list);
+            $this->getEntityManager()->flush();
         }
 
         return $list;
@@ -65,7 +63,7 @@ class BookmarkListRepository extends ServiceEntityRepository
     public function makeListDefault(User $user, BookmarkList $list): void
     {
         $sql = 'UPDATE bookmark_list SET is_default = false WHERE user_id = :user';
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('user', $user->getId());
         $stmt->executeStatement();
@@ -75,13 +73,13 @@ class BookmarkListRepository extends ServiceEntityRepository
         $stmt->bindValue('user', $user->getId());
         $stmt->bindValue('id', $list->getId());
         $stmt->executeStatement();
-        $this->entityManager->refresh($list);
+        $this->getEntityManager()->refresh($list);
     }
 
     public function deleteList(BookmarkList $list): void
     {
         $sql = 'DELETE FROM bookmark_list WHERE id = :id';
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('id', $list->getId());
         $stmt->executeStatement();
@@ -90,7 +88,7 @@ class BookmarkListRepository extends ServiceEntityRepository
     public function editList(User $user, BookmarkList $list, BookmarkListDto $dto): void
     {
         $sql = 'UPDATE bookmark_list SET name = :name WHERE id = :id';
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('id', $list->getId());
         $stmt->bindValue('name', $dto->name);
@@ -100,7 +98,7 @@ class BookmarkListRepository extends ServiceEntityRepository
             $this->makeListDefault($user, $list);
         } else {
             // makeListDefault already refreshes the entity, so we do not need to do it
-            $this->entityManager->refresh($list);
+            $this->getEntityManager()->refresh($list);
         }
     }
 
