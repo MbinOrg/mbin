@@ -22,13 +22,15 @@
         "debril/rss-atom-bundle": "^5.2.0",
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
-        "doctrine/orm": "^3.6.2",
         "doctrine/instantiator": "2.0.0",
+        "doctrine/orm": "^3.6.2",
         "embed/embed": "^4.4.12",
         "endroid/qr-code": "^6.0.3",
+        "firebase/php-jwt": "7.0.2 as 6.11.1",
         "friendsofsymfony/jsrouting-bundle": "^3.5.0",
         "furqansiddiqui/bip39-mnemonic-php": "^0.1.7",
         "gumlet/php-image-resize": "^2.0.4",
+        "heymoon/doctrine-psql-enum": "^3.3",
         "knplabs/knp-time-bundle": "^2.4.0",
         "knpuniversity/oauth2-client-bundle": "^2.18.1",
         "kornrunner/blurhash": "^1.2.2",
@@ -114,8 +116,7 @@
         "twig/intl-extra": "^3.10.0",
         "twig/twig": "^3.15.0",
         "webmozart/assert": "^1.11.0",
-        "wohali/oauth2-discord-new": "^1.2.1",
-        "firebase/php-jwt": "7.0.2 as 6.11.1"
+        "wohali/oauth2-discord-new": "^1.2.1"
     },
     "require-dev": {
         "brianium/paratest": "^7.10.1",
