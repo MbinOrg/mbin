@@ -10,6 +10,7 @@ use App\Entity\Instance;
 use App\Entity\User;
 use App\Entity\UserFollowRequest;
 use App\Enums\EApplicationStatus;
+use App\Enums\EUserType;
 use App\Event\Instance\InstanceBanEvent;
 use App\Event\User\UserApplicationApprovedEvent;
 use App\Event\User\UserApplicationRejectedEvent;
@@ -168,7 +169,7 @@ readonly class UserManager
             $status = EApplicationStatus::Pending;
         }
 
-        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? 'Service' : 'Person', $dto->apProfileId, $dto->apId, applicationStatus: $status, applicationText: $dto->applicationText);
+        $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? EUserType::Service : EUserType::Person, $dto->apProfileId, $dto->apId, applicationStatus: $status, applicationText: $dto->applicationText);
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {

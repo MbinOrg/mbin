@@ -14,6 +14,7 @@ use App\Enums\EApplicationStatus;
 use App\Enums\EDirectMessageSettings;
 use App\Enums\EFrontContentOptions;
 use App\Enums\ESortOptions;
+use App\Enums\EUserType;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -261,8 +262,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
-    #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
-    public string $type;
+    #[Column(type: 'enum', enumType: EUserType::class, nullable: false, options: ['default' => EUserType::Person])]
+    public EUserType $type = EUserType::Person;
 
     #[Column(type: 'text', nullable: true)]
     public ?string $applicationText;
@@ -281,7 +282,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         string $email,
         string $username,
         string $password,
-        string $type,
+        EUserType $type,
         ?string $apProfileId = null,
         ?string $apId = null,
         EApplicationStatus $applicationStatus = EApplicationStatus::Approved,
