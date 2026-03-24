@@ -259,14 +259,14 @@ class CursorPagination implements CursorPaginationInterface
                 return [$this->increaseCursor($cursor), null];
             }
         } else {
-            if ($cursor2 > $this->cursor2LowerLimit) {
-                if ($currentCursor2 >= $cursor2 || $this->currentCursor > $cursor) {
+            if ($cursor2 >= $this->cursor2LowerLimit) {
+                if ($currentCursor2 > $cursor2 || $this->currentCursor > $cursor) {
                     return [$cursor, $this->decreaseCursor($cursor2)];
                 } else {
                     return [$cursor, $this->increaseCursor($cursor2)];
                 }
             } else {
-                if ($currentCursor >= $cursor) {
+                if ($currentCursor > $cursor) {
                     return [$this->decreaseCursor($cursor), $this->cursor2LowerLimit];
                 } else {
                     return [$this->increaseCursor($cursor), $this->cursor2LowerLimit];

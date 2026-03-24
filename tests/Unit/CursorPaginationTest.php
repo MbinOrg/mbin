@@ -137,22 +137,22 @@ class CursorPaginationTest extends WebTestCase
         self::assertEquals(0, $currentPage[1]['value']);
         self::assertEquals(4, $currentPage[1]['value2']);
         self::assertEquals(1, $currentPage[2]['value']);
-        self::assertEquals(0, $currentPage[2]['value2']);
+        self::assertEquals(5, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getNextPage();
-        self::assertEquals([1, 0], $cursors);
+        self::assertEquals([1, 5], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
         self::assertEquals(1, $currentPage[0]['value']);
-        self::assertEquals(1, $currentPage[0]['value2']);
+        self::assertEquals(6, $currentPage[0]['value2']);
         self::assertEquals(1, $currentPage[1]['value']);
-        self::assertEquals(2, $currentPage[1]['value2']);
+        self::assertEquals(7, $currentPage[1]['value2']);
         self::assertEquals(1, $currentPage[2]['value']);
-        self::assertEquals(3, $currentPage[2]['value2']);
+        self::assertEquals(8, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
@@ -167,13 +167,13 @@ class CursorPaginationTest extends WebTestCase
         self::assertEquals(0, $currentPage[1]['value']);
         self::assertEquals(4, $currentPage[1]['value2']);
         self::assertEquals(1, $currentPage[2]['value']);
-        self::assertEquals(0, $currentPage[2]['value2']);
+        self::assertEquals(5, $currentPage[2]['value2']);
 
         self::assertTrue($this->cursorPagination->hasNextPage());
         self::assertTrue($this->cursorPagination->hasPreviousPage());
 
         $cursors = $this->cursorPagination->getPreviousPage();
-        self::assertEquals([-1, 0], $cursors);
+        self::assertEquals([0, -1], $cursors);
         $this->cursorPagination->setCurrentPage($cursors[0], $cursors[1]);
         $currentPage = $this->cursorPagination->getCurrentPageResults();
 
@@ -218,7 +218,7 @@ class CursorPaginationTest extends WebTestCase
         $tempTable = 'CREATE TEMPORARY TABLE cursorTest (value INT, value2 INT)';
         $this->entityManager->getConnection()->executeQuery($tempTable);
 
-        $this->entityManager->getConnection()->executeQuery('INSERT INTO cursorTest(value, value2) VALUES (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4)');
+        $this->entityManager->getConnection()->executeQuery('INSERT INTO cursorTest(value, value2) VALUES (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9)');
 
         $sql = 'SELECT * FROM cursorTest WHERE %cursor% OR (%cursor2%) ORDER BY %cursorSort%, %cursorSort2%';
 

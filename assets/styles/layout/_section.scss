@@ -83,11 +83,19 @@
     > .col {
       display: block;
       flex-grow: 1;
+
+      &.col-auto {
+        flex-grow: 0;
+      }
     }
   }
 
   a {
     display: inline-block;
     width: 150px;
+
+    &.small {
+      width: 50px
+    }
   }
 }

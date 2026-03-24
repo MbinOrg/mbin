@@ -1204,5 +1204,6 @@ monitoring_curl_requests_enabled_persisted: Curl request monitoring is enabled.
 monitoring_curl_requests_enabled_not_persisted: Curl request monitoring is enabled, but only the execution time.
 monitoring_curl_requests_disabled: Curl request monitoring is disabled.
 reached_end: You've reached the end
+first_page: First page
 next_page: Next page
 previous_page: Previous page
