@@ -69,10 +69,11 @@ class RemoveRemoteMediaCommand extends Command
                 $totalDeletedSize += $image->localSize;
 
                 if (!$dryRun) {
+                    $filePath = $image->filePath;
                     if ($this->imageManager->removeCachedImage($image)) {
-                        $progressBar->setMessage(\sprintf('Removed "%s" (%s)', $image->filePath, $image->getId()));
+                        $progressBar->setMessage(\sprintf('Removed "%s" (%s)', $filePath, $image->getId()));
                         $progressBar->display();
-                        $this->logger->debug('Removed "{path}" ({id})', ['path' => $image->filePath, 'id' => $image->getId()]);
+                        $this->logger->debug('Removed "{path}" ({id})', ['path' => $filePath, 'id' => $image->getId()]);
                     }
                 } else {
                     $progressBar->setMessage(\sprintf('Would have removed "%s" (%s)', $image->filePath, $image->getId()));
