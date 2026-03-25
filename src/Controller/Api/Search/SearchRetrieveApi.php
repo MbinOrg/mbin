@@ -141,7 +141,7 @@ class SearchRetrieveApi extends BaseApi
             throw new BadRequestHttpException();
         }
 
-        /** @var ?SearchResponseDto $searchResults */
+        /** @var ?SearchResponseDto[] $searchResults */
         $searchResults = [];
         $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage, authorId: $authorId, magazineId: $magazineId, specificType: $type);
         foreach ($items->getCurrentPageResults() as $item) {

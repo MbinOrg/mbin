@@ -76,7 +76,7 @@ class SearchManager
     /**
      * @param ActorHandle $handle a valid handle (can be obtained from string via ActorHandle::parse())
      *
-     * @return array ['type' => 'magazine'|'user', 'object' => Magazine|User][]
+     * @return array{'type': 'magazine'|'user', 'object': Magazine|User}[]
      */
     public function findActivityPubActorsByUsername(ActorHandle $handle): array
     {
@@ -131,7 +131,7 @@ class SearchManager
      *
      * @param string $url a string that may or may not be a URL
      *
-     * @return array array ['results' => ['type' => 'magazine'|'user'|'subject', 'object' => Magazine|User|ContentInterface][], 'errors' => Exception[]]
+     * @return array{'results': array{'type': 'magazine'|'user'|'subject', 'object': Magazine|User|ContentInterface}, 'errors': \Exception[]}
      */
     public function findActivityPubObjectsByURL(string $url): array
     {
