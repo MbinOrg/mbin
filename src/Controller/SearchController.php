@@ -37,21 +37,9 @@ class SearchController extends AbstractController
                 $this->logger->debug('searching for {query}', ['query' => $query]);
 
                 $objects = [];
-
-                // looking up handles (users and mags)
-                if (str_contains($query, '@') && $this->federatedSearchAllowed()) {
-                    if ($handle = ActorHandle::parse($query)) {
-                        $this->logger->debug('searching for a matched webfinger {query}', ['query' => $query]);
-                        $objects = $this->manager->findActivityPubActorsByUsername($handle);
-                    } else {
-                        $this->logger->debug("query doesn't look like a valid handle...", ['query' => $query]);
-                    }
-                }
-
-                // looking up object by AP id (i.e. urls)
-                if (false !== filter_var($query, FILTER_VALIDATE_URL) && $this->federatedSearchAllowed()) {
-                    $this->logger->debug('Query is a valid url');
-                    $objects = $this->findObjectsByApUrl($query);
+                if($this->federatedSearchAllowed() && (str_contains($query, '@') || false !== filter_var($query, FILTER_VALIDATE_URL))) {
+                    $this->logger->debug('searching for a matched handle or ap url {query}', ['query' => $query]);
+                    $objects = $this->findObjectsByAp($query);
                 }
 
                 $user = $this->getUser();
@@ -98,12 +86,12 @@ class SearchController extends AbstractController
             || $this->getUser();
     }
 
-    private function findObjectsByApUrl(string $url): array
+    private function findObjectsByAp(string $urlOrHandle): array
     {
-        $result = $this->manager->findActivityPubObjectsByURL($url);
+        $result = $this->manager->findActivityPubActorsOrObjects($urlOrHandle);
 
         foreach ($result['errors'] as $error) {
-            /** @var \Exception $error */
+            /** @var \Throwable $error */
             $this->addFlash('error', $error->getMessage());
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\ActivityPub\ActorHandle;
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\CreateMessage;
@@ -74,74 +75,53 @@ class SearchManager
     }
 
     /**
-     * @param ActorHandle $handle a valid handle (can be obtained from string via ActorHandle::parse())
+     * Tries to find the actor or object in the DB, else will dispatch a getActorObject or getActivityObject request.
      *
-     * @return array{'type': 'magazine'|'user', 'object': Magazine|User}[]
+     * @param string $handleOrUrl a string that may be a handle or AP URL
+     *
+     * @return array{'results': array{'type': 'magazine'|'user'|'subject', 'object': Magazine|User|ContentInterface}, 'errors': \Throwable[]}
      */
-    public function findActivityPubActorsByUsername(ActorHandle $handle): array
-    {
-        $objects = [];
-        $name = $handle->plainHandle();
-
-        try {
-            $webfinger = $this->activityPubManager->webfinger($name);
-            foreach ($webfinger->getProfileIds() as $profileId) {
-                $this->logger->debug('Found "{profileId}" at "{name}"', ['profileId' => $profileId, 'name' => $name]);
-
-                // if actor object exists or successfully created
-                $object = $this->activityPubManager->findActorOrCreate($profileId);
-                if (!empty($object)) {
-                    if ($object instanceof Magazine) {
-                        $type = 'magazine';
-                    } elseif ($object instanceof User && '!' !== $handle->prefix) {
-                        $type = 'user';
-                    } else {
-                        $this->logger->error(
-                            'Unexpected AP object type: {type} , handle: {handle}',
-                            [
-                                'type' => \get_class($object),
-                                'handle' => $name,
-                            ]
-                        );
-                        continue;
-                    }
-
-                    $objects[] = [
-                        'type' => $type,
-                        'object' => $object,
-                    ];
-                }
-            }
-        } catch (\Exception $e) {
-            $this->logger->warning(
-                'an error occurred during webfinger lookup of "{handle}": {exceptionClass}: {message}',
-                [
-                    'handle' => $name,
-                    'exceptionClass' => \get_class($e),
-                    'message' => $e->getMessage(),
-                ]
-            );
-        }
-
-        return $objects;
-    }
-
-    /**
-     * Will dispatch a getActivityObject request if a valid URL was provided but no item was found locally.
-     *
-     * @param string $url a string that may or may not be a URL
-     *
-     * @return array{'results': array{'type': 'magazine'|'user'|'subject', 'object': Magazine|User|ContentInterface}, 'errors': \Exception[]}
-     */
-    public function findActivityPubObjectsByURL(string $url): array
-    {
-        if (false === filter_var($url, FILTER_VALIDATE_URL)) {
+    public function findActivityPubActorsOrObjects(string $handleOrUrl): array {
+        $handle = ActorHandle::parse($handleOrUrl);
+        if (null !== $handle) {
+            $handleOrUrl = $handle->plainHandle();
+            $isUrl = false;
+        } elseif(filter_var($handleOrUrl, FILTER_VALIDATE_URL)) {
+            $isUrl = true;
+        } else {
             return [
                 'results' => [],
                 'errors' => [],
             ];
         }
 
+        // try resolving it as an actor
+        try {
+            $actor = $this->activityPubManager->findActorOrCreate($handleOrUrl);
+            if(null !== $actor) {
+                $objects = $this->mapApResultsToSearchModel([$actor]);
+                return [
+                    'results' => $objects,
+                    'errors' => []
+                ];
+            } elseif (!$isUrl) {
+                // lookup of handle failed -> give up
+                return [
+                    'results' => [],
+                    'errors' => [],
+                ];
+            }
+        } catch (\Throwable $e) {
+            if(!$isUrl) {
+                // lookup of handle failed -> give up
+                return [
+                    'results' => [],
+                    'errors' => [$e],
+                ];
+            }
+        }
+
+        $url = $handleOrUrl;
         $exceptions = [];
         $objects = $this->findByApId($url);
         if (0 === \sizeof($objects)) {
@@ -150,7 +130,7 @@ class SearchManager
                 $body = $this->apHttpClient->getActivityObject($url);
                 $apId = $body['id'];
                 $objects = $this->findByApId($apId);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $body = null;
                 $apId = $url;
                 $exceptions[] = $e;
@@ -162,7 +142,7 @@ class SearchManager
                     // process the message in the sync transport, so that the created content is directly visible
                     $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
                     $objects = $this->findByApId($apId);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $exceptions[] = $e;
                 }
             }
@@ -172,7 +152,7 @@ class SearchManager
                 try {
                     $this->activityPubManager->findActorOrCreate($apId);
                     $objects = $this->findByApId($apId);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $exceptions[] = $e;
                 }
             }

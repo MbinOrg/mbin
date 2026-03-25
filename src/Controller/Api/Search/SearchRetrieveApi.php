@@ -151,28 +151,22 @@ class SearchRetrieveApi extends BaseApi
         /** @var ?SearchResponseDto $apResults */
         $apResults = [];
         if ($this->federatedSearchAllowed()) {
-            if ($handle = ActorHandle::parse($q)) {
-                $actors = $manager->findActivityPubActorsByUsername($handle);
-                foreach ($actors as $actor) {
-                    $apResults[] = $this->serializeItem($actor['object']);
-                }
-            } else {
-                $objects = $manager->findActivityPubObjectsByURL($q);
-                foreach ($objects['errors'] as $error) {
-                    /** @var \Exception $error */
-                    $this->logger->warning(
-                        'Exception while resolving URL {url}: {type}: {msg}',
-                        [
-                            'url' => $q,
-                            'type' => \get_class($error),
-                            'msg' => $error->getMessage(),
-                        ]
-                    );
-                }
+            $objects = $manager->findActivityPubActorsOrObjects($q);
 
-                foreach ($objects['results'] as $object) {
-                    $apResults[] = $this->serializeItem($object['object']);
-                }
+            foreach ($objects['errors'] as $error) {
+                /** @var \Throwable $error */
+                $this->logger->warning(
+                    'Exception while resolving AP handle / url {q}: {type}: {msg}',
+                    [
+                        'q' => $q,
+                        'type' => \get_class($error),
+                        'msg' => $error->getMessage(),
+                    ]
+                );
+            }
+
+            foreach ($objects['results'] as $object) {
+                $apResults[] = $this->serializeItem($object['object']);
             }
         }
 
