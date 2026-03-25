@@ -1,5 +1,11 @@
 api_search:
-  controller: App\Controller\Api\Search\SearchRetrieveApi
+  controller: App\Controller\Api\Search\SearchRetrieveApi::searchV1
   path: /api/search
+  methods: [ GET ]
+  format: json
+
+api_search_v2:
+  controller: App\Controller\Api\Search\SearchRetrieveApi::searchV2
+  path: /api/search/v2
   methods: [ GET ]
   format: json

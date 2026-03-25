@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Search;
 
 use App\Entity\Entry;
+use App\Entity\Magazine;
+use App\Entity\User;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
@@ -28,11 +30,26 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
     private const string TEST_MAGAZINE_NAME = 'someremotemagazine';
     private const string TEST_MAGAZINE_HANDLE = self::TEST_MAGAZINE_NAME.'@remote.mbin';
     private const string TEST_MAGAZINE_URL = 'https://remote.mbin/m/'.self::TEST_MAGAZINE_NAME;
-    private const string TEST_ENTRY_URL = 'https://remote.mbin/m/someremotemagazine/t/1';
+
+    private string $testEntryUrl;
+
+    private User $someUser;
+    private Magazine $someMagazine;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->someUser = $this->getUserByUsername('JohnDoe2', email: 'jd@test.tld');
+        $this->someMagazine = $this->getMagazineByName('acme2', $this->someUser);
+    }
+
 
     public function setUpRemoteEntities(): void
     {
-        $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser, function (Entry $entry) {
+            $this->testEntryUrl = 'https://remote.mbin/m/someremotemagazine/t/'.$entry->getId();
+        });
     }
 
     protected function setUpRemoteActors(): void
@@ -49,17 +66,17 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
     public function testApiCannotSearchWithNoQuery(): void
     {
-        $this->client->request('GET', '/api/search');
+        $this->client->request('GET', '/api/search/v2');
 
         self::assertResponseStatusCodeSame(400);
     }
 
     public function testApiCanFindEntryByTitleAnonymous(): void
     {
-        $entry = $this->getEntryByTitle('A test title to search for');
-        $this->getEntryByTitle('Cannot find this');
+        $entry = $this->getEntryByTitle('A test title to search for', magazine: $this->someMagazine, user: $this->someUser);
+        $this->getEntryByTitle('Cannot find this', magazine: $this->someMagazine, user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q=title');
+        $this->client->request('GET', '/api/search/v2?q=title');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -70,12 +87,12 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
     public function testApiCanFindContentByBodyAnonymous(): void
     {
-        $entry = $this->getEntryByTitle('A test title to search for', body: 'This is the body we\'re finding');
-        $this->getEntryByTitle('Cannot find this', body: 'No keywords here!');
-        $post = $this->createPost('Lets get a post with its body in there too!');
-        $this->createPost('But not this one.');
+        $entry = $this->getEntryByTitle('A test title to search for', body: 'This is the body we\'re finding', magazine: $this->someMagazine, user: $this->someUser);
+        $this->getEntryByTitle('Cannot find this', body: 'No keywords here!', magazine: $this->someMagazine, user: $this->someUser);
+        $post = $this->createPost('Lets get a post with its body in there too!', magazine: $this->someMagazine, user: $this->someUser);
+        $this->createPost('But not this one.', magazine: $this->someMagazine, user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q=body');
+        $this->client->request('GET', '/api/search/v2?q=body');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -97,12 +114,12 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
     public function testApiCanFindCommentsByBodyAnonymous(): void
     {
-        $entry = $this->getEntryByTitle('Cannot find this', body: 'No keywords here!');
-        $post = $this->createPost('But not this one.');
-        $entryComment = $this->createEntryComment('Some comment on a thread', $entry);
-        $postComment = $this->createPostComment('Some comment on a post', $post);
+        $entry = $this->getEntryByTitle('Cannot find this', body: 'No keywords here!', magazine: $this->someMagazine, user: $this->someUser);
+        $post = $this->createPost('But not this one.', magazine: $this->someMagazine, user: $this->someUser);
+        $entryComment = $this->createEntryComment('Some comment on a thread', $entry, user: $this->someUser);
+        $postComment = $this->createPostComment('Some comment on a post', $post, user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q=comment');
+        $this->client->request('GET', '/api/search/v2?q=comment');
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -128,7 +145,7 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
-        $this->client->request('GET', '/api/search?q=ernest@kbin.social');
+        $this->client->request('GET', '/api/search/v2?q='.self::TEST_USER_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -145,7 +162,7 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
 
-        $this->client->request('GET', '/api/search?q=kbinMeta@kbin.social');
+        $this->client->request('GET', '/api/search/v2?q='.self::TEST_MAGAZINE_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -163,12 +180,21 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
         $this->getUserByUsername('test');
 
-        $this->client->request('GET', '/api/search?q=@'.self::TEST_USER_HANDLE);
+        $this->client->request('GET', '/api/search/v2?q=@'.self::TEST_USER_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
+        self::validateResponseItemData($jsonData['apResults'][0], 'user', null, self::TEST_USER_HANDLE, self::TEST_USER_URL);
+
+        $this->client->request('GET', '/api/search/v2?q='.self::TEST_USER_HANDLE);
+
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::validateResponseOuterData($jsonData, 1, 1);
+        self::assertSame(self::TEST_USER_URL, $jsonData['items'][0]['user']['apProfileId']);
         self::validateResponseItemData($jsonData['apResults'][0], 'user', null, self::TEST_USER_HANDLE, self::TEST_USER_URL);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups.
@@ -178,14 +204,14 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
     public function testApiCanFindRemoteMagazineByHandleAnonymous(): void
     {
         // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
-        $admin = $this->getUserByUsername('admin', isAdmin: true);
+        $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
-        $this->getMagazineByName('testMag', user: $admin);
+        $this->getMagazineByName('testMag', user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q=!'.self::TEST_MAGAZINE_HANDLE);
+        $this->client->request('GET', '/api/search/v2?q=!'.self::TEST_MAGAZINE_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -206,7 +232,7 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
         $this->client->loginUser($this->localUser);
 
-        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_USER_URL));
+        $this->client->request('GET', '/api/search/v2?q='.urlencode(self::TEST_USER_URL));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -220,7 +246,7 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
     public function testApiCanFindRemoteMagazineByUrl(): void
     {
-        $admin = $this->getUserByUsername('admin', isAdmin: true);
+        $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
@@ -228,9 +254,9 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
         $this->client->loginUser($this->localUser);
 
-        $this->getMagazineByName('testMag', user: $admin);
+        $this->getMagazineByName('testMag', user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_MAGAZINE_URL));
+        $this->client->request('GET', '/api/search/v2?q='.urlencode(self::TEST_MAGAZINE_URL));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
@@ -244,7 +270,7 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
     public function testApiCanFindRemotePostByUrl(): void
     {
-        $admin = $this->getUserByUsername('admin', isAdmin: true);
+        $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
@@ -252,15 +278,15 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
 
         $this->client->loginUser($this->localUser);
 
-        $this->getMagazineByName('testMag', user: $admin);
+        $this->getMagazineByName('testMag', user: $this->someUser);
 
-        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_ENTRY_URL));
+        $this->client->request('GET', '/api/search/v2?q='.urlencode($this->testEntryUrl));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'entry', null, self::TEST_ENTRY_URL);
+        self::validateResponseItemData($jsonData['apResults'][0], 'entry', null, $this->testEntryUrl);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
