@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Search;
 
-use App\ActivityPub\ActorHandle;
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\SearchResponseDto;

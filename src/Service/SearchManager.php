@@ -81,12 +81,13 @@ class SearchManager
      *
      * @return array{'results': array{'type': 'magazine'|'user'|'subject', 'object': Magazine|User|ContentInterface}, 'errors': \Throwable[]}
      */
-    public function findActivityPubActorsOrObjects(string $handleOrUrl): array {
+    public function findActivityPubActorsOrObjects(string $handleOrUrl): array
+    {
         $handle = ActorHandle::parse($handleOrUrl);
         if (null !== $handle) {
             $handleOrUrl = $handle->plainHandle();
             $isUrl = false;
-        } elseif(filter_var($handleOrUrl, FILTER_VALIDATE_URL)) {
+        } elseif (filter_var($handleOrUrl, FILTER_VALIDATE_URL)) {
             $isUrl = true;
         } else {
             return [
@@ -98,11 +99,12 @@ class SearchManager
         // try resolving it as an actor
         try {
             $actor = $this->activityPubManager->findActorOrCreate($handleOrUrl);
-            if(null !== $actor) {
+            if (null !== $actor) {
                 $objects = $this->mapApResultsToSearchModel([$actor]);
+
                 return [
                     'results' => $objects,
-                    'errors' => []
+                    'errors' => [],
                 ];
             } elseif (!$isUrl) {
                 // lookup of handle failed -> give up
@@ -112,7 +114,7 @@ class SearchManager
                 ];
             }
         } catch (\Throwable $e) {
-            if(!$isUrl) {
+            if (!$isUrl) {
                 // lookup of handle failed -> give up
                 return [
                     'results' => [],

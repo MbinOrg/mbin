@@ -7,20 +7,12 @@ namespace App\Tests\Functional\Controller\Api\Search;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
-use App\Service\ActivityPub\ApHttpClient;
-use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
-use App\Tests\WebTestCase;
-use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\Attributes\Group;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 #[Group(name: 'NonThreadSafe')]
 class SearchApiTest extends ActivityPubFunctionalTestCase
 {
-
     public const SEARCH_PAGINATED_KEYS = ['items', 'pagination', 'apResults'];
     public const SEARCH_ITEM_KEYS = ['entry', 'entryComment', 'post', 'postComment', 'magazine', 'user'];
 
@@ -44,7 +36,6 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
         $this->someMagazine = $this->getMagazineByName('acme2', $this->someUser);
     }
 
-
     public function setUpRemoteEntities(): void
     {
         $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser, function (Entry $entry) {
@@ -62,7 +53,6 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
         $this->remoteMagazine = $this->getMagazineByName(self::TEST_MAGAZINE_NAME);
         $this->registerActor($this->remoteMagazine, $this->remoteDomain, true);
     }
-
 
     public function testApiCannotSearchWithNoQuery(): void
     {
@@ -405,6 +395,4 @@ class SearchApiTest extends ActivityPubFunctionalTestCase
                 throw new \AssertionError();
         }
     }
-
-
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\ActivityPub\ActorHandle;
 use App\DTO\SearchDto;
 use App\Form\SearchType;
 use App\Service\SearchManager;
@@ -37,7 +36,7 @@ class SearchController extends AbstractController
                 $this->logger->debug('searching for {query}', ['query' => $query]);
 
                 $objects = [];
-                if($this->federatedSearchAllowed() && (str_contains($query, '@') || false !== filter_var($query, FILTER_VALIDATE_URL))) {
+                if ($this->federatedSearchAllowed() && (str_contains($query, '@') || false !== filter_var($query, FILTER_VALIDATE_URL))) {
                     $this->logger->debug('searching for a matched handle or ap url {query}', ['query' => $query]);
                     $objects = $this->findObjectsByAp($query);
                 }
