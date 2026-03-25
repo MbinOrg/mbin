@@ -17,8 +17,6 @@ class ContextsProvider
     public static function embeddedContexts(): array
     {
         return [
-            ActivityPubActivityInterface::CONTEXT_URL,
-            ActivityPubActivityInterface::SECURITY_URL,
             [
                 ...ActivityPubActivityInterface::ADDITIONAL_CONTEXTS,
             ],
@@ -28,6 +26,8 @@ class ContextsProvider
     public function referencedContexts(): array
     {
         return [
+            ActivityPubActivityInterface::CONTEXT_URL,
+            ActivityPubActivityInterface::SECURITY_URL,
             $this->urlGenerator->generate('ap_contexts', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ];
     }
