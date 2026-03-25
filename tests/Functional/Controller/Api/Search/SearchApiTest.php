@@ -4,29 +4,48 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Search;
 
+use App\Entity\Entry;
 use App\Service\ActivityPub\ApHttpClient;
 use App\Service\ActivityPub\ApHttpClientInterface;
+use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
 use App\Tests\WebTestCase;
 use phpseclib3\Crypt\RSA;
+use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class SearchApiTest extends WebTestCase
+#[Group(name: 'NonThreadSafe')]
+class SearchApiTest extends ActivityPubFunctionalTestCase
 {
-    // These tests do work, but we should not do requests to a remote server when running tests
-    private const RUN_AP_SEARCHES = false;
 
     public const SEARCH_PAGINATED_KEYS = ['items', 'pagination', 'apResults'];
     public const SEARCH_ITEM_KEYS = ['entry', 'entryComment', 'post', 'postComment', 'magazine', 'user'];
 
-    private RSA\PrivateKey $key;
+    private const string TEST_USER_NAME = 'someremoteuser';
+    private const string TEST_USER_HANDLE = self::TEST_USER_NAME.'@remote.mbin';
+    private const string TEST_USER_URL = 'https://remote.mbin/u/'.self::TEST_USER_NAME;
+    private const string TEST_MAGAZINE_NAME = 'someremotemagazine';
+    private const string TEST_MAGAZINE_HANDLE = self::TEST_MAGAZINE_NAME.'@remote.mbin';
+    private const string TEST_MAGAZINE_URL = 'https://remote.mbin/m/'.self::TEST_MAGAZINE_NAME;
+    private const string TEST_ENTRY_URL = 'https://remote.mbin/m/someremotemagazine/t/1';
 
-    public function setUp(): void
+    public function setUpRemoteEntities(): void
     {
-        parent::setUp();
-        $this->key = RSA::createKey(1024);
+        $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
     }
+
+    protected function setUpRemoteActors(): void
+    {
+        parent::setUpRemoteActors();
+
+        $this->remoteUser = $this->getUserByUsername(self::TEST_USER_NAME, addImage: false);
+        $this->registerActor($this->remoteUser, $this->remoteDomain, true);
+
+        $this->remoteMagazine = $this->getMagazineByName(self::TEST_MAGAZINE_NAME);
+        $this->registerActor($this->remoteMagazine, $this->remoteDomain, true);
+    }
+
 
     public function testApiCannotSearchWithNoQuery(): void
     {
@@ -139,147 +158,112 @@ class SearchApiTest extends WebTestCase
 
     public function testApiCanFindRemoteUserByHandleAnonymous(): void
     {
-        if (!self::RUN_AP_SEARCHES) {
-            return;
-        }
-
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
-        $domain = $settingsManager->get('KBIN_DOMAIN');
         $this->getUserByUsername('test');
-        $this->setCacheKeysForApHttpClient($domain);
 
-        $this->client->request('GET', '/api/search?q=@eugen@mastodon.social');
+        $this->client->request('GET', '/api/search?q=@'.self::TEST_USER_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'user', null, 'eugen@mastodon.social');
+        self::validateResponseItemData($jsonData['apResults'][0], 'user', null, self::TEST_USER_HANDLE, self::TEST_USER_URL);
 
-        // Seems like settings can persist in the test environment? Might only be for bare metal setups
+        // Seems like settings can persist in the test environment? Might only be for bare metal setups.
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
     public function testApiCanFindRemoteMagazineByHandleAnonymous(): void
     {
-        if (!self::RUN_AP_SEARCHES) {
-            return;
-        }
-
         // Admin user must exist to retrieve a remote magazine since remote mods aren't federated (yet)
-        $this->getUserByUsername('admin', isAdmin: true);
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', false);
-        $domain = $settingsManager->get('KBIN_DOMAIN');
-        $this->setCacheKeysForApHttpClient($domain, $this->logger);
-        $this->getMagazineByName('testMag');
+        $this->getMagazineByName('testMag', user: $admin);
 
-        $this->client->request('GET', '/api/search?q=!technology@lemmy.world');
+        $this->client->request('GET', '/api/search?q=!'.self::TEST_MAGAZINE_HANDLE);
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'magazine', null, 'technology@lemmy.world');
+        self::validateResponseItemData($jsonData['apResults'][0], 'magazine', null, self::TEST_MAGAZINE_HANDLE, self::TEST_MAGAZINE_URL);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
     public function testApiCanFindRemoteUserByUrl(): void
     {
-        if (!self::RUN_AP_SEARCHES) {
-            return;
-        }
-
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
-        $domain = $settingsManager->get('KBIN_DOMAIN');
-        $this->setCacheKeysForApHttpClient($domain);
         $this->getUserByUsername('test');
 
-        $this->client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->localUser);
 
-        $this->client->request('GET', '/api/search?q=https%3A%2F%2Fmastodon.social%2F%40eugen');
+        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_USER_URL));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'user', null, 'eugen@mastodon.social');
+        self::validateResponseItemData($jsonData['apResults'][0], 'user', null, self::TEST_USER_HANDLE, self::TEST_USER_URL);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
     public function testApiCanFindRemoteMagazineByUrl(): void
     {
-        if (!self::RUN_AP_SEARCHES) {
-            return;
-        }
-
-        $this->getUserByUsername('admin', isAdmin: true);
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
-        $domain = $settingsManager->get('KBIN_DOMAIN');
-        $this->setCacheKeysForApHttpClient($domain);
 
-        $this->client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->localUser);
 
-        $this->getMagazineByName('testMag');
+        $this->getMagazineByName('testMag', user: $admin);
 
-        $this->client->request('GET', '/api/search?q=https%3A%2F%2Flemmy.world%2Fc%2Ftechnology');
+        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_MAGAZINE_URL));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'magazine', null, 'technology@lemmy.world');
+        self::validateResponseItemData($jsonData['apResults'][0], 'magazine', null, self::TEST_MAGAZINE_HANDLE, self::TEST_MAGAZINE_URL);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
     public function testApiCanFindRemotePostByUrl(): void
     {
-        if (!self::RUN_AP_SEARCHES) {
-            return;
-        }
-
-        $this->getUserByUsername('admin', isAdmin: true);
+        $admin = $this->getUserByUsername('admin', isAdmin: true);
 
         $settingsManager = $this->settingsManager;
         $value = $settingsManager->get('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN');
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', true);
-        $domain = $settingsManager->get('KBIN_DOMAIN');
-        $this->setCacheKeysForApHttpClient($domain);
 
-        $this->client->loginUser($this->getUserByUsername('user'));
+        $this->client->loginUser($this->localUser);
 
-        $this->getMagazineByName('testMag');
+        $this->getMagazineByName('testMag', user: $admin);
 
-        $this->client->request('GET', '/api/search?q=https%3A%2F%2Flemmy.world%2Fpost%2F44358216');
+        $this->client->request('GET', '/api/search?q='.urlencode(self::TEST_ENTRY_URL));
 
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
         self::validateResponseOuterData($jsonData, 0, 1);
-        self::validateResponseItemData($jsonData['apResults'][0], 'entry', null, 'https://sh.itjust.works/post/56929452');
+        self::validateResponseItemData($jsonData['apResults'][0], 'entry', null, self::TEST_ENTRY_URL);
 
         // Seems like settings can persist in the test environment? Might only be for bare metal setups
         $settingsManager->set('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', $value);
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = null;
     }
 
     private static function validateResponseOuterData(array $data, int $expectedLength, int $expectedApLength): void
@@ -295,7 +279,7 @@ class SearchApiTest extends WebTestCase
         self::assertCount($expectedApLength, $data['apResults']);
     }
 
-    private static function validateResponseItemData(array $data, string $expectedType, ?int $expectedId = null, ?string $expectedApId = null): void
+    private static function validateResponseItemData(array $data, string $expectedType, ?int $expectedId = null, ?string $expectedApId = null, ?string $apProfileId = null): void
     {
         self::assertIsArray($data);
         self::assertArrayKeysMatch(self::SEARCH_ITEM_KEYS, $data);
@@ -370,6 +354,9 @@ class SearchApiTest extends WebTestCase
                 } else {
                     self::assertSame($expectedApId, $data['magazine']['apId']);
                 }
+                if (null !== $apProfileId) {
+                    self::assertSame($apProfileId, $data['magazine']['apProfileId']);
+                }
                 break;
             case 'user':
                 self::assertNotNull($data['user']);
@@ -384,44 +371,14 @@ class SearchApiTest extends WebTestCase
                 } else {
                     self::assertSame($expectedApId, $data['user']['apId']);
                 }
+                if (null !== $apProfileId) {
+                    self::assertSame($apProfileId, $data['user']['apProfileId']);
+                }
                 break;
             default:
                 throw new \AssertionError();
         }
     }
 
-    private function setCacheKeysForApHttpClient(string $domain, ?LoggerInterface $logger = null): void
-    {
-        $cache = new ArrayAdapter();
 
-        $key = $this->key;
-
-        // Set 'fake' keys in cache for testing purposes
-        $cache->get('instance_private_key', function (ItemInterface $item) use ($key) {
-            $item->expiresAt(new \DateTime('+1 day'));
-
-            return (string) $key;
-        });
-        $cache->get('instance_public_key', function (ItemInterface $item) use ($key) {
-            $item->expiresAt(new \DateTime('+1 day'));
-
-            return (string) $key->getPublicKey();
-        });
-
-        // Inject fake keys into apHttpClient
-        $apHttpClient = new ApHttpClient(
-            $domain,
-            $this->tombstoneFactory,
-            $this->personFactory,
-            $this->groupFactory,
-            $logger ?? $this->logger,
-            $cache,
-            $this->userRepository,
-            $this->magazineRepository,
-            $this->siteRepository,
-            $this->projectInfoService,
-            $this->eventDispatcher,
-        );
-        self::getContainer()->get(ApHttpClientInterface::class)->replacement = $apHttpClient;
-    }
 }

@@ -56,7 +56,6 @@ use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
-use App\Tests\Service\ApHttpClientProxy;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
 use App\Twig\Runtime\FormattingExtensionRuntime;
@@ -186,7 +185,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->client = static::createClient();
 
         $this->testingApHttpClient = new TestingApHttpClient();
-        self::getContainer()->set(ApHttpClientInterface::class, new ApHttpClientProxy($this->testingApHttpClient));
+        self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
 
         $this->imageManager = new TestingImageManager(
             $this->getContainer()->getParameter('kbin_storage_url'),
