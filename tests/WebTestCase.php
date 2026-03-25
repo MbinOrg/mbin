@@ -59,9 +59,11 @@ use App\Service\UserManager;
 use App\Service\VoteManager;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
+use App\Twig\Runtime\FormattingExtensionRuntime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -198,6 +200,10 @@ abstract class WebTestCase extends BaseWebTestCase
             $this->getService(ValidatorInterface::class),
             $this->getService(LoggerInterface::class),
             $this->getService(SettingsManager::class),
+            $this->getService(FormattingExtensionRuntime::class),
+            self::getContainer()->getParameter('mbin_image_compression_quality'),
+            $this->getService(CacheManager::class),
+            $this->getService(EntityManagerInterface::class),
         );
         $this->imageManager->setKibbyPath($this->kibbyPath);
         self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);

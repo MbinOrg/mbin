@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	gettext \
 	git \
 	gosu \
+    procps \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \

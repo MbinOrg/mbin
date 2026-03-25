@@ -23,4 +23,23 @@ class ArrayUtils
 
         return ($a < $b) ? 1 : -1;
     }
+
+    /**
+     * @template-covariant T
+     *
+     * @param T[] $a
+     *
+     * @return T[][]
+     */
+    public static function sliceArrayIntoEqualPieces(array $a, int $size): array
+    {
+        $arraySize = \sizeof($a);
+        $steps = $arraySize / $size;
+        $result = [];
+        for ($i = 0; $i < $steps; ++$i) {
+            $result[] = \array_slice($a, $i * $size, $size);
+        }
+
+        return $result;
+    }
 }
