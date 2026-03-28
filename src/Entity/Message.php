@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Contracts\ReportInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
@@ -20,19 +21,22 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Uid\Uuid;
 
 #[Entity]
-class Message implements ActivityPubActivityInterface
+class Message implements ActivityPubActivityInterface, ReportInterface
 {
     use ActivityPubActivityTrait;
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
     use EditedAtTrait;
+
     public const STATUS_NEW = 'new';
     public const STATUS_READ = 'read';
     public const STATUS_OPTIONS = [
         self::STATUS_NEW,
         self::STATUS_READ,
     ];
+
+    public const string REPORT_TYPE = 'message_report';
 
     #[ManyToOne(targetEntity: MessageThread::class, inversedBy: 'messages')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -46,6 +50,8 @@ class Message implements ActivityPubActivityInterface
     public string $status = self::STATUS_NEW;
     #[Column(type: 'uuid', unique: true, nullable: false)]
     public string $uuid;
+    #[OneToMany(mappedBy: 'message', targetEntity: MessageReport::class, cascade: ['remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    public Collection $reports;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -61,6 +67,7 @@ class Message implements ActivityPubActivityInterface
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4()->toRfc4122();
         $this->apId = $apId;
+        $this->reports = new ArrayCollection();
 
         $thread->addMessage($this);
 
@@ -86,5 +93,27 @@ class Message implements ActivityPubActivityInterface
     public function getUser(): User
     {
         return $this->sender;
+    }
+
+
+    public function getApId(): ?string
+    {
+        return $this->apId;
+    }
+
+    public function getMagazine(): ?Magazine
+    {
+        return null;
+    }
+
+    public function getShortTitle(): string {
+        $body = wordwrap($this->body, 60);
+        $body = explode("\n", $body);
+        return trim($body[0]).(isset($body[1]) ? '...' : '');
+    }
+
+    public function getReportType(): string
+    {
+        return self::REPORT_TYPE;
     }
 }

@@ -34,6 +34,12 @@
 </div>
 
 {% for report in reports %}
+    {% if report.subject is message %}
+        {% set routePrefix = 'message_report' %}
+    {% else %}
+        {% set routePrefix = 'magazine_panel_report' %}
+    {% endif %}
+
     <div class="{{ html_classes('section section--small report') }}" id="report-id-{{ report.id }}">
         <div>
             <small class="meta">{{ component('user_inline', {user: report.reporting, showNewIcon: true}) }},
@@ -52,7 +58,7 @@
             {% if report.status is not same as REPORT_CLOSED %}
                 {% if report.status is not same as REPORT_REJECTED %}
                     <form method="post"
-                          action="{{ path('magazine_panel_report_reject', {'magazine_name': report.subject.magazine.name, 'report_id': report.id}) }}"
+                          action="{{ path(routePrefix~'_reject', {'magazine_name': report.subject.magazine.name is defined ? report.subject.magazine.name : null, 'report_id': report.id}) }}"
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('report_decline') }}">
                         <button type="submit" class="btn btn__secondary">{{ 'reject'|trans }}</button>
@@ -60,15 +66,17 @@
                 {% endif %}
                 {% if report.status is not same as REPORT_APPROVED %}
                     <form method="post"
-                          action="{{ path('magazine_panel_report_approve', {'magazine_name': report.subject.magazine.name, 'report_id': report.id} ) }}"
+                          action="{{ path(routePrefix~'_approve', {'magazine_name': report.subject.magazine.name is defined ? report.subject.magazine.name : null, 'report_id': report.id} ) }}"
                           data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
                         <input type="hidden" name="token" value="{{ csrf_token('report_approve') }}">
                         <button type="submit" class="btn btn__secondary">{{ 'approve'|trans }}</button>
                     </form>
                 {% endif %}
             {% endif %}
+            {% if report.subject.magazine is not same as null %}
             <a href="{{ path('magazine_panel_ban', {'name': report.subject.magazine.name, 'username': report.reported.username}) }}"
                class="btn btn__secondary">{{ 'ban'|trans }} ({{ report.reported.username|username(true) }})</a>
+            {% endif %}
         </div>
     </div>
 {% endfor %}

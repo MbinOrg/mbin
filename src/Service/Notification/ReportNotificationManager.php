@@ -11,6 +11,7 @@ use App\Entity\ReportCreatedNotification;
 use App\Event\NotificationCreatedEvent;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReportNotificationManager
@@ -25,9 +26,12 @@ class ReportNotificationManager
     public function sendReportCreatedNotification(Report $report): void
     {
         $receivers = [];
-        foreach ($report->magazine->moderators as /* @var Moderator $moderator */ $moderator) {
-            if (null === $moderator->user->apId) {
-                $receivers[] = $moderator->user;
+
+        if($report->magazine !== null) {
+            foreach ($report->magazine->moderators as /* @var Moderator $moderator */ $moderator) {
+                if (null === $moderator->user->apId) {
+                    $receivers[] = $moderator->user;
+                }
             }
         }
 

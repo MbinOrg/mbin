@@ -9,6 +9,8 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentReport;
 use App\Entity\EntryReport;
+use App\Entity\Message;
+use App\Entity\MessageReport;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\PostCommentReport;
@@ -45,6 +47,7 @@ class ReportRepository extends ServiceEntityRepository
             $subject instanceof EntryComment => $this->findByEntryComment($subject),
             $subject instanceof Post => $this->findByPost($subject),
             $subject instanceof PostComment => $this->findByPostComment($subject),
+            $subject instanceof Message => $this->findByMessage($subject),
             default => throw new \LogicException(),
         };
     }
@@ -85,6 +88,15 @@ class ReportRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    private function findByMessage(Message $message): ?MessageReport
+    {
+        $dql = 'SELECT r FROM '.MessageReport::class.' r WHERE r.message = :message';
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameter('message', $message)
+            ->getOneOrNullResult();
+    }
+
     public function findPendingBySubject(ReportInterface $subject): ?Report
     {
         return match (true) {
@@ -92,6 +104,7 @@ class ReportRepository extends ServiceEntityRepository
             $subject instanceof EntryComment => $this->findPendingByEntryComment($subject),
             $subject instanceof Post => $this->findPendingByPost($subject),
             $subject instanceof PostComment => $this->findPendingByPostComment($subject),
+            $subject instanceof Message => $this->findPendingByMessage($subject),
             default => throw new \LogicException(),
         };
     }
@@ -132,6 +145,16 @@ class ReportRepository extends ServiceEntityRepository
 
         return $this->getEntityManager()->createQuery($dql)
             ->setParameter('comment', $comment)
+            ->setParameter('status', Report::STATUS_PENDING)
+            ->getOneOrNullResult();
+    }
+
+    private function findPendingByMessage(Message $message): ?PostCommentReport
+    {
+        $dql = 'SELECT r FROM '.MessageReport::class.' r WHERE r.message = :comment AND r.status = :status';
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameter('message', $message)
             ->setParameter('status', Report::STATUS_PENDING)
             ->getOneOrNullResult();
     }

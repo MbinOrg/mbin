@@ -19,6 +19,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
@@ -32,7 +33,7 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class PostNotificationManager implements ContentNotificationManagerInterface
+class PostNotificationManager implements SwitchableService, ContentNotificationManagerInterface
 {
     use NotificationTrait;
 
@@ -53,6 +54,11 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         private readonly NotificationSettingsRepository $notificationSettingsRepository,
         private readonly UserRepository $userRepository,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [Post::class];
     }
 
     public function sendCreated(ContentInterface $subject): void
@@ -156,16 +162,22 @@ class PostNotificationManager implements ContentNotificationManagerInterface
         if (!$subject instanceof Post) {
             throw new \LogicException();
         }
-        $this->notifyMagazine($notification = new PostDeletedNotification($subject->user, $subject));
+        $this->notifyMagazine(new PostDeletedNotification($subject->user, $subject));
     }
 
-    public function purgeNotifications(Post $post): void
+    public function purgeNotifications(ContentInterface $subject): void
     {
-        $this->notificationRepository->removePostNotifications($post);
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
+        $this->notificationRepository->removePostNotifications($subject);
     }
 
-    public function purgeMagazineLog(Post $post): void
+    public function purgeMagazineLog(ContentInterface $subject): void
     {
-        $this->magazineLogRepository->removePostLogs($post);
+        if (!$subject instanceof Post) {
+            throw new \LogicException();
+        }
+        $this->magazineLogRepository->removePostLogs($subject);
     }
 }

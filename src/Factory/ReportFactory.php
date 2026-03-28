@@ -6,16 +6,22 @@ namespace App\Factory;
 
 use App\DTO\ReportDto;
 use App\DTO\ReportResponseDto;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentReport;
 use App\Entity\EntryReport;
+use App\Entity\Message;
+use App\Entity\MessageReport;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\PostCommentReport;
 use App\Entity\PostReport;
 use App\Entity\Report;
+use App\Factory\Contract\ContentDtoFactory;
 use App\Repository\TagLinkRepository;
+use App\Service\SwitchingServiceRegistry;
+use App\Utils\SqlHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ReportFactory
@@ -24,11 +30,8 @@ class ReportFactory
         private readonly EntityManagerInterface $entityManager,
         private readonly UserFactory $userFactory,
         private readonly MagazineFactory $magazineFactory,
-        private readonly EntryFactory $entryFactory,
-        private readonly PostFactory $postFactory,
-        private readonly EntryCommentFactory $entryCommentFactory,
-        private readonly PostCommentFactory $postCommentFactory,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
     ) {
     }
 
@@ -36,14 +39,15 @@ class ReportFactory
     {
         $className = $this->entityManager->getClassMetadata(\get_class($dto->getSubject()))->name.'Report';
 
-        return new $className($dto->getSubject()->user, $dto->getSubject(), $dto->reason);
+        return new $className($dto->getSubject()->getUser(), $dto->getSubject(), $dto->reason);
     }
 
     public function createResponseDto(Report $report): ReportResponseDto
     {
+        $magazine = $report->magazine !== null ? $this->magazineFactory->createSmallDto($report->magazine) : null;
         $toReturn = ReportResponseDto::create(
             $report->getId(),
-            $this->magazineFactory->createSmallDto($report->magazine),
+            $magazine,
             $this->userFactory->createSmallDto($report->reported),
             $this->userFactory->createSmallDto($report->reporting),
             $report->reason,
@@ -55,26 +59,9 @@ class ReportFactory
         );
 
         $subject = $report->getSubject();
-        switch (\get_class($report)) {
-            case EntryReport::class:
-                \assert($subject instanceof Entry);
-                $toReturn->subject = $this->entryFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfContent($subject));
-                break;
-            case EntryCommentReport::class:
-                \assert($subject instanceof EntryComment);
-                $toReturn->subject = $this->entryCommentFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfContent($subject));
-                break;
-            case PostReport::class:
-                \assert($subject instanceof Post);
-                $toReturn->subject = $this->postFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfContent($subject));
-                break;
-            case PostCommentReport::class:
-                \assert($subject instanceof PostComment);
-                $toReturn->subject = $this->postCommentFactory->createResponseDto($subject, tags: $this->tagLinkRepository->getTagsOfContent($subject));
-                break;
-            default:
-                throw new \LogicException();
-        }
+        $hashtags = $subject instanceof HashtagableInterface ? $this->tagLinkRepository->getTagsOfContent($subject) : [];
+        $factory = $this->serviceRegistry->getService($subject, ContentDtoFactory::class);
+        $toReturn->subject = $factory->createResponseDto($subject, $hashtags);
 
         return $toReturn;
     }

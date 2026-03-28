@@ -4,9 +4,16 @@ messages_front:
   methods: [ GET ]
 
 messages_single:
-  controller: App\Controller\Message\MessageThreadController
+  controller: App\Controller\Message\MessageThreadController::show
   path: /profile/messages/{id}
   methods: [ GET, POST ]
+  requirements:
+    id: \d+
+
+messages_remove_thread:
+  controller: App\Controller\Message\MessageThreadController::remove
+  path: /profile/messages/{id}/delete
+  methods: [ POST ]
   requirements:
     id: \d+
 
