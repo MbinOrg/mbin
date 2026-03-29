@@ -4,6 +4,12 @@ api_posts_subscribed:
   methods: [ GET ]
   format: json
 
+api_posts_subscribed_with_boost:
+  controller: App\Controller\Api\Post\PostsRetrieveApi::subscribedWithBoosts
+  path: /api/posts/subscribedWithBoosts
+  methods: [ GET ]
+  format: json
+
 api_posts_moderated:
   controller: App\Controller\Api\Post\PostsRetrieveApi::moderated
   path: /api/posts/moderated

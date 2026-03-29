@@ -388,6 +388,7 @@ class ActivityPubManager
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
+            $user->title = $actor['name'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;

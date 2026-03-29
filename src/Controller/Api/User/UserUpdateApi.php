@@ -70,6 +70,7 @@ class UserUpdateApi extends UserBaseApi
         $dto = $manager->createDto($this->getUserOrThrow());
 
         $dto->about = $deserialized->about;
+        $dto->title = $deserialized->title;
 
         $user = $manager->edit($this->getUserOrThrow(), $dto);
 

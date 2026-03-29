@@ -15,6 +15,7 @@ use App\Service\MagazineManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -55,8 +56,6 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?Image $banner = null;
     #[Column(type: 'string', nullable: false)]
     public string $name;
-    #[Column(type: 'string')]
-    public ?string $title;
     #[Column(type: 'text', length: self::MAX_DESCRIPTION_LENGTH, nullable: true)]
     public ?string $description = null;
     #[Column(type: 'text', length: self::MAX_RULES_LENGTH, nullable: true)]
@@ -87,7 +86,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public ?\DateTime $lastOriginUpdate = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $tags = null;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderators;
@@ -402,7 +401,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
     }
 
-    public function addBan(User $user, User $bannedBy, ?string $reason, ?\DateTimeInterface $expiredAt): ?MagazineBan
+    public function addBan(User $user, User $bannedBy, ?string $reason, ?\DateTimeImmutable $expiredAt): ?MagazineBan
     {
         $ban = $this->isBanned($user);
 
@@ -419,7 +418,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function isBanned(User $user): bool
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));
 
@@ -440,7 +439,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function unban(User $user): MagazineBan
     {
         $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTime()))
+            ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));
 
@@ -448,7 +447,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
          * @var MagazineBan $ban
          */
         $ban = $this->bans->matching($criteria)->first();
-        $ban->expiredAt = new \DateTime('-10 seconds');
+        $ban->expiredAt = new \DateTimeImmutable('-10 seconds');
 
         return $ban;
     }
