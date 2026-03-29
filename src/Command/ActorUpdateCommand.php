@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 #[AsCommand(
     name: 'mbin:actor:update',
@@ -45,15 +46,15 @@ class ActorUpdateCommand extends Command
         $force = (bool) $input->getOption('force');
 
         if ($userArg) {
-            $this->bus->dispatch(new UpdateActorMessage($userArg, $force));
+            $this->bus->dispatch(new UpdateActorMessage($userArg, $force), [new TransportNamesStamp('sync')]);
         } elseif ($input->getOption('users')) {
             foreach ($this->repository->findRemoteForUpdate() as $u) {
-                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force));
+                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force), [new TransportNamesStamp('sync')]);
                 $io->info($u->username);
             }
         } elseif ($input->getOption('magazines')) {
             foreach ($this->magazineRepository->findRemoteForUpdate() as $u) {
-                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force));
+                $this->bus->dispatch(new UpdateActorMessage($u->apProfileId, $force), [new TransportNamesStamp('sync')]);
                 $io->info($u->name);
             }
         }
