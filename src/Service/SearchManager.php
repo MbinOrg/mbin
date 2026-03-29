@@ -8,11 +8,13 @@ use App\ActivityPub\ActorHandle;
 use App\Entity\Contracts\ContentInterface;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
+use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
@@ -183,4 +185,68 @@ class SearchManager
             ];
         }, $objects);
     }
+
+    //region deprecated functions kept for API compatibility
+    /**
+     * @param string $query One or more canonical ActivityPub usernames, such as kbinMeta@kbin.social or @ernest@kbin.social (anything that matches RegPatterns::AP_USER)
+     *
+     * @return array a list of magazines or users that were found using the given identifiers, empty if none were found or no @ is in the query
+     */
+    public function findActivityPubActorsByUsername(string $query): array
+    {
+        if (false === str_contains($query, '@')) {
+            return [];
+        }
+
+        $objects = [];
+        $name = str_starts_with($query, '!') ? '@'.substr($query, 1) : $query;
+        $name = str_starts_with($name, '@') ? $name : '@'.$name;
+        preg_match(RegPatterns::AP_USER, $name, $matches);
+        if (\count(array_filter($matches)) >= 4) {
+            try {
+                $webfinger = $this->activityPubManager->webfinger($name);
+                foreach ($webfinger->getProfileIds() as $profileId) {
+                    $object = $this->activityPubManager->findActorOrCreate($profileId);
+                    if (!empty($object)) {
+                        if ($object instanceof Magazine) {
+                            $type = 'magazine';
+                        } elseif ($object instanceof User) {
+                            $type = 'user';
+                        }
+
+                        $objects[] = [
+                            'type' => $type,
+                            'object' => $object,
+                        ];
+                    }
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        return $objects ?? [];
+    }
+
+    /**
+     * @param string $query a string that may or may not be a URL
+     *
+     * @return array A list of objects found by the given query, or an empty array if none were found.
+     *               Will dispatch a getActivityObject request if a valid URL was provided but no item was found
+     *               locally.
+     */
+    public function findActivityPubObjectsByURL(string $query): array
+    {
+        if (false === filter_var($query, FILTER_VALIDATE_URL)) {
+            return [];
+        }
+
+        $objects = $this->findByApId($query);
+        if (!$objects) {
+            $body = $this->apHttpClient->getActivityObject($query, false);
+            $this->bus->dispatch(new ActivityMessage($body));
+        }
+
+        return $objects ?? [];
+    }
+    //endregion
 }
