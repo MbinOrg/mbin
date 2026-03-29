@@ -25,6 +25,7 @@ use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
@@ -132,6 +133,7 @@ class SearchRetrieveApi extends BaseApi
         schema: new OA\Schema(type: 'string', enum: ['', 'entry', 'post'])
     )]
     #[OA\Tag(name: 'search')]
+    #[OA\Get(deprecated: true)]
     public function searchV1(
         SearchManager $manager,
         UserFactory $userFactory,
@@ -298,23 +300,22 @@ class SearchRetrieveApi extends BaseApi
         SearchManager $manager,
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
+        #[MapQueryParameter]
+        string $q,
+        #[MapQueryParameter]
+        int $perPage = SearchRepository::PER_PAGE,
+        #[MapQueryParameter('authorId')]
+        ?int $authorId = null,
+        #[MapQueryParameter('magazineId')]
+        ?int $magazineId = null,
+        #[MapQueryParameter]
+        ?string $type = null,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        /** @var string $q */
-        $q = $request->get('q');
-        if (null === $q) {
-            throw new BadRequestHttpException();
-        }
-
         $page = $this->getPageNb($request);
-        $perPage = self::constrainPerPage($request->get('perPage', SearchRepository::PER_PAGE));
-        $authorIdRaw = $request->get('authorId');
-        $authorId = null === $authorIdRaw ? null : \intval($authorIdRaw);
-        $magazineIdRaw = $request->get('magazineId');
-        $magazineId = null === $magazineIdRaw ? null : \intval($magazineIdRaw);
-        $type = $request->get('type');
+
         if ('entry' !== $type && 'post' !== $type && null !== $type) {
             throw new BadRequestHttpException();
         }
