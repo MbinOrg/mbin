@@ -142,6 +142,7 @@ class SearchRepository
         ?int $magazineId = null,
         ?string $specificType = null,
         ?\DateTimeImmutable $sinceDate = null,
+        int $perPage = SearchRepository::PER_PAGE,
     ): PagerfantaInterface {
         $authorWhere = null !== $authorId ? 'AND e.user_id = :authorId' : '';
         $magazineWhere = null !== $magazineId ? 'AND e.magazine_id = :magazineId' : '';
@@ -262,6 +263,7 @@ class SearchRepository
         $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);
 
         $pagerfanta = new Pagerfanta($adapter);
+        $pagerfanta->setMaxPerPage($perPage);
         $pagerfanta->setCurrentPage($page);
 
         return $pagerfanta;

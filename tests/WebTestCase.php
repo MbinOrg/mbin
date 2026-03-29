@@ -258,6 +258,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->magazineFactory = $this->getService(MagazineFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
         $this->pageFactory = $this->getService(EntryPageFactory::class);
+        $this->tombstoneFactory = $this->getService(TombstoneFactory::class);
 
         $this->createWrapper = $this->getService(CreateWrapper::class);
         $this->likeWrapper = $this->getService(LikeWrapper::class);
@@ -268,6 +269,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->requestStack = $this->getService(RequestStack::class);
         $this->router = $this->getService(RouterInterface::class);
         $this->bus = $this->getService(MessageBusInterface::class);
+        $this->projectInfoService = $this->getService(ProjectInfoService::class);
+        $this->logger = $this->getService(LoggerInterface::class);
 
         // clear all cache before every test
         $app = new Application($this->client->getKernel());

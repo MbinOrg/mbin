@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\ActivityPub\ActorHandle;
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
+use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\SearchRepository;
@@ -15,7 +18,9 @@ use App\Utils\RegPatterns;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SearchManager
 {
@@ -26,6 +31,7 @@ class SearchManager
         private readonly ActivityPubManager $activityPubManager,
         private readonly MessageBusInterface $bus,
         private readonly ApHttpClientInterface $apHttpClient,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -57,7 +63,7 @@ class SearchManager
         ?string $specificType = null,
         ?\DateTimeImmutable $sinceDate = null,
     ): PagerfantaInterface {
-        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType, sinceDate: $sinceDate);
+        return $this->repository->search($queryingUser, $val, $page, authorId: $authorId, magazineId: $magazineId, specificType: $specificType, sinceDate: $sinceDate, perPage: $perPage);
     }
 
     public function findByApId(string $url): array
@@ -71,10 +77,122 @@ class SearchManager
     }
 
     /**
+     * Tries to find the actor or object in the DB, else will dispatch a getActorObject or getActivityObject request.
+     *
+     * @param string $handleOrUrl a string that may be a handle or AP URL
+     *
+     * @return array{'results': array{'type': 'magazine'|'user'|'subject', 'object': Magazine|User|ContentInterface}, 'errors': \Throwable[]}
+     */
+    public function findActivityPubActorsOrObjects(string $handleOrUrl): array
+    {
+        $handle = ActorHandle::parse($handleOrUrl);
+        if (null !== $handle) {
+            $handleOrUrl = $handle->plainHandle();
+            $isUrl = false;
+        } elseif (filter_var($handleOrUrl, FILTER_VALIDATE_URL)) {
+            $isUrl = true;
+        } else {
+            return [
+                'results' => [],
+                'errors' => [],
+            ];
+        }
+
+        // try resolving it as an actor
+        try {
+            $actor = $this->activityPubManager->findActorOrCreate($handleOrUrl);
+            if (null !== $actor) {
+                $objects = $this->mapApResultsToSearchModel([$actor]);
+
+                return [
+                    'results' => $objects,
+                    'errors' => [],
+                ];
+            } elseif (!$isUrl) {
+                // lookup of handle failed -> give up
+                return [
+                    'results' => [],
+                    'errors' => [],
+                ];
+            }
+        } catch (\Throwable $e) {
+            if (!$isUrl) {
+                // lookup of handle failed -> give up
+                return [
+                    'results' => [],
+                    'errors' => [$e],
+                ];
+            }
+        }
+
+        $url = $handleOrUrl;
+        $exceptions = [];
+        $objects = $this->findByApId($url);
+        if (0 === \sizeof($objects)) {
+            // the url could resolve to a different id.
+            try {
+                $body = $this->apHttpClient->getActivityObject($url);
+                $apId = $body['id'];
+                $objects = $this->findByApId($apId);
+            } catch (\Throwable $e) {
+                $body = null;
+                $apId = $url;
+                $exceptions[] = $e;
+            }
+
+            if (0 === \sizeof($objects) && null !== $body) {
+                // maybe it is an entry, post, etc.
+                try {
+                    // process the message in the sync transport, so that the created content is directly visible
+                    $this->bus->dispatch(new CreateMessage($body), [new TransportNamesStamp('sync')]);
+                    $objects = $this->findByApId($apId);
+                } catch (\Throwable $e) {
+                    $exceptions[] = $e;
+                }
+            }
+
+            if (0 === \sizeof($objects)) {
+                // maybe it is a magazine or user
+                try {
+                    $this->activityPubManager->findActorOrCreate($apId);
+                    $objects = $this->findByApId($apId);
+                } catch (\Throwable $e) {
+                    $exceptions[] = $e;
+                }
+            }
+        }
+
+        return [
+            'results' => $this->mapApResultsToSearchModel($objects),
+            'errors' => $exceptions,
+        ];
+    }
+
+    private function mapApResultsToSearchModel(array $objects): array
+    {
+        return array_map(function ($object) {
+            if ($object instanceof Magazine) {
+                $type = 'magazine';
+            } elseif ($object instanceof User) {
+                $type = 'user';
+            } else {
+                $type = 'subject';
+            }
+
+            return [
+                'type' => $type,
+                'object' => $object,
+            ];
+        }, $objects);
+    }
+
+    // region deprecated functions kept for API compatibility
+    /**
      * @param string $query One or more canonical ActivityPub usernames, such as kbinMeta@kbin.social or @ernest@kbin.social (anything that matches RegPatterns::AP_USER)
      *
      * @return array a list of magazines or users that were found using the given identifiers, empty if none were found or no @ is in the query
      */
+    #[\Deprecated]
     public function findActivityPubActorsByUsername(string $query): array
     {
         if (false === str_contains($query, '@')) {
@@ -117,6 +235,7 @@ class SearchManager
      *               Will dispatch a getActivityObject request if a valid URL was provided but no item was found
      *               locally.
      */
+    #[\Deprecated]
     public function findActivityPubObjectsByURL(string $query): array
     {
         if (false === filter_var($query, FILTER_VALIDATE_URL)) {
@@ -131,4 +250,5 @@ class SearchManager
 
         return $objects ?? [];
     }
+    // endregion
 }
