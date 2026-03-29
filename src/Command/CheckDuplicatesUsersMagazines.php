@@ -323,6 +323,7 @@ ORDER BY duplicate_count DESC';
         $actorObject = $this->apHttpClient->getActorObject($url);
         if (!$actorObject) {
             if (!$dryRun) {
+                $io->writeln(\sprintf('Purging "%s", because it does not exist on the remote server', $user->username));
                 $this->purgeUser($user);
             } else {
                 $io->writeln("Would have purged user '$user->username' ('$user->apProfileId'), because we didn't get a response from the server");
@@ -331,6 +332,7 @@ ORDER BY duplicate_count DESC';
             return [];
         } elseif ('Tombstone' === $actorObject['type']) {
             if (!$dryRun) {
+                $io->writeln(\sprintf('Purging "%s", because it was deleted on the remote server', $user->username));
                 $this->purgeUser($user);
             } else {
                 $io->writeln("Would have purged user '$user->username' ('$user->apProfileId'), because it is deleted on the remote server");
@@ -408,141 +410,157 @@ ORDER BY duplicate_count DESC';
 
             $io->writeln("Merging '$user->username' ('$user->apProfileId') into '$mainUser->username' ('$mainUser->apProfileId')");
             $conn = $this->entityManager->getConnection();
+            $conn->transactional(function () use ($conn, $mainUser, $user) {
+                $stmt = $conn->prepare('UPDATE activity SET user_actor_id = :main WHERE user_actor_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE activity SET user_actor_id = :main WHERE user_actor_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE activity SET object_user_id = :main WHERE object_user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE entry SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE entry SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE entry_comment SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE entry_comment SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE post SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE post SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE post_comment SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE post_comment SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE entry_vote SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE entry_vote SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE entry_comment_vote SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE entry_comment_vote SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE post_vote SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE post_vote SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE post_comment_vote SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE post_comment_vote SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE favourite SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE favourite SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE message_thread_participants SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE message_thread_participants SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE message SET sender_id = :main WHERE sender_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE message SET sender_id = :main WHERE sender_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE magazine_block SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_ban SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE magazine_log SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_ban SET banned_by_id = :main WHERE banned_by_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE magazine_log SET acting_user_id = :main WHERE acting_user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_block SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE magazine_subscription SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_log SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE moderator SET user_id = :main WHERE user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_log SET acting_user_id = :main WHERE acting_user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE moderator SET added_by_user_id = :main WHERE added_by_user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE magazine_subscription SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE notification_settings SET target_user_id = :main WHERE target_user_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE moderator SET user_id = :main WHERE user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE report SET reported_id = :main WHERE reported_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE moderator SET added_by_user_id = :main WHERE added_by_user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE report SET reporting_id = :main WHERE reporting_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE notification_settings SET target_user_id = :main WHERE target_user_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_block SET blocker_id = :main WHERE blocker_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE report SET reported_id = :main WHERE reported_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_block SET blocked_id = :main WHERE blocked_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE report SET reporting_id = :main WHERE reporting_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_follow SET follower_id = :main WHERE follower_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE user_block SET blocker_id = :main WHERE blocker_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_follow SET following_id = :main WHERE following_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE user_block SET blocked_id = :main WHERE blocked_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_follow_request SET follower_id = :main WHERE follower_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE user_follow SET follower_id = :main WHERE follower_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
 
-            $stmt = $conn->prepare('UPDATE user_follow_request SET following_id = :main WHERE following_id = :oldId');
-            $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
-            $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
-            $stmt->executeStatement();
+                $stmt = $conn->prepare('UPDATE user_follow SET following_id = :main WHERE following_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
+
+                $stmt = $conn->prepare('UPDATE user_follow_request SET follower_id = :main WHERE follower_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
+
+                $stmt = $conn->prepare('UPDATE user_follow_request SET following_id = :main WHERE following_id = :oldId');
+                $stmt->bindValue(':main', $mainUser->getId(), ParameterType::INTEGER);
+                $stmt->bindValue(':oldId', $user->getId(), ParameterType::INTEGER);
+                $stmt->executeStatement();
+            });
 
             $io->writeln("Purging user '$user->username' ('$user->apProfileId')");
             $this->purgeUser($user);
