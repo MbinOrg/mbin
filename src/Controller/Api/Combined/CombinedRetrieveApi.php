@@ -8,7 +8,9 @@ use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ContentResponseDto;
 use App\Entity\Entry;
+use App\Entity\EntryComment;
 use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Entity\User;
 use App\PageView\ContentPageView;
 use App\Repository\ContentRepository;
@@ -114,19 +116,27 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
+    #[OA\Parameter(
+        name: 'includeBoosts',
+        description: 'if true then boosted content from followed users are included',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     public function collection(
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
     ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository);
+        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $contentRepository, $sqlHelpers);
     }
 
     #[OA\Response(
@@ -166,6 +176,12 @@ class CombinedRetrieveApi extends BaseApi
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
         content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'collectionType',
+        description: 'the type of collection to get',
+        in: 'path',
+        schema: new OA\Schema(type: 'string', enum: ['subscribed', 'moderated', 'favourited'])
     )]
     #[OA\Parameter(
         name: 'p',
@@ -214,6 +230,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
+    #[OA\Parameter(
+        name: 'includeBoosts',
+        description: 'if true then boosted content from followed users are included',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -222,14 +244,16 @@ class CombinedRetrieveApi extends BaseApi
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
+        SqlHelpers $sqlHelpers,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
         string $collectionType,
     ): JsonResponse {
-        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $perPage, $contentRepository, $collectionType);
+        return $this->generateResponse($apiReadLimiter, $anonymousApiReadLimiter, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $contentRepository, $sqlHelpers, $collectionType);
     }
 
     private function generateResponse(
@@ -240,10 +264,11 @@ class CombinedRetrieveApi extends BaseApi
         ?string $sort,
         ?string $time,
         ?string $federation,
+        ?bool $includeBoosts,
         ?int $perPage,
         ContentRepository $contentRepository,
-        ?string $collectionType = null,
         SqlHelpers $sqlHelpers,
+        ?string $collectionType = null,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $criteria = new ContentPageView($p ?? 1, $security);
@@ -251,10 +276,11 @@ class CombinedRetrieveApi extends BaseApi
         $criteria->time = $criteria->resolveTime($time ?? Criteria::TIME_ALL);
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
         $this->handleLanguageCriteria($criteria);
-        $criteria->content = Criteria::CONTENT_THREADS;
+        $criteria->content = Criteria::CONTENT_COMBINED;
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
+            $criteria->includeBoosts = $includeBoosts ?? $user->showBoostsOfFollowing;
             $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
@@ -281,6 +307,12 @@ class CombinedRetrieveApi extends BaseApi
             } elseif ($item instanceof Post) {
                 $this->handlePrivateContent($item);
                 $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            } elseif ($item instanceof EntryComment) {
+                $this->handlePrivateContent($item);
+                $result[] = new ContentResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            } elseif ($item instanceof PostComment) {
+                $this->handlePrivateContent($item);
+                $result[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
             }
         }
 

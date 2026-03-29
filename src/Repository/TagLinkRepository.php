@@ -11,7 +11,6 @@ use App\Entity\HashtagLink;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,7 +23,6 @@ class TagLinkRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($registry, HashtagLink::class);
     }
@@ -61,8 +59,8 @@ class TagLinkRepository extends ServiceEntityRepository
     public function removeTagOfEntry(Entry $entry, Hashtag $tag): void
     {
         $link = $this->findOneBy(['entry' => $entry, 'hashtag' => $tag]);
-        $this->entityManager->remove($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->remove($link);
+        $this->getEntityManager()->flush();
     }
 
     public function addTagToEntry(Entry $entry, Hashtag $tag): void
@@ -70,8 +68,8 @@ class TagLinkRepository extends ServiceEntityRepository
         $link = new HashtagLink();
         $link->entry = $entry;
         $link->hashtag = $tag;
-        $this->entityManager->persist($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($link);
+        $this->getEntityManager()->flush();
     }
 
     public function entryHasTag(Entry $entry, Hashtag $tag): bool
@@ -92,8 +90,8 @@ class TagLinkRepository extends ServiceEntityRepository
     public function removeTagOfEntryComment(EntryComment $entryComment, Hashtag $tag): void
     {
         $link = $this->findOneBy(['entryComment' => $entryComment, 'hashtag' => $tag]);
-        $this->entityManager->remove($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->remove($link);
+        $this->getEntityManager()->flush();
     }
 
     public function addTagToEntryComment(EntryComment $entryComment, Hashtag $tag): void
@@ -101,8 +99,8 @@ class TagLinkRepository extends ServiceEntityRepository
         $link = new HashtagLink();
         $link->entryComment = $entryComment;
         $link->hashtag = $tag;
-        $this->entityManager->persist($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($link);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -118,8 +116,8 @@ class TagLinkRepository extends ServiceEntityRepository
     public function removeTagOfPost(Post $post, Hashtag $tag): void
     {
         $link = $this->findOneBy(['post' => $post, 'hashtag' => $tag]);
-        $this->entityManager->remove($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->remove($link);
+        $this->getEntityManager()->flush();
     }
 
     public function addTagToPost(Post $post, Hashtag $tag): void
@@ -127,8 +125,8 @@ class TagLinkRepository extends ServiceEntityRepository
         $link = new HashtagLink();
         $link->post = $post;
         $link->hashtag = $tag;
-        $this->entityManager->persist($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($link);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -144,8 +142,8 @@ class TagLinkRepository extends ServiceEntityRepository
     public function removeTagOfPostComment(PostComment $postComment, Hashtag $tag): void
     {
         $link = $this->findOneBy(['postComment' => $postComment, 'hashtag' => $tag]);
-        $this->entityManager->remove($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->remove($link);
+        $this->getEntityManager()->flush();
     }
 
     public function addTagToPostComment(PostComment $postComment, Hashtag $tag): void
@@ -153,7 +151,7 @@ class TagLinkRepository extends ServiceEntityRepository
         $link = new HashtagLink();
         $link->postComment = $postComment;
         $link->hashtag = $tag;
-        $this->entityManager->persist($link);
-        $this->entityManager->flush();
+        $this->getEntityManager()->persist($link);
+        $this->getEntityManager()->flush();
     }
 }

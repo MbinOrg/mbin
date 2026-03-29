@@ -7,6 +7,7 @@ namespace App\Utils;
 use App\Entity\MagazineBlock;
 use App\Entity\User;
 use App\Entity\UserBlock;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
@@ -106,7 +107,7 @@ class SqlHelpers
             return Types::INTEGER;
         }
 
-        return ParameterType::STRING;
+        return Types::STRING;
     }
 
     public function getBlockedMagazinesDql(User $user): string
@@ -370,5 +371,30 @@ class SqlHelpers
         $this->logger->debug('Fetching single column row from {sql}: {res}', ['sql' => $sql, 'res' => $result]);
 
         return $result;
+    }
+
+    public static function getRealClassName(EntityManagerInterface $entityManager, mixed $object): string
+    {
+        return $entityManager->getClassMetadata(\get_class($object))->getName();
+    }
+
+    /**
+     * This method is useful for gathering more entities than the parameter limit allows for.
+     *
+     * @template-covariant T
+     *
+     * @param ServiceEntityRepository<T> $repository
+     *
+     * @return T[]
+     */
+    public static function findByAdjusted(ServiceEntityRepository $repository, string $columnName, array $values): array
+    {
+        $split = ArrayUtils::sliceArrayIntoEqualPieces($values, 65000);
+        $results = [];
+        foreach ($split as $part) {
+            $results[] = $repository->findBy([$columnName => $part]);
+        }
+
+        return array_merge(...$results);
     }
 }

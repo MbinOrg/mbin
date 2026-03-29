@@ -25,23 +25,23 @@ class DoctrineStatementMiddleware extends AbstractStatementMiddleware
         parent::__construct($statement);
     }
 
-    public function bindValue($param, $value, $type = ParameterType::STRING): bool
+    public function bindValue($param, $value, $type = ParameterType::STRING): void
     {
         $this->parameters[$param] = $value;
 
-        return parent::bindValue($param, $value, $type);
+        parent::bindValue($param, $value, $type);
     }
 
-    public function execute($params = null): Result
+    public function execute(): Result
     {
         if (!$this->monitor->shouldRecordQueries() || null === $this->monitor->currentContext) {
-            return parent::execute($params);
+            return parent::execute();
         }
 
         $this->monitor->startQuery($this->sql, $this->parameters);
 
         try {
-            return parent::execute($params);
+            return parent::execute();
         } finally {
             $this->monitor->endQuery();
         }
