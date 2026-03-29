@@ -186,7 +186,7 @@ class SearchManager
         }, $objects);
     }
 
-    //region deprecated functions kept for API compatibility
+    // region deprecated functions kept for API compatibility
     /**
      * @param string $query One or more canonical ActivityPub usernames, such as kbinMeta@kbin.social or @ernest@kbin.social (anything that matches RegPatterns::AP_USER)
      *
@@ -248,5 +248,5 @@ class SearchManager
 
         return $objects ?? [];
     }
-    //endregion
+    // endregion
 }
