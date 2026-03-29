@@ -389,6 +389,8 @@ class ImageManager implements ImageManagerInterface
             $this->publicUploadsFilesystem->delete($image->filePath);
             $this->imagineCacheManager->remove($image->filePath);
             $sql = 'UPDATE image SET file_path = NULL, downloaded_at = NULL WHERE id = :id';
+            $image->filePath = null;
+            $image->downloadedAt = null;
             $this->entityManager->getConnection()->executeStatement($sql, ['id' => $image->getId()]);
 
             return true;
