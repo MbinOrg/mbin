@@ -25,6 +25,7 @@ use App\Service\SettingsManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -300,13 +301,13 @@ class SearchRetrieveApi extends BaseApi
         SearchManager $manager,
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
-        #[MapQueryParameter]
+        #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         string $q,
-        #[MapQueryParameter]
+        #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         int $perPage = SearchRepository::PER_PAGE,
-        #[MapQueryParameter('authorId')]
+        #[MapQueryParameter('authorId', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         ?int $authorId = null,
-        #[MapQueryParameter('magazineId')]
+        #[MapQueryParameter('magazineId', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         ?int $magazineId = null,
         #[MapQueryParameter]
         ?string $type = null,
