@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
+use App\Entity\Post;
 use App\Entity\User;
+use App\Pagination\Cursor\CursorPagination;
+use App\Pagination\Cursor\CursorPaginationInterface;
+use App\Pagination\Cursor\NativeQueryCursorAdapter;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Utils\SqlHelpers;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
@@ -32,6 +38,68 @@ class ContentRepository
     }
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
+    {
+        $query = $this->getQueryAndParameters($criteria, false);
+        $conn = $this->entityManager->getConnection();
+
+        $numResults = null;
+        if ('test' !== $this->kernel->getEnvironment() && !$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
+            // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
+            $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
+        }
+        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $query['sql'], $query['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
+        $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
+        $fanta->setCurrentPage($criteria->page);
+
+        return $fanta;
+    }
+
+    /**
+     * @template-covariant TCursor
+     *
+     * @param TCursor|null $currentCursor
+     *
+     * @return CursorPaginationInterface<Entry|Post,TCursor>
+     *
+     * @throws Exception
+     */
+    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null): CursorPaginationInterface
+    {
+        $query = $this->getQueryAndParameters($criteria, true);
+        $conn = $this->entityManager->getConnection();
+        $orderings = $this->getOrderings($criteria);
+        $start = new \DateTimeImmutable();
+        $start = $start->setTimestamp(0);
+
+        $fanta = new CursorPagination(
+            new NativeQueryCursorAdapter(
+                $conn,
+                $query['sql'],
+                $this->getCursorWhereFromCriteria($criteria),
+                $this->getCursorWhereInvertedFromCriteria($criteria),
+                join(',', $orderings),
+                join(',', SqlHelpers::invertOrderings($orderings)),
+                $query['parameters'],
+                $this->getSecondaryCursorWhereFromCriteria($criteria),
+                $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
+                'c.created_at DESC',
+                'c.created_at',
+                transformer: $this->contentPopulationTransformer,
+            ),
+            $this->getCursorFieldFromCriteria($criteria),
+            $criteria->perPage ?? self::PER_PAGE,
+            'createdAt',
+            $start,
+        );
+        $fanta->setCurrentPage($currentCursor ?? $this->guessInitialCursor($criteria->sortOption), $currentCursor2 ?? new \DateTimeImmutable('now + 1 minute'));
+
+        return $fanta;
+    }
+
+    /**
+     * @return array{sql: string, parameters: array}>
+     */
+    private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
         $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
@@ -257,6 +325,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -277,6 +346,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
         $entryCommentWhere = SqlHelpers::makeWhereString([
@@ -322,8 +392,138 @@ class ContentRepository
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
+        $orderings = $addCursor ? ['%cursorSort%', '%cursorSort2%'] : $this->getOrderings($criteria);
+
+        $orderBy = 'ORDER BY '.join(', ', $orderings);
+        // only join domain if we are explicitly looking at one
+        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
+
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $domainJoin
+            $entryWhere";
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $postWhere";
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $entryCommentWhere";
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $postCommentWhere";
+
+        $innerLimit = $addCursor ? 'LIMIT :limit' : '';
+        $innerSql = '';
+        if (Criteria::CONTENT_THREADS === $criteria->content) {
+            if ($includeEntryComments) {
+                $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($entryCommentSql $orderBy $innerLimit)";
+            } else {
+                $innerSql = "$entrySql $orderBy $innerLimit";
+            }
+        } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
+            if ($includePostComments) {
+                $innerSql = "($postSql $orderBy $innerLimit) UNION ALL ($postCommentSql $orderBy $innerLimit)";
+            } else {
+                $innerSql = "$postSql $orderBy $innerLimit";
+            }
+        } else {
+            $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($postSql $orderBy $innerLimit)";
+            if ($includeEntryComments) {
+                $innerSql .= " UNION ALL ($entryCommentSql $orderBy $innerLimit)";
+            }
+            if ($includePostComments) {
+                $innerSql .= " UNION ALL ($postCommentSql $orderBy $innerLimit)";
+            }
+        }
+
+        $sql = "SELECT c.* FROM ($innerSql) c
+            INNER JOIN \"user\" u ON c.user_id = u.id
+            $outerWhere
+            $orderBy";
+
+        if (!str_contains($sql, ':loggedInUser')) {
+            $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
+        }
+
+        $rewritten = SqlHelpers::rewriteArrayParameters($parameters, $sql);
+
+        $this->logger->debug('{s} | {p}', ['s' => $sql, 'p' => $parameters]);
+        $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
+
+        return $rewritten;
+    }
+
+    private function getCursorFieldFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'score',
+            Criteria::SORT_HOT => 'ranking',
+            Criteria::SORT_COMMENTED => 'commentCount',
+            Criteria::SORT_ACTIVE => 'lastActive',
+            default => 'createdAt',
+        };
+    }
+
+    private function getCursorWhereFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score < :cursor',
+            Criteria::SORT_HOT => 'c.ranking < :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
+            Criteria::SORT_OLD => 'c.created_at > :cursor',
+            default => 'c.created_at < :cursor',
+        };
+    }
+
+    private function getCursorWhereInvertedFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score > :cursor',
+            Criteria::SORT_HOT => 'c.ranking > :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
+            Criteria::SORT_OLD => 'c.created_at < :cursor',
+            default => 'c.created_at >= :cursor',
+        };
+    }
+
+    private function getSecondaryCursorWhereFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at < :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    private function getSecondaryCursorWhereFromCriteriaInverted(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at >= :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    public function guessInitialCursor(string $sortOption): mixed
+    {
+        return match ($sortOption) {
+            Criteria::SORT_TOP, Criteria::SORT_HOT, Criteria::SORT_COMMENTED => 2147483647, // postgresql max int
+            Criteria::SORT_OLD => (new \DateTimeImmutable())->setTimestamp(0),
+            default => new \DateTimeImmutable('now + 1 minute'),
+        };
+    }
+
+    private function getOrderings(Criteria $criteria): array
+    {
         $orderings = [];
 
         if ($criteria->stickiesFirst) {
@@ -355,71 +555,6 @@ class ContentRepository
                 $orderings[] = 'created_at DESC';
         }
 
-        $orderBy = 'ORDER BY '.join(', ', $orderings);
-        // only join domain if we are explicitly looking at one
-        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
-
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $domainJoin
-            $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $postCommentWhere";
-
-        $innerSql = '';
-        if (Criteria::CONTENT_THREADS === $criteria->content) {
-            if ($includeEntryComments) {
-                $innerSql = "$entrySql UNION ALL $entryCommentSql";
-            } else {
-                $innerSql = "$entrySql $orderBy";
-            }
-        } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
-            if ($includePostComments) {
-                $innerSql = "$postSql UNION ALL $postCommentSql";
-            } else {
-                $innerSql = "$postSql $orderBy";
-            }
-        } else {
-            $innerSql = "$entrySql UNION ALL $postSql";
-            if ($includeEntryComments) {
-                $innerSql .= " UNION ALL $entryCommentSql";
-            }
-            if ($includePostComments) {
-                $innerSql .= " UNION ALL $postCommentSql";
-            }
-        }
-
-        $sql = "SELECT content.* FROM ($innerSql) content
-            INNER JOIN \"user\" u ON content.user_id = u.id
-            $outerWhere
-            $orderBy";
-
-        if (!str_contains($sql, ':loggedInUser')) {
-            $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
-        }
-
-        $rewritten = SqlHelpers::rewriteArrayParameters($parameters, $sql);
-        $conn = $this->entityManager->getConnection();
-
-        $this->logger->debug('{s} | {p}', ['s' => $sql, 'p' => $parameters]);
-        $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
-
-        $numResults = null;
-        if ('test' !== $this->kernel->getEnvironment() && !$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
-            // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
-            $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
-        }
-        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $rewritten['sql'], $rewritten['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
-        $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
-        $fanta->setCurrentPage($criteria->page);
-
-        return $fanta;
+        return $orderings;
     }
 }
