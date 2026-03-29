@@ -58,7 +58,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
 
     public function testCombinedCursoredAnonymous(): void
     {
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest');
+        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=newest');
 
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
@@ -71,7 +71,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::createOAuth2PublicAuthCodeClient();
         $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
-        $this->client->request('GET', '/api/combined/2.0/subscribed?perPage=2&sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/combined/v2/subscribed?perPage=2&sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
@@ -80,7 +80,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
 
     public function testCombinedCursoredPagination(): void
     {
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented');
+        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=commented');
 
         self::assertResponseIsSuccessful();
         $data1 = self::getJsonResponse($this->client);
@@ -94,7 +94,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::assertNull($data1['pagination']['previousCursor']);
         self::assertNull($data1['pagination']['previousCursor2']);
 
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented&cursor='.urlencode($data1['pagination']['nextCursor']).'&cursor2='.urlencode($data1['pagination']['nextCursor2']));
+        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=commented&cursor='.urlencode($data1['pagination']['nextCursor']).'&cursor2='.urlencode($data1['pagination']['nextCursor2']));
 
         self::assertResponseIsSuccessful();
         $data2 = self::getJsonResponse($this->client);
@@ -108,7 +108,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::assertNotNull($data2['pagination']['previousCursor']);
         self::assertNotNull($data2['pagination']['previousCursor2']);
 
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=commented&cursor='.urlencode($data2['pagination']['previousCursor']).'&cursor2='.urlencode($data2['pagination']['previousCursor2']));
+        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=commented&cursor='.urlencode($data2['pagination']['previousCursor']).'&cursor2='.urlencode($data2['pagination']['previousCursor2']));
 
         self::assertResponseIsSuccessful();
         $data3 = self::getJsonResponse($this->client);
@@ -146,7 +146,7 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::assertNull($data['items'][1]['entry']);
         assertEquals($this->generatedPosts[0]->getId(), $data['items'][1]['post']['postId']);
 
-        $this->client->request('GET', '/api/combined/2.0?perPage=2&sort=newest&cursor='.urlencode($data['pagination']['nextCursor']));
+        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=newest&cursor='.urlencode($data['pagination']['nextCursor']));
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
 
