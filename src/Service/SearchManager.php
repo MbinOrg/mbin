@@ -192,6 +192,7 @@ class SearchManager
      *
      * @return array a list of magazines or users that were found using the given identifiers, empty if none were found or no @ is in the query
      */
+    #[\Deprecated]
     public function findActivityPubActorsByUsername(string $query): array
     {
         if (false === str_contains($query, '@')) {
@@ -234,6 +235,7 @@ class SearchManager
      *               Will dispatch a getActivityObject request if a valid URL was provided but no item was found
      *               locally.
      */
+    #[\Deprecated]
     public function findActivityPubObjectsByURL(string $query): array
     {
         if (false === filter_var($query, FILTER_VALIDATE_URL)) {
