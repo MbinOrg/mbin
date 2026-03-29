@@ -399,6 +399,13 @@ class ActivityPubManager
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            if ($actor['preferredUsername']) {
+                $newUsername = '@'.$actor['preferredUsername'].'@'.$user->apDomain;
+                if ($user->username !== $newUsername) {
+                    $this->logger->info('The handle of "{u}" ({url}) changed to "{u2}" for id {id}', ['u' => $user->username, 'url' => $user->apProfileId, 'u2' => $newUsername, 'id' => $user->getId()]);
+                    $user->username = $newUsername;
+                }
+            }
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;

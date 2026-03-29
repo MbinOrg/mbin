@@ -26,6 +26,8 @@
                     {{ pagerfanta(pagination, null, {'pageParameter':'[p]'}) }}
                 </div>
             </div>
+        {% elseif pagination.getCurrentCursor is defined %}
+            {{ component('cursor_pagination', {'pagination': pagination}) }}
         {% else %}
             {{ pagerfanta(pagination, null, {'pageParameter':'[p]'}) }}
         {% endif %}
@@ -36,9 +38,15 @@
             <div data-controller="infinite-scroll" class="infinite-scroll">
                 {{ component('loader', {'data-infinite-scroll-target': 'loader'}) }}
                 <div data-infinite-scroll-target="pagination" class="visually-hidden">
-                    {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
+                    {% if results.getCurrentCursor is defined %}
+                        {{ component('cursor_pagination', {'pagination': results}) }}
+                    {% else %}
+                        {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
+                    {% endif %}
                 </div>
             </div>
+        {% elseif results.getCurrentCursor is defined %}
+            {{ component('cursor_pagination', {'pagination': results}) }}
         {% else %}
             {{ pagerfanta(results, null, {'pageParameter':'[p]'}) }}
         {% endif %}
