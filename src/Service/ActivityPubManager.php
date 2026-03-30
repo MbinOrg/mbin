@@ -166,6 +166,21 @@ class ActivityPubManager
                 return $user;
             }
 
+            if (!substr_count(ltrim($actorUrl, '@'), '@')) {
+                // local magazine. Maybe an @ at the beginning, but not in the middle
+                $magazine = $this->magazineRepository->findOneBy(['name' => ltrim($actorUrl, '@')]);
+            } else {
+                // remote magazine. Maybe !magazine@domain, maybe only magazine@domain -> trim left and look in apId
+                $magazine = $this->magazineRepository->findOneBy(['apId' => ltrim($actorUrl, '@!')]);
+            }
+            if ($magazine instanceof Magazine) {
+                if ($magazine->apId && !$magazine->isSoftDeleted() && !$magazine->isTrashed() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    $this->dispatchUpdateActor($magazine->apProfileId);
+                }
+
+                return $magazine;
+            }
+
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
         }
 
@@ -385,6 +400,13 @@ class ActivityPubManager
             $user->type = EUserType::getFromString($actor['type']) ?? EUserType::Person;
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            if ($actor['preferredUsername']) {
+                $newUsername = '@'.$actor['preferredUsername'].'@'.$user->apDomain;
+                if ($user->username !== $newUsername) {
+                    $this->logger->info('The handle of "{u}" ({url}) changed to "{u2}" for id {id}', ['u' => $user->username, 'url' => $user->apProfileId, 'u2' => $newUsername, 'id' => $user->getId()]);
+                    $user->username = $newUsername;
+                }
+            }
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;

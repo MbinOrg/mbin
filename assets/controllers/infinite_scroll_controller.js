@@ -22,9 +22,19 @@ export default class extends Controller {
         try {
             this.loadingValue = true;
 
-            const paginationElem = this.paginationTarget.getElementsByClassName('pagination__item--current-page')[0].nextElementSibling;
-            if (paginationElem.classList.contains('pagination__item--disabled')) {
-                throw new Error('No more pages');
+            const cursorPaginationElement = this.paginationTarget.getElementsByClassName('cursor-pagination');
+            let paginationElem = null;
+            if (cursorPaginationElement.length) {
+                const button = cursorPaginationElement[0].getElementsByClassName('next');
+                if (!button.length) {
+                    throw new Error('No more pages');
+                }
+                paginationElem = button[0];
+            } else {
+                paginationElem = this.paginationTarget.getElementsByClassName('pagination__item--current-page')[0].nextElementSibling;
+                if (paginationElem.classList.contains('pagination__item--disabled')) {
+                    throw new Error('No more pages');
+                }
             }
 
             if (window.infiniteScrollUrls.includes(paginationElem.href)) {

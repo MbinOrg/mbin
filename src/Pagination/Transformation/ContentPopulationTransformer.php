@@ -6,10 +6,12 @@ namespace App\Pagination\Transformation;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Image;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Utils\SqlHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ContentPopulationTransformer implements ResultTransformer
@@ -27,6 +29,7 @@ class ContentPopulationTransformer implements ResultTransformer
         $postCommentRepository = $this->entityManager->getRepository(PostComment::class);
         $magazineRepository = $this->entityManager->getRepository(Magazine::class);
         $userRepository = $this->entityManager->getRepository(User::class);
+        $imageRepository = $this->entityManager->getRepository(Image::class);
 
         $positionsArray = $this->buildPositionArray($input);
         $entryIds = $this->getOverviewIds((array) $input, 'entry');
@@ -63,7 +66,12 @@ class ContentPopulationTransformer implements ResultTransformer
             $users = $userRepository->findBy(['id' => $userIds]);
         }
 
-        return $this->applyPositions($positionsArray, $entries ?? [], $entryComments ?? [], $post ?? [], $postComment ?? [], $magazines ?? [], $users ?? []);
+        $imageIds = $this->getOverviewIds((array) $input, 'image');
+        if (\count($imageIds) > 0) {
+            $images = SqlHelpers::findByAdjusted($imageRepository, 'id', $imageIds);
+        }
+
+        return $this->applyPositions($positionsArray, $entries ?? [], $entryComments ?? [], $post ?? [], $postComment ?? [], $magazines ?? [], $users ?? [], $images ?? []);
     }
 
     private function getOverviewIds(array $result, string $type): array
@@ -84,6 +92,7 @@ class ContentPopulationTransformer implements ResultTransformer
         $postCommentPositions = [];
         $userPositions = [];
         $magazinePositions = [];
+        $imagePositions = [];
         $i = 0;
         foreach ($input as $current) {
             switch ($current['type']) {
@@ -105,6 +114,9 @@ class ContentPopulationTransformer implements ResultTransformer
                 case 'user':
                     $userPositions[$current['id']] = $i;
                     break;
+                case 'image':
+                    $imagePositions[$current['id']] = $i;
+                    break;
             }
             ++$i;
         }
@@ -116,6 +128,7 @@ class ContentPopulationTransformer implements ResultTransformer
             'post_comment' => $postCommentPositions,
             'magazine' => $magazinePositions,
             'user' => $userPositions,
+            'image' => $imagePositions,
         ];
     }
 
@@ -125,8 +138,10 @@ class ContentPopulationTransformer implements ResultTransformer
      * @param EntryComment[] $entryComments
      * @param Post[]         $posts
      * @param PostComment[]  $postComments
+     * @param User[]         $users
+     * @param Image[]        $images
      */
-    private function applyPositions(array $positionsArray, array $entries, array $entryComments, array $posts, array $postComments, array $magazines, array $users): array
+    private function applyPositions(array $positionsArray, array $entries, array $entryComments, array $posts, array $postComments, array $magazines, array $users, array $images): array
     {
         $result = [];
         foreach ($entries as $entry) {
@@ -146,6 +161,9 @@ class ContentPopulationTransformer implements ResultTransformer
         }
         foreach ($users as $user) {
             $result[$positionsArray['user'][$user->getId()]] = $user;
+        }
+        foreach ($images as $image) {
+            $result[$positionsArray['image'][$image->getId()]] = $image;
         }
         ksort($result, SORT_NUMERIC);
 

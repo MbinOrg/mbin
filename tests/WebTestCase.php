@@ -15,6 +15,7 @@ use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
 use App\Repository\ActivityRepository;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
+use App\Repository\ContentRepository;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
@@ -58,14 +59,17 @@ use App\Service\UserManager;
 use App\Service\VoteManager;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
+use App\Twig\Runtime\FormattingExtensionRuntime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -84,6 +88,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected const PAGINATED_KEYS = ['items', 'pagination'];
     protected const PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
+    protected const CURSOR_PAGINATION_KEYS = ['currentCursor', 'currentCursor2', 'nextCursor', 'nextCursor2', 'previousCursor', 'previousCursor2', 'perPage'];
     protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
     protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
     protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints', 'discoverable', 'indexable', 'title'];
@@ -147,6 +152,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ActivityRepository $activityRepository;
     protected InstanceRepository $instanceRepository;
     protected MagazineBanRepository $magazineBanRepository;
+    protected ContentRepository $contentRepository;
 
     protected ImageFactory $imageFactory;
     protected MagazineFactory $magazineFactory;
@@ -169,6 +175,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected RouterInterface $router;
     protected MessageBusInterface $bus;
     protected ActivityJsonBuilder $activityJsonBuilder;
+    protected Security $security;
 
     protected DeliverHandler $deliverHandler;
 
@@ -193,6 +200,10 @@ abstract class WebTestCase extends BaseWebTestCase
             $this->getService(ValidatorInterface::class),
             $this->getService(LoggerInterface::class),
             $this->getService(SettingsManager::class),
+            $this->getService(FormattingExtensionRuntime::class),
+            self::getContainer()->getParameter('mbin_image_compression_quality'),
+            $this->getService(CacheManager::class),
+            $this->getService(EntityManagerInterface::class),
         );
         $this->imageManager->setKibbyPath($this->kibbyPath);
         self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);
@@ -218,6 +229,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->instanceManager = $this->getService(InstanceManager::class);
         $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->mentionManager = $this->getService(MentionManager::class);
+        $this->security = $this->getService(Security::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);
@@ -239,12 +251,14 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->activityRepository = $this->getService(ActivityRepository::class);
         $this->instanceRepository = $this->getService(InstanceRepository::class);
         $this->magazineBanRepository = $this->getService(MagazineBanRepository::class);
+        $this->contentRepository = $this->getService(ContentRepository::class);
 
         $this->imageFactory = $this->getService(ImageFactory::class);
         $this->personFactory = $this->getService(PersonFactory::class);
         $this->magazineFactory = $this->getService(MagazineFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
         $this->pageFactory = $this->getService(EntryPageFactory::class);
+        $this->tombstoneFactory = $this->getService(TombstoneFactory::class);
 
         $this->createWrapper = $this->getService(CreateWrapper::class);
         $this->likeWrapper = $this->getService(LikeWrapper::class);
@@ -255,6 +269,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->requestStack = $this->getService(RequestStack::class);
         $this->router = $this->getService(RouterInterface::class);
         $this->bus = $this->getService(MessageBusInterface::class);
+        $this->projectInfoService = $this->getService(ProjectInfoService::class);
+        $this->logger = $this->getService(LoggerInterface::class);
 
         // clear all cache before every test
         $app = new Application($this->client->getKernel());
