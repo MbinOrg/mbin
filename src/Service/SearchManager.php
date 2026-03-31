@@ -132,8 +132,12 @@ class SearchManager
             // the url could resolve to a different id.
             try {
                 $body = $this->apHttpClient->getActivityObject($url);
-                $apId = $body['id'];
-                $objects = $this->findByApId($apId);
+                if (null !== $body) {
+                    $apId = $body['id'];
+                    $objects = $this->findByApId($apId);
+                } else {
+                    $apId = $url;
+                }
             } catch (\Throwable $e) {
                 $body = null;
                 $apId = $url;
