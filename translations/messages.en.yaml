@@ -1207,3 +1207,12 @@ reached_end: You've reached the end
 first_page: First page
 next_page: Next page
 previous_page: Previous page
+filter_list_create: Create Filter List
+filter_lists: Filter lists
+filter_lists_where_to_filter: Where to apply the filter
+filter_lists_filter_words: Filtered words
+expiration_date: Expiration date
+filter_lists_filter_location: Active in
+filter_lists_word_exact_match: Exact match
+filter_lists_word_exact_match_help: If exact match is true, then the search will be case sensitive
+feeds: Feeds

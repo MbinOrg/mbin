@@ -31,6 +31,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Doctrine\ORM\PersistentCollection;
 use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
@@ -248,6 +249,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $pushSubscriptions;
     #[OneToMany(mappedBy: 'user', targetEntity: BookmarkList::class, fetch: 'EXTRA_LAZY')]
     public Collection $bookmarkLists;
+    #[OneToMany(targetEntity: UserFilterList::class, mappedBy: 'user', fetch: 'LAZY')]
+    public PersistentCollection $filterLists;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -984,6 +987,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return UserFilterList[]
+     */
+    public function getCurrentFilterLists(): array
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->gte('expirationDate', new \DateTimeImmutable()))
+            ->orWhere(Criteria::expr()->isNull('expirationDate'));
+
+        return $this->filterLists->matching($criteria)->toArray();
     }
 
     /**

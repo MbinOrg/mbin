@@ -1,0 +1,30 @@
+{{ form_start(form) }}
+{{ form_row(form.name, {label: 'name'}) }}
+<div class="form-control">
+    {{ form_label(form.expirationDate, 'expiration_date') }}
+    {{ form_widget(form.expirationDate, {'attr': {'class': 'form-control', 'style': 'padding: 1rem .5rem;', 'title': 'expiration_date'|trans}}) }}
+</div>
+
+<div>{{ 'filter_lists_where_to_filter'|trans }}:</div>
+{{ form_row(form.feeds) }}
+{{ form_row(form.comments) }}
+{{ form_row(form.profile) }}
+
+{{ form_label(form.words) }} <span class="help-text">{{ 'filter_lists_word_exact_match_help'|trans }}</span>
+<div {{ stimulus_controller('form_collection') }}
+    data-form-collection-index-value="{{ form.words|length > 0 ? form.words|last.vars.name + 1 : 0 }}"
+    data-form-collection-prototype-value="{{ form_widget(form.words.vars.prototype)|e('html_attr') }}"
+>
+    {{ form_widget(form.words) }}
+    <div class="words-container" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+    </div>
+    <div style="text-align: center;">
+        <button class="btn btn__primary" type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}>
+            {{ '+' }}
+        </button>
+    </div>
+</div>
+<div class="text-right">
+    {{ form_row(form.submit, {label: btn_label, attr: {class: 'btn btn__primary'}}) }}
+</div>
+{{ form_end(form) }}
