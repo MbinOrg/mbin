@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "558bd22be6be876ab7f5debca824160a",
+    "content-hash": "a51ed118696bdeb6ebcabc293f682d46",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2655,6 +2655,62 @@
                 }
             ],
             "time": "2026-03-10T16:41:02+00:00"
+        },
+        {
+            "name": "heymoon/doctrine-psql-enum",
+            "version": "3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heymoon-cc/doctrine-psql-enum.git",
+                "reference": "2fcaccd489ca87ce81dda1d50ae63df955d4d304"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heymoon-cc/doctrine-psql-enum/zipball/2fcaccd489ca87ce81dda1d50ae63df955d4d304",
+                "reference": "2fcaccd489ca87ce81dda1d50ae63df955d4d304",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^4",
+                "doctrine/doctrine-bundle": "^2.0|^3.0",
+                "doctrine/orm": "^3.0",
+                "php": ">=8.2",
+                "symfony/framework-bundle": "7.*|8.*"
+            },
+            "require-dev": {
+                "doctrine/doctrine-migrations-bundle": "3.*",
+                "phpunit/phpunit": "^9.5",
+                "symfony/orm-pack": "2.*",
+                "symfony/var-exporter": "^7",
+                "symfony/yaml": "7.*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "HeyMoon\\DoctrinePostgresEnum\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Egor",
+                    "email": "me@heymoon.cc"
+                }
+            ],
+            "description": "Store PHP native enums as PostgeSQL custom enum types",
+            "keywords": [
+                "doctrine-orm",
+                "enum",
+                "postgresql"
+            ],
+            "support": {
+                "issues": "https://github.com/heymoon-cc/doctrine-psql-enum/issues",
+                "source": "https://github.com/heymoon-cc/doctrine-psql-enum/tree/3.4.0"
+            },
+            "time": "2026-03-30T12:59:08+00:00"
         },
         {
             "name": "imagine/imagine",
