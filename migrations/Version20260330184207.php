@@ -23,7 +23,6 @@ final class Version20260330184207 extends AbstractMigration
         $this->addSql('ALTER TABLE message_thread ALTER updated_at DROP NOT NULL');
         $this->addSql('ALTER TABLE "user" ALTER fields TYPE JSONB');
         $this->addSql('ALTER TABLE "user" ALTER notify_on_user_signup SET NOT NULL');
-        $this->addSql('ALTER TABLE "user" ALTER title SET NOT NULL');
 
         $this->addSql('COMMENT ON COLUMN activity.uuid IS \'\'');
         $this->addSql('COMMENT ON COLUMN activity.inner_activity_id IS \'\'');
@@ -111,8 +110,6 @@ final class Version20260330184207 extends AbstractMigration
         $this->addSql('ALTER TABLE message_thread ALTER updated_at SET NOT NULL');
         $this->addSql('ALTER TABLE "user" ALTER fields TYPE JSON');
         $this->addSql('ALTER TABLE "user" ALTER notify_on_user_signup DROP NOT NULL');
-        $this->addSql('ALTER TABLE "user" ALTER title DROP NOT NULL');
-        $this->addSql('ALTER TABLE "user" ALTER title DROP NOT NULL');
 
         $this->addSql('COMMENT ON COLUMN activity.uuid IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN activity.created_at IS \'(DC2Type:datetimetz_immutable)\'');
