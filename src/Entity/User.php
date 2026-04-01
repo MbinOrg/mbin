@@ -250,7 +250,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: BookmarkList::class, fetch: 'EXTRA_LAZY')]
     public Collection $bookmarkLists;
     #[OneToMany(targetEntity: UserFilterList::class, mappedBy: 'user', fetch: 'LAZY')]
-    public PersistentCollection $filterLists;
+    public Collection $filterLists;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -323,6 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->oAuth2UserConsents = new ArrayCollection();
         $this->setApplicationStatus($applicationStatus);
         $this->applicationText = $applicationText;
+        $this->filterLists = new ArrayCollection();
     }
 
     public function getId(): int

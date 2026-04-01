@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api\User;
 
 use App\DTO\UserFilterListDto;
+use App\DTO\UserFilterListResponseDto;
 use App\Entity\UserFilterList;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
@@ -94,7 +95,7 @@ class UserFilterListApi extends UserBaseApi
         ],
         content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
     )]
-    #[OA\RequestBody(ref: new Model(type: UserFilterListDto::class))]
+    #[OA\RequestBody(content: new Model(type: UserFilterListDto::class))]
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
@@ -132,7 +133,7 @@ class UserFilterListApi extends UserBaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: new Model(type: UserFilterListDto::class)
+        content: new Model(type: UserFilterListResponseDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -149,7 +150,7 @@ class UserFilterListApi extends UserBaseApi
         ],
         content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
     )]
-    #[OA\RequestBody(ref: new Model(type: UserFilterListDto::class))]
+    #[OA\RequestBody(content: new Model(type: UserFilterListDto::class))]
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
