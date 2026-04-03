@@ -69,6 +69,9 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
+            $this->logger->warning('[ActivityHandler::doWork] Debug message dump: {message}', [
+                'message' => json_encode($message),
+            ]);
             $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty or invalid JSON. Truncated content: {content}, ignoring it', [
                 'content' => substr($message->payload ?? 'No payload provided', 0, 200),
             ]);
