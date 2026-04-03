@@ -69,10 +69,16 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
-            $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty or invalid JSON. Truncated content: {content}, ignoring it', [
+            // Extra logging to validate the request object
+            $this->logger->warning('[ActivityHandler::doWork] Request data: {request}', [
+                'request' => json_encode($message->request),
+            ]);
+            $host = $message->request['host'] ?? 'unknown';
+            $this->logger->warning('[ActivityHandler::doWork] Activity message from {host} was empty or invalid JSON. Truncated content: {content}, ignoring it', [
+                'host' => $host,
                 'content' => substr($message->payload ?? 'No payload provided', 0, 200),
             ]);
-            throw new UnrecoverableMessageHandlingException('Activity message from was empty or invalid JSON');
+            throw new UnrecoverableMessageHandlingException("Activity message from {$host} was empty or invalid JSON");
         }
 
         if ($message->request && $message->headers) {
