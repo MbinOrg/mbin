@@ -31,18 +31,21 @@ class UserFilterListType extends AbstractType
                 'row_attr' => [
                     'class' => 'checkbox',
                 ],
+                'help' => 'filter_lists_feeds_help',
             ])
             ->add('comments', CheckboxType::class, [
                 'required' => false,
                 'row_attr' => [
                     'class' => 'checkbox',
                 ],
+                'help' => 'filter_lists_comments_help',
             ])
             ->add('profile', CheckboxType::class, [
                 'required' => false,
                 'row_attr' => [
                     'class' => 'checkbox',
                 ],
+                'help' => 'filter_lists_profile_help',
             ])
             ->add('words', CollectionType::class, [
                 'entry_type' => UserFilterWordType::class,
