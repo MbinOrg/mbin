@@ -59,7 +59,6 @@ class EntryCommentCreateController extends AbstractController
                 $dto->entry = $entry;
                 $dto->parent = $parent;
                 $dto->ip = $this->ipResolver->resolve();
-
                 if (!$this->isGranted('create_content', $dto->magazine)) {
                     throw new AccessDeniedHttpException();
                 }
@@ -98,6 +97,7 @@ class EntryCommentCreateController extends AbstractController
     private function getForm(Entry $entry, ?EntryComment $parent = null): FormInterface
     {
         $dto = new EntryCommentDto();
+        $dto->addEmptyChoices();
 
         if ($parent && $this->getUser()->addMentionsEntries) {
             $handle = $this->mentionManager->addHandle([$parent->user->username])[0];

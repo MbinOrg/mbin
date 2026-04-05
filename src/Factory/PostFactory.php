@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use App\DTO\PollChoiceResponseDto;
+use App\DTO\PollResponseDto;
 use App\DTO\PostDto;
 use App\DTO\PostResponseDto;
+use App\Entity\PollChoice;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\BookmarkListRepository;
@@ -33,9 +36,18 @@ class PostFactory
         );
     }
 
-    public function createResponseDto(PostDto|Post $post, array $tags): PostResponseDto
+    public function createResponseDto(Post $post, array $tags): PostResponseDto
     {
-        $dto = $post instanceof Post ? $this->createDto($post) : $post;
+        $dto = $this->createDto($post);
+
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = new PollResponseDto();
+            $pollDto->voterCount = $post->poll->voterCount;
+            $user = $this->security->getUser();
+            $pollDto->currentUserHasVoted = $user instanceof User ? $post->poll->hasUserVoted($user) : null;
+            $pollDto->choices = $post->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $post->poll->choices->toArray()) : null;
+        }
 
         return PostResponseDto::create(
             $dto->getId(),
@@ -61,6 +73,7 @@ class PostFactory
             $dto->slug,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($post),
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto,
         );
     }
 

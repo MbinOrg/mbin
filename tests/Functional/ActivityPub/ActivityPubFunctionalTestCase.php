@@ -12,6 +12,8 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Message;
+use App\Entity\Poll;
+use App\Entity\PollVote;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -193,9 +195,13 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(Entry $entry):void|null $entryCreateCallback
      */
-    protected function createRemoteEntryInRemoteMagazine(Magazine $magazine, User $user, ?callable $entryCreateCallback = null): array
+    protected function createRemoteEntryInRemoteMagazine(Magazine $magazine, User $user, ?callable $entryCreateCallback = null, bool $addPoll = false): array
     {
-        $entry = $this->getEntryByTitle('remote entry', magazine: $magazine, user: $user);
+        $entry = $this->getEntryByTitle('remote entry'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
+        if ($addPoll) {
+            $entry->poll = $this->createSimplePoll(false, true);
+        }
+
         $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -213,6 +219,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $this->entitiesToRemoveAfterSetup[] = $announceActivity;
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $entry->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $entry;
 
         return $announce;
@@ -221,11 +230,14 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(EntryComment $entry):void|null $entryCommentCreateCallback
      */
-    protected function createRemoteEntryCommentInRemoteMagazine(Magazine $magazine, User $user, ?callable $entryCommentCreateCallback = null): array
+    protected function createRemoteEntryCommentInRemoteMagazine(Magazine $magazine, User $user, ?callable $entryCommentCreateCallback = null, bool $addPoll = false): array
     {
         $entries = array_filter($this->entitiesToRemoveAfterSetup, fn ($item) => $item instanceof Entry);
         $entry = $entries[array_key_first($entries)];
-        $comment = $this->createEntryComment('remote entry comment', $entry, $user);
+        $comment = $this->createEntryComment('remote entry comment'.($addPoll ? ' with poll' : ''), $entry, $user);
+        if ($addPoll) {
+            $comment->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->entryCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -243,6 +255,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $this->entitiesToRemoveAfterSetup[] = $announceActivity;
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $comment->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $comment;
 
         return $announce;
@@ -251,9 +266,12 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(Post $entry):void|null $postCreateCallback
      */
-    protected function createRemotePostInRemoteMagazine(Magazine $magazine, User $user, ?callable $postCreateCallback = null): array
+    protected function createRemotePostInRemoteMagazine(Magazine $magazine, User $user, ?callable $postCreateCallback = null, bool $addPoll = false): array
     {
-        $post = $this->createPost('remote post', magazine: $magazine, user: $user);
+        $post = $this->createPost('remote post'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
+        if ($addPoll) {
+            $post->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -271,6 +289,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $this->entitiesToRemoveAfterSetup[] = $announceActivity;
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $post->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $post;
 
         return $announce;
@@ -279,11 +300,14 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(PostComment $entry):void|null $postCommentCreateCallback
      */
-    protected function createRemotePostCommentInRemoteMagazine(Magazine $magazine, User $user, ?callable $postCommentCreateCallback = null): array
+    protected function createRemotePostCommentInRemoteMagazine(Magazine $magazine, User $user, ?callable $postCommentCreateCallback = null, bool $addPoll = false): array
     {
         $posts = array_filter($this->entitiesToRemoveAfterSetup, fn ($item) => $item instanceof Post);
         $post = $posts[array_key_first($posts)];
-        $comment = $this->createPostComment('remote post comment', $post, $user);
+        $comment = $this->createPostComment('remote post comment'.($addPoll ? ' with poll' : ''), $post, $user);
+        if ($addPoll) {
+            $comment->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->postCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -301,6 +325,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $this->entitiesToRemoveAfterSetup[] = $announceActivity;
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $comment->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $comment;
 
         return $announce;
@@ -309,9 +336,12 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(Entry $entry):void|null $entryCreateCallback
      */
-    protected function createRemoteEntryInLocalMagazine(Magazine $magazine, User $user, ?callable $entryCreateCallback = null): array
+    protected function createRemoteEntryInLocalMagazine(Magazine $magazine, User $user, ?callable $entryCreateCallback = null, bool $addPoll = false, $pollMultipleChoice = false): array
     {
-        $entry = $this->getEntryByTitle('remote entry in local', magazine: $magazine, user: $user);
+        $entry = $this->getEntryByTitle('remote entry in local'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
+        if ($addPoll) {
+            $entry->poll = $this->createSimplePoll($pollMultipleChoice, true);
+        }
         $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -326,6 +356,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $entry->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $entry;
 
         return $create;
@@ -334,11 +367,14 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(EntryComment $entry):void|null $entryCommentCreateCallback
      */
-    protected function createRemoteEntryCommentInLocalMagazine(Magazine $magazine, User $user, ?callable $entryCommentCreateCallback = null): array
+    protected function createRemoteEntryCommentInLocalMagazine(Magazine $magazine, User $user, ?callable $entryCommentCreateCallback = null, bool $addPoll = false): array
     {
         $entries = array_filter($this->entitiesToRemoveAfterSetup, fn ($item) => $item instanceof Entry && 'remote entry in local' === $item->title);
         $entry = $entries[array_key_first($entries)];
-        $comment = $this->createEntryComment('remote entry comment', $entry, $user);
+        $comment = $this->createEntryComment('remote entry comment'.($addPoll ? ' with poll' : ''), $entry, $user);
+        if ($addPoll) {
+            $comment->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->entryCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -353,6 +389,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $comment->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $comment;
 
         return $create;
@@ -361,9 +400,12 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(Post $entry):void|null $postCreateCallback
      */
-    protected function createRemotePostInLocalMagazine(Magazine $magazine, User $user, ?callable $postCreateCallback = null): array
+    protected function createRemotePostInLocalMagazine(Magazine $magazine, User $user, ?callable $postCreateCallback = null, bool $addPoll = false): array
     {
-        $post = $this->createPost('remote post in local', magazine: $magazine, user: $user);
+        $post = $this->createPost('remote post in local'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
+        if ($addPoll) {
+            $post->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -378,6 +420,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $post->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $post;
 
         return $create;
@@ -386,11 +431,14 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     /**
      * @param callable(PostComment $entry):void|null $postCommentCreateCallback
      */
-    protected function createRemotePostCommentInLocalMagazine(Magazine $magazine, User $user, ?callable $postCommentCreateCallback = null): array
+    protected function createRemotePostCommentInLocalMagazine(Magazine $magazine, User $user, ?callable $postCommentCreateCallback = null, bool $addPoll = false): array
     {
         $posts = array_filter($this->entitiesToRemoveAfterSetup, fn ($item) => $item instanceof Post && 'remote post in local' === $item->body);
         $post = $posts[array_key_first($posts)];
-        $comment = $this->createPostComment('remote post comment in local', $post, $user);
+        $comment = $this->createPostComment('remote post comment in local'.($addPoll ? ' with poll' : ''), $post, $user);
+        if ($addPoll) {
+            $comment->poll = $this->createSimplePoll(false, true);
+        }
         $json = $this->postCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
 
@@ -405,6 +453,9 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        if ($addPoll) {
+            $this->entitiesToRemoveAfterSetup[] = $comment->poll;
+        }
         $this->entitiesToRemoveAfterSetup[] = $comment;
 
         return $create;
@@ -435,6 +486,29 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         }
 
         $this->entitiesToRemoveAfterSetup[] = $createActivity;
+
+        return $create;
+    }
+
+    public function createRemoteVoteOnLocalPoll(Poll $localPoll, User $remoteUser, string $choice): array
+    {
+        $vote = new PollVote();
+        $vote->poll = $localPoll;
+        $vote->voter = $remoteUser;
+        $vote->choice = $localPoll->findChoice($choice);
+        $this->entityManager->persist($vote);
+
+        $createActivity = $this->createWrapper->build($vote);
+        $create = $this->activityJsonBuilder->buildActivityJson($createActivity);
+        // replace current domain with previous one, because we are creating a remote object with the remote domain
+        // responding to a local object with a local domain and the local domain is the previous one
+        $create['object']['inReplyTo'] = str_replace($this->settingsManager->get('KBIN_DOMAIN'), $this->prev, $create['object']['inReplyTo']);
+        $create['to'][0] = str_replace($this->settingsManager->get('KBIN_DOMAIN'), $this->prev, $create['to'][0]);
+        $create['object']['to'][0] = str_replace($this->settingsManager->get('KBIN_DOMAIN'), $this->prev, $create['object']['to'][0]);
+        $this->testingApHttpClient->activityObjects[$create['id']] = $create;
+
+        $this->entitiesToRemoveAfterSetup[] = $createActivity;
+        $this->entitiesToRemoveAfterSetup[] = $vote;
 
         return $create;
     }

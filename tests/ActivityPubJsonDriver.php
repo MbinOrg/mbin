@@ -70,6 +70,10 @@ class ActivityPubJsonDriver extends JsonDriver
             $data['updated'] = 'SCRUBBED_DATE';
         }
 
+        if (isset($data['endTime'])) {
+            $data['endTime'] = 'SCRUBBED_DATE';
+        }
+
         if (isset($data['publicKey'])) {
             $data['publicKey'] = 'SCRUBBED_KEY';
         }
@@ -113,6 +117,10 @@ class ActivityPubJsonDriver extends JsonDriver
 
         if (isset($data->updated)) {
             $data->updated = 'SCRUBBED_DATE';
+        }
+
+        if (isset($data->endTime)) {
+            $data->endTime = 'SCRUBBED_DATE';
         }
 
         if (isset($data->publicKey)) {

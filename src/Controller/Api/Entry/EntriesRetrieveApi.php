@@ -83,10 +83,8 @@ class EntriesRetrieveApi extends EntriesBaseApi
 
         $dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
-        $dto = $factory->createDto($entry);
-
         return new JsonResponse(
-            $this->serializeEntry($dto, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }
@@ -216,7 +214,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntry($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -338,7 +336,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntry($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -460,7 +458,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntry($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -582,7 +580,7 @@ class EntriesRetrieveApi extends EntriesBaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntry($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }

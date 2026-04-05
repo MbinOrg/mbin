@@ -23,6 +23,8 @@ use App\Entity\Magazine;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Entity\Notification;
+use App\Entity\Poll;
+use App\Entity\PollChoice;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\Site;
@@ -638,5 +640,23 @@ trait FactoryTrait
         assertNotNull($dto->id);
 
         return $dto;
+    }
+
+    protected function createSimplePoll(bool $isMultipleChoice, bool $isRemote): Poll
+    {
+        $poll = new Poll();
+        $poll->multipleChoice = $isMultipleChoice;
+        $poll->isRemote = $isRemote;
+        $this->entityManager->persist($poll);
+        foreach (['A', 'B', 'C'] as $choiceName) {
+            $choice = new PollChoice();
+            $choice->name = $choiceName;
+            $choice->poll = $poll;
+            $poll->choices->add($choice);
+            $this->entityManager->persist($choice);
+        }
+        $this->entityManager->refresh($poll);
+
+        return $poll;
     }
 }

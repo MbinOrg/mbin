@@ -33,6 +33,31 @@
     {{ form_row(form.magazine, {label: false}) }}
     {{ form_row(form.tags, {label: 'tags'}) }}
     {# form_row(form.badges, {label: 'badges'}) #}
+
+    {% if entry.poll is not same as null %}
+        <hr />
+        <h5>{{ 'poll'|trans }}</h5>
+        <p>{{ 'poll_edit_voters_reset'|trans }}</p>
+        <div class="sub-form">
+            {{ form_row(form.isMultipleChoicePoll, {row_attr: {class: 'checkbox'}}) }}
+            {{ form_row(form.pollEndsAt, {attr: {style: 'padding: 1rem .5rem;'}}) }}
+
+            {{ form_label(form.choices) }}
+            <div {{ stimulus_controller('form_collection') }} class="collection-container hide-index"
+                                                              data-form-collection-index-value="{{ form.choices|length > 0 ? form.choices|last.vars.name + 1 : 0 }}"
+                                                              data-form-collection-prototype-value="{{ form_widget(form.choices.vars.prototype)|e('html_attr') }}"
+            >
+                {{ form_widget(form.choices) }}
+                <div class="choices-container" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn__primary" type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}>
+                        {{ '+' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 <div class="row params">
     {{ form_row(form.isAdult, {label: 'is_adult', row_attr: {class: 'checkbox'}}) }}
     {{ form_row(form.isOc, {label: 'oc', row_attr: {class: 'checkbox'}}) }}
