@@ -34,7 +34,7 @@ class UserFilterListApi extends UserBaseApi
                 new OA\Property(
                     property: 'items',
                     type: 'array',
-                    items: new OA\Items(ref: new Model(type: UserFilterListDto::class))
+                    items: new OA\Items(ref: new Model(type: UserFilterListResponseDto::class))
                 ),
             ]
         )
@@ -78,7 +78,7 @@ class UserFilterListApi extends UserBaseApi
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: new Model(type: UserFilterListDto::class)
+        content: new Model(type: UserFilterListResponseDto::class)
     )]
     #[OA\Response(
         response: 401,
@@ -157,7 +157,7 @@ class UserFilterListApi extends UserBaseApi
     #[IsGranted(FilterListVoter::EDIT, 'list')]
     public function edit(
         RateLimiterFactoryInterface $apiUpdateLimiter,
-        #[MapEntity(class: UserFilterList::class)] UserFilterList $list,
+        #[MapEntity] UserFilterList $list,
         #[MapRequestPayload] UserFilterListDto $dto,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
@@ -179,7 +179,7 @@ class UserFilterListApi extends UserBaseApi
     }
 
     #[OA\Response(
-        response: 200,
+        response: 204,
         description: 'Filter list deleted',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),

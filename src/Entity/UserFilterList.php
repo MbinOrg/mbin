@@ -54,7 +54,7 @@ class UserFilterList
     /**
      * @return string[]
      */
-    public function getLocationStrings(): array
+    public function getRealmStrings(): array
     {
         $res = [];
         if ($this->feeds) {
@@ -68,5 +68,14 @@ class UserFilterList
         }
 
         return $res;
+    }
+
+    public function isExpired(): bool
+    {
+        if (null !== $this->expirationDate) {
+            return $this->expirationDate <= new \DateTimeImmutable();
+        }
+
+        return false;
     }
 }

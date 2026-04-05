@@ -279,11 +279,11 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
             foreach ($list->words as $word) {
                 if ($word['exactMatch']) {
-                    if (str_contains($this->body, $word['word'])) {
+                    if (false !== mb_strpos($this->body, $word['word'])) {
                         return true;
                     }
                 } else {
-                    if (str_contains(strtolower($this->body), strtolower($word['word']))) {
+                    if (false !== mb_stripos($this->body, $word['word'])) {
                         return true;
                     }
                 }

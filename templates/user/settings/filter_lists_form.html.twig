@@ -6,9 +6,30 @@
 </div>
 
 <div>{{ 'filter_lists_where_to_filter'|trans }}:</div>
-{{ form_row(form.feeds) }}
-{{ form_row(form.comments) }}
-{{ form_row(form.profile) }}
+
+<div class="checkbox">
+    {{ form_label(form.feeds) }}
+    {{ form_widget(form.feeds) }}
+</div>
+<div class="checkbox help-text">
+    {{ form_help(form.feeds) }}
+</div>
+
+<div class="checkbox">
+    {{ form_label(form.comments) }}
+    {{ form_widget(form.comments) }}
+</div>
+<div class="checkbox help-text">
+    {{ form_help(form.comments) }}
+</div>
+
+<div class="checkbox">
+    {{ form_label(form.profile) }}
+    {{ form_widget(form.profile) }}
+</div>
+<div class="checkbox help-text">
+    {{ form_help(form.profile) }}
+</div>
 
 {{ form_label(form.words) }} <span class="help-text">{{ 'filter_lists_word_exact_match_help'|trans }}</span>
 <div {{ stimulus_controller('form_collection') }}

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\UserFilterList;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema]
 class UserFilterListResponseDto implements \JsonSerializable
 {
     public ?int $id = null;

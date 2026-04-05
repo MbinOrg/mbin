@@ -1,7 +1,7 @@
 <div class="filter-list">
     <div class="section">
         <h3>
-            <a href="{{ path('user_settings_filter_lists_edit', {id: list.id}) }}">{{ list.name }}</a>
+            <a href="{{ path('user_settings_filter_lists_edit', {id: list.id}) }}">{{ list.name }}{% if list.isExpired %} ({{ 'expired'|trans|lower }}){% endif %}</a>
         </h3>
         <div>
             {{ 'filter_lists_filter_words'|trans }}:
@@ -12,7 +12,7 @@
         <div>
             {{ 'filter_lists_filter_location'|trans }}:
             <span>
-                {{ list.getLocationStrings()|map(location => location|trans)|join(', ') }}
+                {{ list.getRealmStrings()|map(location => location|trans)|join(', ') }}
             </span>
         </div>
         <div class="flex flex-reverse">

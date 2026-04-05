@@ -1216,3 +1216,7 @@ filter_lists_filter_location: Active in
 filter_lists_word_exact_match: Exact match
 filter_lists_word_exact_match_help: If exact match is true, then the search will be case sensitive
 feeds: Feeds
+filter_lists_feeds_help: Filter words in threads, microblogs and comments in feeds, like /all, /sub, magazine feeds, etc.
+filter_lists_comments_help: Filter words while viewing a thread or microblog in the comment tree.
+filter_lists_profile_help: Filter words while viewing a users' profile in their content.
+expired: Expired
