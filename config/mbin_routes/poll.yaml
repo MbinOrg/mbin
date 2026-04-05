@@ -1,0 +1,4 @@
+poll_vote:
+  controller: App\Controller\PollVoteController::vote
+  path: /poll/{id}/vote
+  methods: [GET]

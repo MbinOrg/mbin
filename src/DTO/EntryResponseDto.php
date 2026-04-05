@@ -61,6 +61,7 @@ class EntryResponseDto implements \JsonSerializable
      */
     #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: EntryResponseDto::class)))]
     public ?array $crosspostedEntries;
+    public ?PollResponseDto $poll = null;
 
     /**
      * @param string[]|null $bookmarks
@@ -96,6 +97,7 @@ class EntryResponseDto implements \JsonSerializable
         ?array $bookmarks = null,
         ?array $crosspostedEntries = null,
         ?bool $isAuthorModeratorInMagazine = null,
+        ?PollResponseDto $poll = null,
     ): self {
         $dto = new EntryResponseDto();
         $dto->entryId = $id;
@@ -128,6 +130,7 @@ class EntryResponseDto implements \JsonSerializable
         $dto->bookmarks = $bookmarks;
         $dto->crosspostedEntries = $crosspostedEntries;
         $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
+        $dto->poll = $poll;
 
         return $dto;
     }
@@ -149,6 +152,7 @@ class EntryResponseDto implements \JsonSerializable
                 'isFavourited',
                 'userVote',
                 'slug',
+                'poll',
             ];
         }
 
@@ -186,6 +190,7 @@ class EntryResponseDto implements \JsonSerializable
             'bookmarks' => $this->bookmarks,
             'crosspostedEntries' => $this->crosspostedEntries,
             'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
+            'poll' => $this->poll?->jsonSerialize(),
         ]);
     }
 }

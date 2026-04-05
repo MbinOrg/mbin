@@ -120,7 +120,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
+            $this->serializePostComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );
@@ -226,7 +226,7 @@ class PostCommentsCreateApi extends PostsBaseApi
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializePostComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
+            $this->serializePostComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
             status: 201,
             headers: $headers
         );
