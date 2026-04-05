@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class EntryDto implements ContentVisibilityInterface
+class EntryDto extends ContentWithPollDto implements ContentVisibilityInterface
 {
     #[Assert\NotBlank]
     public Magazine|MagazineDto|null $magazine = null;

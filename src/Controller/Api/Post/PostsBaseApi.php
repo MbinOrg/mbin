@@ -106,10 +106,6 @@ class PostsBaseApi extends BaseApi
      */
     protected function serializePostCommentTree(?PostComment $comment, PostCommentPageView $commentPageView, ?int $depth = null): array
     {
-        if (null === $comment) {
-            return [];
-        }
-
         if (null === $depth) {
             $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
         }

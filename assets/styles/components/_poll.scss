@@ -1,0 +1,24 @@
+.poll {
+  margin: auto;
+
+  form {
+    margin: auto;
+    max-width: 400px;
+  }
+
+  .poll-result {
+    margin: .5rem 0;
+  }
+
+  .choice-result {
+    margin-bottom: .5rem;
+
+    .choice-bar {
+      background-color: var(--kbin-button-primary-bg);
+      color: var(--kbin-button-primary-text-color);
+      height: .5rem;
+      border: var(--kbin-button-primary-border);
+      border-radius: var(--kbin-rounded-edges-radius);
+    }
+  }
+}

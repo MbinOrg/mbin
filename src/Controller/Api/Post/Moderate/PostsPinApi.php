@@ -76,7 +76,7 @@ class PostsPinApi extends PostsBaseApi
         $manager->pin($post);
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
+            $this->serializePost($post, $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

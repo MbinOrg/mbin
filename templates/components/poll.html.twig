@@ -1,0 +1,56 @@
+<div class="poll">
+    {% if app.user and poll.hasUserVoted(app.user) is not same as true and poll.hasEnded() is not same as true %}
+        <form action="/poll/{{ poll.id }}/vote" method="get">
+            {% if poll.multipleChoice %}
+                {% for choice in poll.choices %}
+                    <div class="checkbox">
+                        <label for="choice_{{ choice.id }}">{{ choice.name }}</label>
+                        <input id="choice_{{ choice.id }}" type="checkbox" name="choice[]" value="{{ choice.name }}" />
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for choice in poll.choices %}
+                    <div class="checkbox">
+                        <label for="choice_{{ choice.id }}">{{ choice.name }}</label>
+                        <input id="choice_{{ choice.id }}" type="radio" name="choice[]" value="{{ choice.name }}" />
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="text-right">
+                <button id="poll_vote_submit" class="btn btn__primary" type="submit">{{ 'poll_vote'|trans }}</button>
+            </div>
+        </form>
+    {% else %}
+        <div class="poll-result">
+            {% for choice in poll.getResultData(app.user) %}
+                <div class="choice-result">
+                    <div class="choice-label">
+                        <span class="percentage">{{ choice['percentage'] }}%</span>
+                        <span class="name">
+                            {{ choice['name'] }}
+                            {% if choice['userVoted'] %}
+                                <i class="fa fa-check"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="choice-bar" style="width: {{ choice['percentage'] }}%"></div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="flex">
+            <div class="flex-item">
+                <span class="text-muted">{{ poll.voterCount }} {{ 'poll_voters'|trans({'%count%': poll.voterCount}) }}</span>
+                {% if poll.hasEnded %}
+                    <span style="margin-left: 2rem;">{{ 'poll_ended'|trans }} {{ component('date', {date: poll.endDate}) }}</span>
+                {% else %}
+                    <span style="margin-left: 2rem;">{{ 'poll_ends'|trans }} {{ component('date', {date: poll.endDate}) }}</span>
+                {% endif %}
+            </div>
+            {% if isExternal %}
+                <div class="flex-item text-right">
+                    <a href="">{{ 'poll_update_results'|trans }}</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

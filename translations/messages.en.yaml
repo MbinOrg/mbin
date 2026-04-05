@@ -1226,3 +1226,15 @@ filter_lists_feeds_help: Filter words in threads, microblogs and comments in fee
 filter_lists_comments_help: Filter words while viewing a thread or microblog in the comment tree.
 filter_lists_profile_help: Filter words while viewing a users' profile in their content.
 expired: Expired
+poll: Poll
+poll_edit_voters_reset: All votes will be reset after editing!
+poll_ends_at: Poll ends at
+poll_choices: Choices
+poll_is_multiple_choice: Is multiple choice
+poll_vote: Vote
+poll_ends: Poll ends
+poll_ended: Poll ended
+poll_voters: '{0}Persons|{1}Person|]1,Inf[ Persons'
+poll_update_results: Update results
+notification_title_poll_ended: A poll you have voted in has ended
+notification_title_poll_edited: A poll you have voted in has been edited
