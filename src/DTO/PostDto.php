@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class PostDto implements ContentVisibilityInterface
+class PostDto extends ContentWithPollDto implements ContentVisibilityInterface
 {
     public const MAX_BODY_LENGTH = 5000;
 

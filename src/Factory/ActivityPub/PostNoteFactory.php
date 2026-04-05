@@ -32,6 +32,7 @@ class PostNoteFactory
         private readonly MentionManager $mentionManager,
         private readonly TagExtractor $tagExtractor,
         private readonly MarkdownConverter $markdownConverter,
+        private readonly PollFactory $pollFactory,
     ) {
     }
 
@@ -92,6 +93,10 @@ class PostNoteFactory
 
         if ($post->image) {
             $note = $this->imageWrapper->build($note, $post->image, $post->getShortTitle());
+        }
+
+        if ($post->poll) {
+            $this->pollFactory->addToNote($note, $post->poll);
         }
 
         $note['to'] = array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body)));

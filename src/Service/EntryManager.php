@@ -68,6 +68,7 @@ class EntryManager implements ContentManagerInterface
         private readonly ImageRepository $imageRepository,
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly CacheInterface $cache,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -144,6 +145,10 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
+        if ($dto->addPoll) {
+            $this->pollManager->createPoll($dto, $entry);
+        }
+
         $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
         $this->tagManager->updateEntryTags($entry, $tags);
 
@@ -219,6 +224,10 @@ class EntryManager implements ContentManagerInterface
         }
         if (empty($entry->body) && empty($entry->title) && null === $entry->image && null === $entry->url) {
             throw new \Exception('Entry body, name, url and image cannot all be empty');
+        }
+
+        if ($entry->poll) {
+            $this->pollManager->edit($entry->poll, $dto, $editedBy);
         }
 
         $entry->apLikeCount = $dto->apLikeCount;
