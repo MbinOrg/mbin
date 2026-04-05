@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
@@ -304,5 +305,20 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $cursor;
+    }
+
+    public function contentUrl(ContentInterface $content): string
+    {
+        if ($content instanceof Entry) {
+            return $this->entryUrl($content);
+        } elseif ($content instanceof EntryComment) {
+            return $this->entryCommentViewUrl($content);
+        } elseif ($content instanceof Post) {
+            return $this->postUrl($content);
+        } elseif ($content instanceof PostComment) {
+            return $this->postUrl($content->post).'#post-comment-'.$content->getId();
+        }
+
+        return '#';
     }
 }

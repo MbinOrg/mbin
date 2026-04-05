@@ -6,8 +6,11 @@ namespace App\Factory;
 
 use App\DTO\EntryDto;
 use App\DTO\EntryResponseDto;
+use App\DTO\PollChoiceResponseDto;
+use App\DTO\PollResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
+use App\Entity\PollChoice;
 use App\Entity\User;
 use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
@@ -42,10 +45,18 @@ class EntryFactory
         );
     }
 
-    public function createResponseDto(EntryDto|Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
+    public function createResponseDto(Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
     {
-        $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
+        $dto = $this->createDto($entry);
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $user = $this->security->getUser();
+            $pollDto = new PollResponseDto();
+            $pollDto->voterCount = $entry->poll->voterCount;
+            $pollDto->currentUserHasVoted = $user instanceof User ? $entry->poll->hasUserVoted($user) : null;
+            $pollDto->choices = $entry->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $entry->poll->choices->toArray()) : null;
+        }
 
         return EntryResponseDto::create(
             $dto->getId(),
@@ -77,6 +88,7 @@ class EntryFactory
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
             crosspostedEntries: $crosspostedEntries,
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto
         );
     }
 
@@ -115,6 +127,15 @@ class EntryFactory
         $dto->apDislikeCount = $entry->apDislikeCount;
         $dto->apShareCount = $entry->apShareCount;
         $dto->tags = $this->tagLinkRepository->getTagsOfContent($entry);
+
+        if ($entry->poll) {
+            $dto->addPoll = true;
+            $dto->pollEndsAt = $entry->poll->endDate;
+            $dto->isMultipleChoicePoll = $entry->poll->multipleChoice;
+            foreach ($entry->poll->choices as $choice) {
+                $dto->choices[] = $choice->name;
+            }
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

@@ -45,6 +45,7 @@ class EntryCommentManager implements ContentManagerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageRepository $imageRepository,
         private readonly SettingsManager $settingsManager,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -114,6 +115,10 @@ class EntryCommentManager implements ContentManagerInterface
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
+        if ($dto->addPoll) {
+            $this->pollManager->createPoll($dto, $comment);
+        }
+
         $this->tagManager->updateEntryCommentTags($comment, $this->tagExtractor->extract($comment->body) ?? []);
 
         $this->dispatcher->dispatch(new EntryCommentCreatedEvent($comment));
@@ -149,6 +154,10 @@ class EntryCommentManager implements ContentManagerInterface
         $comment->editedAt = new \DateTimeImmutable('@'.time());
         if (empty($comment->body) && null === $comment->image) {
             throw new \Exception('Comment body and image cannot be empty');
+        }
+
+        if ($comment->poll) {
+            $this->pollManager->edit($comment->poll, $dto, $editedByUser);
         }
 
         $comment->apLikeCount = $dto->apLikeCount;

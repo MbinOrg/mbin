@@ -11,9 +11,13 @@ use App\Form\EventListener\ImageListener;
 use App\Form\Type\LanguageType;
 use App\Service\SettingsManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -45,6 +49,30 @@ class EntryCommentType extends AbstractType
             )
             ->add('imageUrl', UrlType::class, ['required' => false, 'default_protocol' => 'https'])
             ->add('imageAlt', TextareaType::class, ['required' => false])
+            ->add('addPoll', CheckboxType::class, [
+                'required' => false,
+            ])
+            ->add('isMultipleChoicePoll', CheckboxType::class, [
+                'required' => false,
+                'label' => 'poll_is_multiple_choice',
+            ])
+            ->add('pollEndsAt', DateTimeType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'required' => false,
+                'label' => 'poll_ends_at',
+            ])
+            ->add('choices', CollectionType::class, [
+                'entry_type' => TextType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'required' => false,
+                'attr' => [
+                    'class' => 'existing-collection-items',
+                ],
+                'label' => 'poll_choices',
+            ])
             ->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber($this->defaultLanguage);

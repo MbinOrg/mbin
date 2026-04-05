@@ -6,7 +6,10 @@ namespace App\Factory;
 
 use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
+use App\DTO\PollChoiceResponseDto;
+use App\DTO\PollResponseDto;
 use App\Entity\EntryComment;
+use App\Entity\PollChoice;
 use App\Entity\User;
 use App\PageView\EntryCommentPageView;
 use App\Repository\BookmarkListRepository;
@@ -38,9 +41,17 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseDto(EntryCommentDto|EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
+    public function createResponseDto(EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
     {
-        $dto = $comment instanceof EntryComment ? $this->createDto($comment) : $comment;
+        $dto = $this->createDto($comment);
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = new PollResponseDto();
+            $pollDto->voterCount = $comment->poll->voterCount;
+            $user = $this->security->getUser();
+            $pollDto->currentUserHasVoted = $user instanceof User ? $comment->poll->hasUserVoted($user) : null;
+            $pollDto->choices = $comment->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $comment->poll->choices->toArray()) : null;
+        }
 
         return EntryCommentResponseDto::create(
             $dto->getId(),
@@ -66,13 +77,14 @@ class EntryCommentFactory
             $childCount,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto,
         );
     }
 
     public function createResponseTree(EntryComment $comment, EntryCommentPageView $commentPageView, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($comment, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
         $toReturn->canAuthUserModerate = $canModerate;
