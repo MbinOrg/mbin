@@ -370,19 +370,19 @@ class SearchRetrieveApi extends BaseApi
         if ($item instanceof Entry) {
             $this->handlePrivateContent($item);
 
-            return new SearchResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            return new SearchResponseDto(entry: $this->serializeEntry($item, $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof Post) {
             $this->handlePrivateContent($item);
 
-            return new SearchResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            return new SearchResponseDto(post: $this->serializePost($item, $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof EntryComment) {
             $this->handlePrivateContent($item);
 
-            return new SearchResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            return new SearchResponseDto(entryComment: $this->serializeEntryComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof PostComment) {
             $this->handlePrivateContent($item);
 
-            return new SearchResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+            return new SearchResponseDto(postComment: $this->serializePostComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
         } elseif ($item instanceof Magazine) {
             return new SearchResponseDto(magazine: $this->serializeMagazine($this->magazineFactory->createDto($item)));
         } elseif ($item instanceof User) {

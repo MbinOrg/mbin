@@ -31,6 +31,7 @@ use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\MessageManager;
+use App\Service\PollManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,6 +61,7 @@ class UpdateHandler extends MbinMessageHandler
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
         private readonly ImageFactory $imageFactory,
+        private readonly PollManager $pollManager,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -149,6 +151,7 @@ class UpdateHandler extends MbinMessageHandler
 
         $this->extractChanges($dto, $payload);
         $this->entryManager->edit($entry, $dto, $user);
+        $this->updatePollCounts($entry, $payload);
     }
 
     private function editEntryComment(EntryComment $comment, User $user, array $payload): void
@@ -163,6 +166,7 @@ class UpdateHandler extends MbinMessageHandler
         $this->extractChanges($dto, $payload);
 
         $this->entryCommentManager->edit($comment, $dto, $user);
+        $this->updatePollCounts($comment, $payload);
     }
 
     private function editPost(Post $post, User $user, array $payload): void
@@ -177,6 +181,7 @@ class UpdateHandler extends MbinMessageHandler
         $this->extractChanges($dto, $payload);
 
         $this->postManager->edit($post, $dto, $user);
+        $this->updatePollCounts($post, $payload);
     }
 
     private function editPostComment(PostComment $comment, User $user, array $payload): void
@@ -191,6 +196,14 @@ class UpdateHandler extends MbinMessageHandler
         $this->extractChanges($dto, $payload);
 
         $this->postCommentManager->edit($comment, $dto, $user);
+        $this->updatePollCounts($comment, $payload);
+    }
+
+    private function updatePollCounts(Entry|EntryComment|Post|PostComment $content, array $payload): void
+    {
+        if (($poll = $content->poll) && $this->pollManager->hasPollProperties($payload)) {
+            $this->pollManager->updatePollCounts($poll, $payload);
+        }
     }
 
     private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto, array $payload): void

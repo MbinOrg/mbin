@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping\Index;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Webmozart\Assert\Assert;
 
@@ -80,6 +81,8 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public ?string $ip = null;
     #[Column(type: 'json', nullable: true)]
     public ?array $mentions = null;
+    #[OneToOne(targetEntity: Poll::class)]
+    public ?Poll $poll = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]
     public Collection $children;

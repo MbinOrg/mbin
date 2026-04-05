@@ -554,16 +554,16 @@ class CombinedRetrieveApi extends BaseApi
         foreach ($content as $item) {
             if ($item instanceof Entry) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(entry: $this->serializeEntry($item, $this->tagLinkRepository->getTagsOfContent($item)));
             } elseif ($item instanceof Post) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(post: $this->serializePost($item, $this->tagLinkRepository->getTagsOfContent($item)));
             } elseif ($item instanceof EntryComment) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(entryComment: $this->serializeEntryComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
             } elseif ($item instanceof PostComment) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(postComment: $this->serializePostComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
             }
         }
 
@@ -576,10 +576,10 @@ class CombinedRetrieveApi extends BaseApi
         foreach ($content as $item) {
             if ($item instanceof Entry) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(entry: $this->serializeEntry($item, $this->tagLinkRepository->getTagsOfContent($item)));
             } elseif ($item instanceof Post) {
                 $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                $result[] = new ContentResponseDto(post: $this->serializePost($item, $this->tagLinkRepository->getTagsOfContent($item)));
             }
         }
 

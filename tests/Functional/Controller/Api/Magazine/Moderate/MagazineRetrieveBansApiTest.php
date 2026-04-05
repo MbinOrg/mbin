@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Magazine\Moderate;
 
 use App\DTO\MagazineBanDto;
-use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 
 class MagazineRetrieveBansApiTest extends WebTestCase
 {
-    public const BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
-
     public function testApiCannotRetrieveMagazineBansAnonymous(): void
     {
         $magazine = $this->getMagazineByName('test');
@@ -77,7 +74,7 @@ class MagazineRetrieveBansApiTest extends WebTestCase
         self::assertCount(1, $jsonData['items']);
         self::assertArrayKeysMatch(self::BAN_RESPONSE_KEYS, $jsonData['items'][0]);
         self::assertEquals($ban->reason, $jsonData['items'][0]['reason']);
-        self::assertArrayKeysMatch(MagazineRetrieveApiTest::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
+        self::assertArrayKeysMatch(WebTestCase::MAGAZINE_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['magazine']);
         self::assertSame($magazine->getId(), $jsonData['items'][0]['magazine']['magazineId']);
         self::assertArrayKeysMatch(self::USER_SMALL_RESPONSE_KEYS, $jsonData['items'][0]['bannedUser']);
         self::assertSame($bannedUser->getId(), $jsonData['items'][0]['bannedUser']['userId']);

@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
-use App\DTO\EntryDto;
 use App\DTO\EntryResponseDto;
 use App\DTO\MagazineDto;
 use App\DTO\MagazineResponseDto;
-use App\DTO\PostCommentDto;
+use App\DTO\PollResponseDto;
 use App\DTO\PostCommentResponseDto;
-use App\DTO\PostDto;
 use App\DTO\PostResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
@@ -30,6 +27,7 @@ use App\Entity\EntryComment;
 use App\Entity\Image;
 use App\Entity\MagazineLog;
 use App\Entity\OAuth2ClientAccess;
+use App\Entity\Poll;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\UserFilterList;
@@ -455,22 +453,22 @@ class BaseApi extends AbstractController
      *
      * @param Entry[]|null $crosspostedEntries
      */
-    protected function serializeEntry(EntryDto|Entry $dto, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
+    protected function serializeEntry(Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
     {
         $crosspostedEntryDtos = null;
         if (null !== $crosspostedEntries) {
             $crosspostedEntryDtos = array_map(fn (Entry $item) => $this->entryFactory->createResponseDto($item, []), $crosspostedEntries);
         }
-        $response = $this->entryFactory->createResponseDto($dto, $tags, $crosspostedEntryDtos);
+        $response = $this->entryFactory->createResponseDto($entry, $tags, $crosspostedEntryDtos);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY:VOTE')) {
-            $response->isFavourited = $dto instanceof EntryDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
-            $response->userVote = $dto instanceof EntryDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $entry->isFavored($this->getUserOrThrow());
+            $response->userVote = $entry->getUserChoice($this->getUserOrThrow());
         }
 
         if ($user = $this->getUser()) {
-            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+            $response->canAuthUserModerate = $entry->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $entry)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
@@ -479,13 +477,13 @@ class BaseApi extends AbstractController
     /**
      * Serialize a single entry comment to JSON.
      */
-    protected function serializeEntryComment(EntryCommentDto $comment, array $tags): EntryCommentResponseDto
+    protected function serializeEntryComment(EntryComment $comment, array $tags): EntryCommentResponseDto
     {
         $response = $this->entryCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_ENTRY_COMMENT:VOTE')) {
-            $response->isFavourited = $comment->isFavourited;
-            $response->userVote = $comment->userVote;
+            $response->isFavourited = $comment->isFavored($this->getUserOrThrow());
+            $response->userVote = $comment->getUserChoice($this->getUserOrThrow());
         }
 
         if ($user = $this->getUser()) {
@@ -498,21 +496,18 @@ class BaseApi extends AbstractController
     /**
      * Serialize a single post to JSON.
      */
-    protected function serializePost(Post|PostDto $dto, array $tags): PostResponseDto
+    protected function serializePost(Post $post, array $tags): PostResponseDto
     {
-        if (null === $dto) {
-            return [];
-        }
-        $response = $this->postFactory->createResponseDto($dto, $tags);
+        $response = $this->postFactory->createResponseDto($post, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
-            $response->isFavourited = $dto instanceof PostDto ? $dto->isFavourited : $dto->isFavored($this->getUserOrThrow());
-            $response->userVote = $dto instanceof PostDto ? $dto->userVote : $dto->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $post->isFavored($this->getUserOrThrow());
+            $response->userVote = $post->getUserChoice($this->getUserOrThrow());
         }
 
         if ($user = $this->getUser()) {
-            $response->canAuthUserModerate = $dto->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
-            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $dto)?->getStatus() ?? ENotificationStatus::Default;
+            $response->canAuthUserModerate = $post->getMagazine()->userIsModerator($user) || $user->isModerator() || $user->isAdmin();
+            $response->notificationStatus = $this->notificationSettingsRepository->findOneByTarget($user, $post)?->getStatus() ?? ENotificationStatus::Default;
         }
 
         return $response;
@@ -521,13 +516,13 @@ class BaseApi extends AbstractController
     /**
      * Serialize a single comment to JSON.
      */
-    protected function serializePostComment(PostCommentDto $comment, array $tags): PostCommentResponseDto
+    protected function serializePostComment(PostComment $comment, array $tags): PostCommentResponseDto
     {
         $response = $this->postCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
-            $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
-            $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $comment->isFavored($this->getUserOrThrow());
+            $response->userVote = $comment->getUserChoice($this->getUserOrThrow());
         }
 
         if ($user = $this->getUser()) {
@@ -535,5 +530,10 @@ class BaseApi extends AbstractController
         }
 
         return $response;
+    }
+
+    protected function serializePoll(Poll $poll): PollResponseDto
+    {
+        return PollResponseDto::createFromPoll($poll, $this->getUser());
     }
 }

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use App\DTO\PollChoiceResponseDto;
+use App\DTO\PollResponseDto;
 use App\DTO\PostCommentDto;
 use App\DTO\PostCommentResponseDto;
+use App\Entity\PollChoice;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\PageView\PostCommentPageView;
@@ -38,9 +41,18 @@ class PostCommentFactory
         );
     }
 
-    public function createResponseDto(PostCommentDto|PostComment $comment, array $tags, int $childCount = 0): PostCommentResponseDto
+    public function createResponseDto(PostComment $comment, array $tags, int $childCount = 0): PostCommentResponseDto
     {
-        $dto = $comment instanceof PostComment ? $this->createDto($comment) : $comment;
+        $dto = $this->createDto($comment);
+
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = new PollResponseDto();
+            $pollDto->voterCount = $comment->poll->voterCount;
+            $user = $this->security->getUser();
+            $pollDto->currentUserHasVoted = $user instanceof User ? $comment->poll->hasUserVoted($user) : null;
+            $pollDto->choices = $comment->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $comment->poll->choices->toArray()) : null;
+        }
 
         return PostCommentResponseDto::create(
             $dto->getId(),
@@ -65,13 +77,14 @@ class PostCommentFactory
             $dto->lastActive,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto,
         );
     }
 
     public function createResponseTree(PostComment $comment, PostCommentPageView $criteria, int $depth, ?bool $canModerate = null): PostCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($comment, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), PostCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
         $toReturn->canAuthUserModerate = $canModerate;
@@ -122,8 +135,8 @@ class PostCommentFactory
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given
-        $dto->isFavourited = $this->security->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE') ? $comment->isFavored($currentUser) : null;
-        $dto->userVote = $this->security->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE') ? $comment->getUserChoice($currentUser) : null;
+        $dto->isFavourited = $this->security->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE') && $currentUser instanceof User ? $comment->isFavored($currentUser) : null;
+        $dto->userVote = $this->security->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE') && $currentUser instanceof User ? $comment->getUserChoice($currentUser) : null;
 
         return $dto;
     }

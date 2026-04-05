@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping\Index;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Webmozart\Assert\Assert;
 
@@ -82,6 +83,8 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public bool $isAdult = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public ?bool $updateMark = false;
+    #[OneToOne(targetEntity: Poll::class)]
+    public ?Poll $poll = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: PostComment::class, orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]
     public Collection $children;

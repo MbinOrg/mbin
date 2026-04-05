@@ -134,6 +134,12 @@ class ChainActivityHandler extends MbinMessageHandler
 
             switch ($object['type']) {
                 case 'Question':
+                    if (isset($object['title'])) {
+                        return $this->page->create($object);
+                    } else {
+                        return $this->note->create($object);
+                    }
+                    break;
                 case 'Note':
                     $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating note {o}', ['o' => $object]);
 

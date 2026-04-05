@@ -50,6 +50,7 @@ use App\Service\MagazineManager;
 use App\Service\MentionManager;
 use App\Service\MessageManager;
 use App\Service\NotificationManager;
+use App\Service\PollManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\ProjectInfoService;
@@ -86,24 +87,26 @@ abstract class WebTestCase extends BaseWebTestCase
     use OAuth2FlowTrait;
     use ValidationTrait;
 
-    protected const PAGINATED_KEYS = ['items', 'pagination'];
-    protected const PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
-    protected const CURSOR_PAGINATION_KEYS = ['currentCursor', 'currentCursor2', 'nextCursor', 'nextCursor2', 'previousCursor', 'previousCursor2', 'perPage'];
-    protected const IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
-    protected const MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
-    protected const USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints', 'discoverable', 'indexable', 'title'];
-    protected const USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator', 'discoverable', 'indexable', 'title'];
-    protected const ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'isLocked', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'crosspostedEntries', 'isAuthorModeratorInMagazine'];
-    protected const ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine'];
-    protected const POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'isLocked', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'isAuthorModeratorInMagazine'];
-    protected const POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine'];
-    protected const BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
-    protected const LOG_ENTRY_KEYS = ['type', 'createdAt', 'magazine', 'moderator', 'subject'];
-    protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus', 'discoverable', 'indexable'];
-    protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId', 'discoverable', 'indexable'];
-    protected const DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
+    protected const array PAGINATED_KEYS = ['items', 'pagination'];
+    protected const array PAGINATION_KEYS = ['count', 'currentPage', 'maxPage', 'perPage'];
+    protected const array CURSOR_PAGINATION_KEYS = ['currentCursor', 'currentCursor2', 'nextCursor', 'nextCursor2', 'previousCursor', 'previousCursor2', 'perPage'];
+    protected const array IMAGE_KEYS = ['filePath', 'sourceUrl', 'storageUrl', 'altText', 'width', 'height', 'blurHash'];
+    protected const array MESSAGE_RESPONSE_KEYS = ['messageId', 'threadId', 'sender', 'body', 'status', 'createdAt'];
+    protected const array USER_RESPONSE_KEYS = ['userId', 'username', 'about', 'avatar', 'cover', 'createdAt', 'followersCount', 'apId', 'apProfileId', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'isAdmin', 'isGlobalModerator', 'serverSoftware', 'serverSoftwareVersion', 'notificationStatus', 'reputationPoints', 'discoverable', 'indexable', 'title'];
+    protected const array USER_SMALL_RESPONSE_KEYS = ['userId', 'username', 'isBot', 'isFollowedByUser', 'isFollowerOfUser', 'isBlockedByUser', 'avatar', 'apId', 'apProfileId', 'createdAt', 'isAdmin', 'isGlobalModerator', 'discoverable', 'indexable', 'title'];
+    protected const array ENTRY_RESPONSE_KEYS = ['entryId', 'magazine', 'user', 'domain', 'title', 'url', 'image', 'body', 'lang', 'tags', 'badges', 'numComments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'isOc', 'isAdult', 'isPinned', 'isLocked', 'createdAt', 'editedAt', 'lastActive', 'visibility', 'type', 'slug', 'apId', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'crosspostedEntries', 'isAuthorModeratorInMagazine', 'poll'];
+    protected const array ENTRY_COMMENT_RESPONSE_KEYS = ['commentId', 'magazine', 'user', 'entryId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine', 'poll'];
+    protected const array POST_RESPONSE_KEYS = ['postId', 'user', 'magazine', 'image', 'body', 'lang', 'isAdult', 'isPinned', 'isLocked', 'comments', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'tags', 'mentions', 'createdAt', 'editedAt', 'lastActive', 'slug', 'canAuthUserModerate', 'notificationStatus', 'bookmarks', 'isAuthorModeratorInMagazine', 'poll'];
+    protected const array POST_COMMENT_RESPONSE_KEYS = ['commentId', 'user', 'magazine', 'postId', 'parentId', 'rootId', 'image', 'body', 'lang', 'isAdult', 'uv', 'dv', 'favourites', 'isFavourited', 'userVote', 'visibility', 'apId', 'mentions', 'tags', 'createdAt', 'editedAt', 'lastActive', 'childCount', 'children', 'canAuthUserModerate', 'bookmarks', 'isAuthorModeratorInMagazine', 'poll'];
+    protected const array BAN_RESPONSE_KEYS = ['banId', 'reason', 'expired', 'expiredAt', 'bannedUser', 'bannedBy', 'magazine'];
+    protected const array LOG_ENTRY_KEYS = ['type', 'createdAt', 'magazine', 'moderator', 'subject'];
+    protected const array MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus', 'discoverable', 'indexable'];
+    protected const array MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId', 'discoverable', 'indexable'];
+    protected const array DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
+    protected const array POLL_KEYS = ['voterCount', 'currentUserHasVoted', 'choices'];
+    protected const array POLL_CHOICE_KEYS = ['name', 'voteCount', 'currentUserHasVoted'];
 
-    protected const KIBBY_PNG_URL_RESULT = 'a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png';
+    protected const string KIBBY_PNG_URL_RESULT = 'a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png';
 
     protected ArrayCollection $users;
     protected ArrayCollection $magazines;
@@ -162,6 +165,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected EntryPageFactory $pageFactory;
     protected TestingApHttpClient $testingApHttpClient;
     protected TestingImageManager $imageManager;
+    protected PollManager $pollManager;
 
     protected CreateWrapper $createWrapper;
     protected LikeWrapper $likeWrapper;
@@ -229,6 +233,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->instanceManager = $this->getService(InstanceManager::class);
         $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->mentionManager = $this->getService(MentionManager::class);
+        $this->pollManager = $this->getService(PollManager::class);
         $this->security = $this->getService(Security::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
