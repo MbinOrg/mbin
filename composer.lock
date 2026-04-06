@@ -5572,16 +5572,16 @@
         },
         {
             "name": "pagerfanta/doctrine-dbal-adapter",
-            "version": "v4.7.2",
+            "version": "v4.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pagerfanta/doctrine-dbal-adapter.git",
-                "reference": "71239d4183b510dec4d97eeb74aada58d36c15e0"
+                "reference": "8905a7890e0cb6bf06dcd51a19d5d21a029b41ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/71239d4183b510dec4d97eeb74aada58d36c15e0",
-                "reference": "71239d4183b510dec4d97eeb74aada58d36c15e0",
+                "url": "https://api.github.com/repos/Pagerfanta/doctrine-dbal-adapter/zipball/8905a7890e0cb6bf06dcd51a19d5d21a029b41ad",
+                "reference": "8905a7890e0cb6bf06dcd51a19d5d21a029b41ad",
                 "shasum": ""
             },
             "require": {
@@ -5613,9 +5613,9 @@
                 "pagerfanta"
             ],
             "support": {
-                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.7.2"
+                "source": "https://github.com/Pagerfanta/doctrine-dbal-adapter/tree/v4.8.0"
             },
-            "time": "2024-11-30T19:18:10+00:00"
+            "time": "2026-01-22T13:44:13+00:00"
         },
         {
             "name": "pagerfanta/doctrine-orm-adapter",
