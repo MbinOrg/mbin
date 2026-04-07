@@ -81,9 +81,10 @@ class EntryCommentFactory
             return $toReturn;
         }
 
-        foreach ($comment->getChildrenByCriteria($commentPageView, $this->settingsManager->getDownvotesMode()) as $childComment) {
+        $user = $this->security->getUser();
+        foreach ($comment->getChildrenByCriteria($commentPageView, $this->settingsManager->getDownvotesMode(), $user, 'comments') as $childComment) {
             \assert($childComment instanceof EntryComment);
-            if (($user = $this->security->getUser()) && $user instanceof User) {
+            if ($user instanceof User) {
                 if ($user->isBlocked($childComment->user)) {
                     continue;
                 }

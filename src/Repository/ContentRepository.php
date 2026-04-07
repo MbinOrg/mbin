@@ -112,6 +112,7 @@ class ContentRepository
 
         /** @var ?User $user */
         $user = $this->security->getUser();
+        $currenFilterLists = $user?->getCurrentFilterLists() ?? [];
         $parameters['loggedInUser'] = $user?->getId();
 
         $timeClause = '';
@@ -304,6 +305,54 @@ class ContentRepository
             $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND c.user_id IN (:cachedUserFollows))';
         }
 
+        $filterClauseEntry = '';
+        $filterClausePost = '';
+        $filterClauseComments = '';
+        if (\sizeof($currenFilterLists) > 0) {
+            $listOrsEntry = [];
+            $listOrsPost = [];
+            $listOrsComments = [];
+            $i = 0;
+            foreach ($currenFilterLists as $filterList) {
+                foreach ($filterList->words as $filterListWord) {
+                    $word = $filterListWord['word'];
+                    $exact = $filterListWord['exactMatch'];
+                    if ($exact) {
+                        if ($filterList->feeds) {
+                            $listOrsEntry[] = "(c.title LIKE :word$i)";
+                            $listOrsEntry[] = "(c.body LIKE :word$i)";
+                            $listOrsPost[] = "(c.body LIKE :word$i)";
+                        }
+                        if ($filterList->comments) {
+                            $listOrsComments[] = "(c.body LIKE :word$i)";
+                        }
+                    } else {
+                        if ($filterList->feeds) {
+                            $listOrsEntry[] = "(c.title ILIKE :word$i)";
+                            $listOrsEntry[] = "(c.body ILIKE :word$i)";
+                            $listOrsPost[] = "(c.body ILIKE :word$i)";
+                        }
+                        if ($filterList->comments) {
+                            $listOrsComments[] = "(c.body ILIKE :word$i)";
+                        }
+                    }
+                    if ($filterList->feeds || ($filterList->comments && ($includeEntryComments || $includePostComments))) {
+                        $parameters["word$i"] = '%'.$word.'%';
+                    }
+                    ++$i;
+                }
+            }
+            if (\sizeof($listOrsEntry) > 0) {
+                $filterClauseEntry = 'NOT ('.implode(' OR ', $listOrsEntry).') OR c.user_id = :loggedInUser';
+            }
+            if (\sizeof($listOrsPost) > 0) {
+                $filterClausePost = 'NOT ('.implode(' OR ', $listOrsPost).') OR c.user_id = :loggedInUser';
+            }
+            if (\sizeof($listOrsComments) > 0) {
+                $filterClauseComments = 'NOT ('.implode(' OR ', $listOrsComments).') OR c.user_id = :loggedInUser';
+            }
+        }
+
         $deletedClause = 'u.is_deleted = false';
         $visibilityClauseU = 'u.visibility = :visible';
 
@@ -326,6 +375,7 @@ class ContentRepository
             $visibilityClauseC,
             $allClause,
             $addCursor ? '%cursor% OR (%cursor2%)' : '',
+            $filterClauseEntry,
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -347,6 +397,7 @@ class ContentRepository
             $visibilityClauseC,
             $allClause,
             $addCursor ? '%cursor% OR (%cursor2%)' : '',
+            $filterClausePost,
         ]);
 
         $entryCommentWhere = SqlHelpers::makeWhereString([
@@ -366,6 +417,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $filterClauseComments,
         ]);
 
         $postCommentWhere = SqlHelpers::makeWhereString([
@@ -386,6 +438,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $filterClauseComments,
         ]);
 
         $outerWhere = SqlHelpers::makeWhereString([

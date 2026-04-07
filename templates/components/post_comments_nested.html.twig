@@ -8,7 +8,7 @@
         }) }}
     {% endfor %}
 {% else %}
-    {% for reply in comment.getChildrenByCriteria(criteria) %}
+    {% for reply in comment.getChildrenByCriteria(criteria, app.user, 'comments') %}
         {{ component('post_comment', {
             comment: reply,
             showNested: true,

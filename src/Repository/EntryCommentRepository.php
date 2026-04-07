@@ -19,6 +19,7 @@ use App\Entity\Image;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
+use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\Service\SettingsManager;
@@ -104,6 +105,9 @@ class EntryCommentRepository extends ServiceEntityRepository
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
         $this->addBannedHashtagClause($qb);
+        if ($user instanceof User) {
+            $this->filterWords($qb, $user);
+        }
 
         return $qb;
     }
@@ -265,6 +269,32 @@ class EntryCommentRepository extends ServiceEntityRepository
 
         $qb->addOrderBy('c.createdAt', 'DESC');
         $qb->addOrderBy('c.id', 'DESC');
+
+        return $qb;
+    }
+
+    private function filterWords(QueryBuilder $qb, User $user): QueryBuilder
+    {
+        $i = 0;
+        foreach ($user->getCurrentFilterLists() as $list) {
+            if (!$list->comments) {
+                continue;
+            }
+
+            foreach ($list->words as $word) {
+                if ($word['exactMatch']) {
+                    $qb->andWhere("NOT (c.body LIKE :word$i) OR c.user = :filterUser")
+                        ->setParameter("word$i", '%'.$word['word'].'%');
+                } else {
+                    $qb->andWhere("NOT (lower(c.body) LIKE lower(:word$i)) OR c.user = :filterUser")
+                        ->setParameter("word$i", '%'.$word['word'].'%');
+                }
+                ++$i;
+            }
+        }
+        if ($i > 0) {
+            $qb->setParameter('filterUser', $user);
+        }
 
         return $qb;
     }
