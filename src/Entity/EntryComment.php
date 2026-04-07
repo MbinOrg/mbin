@@ -267,7 +267,36 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return false;
     }
 
-    public function getChildrenByCriteria(MbinCriteria $entryCommentCriteria, DownvotesMode $downvoteMode): array
+    /**
+     * @param 'profile'|'comments' $filterRealm
+     */
+    public function containsFilteredWords(User $loggedInUser, string $filterRealm): bool
+    {
+        foreach ($loggedInUser->getCurrentFilterLists() as $list) {
+            if (!$list->$filterRealm) {
+                continue;
+            }
+
+            foreach ($list->words as $word) {
+                if ($word['exactMatch']) {
+                    if (false !== mb_strpos($this->body, $word['word'])) {
+                        return true;
+                    }
+                } else {
+                    if (false !== mb_stripos($this->body, $word['word'])) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param 'profile'|'comments' $filterRealm
+     */
+    public function getChildrenByCriteria(MbinCriteria $entryCommentCriteria, DownvotesMode $downvoteMode, ?User $loggedInUser, string $filterRealm): array
     {
         $criteria = Criteria::create();
 
@@ -287,7 +316,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (EntryComment $comment) => !$comment->containsBannedHashtags())
+            ->filter(fn (EntryComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
             ->toArray();
 
         switch ($entryCommentCriteria->sortOption) {
@@ -307,11 +336,11 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
                 break;
             case MbinCriteria::SORT_OLD:
-                uasort($children, fn (EntryComment $a, EntryComment $b) => ArrayUtils::numCompareDescending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
+                uasort($children, fn (EntryComment $a, EntryComment $b) => ArrayUtils::numCompareAscending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
 
                 break;
             case MbinCriteria::SORT_NEW:
-                uasort($children, fn (EntryComment $a, EntryComment $b) => ArrayUtils::numCompareAscending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
+                uasort($children, fn (EntryComment $a, EntryComment $b) => ArrayUtils::numCompareDescending($a->createdAt->getTimestamp(), $b->createdAt->getTimestamp()));
 
                 break;
             default:

@@ -1,0 +1,20 @@
+.page-settings.page-settings-filter-lists {
+  .existing-words > div > label {
+    display:none
+  }
+
+  .existing-words > div > div,
+  .words-container > div > div {
+    display: flex;
+    gap: .5rem;
+
+    > * {
+      flex-grow: 1;
+      margin: auto;
+
+      &.checkbox {
+        flex-grow: 0;
+      }
+    }
+  }
+}

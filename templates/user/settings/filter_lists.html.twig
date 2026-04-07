@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'filter_lists'|trans }} - {{ app.user.username|username(false) }} - {{ parent() -}}
+{%- endblock -%}
+
+
+{% block mainClass %}page-settings page-settings-filter-lists{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include('user/settings/_options.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include 'layout/_flash.html.twig' %}
+    <div id="content" class="section">
+        <div class="container">
+            <h1 hidden>{{ 'filter_lists'|trans }}</h1>
+            {% for list in app.user.filterLists %}
+                {{ component('filter_list', {list: list}) }}
+            {% endfor %}
+            <div style="margin-top: 2rem;" >
+
+            <a class="btn btn__primary" href="{{ path('user_settings_filter_lists_create') }}">{{ 'filter_list_create'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

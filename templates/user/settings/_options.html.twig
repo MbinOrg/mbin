@@ -37,6 +37,12 @@
             </li>
         {% endif %}
         <li>
+            <a href="{{ path('user_settings_filter_lists') }}"
+               class="{{ html_classes({'active': is_route_name('user_settings_filter_lists')}) }}">
+                {{ 'filter_lists'|trans }}
+            </a>
+        </li>
+        <li>
             <a href="{{ path('user_settings_magazine_blocks') }}"
                class="{{ html_classes({'active': is_route_name_contains('_blocks')}) }}">
                 {{ 'blocked'|trans }}

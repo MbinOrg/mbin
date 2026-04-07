@@ -248,6 +248,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $pushSubscriptions;
     #[OneToMany(mappedBy: 'user', targetEntity: BookmarkList::class, fetch: 'EXTRA_LAZY')]
     public Collection $bookmarkLists;
+    #[OneToMany(targetEntity: UserFilterList::class, mappedBy: 'user', fetch: 'LAZY')]
+    public Collection $filterLists;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -320,6 +322,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->oAuth2UserConsents = new ArrayCollection();
         $this->setApplicationStatus($applicationStatus);
         $this->applicationText = $applicationText;
+        $this->filterLists = new ArrayCollection();
     }
 
     public function getId(): int
@@ -984,6 +987,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return UserFilterList[]
+     */
+    public function getCurrentFilterLists(): array
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->gte('expirationDate', new \DateTimeImmutable()))
+            ->orWhere(Criteria::expr()->isNull('expirationDate'));
+
+        return $this->filterLists->matching($criteria)->toArray();
     }
 
     /**
