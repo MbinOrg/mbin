@@ -413,7 +413,26 @@ class ActivityPubManager
             $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
-            $user->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $actorUrlValue = $actor['url'] ?? $actorUrl;
+            if (\is_array($actorUrlValue)) {
+                // Pick the link with the fewest path segments as the most canonical profile URL.
+                // Fall back to $actorUrl if no valid href is found.
+                $best = null;
+                $bestCount = PHP_INT_MAX;
+                foreach ($actorUrlValue as $link) {
+                    $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
+                    if (null === $href) {
+                        continue;
+                    }
+                    $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
+                    if ($pathSegments < $bestCount) {
+                        $bestCount = $pathSegments;
+                        $best = $href;
+                    }
+                }
+                $actorUrlValue = $best ?? $actorUrl;
+            }
+            $user->apPublicUrl = \is_string($actorUrlValue) ? $actorUrlValue : $actorUrl;
             $user->apDeletedAt = null;
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
