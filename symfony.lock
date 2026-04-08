@@ -135,6 +135,9 @@
     "guzzlehttp/psr7": {
         "version": "2.0.0"
     },
+    "heymoon/doctrine-psql-enum": {
+        "version": "3.3.0"
+    },
     "imagine/imagine": {
         "version": "1.2.4"
     },

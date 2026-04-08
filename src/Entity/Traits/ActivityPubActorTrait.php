@@ -39,7 +39,7 @@ trait ActivityPubActorTrait
     #[Column(type: 'string', nullable: true)]
     public ?string $apPreferredUsername = null;
 
-    #[Column(type: 'string')]
+    #[Column(type: 'string', nullable: false)]
     public ?string $title = null;
 
     #[Column(type: 'boolean', nullable: true)]
