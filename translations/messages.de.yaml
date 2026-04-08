@@ -1111,7 +1111,7 @@ magazine_theme_appearance_banner: Nutzerdefiniertes Banner für das Magazin. Es
 everyone: Jeder
 nobody: Niemand
 followers_only: Nur Follower
-direct_message_setting_label: Wer kann eine Direktnachricht senden
+direct_message_setting_label: Wer kann dir eine Direktnachricht senden
 delete_magazine_icon: Magazin Icon löschen
 flash_magazine_theme_icon_detached_success: Magazin Icon erfolgreich gelöscht
 delete_magazine_banner: Magazin Banner löschen
@@ -1147,7 +1147,7 @@ you_have_been_banned_from_magazine_permanently: Du wurdest dauerhaft in Magazin
   %m gesperrt.
 you_are_no_longer_banned_from_magazine: Du ist nicht mehr in Magazin %m 
   gesperrt.
-front_default_content: Startseite Standard-Ansicht
+front_default_content: Startseiten Standard-Ansicht
 default_content_default: Server Standard (Themen)
 default_content_combined: Themen + Mikroblog
 default_content_threads: Themen
@@ -1209,3 +1209,91 @@ magazine_name_as_tag_help: Die Hashtags eines Magazine werden genutzt um
   dem Hashtag "#fediverse" diesem Magazine zugewiesen.
 magazine_rules_deprecated: das Regel-Feld ist veraltet und wird in der Zukunft 
   entfernt werden. Bitte schreib die Regeln in das Beschreibungs-Feld.
+created_since: Erstellt seit
+displayname: Anzeigename
+show_boost_following_label: Zeige geboostete Inhalte in den Mikroblog und 
+  Kombiniert-Feeds
+monitoring: Überwachung
+monitoring_queries: '{0}SQL Abfragen|{1}SQL Abfrage|]1,Inf[ SQL Abfragen'
+monitoring_duration_min: minimum
+monitoring_duration_mean: durchschnitt
+monitoring_duration_max: maximum
+monitoring_query_count: anzahl
+monitoring_query_total: gesamt
+monitoring_duration: Dauer
+monitoring_dont_group_similar: ähnliche Abfragen nicht zusammenfassen
+monitoring_group_similar: ähnliche Abfragen zusammenfassen
+monitoring_http_method: HTTP Methode
+monitoring_url: URL
+monitoring_request_successful: Erfolgreich
+monitoring_user_type: Nutzer-Typ
+monitoring_path: Route/Nachrichten Klasse
+monitoring_handler: Controller/Transport
+monitoring_started: Gestartet
+monitoring_twig_renders: Twig Render
+monitoring_curl_requests: Curl Anfragen
+monitoring_route_overview: Prozesslaufzeit summiert pro Route
+monitoring_route_overview_description: Dieser Graph zeigt die summierte 
+  Prozesslaufzeit in Millisekunden pro Route/Nachricht
+monitoring_duration_overall: Andere
+monitoring_duration_query: Abfrage
+monitoring_duration_twig_render: Twig Render
+monitoring_duration_curl_request: Curl Anfrage
+monitoring_duration_sending_response: Antwort senden
+monitoring_dont_format_query: Abfrage nicht formatieren
+monitoring_format_query: Abfrage formatieren
+monitoring_dont_show_parameters: Parameter nicht anzeigen
+monitoring_show_parameters: Parameter anzeigen
+monitoring_execution_type: Verarbeitungstyp
+monitoring_request: HTTP Anfrage
+monitoring_messenger: Messenger
+monitoring_anonymous: Anonym
+monitoring_user: Nutzer
+monitoring_activity_pub: ActivityPub
+monitoring_ajax: AJAX
+monitoring_created_from: Gestartet nach
+monitoring_created_to: Gestartet vor
+monitoring_duration_minimum: Minimale Dauer
+monitoring_submit: Filtern
+monitoring_has_exception: Fehlerhaft
+monitoring_chart_ordering: Diagramm Sortierung
+monitoring_total_duration: Gesamtdauer
+monitoring_mean_duration: Durchschnittsdauer
+monitoring_twig_compare_to_total: Vergleiche mit Gesamtdauer
+monitoring_twig_compare_to_parent: Vergleiche mit übergeordneter Dauer
+monitoring_disabled: Überwachung ist deaktiviert.
+monitoring_queries_enabled_persisted: Abfragenüberwachung ist aktiviert.
+monitoring_queries_enabled_not_persisted: Abfragenüberwachung ist aktiviert, 
+  aber nur für die Prozessdauer.
+monitoring_queries_disabled: Abfragenüberwachung ist deaktiviert.
+monitoring_twig_renders_enabled_persisted: Twig-Render-Überwachung ist 
+  aktiviert.
+monitoring_twig_renders_enabled_not_persisted: Twig-Render-Überwachung, aber nur
+  für die Prozessdauer.
+monitoring_twig_renders_disabled: Twig-Render-Überwachung ist deaktiviert.
+monitoring_curl_requests_enabled_persisted: Curl-Anfragen-Überwachung ist 
+  aktiviert.
+monitoring_curl_requests_enabled_not_persisted: Curl-Anfragen-Überwachung ist 
+  aktiviert, aber nur für die Prozessdauer.
+monitoring_curl_requests_disabled: Curl-Anfragen-Überwachung ist deaktiviert.
+reached_end: Du hast das Ende erreicht
+first_page: Erste Seite
+next_page: Nächste Seite
+previous_page: Vorherige Seite
+filter_list_create: Filter-Liste erstellen
+filter_lists: Filterlisten
+filter_lists_where_to_filter: Wo soll der Filter angewandt werden
+filter_lists_filter_words: Gefilterte Wörter
+expiration_date: Ablaufdatum
+filter_lists_filter_location: Aktiv in
+filter_lists_word_exact_match: Exakte Übereinstimmung
+filter_lists_word_exact_match_help: Wenn exakte Übereinstimmung aktiviert ist, 
+  wird die Suche die Groß-/Kleinschreibung beachten
+feeds: Feeds
+filter_lists_feeds_help: Filtere die Wörter in Themen, Mikroblogs und 
+  Kommentaren in Feeds, wie zum Beispiel /all, /sub, Magazin-Feeds, etc.
+filter_lists_comments_help: Filtere die Wörter während du Themen oder Mikroblogs
+  anschaust in den Kommentaren.
+filter_lists_profile_help: Filtere die Wörter während du dir das Profil eines 
+  Nutzers und seine Inhalte ansiehst.
+expired: Abgelaufen
