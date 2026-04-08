@@ -15,6 +15,8 @@ class ContentResponseDto
     public function __construct(
         public ?EntryResponseDto $entry = null,
         public ?PostResponseDto $post = null,
+        public ?EntryCommentResponseDto $entryComment = null,
+        public ?PostCommentResponseDto $postComment = null,
     ) {
     }
 }

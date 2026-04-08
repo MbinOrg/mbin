@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -44,6 +45,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Table(name: '`user`')]
 #[Index(columns: ['visibility'], name: 'user_visibility_idx')]
 #[Index(columns: ['username_ts'], name: 'user_username_ts')]
+#[Index(columns: ['title_ts'], name: 'user_title_ts')]
 #[Index(columns: ['about_ts'], name: 'user_about_ts')]
 #[UniqueConstraint(name: 'user_email_idx', columns: ['email'])]
 #[UniqueConstraint(name: 'user_username_idx', columns: ['username'])]
@@ -102,12 +104,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public string $email;
     #[Column(type: 'string', unique: true, nullable: false)]
     public string $username;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: false)]
     public array $roles = [];
     #[Column(type: 'integer', nullable: false)]
     public int $followersCount = 0;
     #[Column(type: 'string', nullable: false, options: ['default' => self::HOMEPAGE_ALL])]
     public string $homepage = self::HOMEPAGE_ALL;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $showBoostsOfFollowing = false;
     #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
     public string $frontDefaultSort = ESortOptions::Hot->value;
     #[Column(type: 'enumFrontContentOptions', nullable: true)]
@@ -122,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?\DateTime $lastActive = null;
     #[Column(type: 'datetimetz', nullable: true)]
     public ?\DateTime $markedForDeletionAt = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $fields = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $oauthAzureId = null;
@@ -146,9 +150,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $oauthAuthentikId = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $hideAdult = true;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
+    #[Column(type: Types::JSONB, nullable: false, options: ['default' => '[]'])]
     public array $preferredLanguages = [];
-    #[Column(type: 'array', nullable: true)]
+    #[Column(type: 'simple_array', nullable: true)]
     public ?array $featuredMagazines = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => true])]
     public bool $showProfileSubscriptions = false;
@@ -244,6 +248,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $pushSubscriptions;
     #[OneToMany(mappedBy: 'user', targetEntity: BookmarkList::class, fetch: 'EXTRA_LAZY')]
     public Collection $bookmarkLists;
+    #[OneToMany(targetEntity: UserFilterList::class, mappedBy: 'user', fetch: 'LAZY')]
+    public Collection $filterLists;
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
@@ -252,7 +258,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private string $password;
     #[Column(type: 'string', nullable: true)]
     private ?string $totpSecret = null;
-    #[Column(type: 'json', nullable: false, options: ['jsonb' => true, 'default' => '[]'])]
+    #[Column(type: Types::JSONB, nullable: false, options: ['default' => '[]'])]
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
@@ -264,6 +270,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $usernameTs;
+    #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
+    private ?string $titleTs;
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $aboutTs;
 
@@ -314,6 +322,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->oAuth2UserConsents = new ArrayCollection();
         $this->setApplicationStatus($applicationStatus);
         $this->applicationText = $applicationText;
+        $this->filterLists = new ArrayCollection();
     }
 
     public function getId(): int
@@ -978,6 +987,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return UserFilterList[]
+     */
+    public function getCurrentFilterLists(): array
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->gte('expirationDate', new \DateTimeImmutable()))
+            ->orWhere(Criteria::expr()->isNull('expirationDate'));
+
+        return $this->filterLists->matching($criteria)->toArray();
     }
 
     /**

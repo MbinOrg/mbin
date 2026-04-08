@@ -26,7 +26,7 @@
                           {% endif %}
                         {% endif %}
                         <h1>
-                            {{ user.apPreferredUsername ?? user.username|username(false) }}
+                            {{ user.title ?? user.apPreferredUsername ?? user.username|username(false) }}
 
                             {% if (user.type) == "Service" %}
                                 <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
@@ -34,6 +34,9 @@
                             {% if user.isNew() %}
                                 {% set days = constant('App\\Entity\\User::NEW_FOR_DAYS') %}
                                 <i class="fa-solid fa-leaf new-user-icon" title="{{ 'new_user_description'|trans({ '%days%': days }) }}" aria-description="{{ 'new_user_description'|trans({ '%days%': days }) }}"></i>
+                            {% endif %}
+                            {% if user.isCakeDay() %}
+                                <i class="fa-solid fa-cake-candles" title="Cake Day" aria-description="Cake Day"></i>
                             {% endif %}
 
                             {% if user.admin() %}

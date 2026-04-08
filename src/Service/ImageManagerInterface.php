@@ -41,4 +41,6 @@ interface ImageManagerInterface
      * @throws FilesystemException
      */
     public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable;
+
+    public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool;
 }

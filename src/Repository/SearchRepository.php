@@ -16,6 +16,7 @@ use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class SearchRepository
@@ -27,6 +28,7 @@ class SearchRepository
         private readonly ContentPopulationTransformer $transformer,
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
+        private readonly Security $security,
     ) {
     }
 
@@ -90,25 +92,56 @@ class SearchRepository
      */
     private function getUserPublicActivityQueryAdapter(User $user, bool $hideAdult): AdapterInterface
     {
-        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
-        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
-        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'post' AS type FROM post
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        UNION ALL
-        SELECT id, created_at, 'post_comment' AS type FROM post_comment
-            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond
-        ORDER BY created_at DESC";
-
         $parameters = [
             'userId' => $user->getId(),
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
         ];
+
+        $loggedInUser = $this->security->getUser();
+        $bodyWordsCond = '';
+        $titleWordsCond = '';
+        if ($loggedInUser instanceof User) {
+            $bodyWordsFilter = [];
+            $titleWordsFilter = [];
+
+            $i = 0;
+            foreach ($loggedInUser->getCurrentFilterLists() as $filterList) {
+                if (!$filterList->profile) {
+                    continue;
+                }
+                foreach ($filterList->words as $word) {
+                    if ($word['exactMatch']) {
+                        $titleWordsFilter[] = "(title LIKE :word$i)";
+                        $bodyWordsFilter[] = "(body LIKE :word$i)";
+                    } else {
+                        $titleWordsFilter[] = "(title ILIKE :word$i)";
+                        $bodyWordsFilter[] = "(body ILIKE :word$i)";
+                    }
+                    $parameters["word$i"] = '%'.$word['word'].'%';
+                    ++$i;
+                }
+            }
+            if ($i > 0) {
+                $bodyWordsCond = 'AND (NOT ('.implode(' OR ', $bodyWordsFilter).') OR user_id = :loggedInUser)';
+                $titleWordsCond = 'AND (NOT ('.implode(' OR ', $titleWordsFilter).') OR user_id = :loggedInUser)';
+                $parameters['loggedInUser'] = $loggedInUser->getId();
+            }
+        }
+
+        $falseCond = $user->isDeleted ? ' AND FALSE ' : '';
+        $hideAdultCond = $hideAdult ? ' AND is_adult = false ' : '';
+        $sql = "SELECT id, created_at, 'entry' AS type FROM entry
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond $titleWordsCond $bodyWordsCond
+        UNION ALL
+        SELECT id, created_at, 'entry_comment' AS type FROM entry_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond $bodyWordsCond
+        UNION ALL
+        SELECT id, created_at, 'post' AS type FROM post
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond $bodyWordsCond
+        UNION ALL
+        SELECT id, created_at, 'post_comment' AS type FROM post_comment
+            WHERE user_id = :userId AND visibility = :visibility $falseCond $hideAdultCond $bodyWordsCond
+        ORDER BY created_at DESC";
 
         return new NativeQueryAdapter(
             $this->entityManager->getConnection(),
@@ -142,6 +175,7 @@ class SearchRepository
         ?int $magazineId = null,
         ?string $specificType = null,
         ?\DateTimeImmutable $sinceDate = null,
+        int $perPage = SearchRepository::PER_PAGE,
     ): PagerfantaInterface {
         $authorWhere = null !== $authorId ? 'AND e.user_id = :authorId' : '';
         $magazineWhere = null !== $magazineId ? 'AND e.magazine_id = :magazineId' : '';
@@ -213,8 +247,8 @@ class SearchRepository
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
 
-        $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
-            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true OR u.username LIKE :likeQuery)
+        $sqlUser = "SELECT u.Id, u.created_at, u.visibility, ts_rank_cd(u.username_ts, plainto_tsquery(:query)) + ts_rank_cd(u.title_ts, plainto_tsquery(:query)) + ts_rank_cd(u.about_ts, plainto_tsquery(:query)) as rank, 'user' AS type FROM \"user\" u
+            WHERE (u.username_ts @@ plainto_tsquery( :query ) = true OR u.title_ts @@ plainto_tsquery( :query ) = true OR u.about_ts @@ plainto_tsquery( :query ) = true OR u.username LIKE :likeQuery)
                 AND u.visibility = :visibility
                 AND u.is_deleted = false
                 AND u.marked_for_deletion_at IS NULL
@@ -262,6 +296,7 @@ class SearchRepository
         $adapter = new NativeQueryAdapter($conn, $sql, $parameters, transformer: $this->transformer);
 
         $pagerfanta = new Pagerfanta($adapter);
+        $pagerfanta->setMaxPerPage($perPage);
         $pagerfanta->setCurrentPage($page);
 
         return $pagerfanta;

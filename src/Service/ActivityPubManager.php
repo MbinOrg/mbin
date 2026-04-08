@@ -165,6 +165,21 @@ class ActivityPubManager
                 return $user;
             }
 
+            if (!substr_count(ltrim($actorUrl, '@'), '@')) {
+                // local magazine. Maybe an @ at the beginning, but not in the middle
+                $magazine = $this->magazineRepository->findOneBy(['name' => ltrim($actorUrl, '@')]);
+            } else {
+                // remote magazine. Maybe !magazine@domain, maybe only magazine@domain -> trim left and look in apId
+                $magazine = $this->magazineRepository->findOneBy(['apId' => ltrim($actorUrl, '@!')]);
+            }
+            if ($magazine instanceof Magazine) {
+                if ($magazine->apId && !$magazine->isSoftDeleted() && !$magazine->isTrashed() && (!$magazine->apFetchedAt || $magazine->apFetchedAt->modify('+1 hour') < (new \DateTime()))) {
+                    $this->dispatchUpdateActor($magazine->apProfileId);
+                }
+
+                return $magazine;
+            }
+
             $actorUrl = $this->webfinger($actorUrl)->getProfileId();
         }
 
@@ -384,13 +399,40 @@ class ActivityPubManager
             $user->type = $actor['type'] ?? 'Person';
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
+            if ($actor['preferredUsername']) {
+                $newUsername = '@'.$actor['preferredUsername'].'@'.$user->apDomain;
+                if ($user->username !== $newUsername) {
+                    $this->logger->info('The handle of "{u}" ({url}) changed to "{u2}" for id {id}', ['u' => $user->username, 'url' => $user->apProfileId, 'u2' => $newUsername, 'id' => $user->getId()]);
+                    $user->username = $newUsername;
+                }
+            }
             $user->apFollowersUrl = $actor['followers'] ?? null;
             $user->apAttributedToUrl = $actor['attributedTo'] ?? null;
             $user->apPreferredUsername = $actor['preferredUsername'] ?? null;
+            $user->title = $actor['name'] ?? null;
             $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
-            $user->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $actorUrlValue = $actor['url'] ?? $actorUrl;
+            if (\is_array($actorUrlValue)) {
+                // Pick the link with the fewest path segments as the most canonical profile URL.
+                // Fall back to $actorUrl if no valid href is found.
+                $best = null;
+                $bestCount = PHP_INT_MAX;
+                foreach ($actorUrlValue as $link) {
+                    $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
+                    if (null === $href) {
+                        continue;
+                    }
+                    $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
+                    if ($pathSegments < $bestCount) {
+                        $bestCount = $pathSegments;
+                        $best = $href;
+                    }
+                }
+                $actorUrlValue = $best ?? $actorUrl;
+            }
+            $user->apPublicUrl = \is_string($actorUrlValue) ? $actorUrlValue : $actorUrl;
             $user->apDeletedAt = null;
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();

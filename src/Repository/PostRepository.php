@@ -243,7 +243,7 @@ class PostRepository extends ServiceEntityRepository
 
     public function hydrate(Post ...$posts): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL p.{id}')
             ->addSelect('u')
             ->addSelect('ua')
@@ -307,7 +307,8 @@ class PostRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->where('p.visibility != :visibility')
             ->andWhere('p.user = :user')
-            ->setParameters(['visibility' => VisibilityInterface::VISIBILITY_SOFT_DELETED, 'user' => $user])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
+            ->setParameter('user', $user)
             ->orderBy('p.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
@@ -332,10 +333,8 @@ class PostRepository extends ServiceEntityRepository
             ->join('p.hashtags', 'hl')
             ->join('hl.hashtag', 'h')
             ->orderBy('p.createdAt', 'DESC')
-            ->setParameters([
-                'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
-                'name' => $tag,
-            ])
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('name', $tag)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -362,9 +361,9 @@ class PostRepository extends ServiceEntityRepository
             ->join('p.magazine', 'm')
             ->join('p.user', 'u')
             ->orderBy('p.createdAt', 'DESC')
-            ->setParameters(
-                ['name' => "%{$name}%", 'title' => "%{$name}%", 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
-            )
+            ->setParameter('name', "%{$name}%")
+            ->setParameter('title', "%{$name}%")
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setMaxResults($limit);
 
         if (null !== $user) {
@@ -429,9 +428,8 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('p.apId IS NOT NULL')
             ->andWhere('p.visibility = :visibility')
             ->orderBy('p.createdAt', 'DESC')
-            ->setParameters(
-                ['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'magazine' => 'random']
-            )
+            ->setParameter('magazine', 'random')
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->getQuery()
             ->getResult();
     }
@@ -456,9 +454,9 @@ class PostRepository extends ServiceEntityRepository
         }
 
         return $qb->orderBy('count', 'DESC')
-            ->setParameters(
-                ['magazine' => $magazine, 'emptyString' => '', 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE]
-            )
+            ->setParameter('magazine', $magazine)
+            ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+            ->setParameter('emptyString', '')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult();
@@ -472,17 +470,16 @@ class PostRepository extends ServiceEntityRepository
                 $item->expiresAfter(60);
 
                 if (!$criteria->magazine) {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility'
                     )
                         ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
                 } else {
-                    $query = $this->_em->createQuery(
+                    $query = $this->getEntityManager()->createQuery(
                         'SELECT COUNT(p.id) FROM App\Entity\Post p WHERE p.visibility = :visibility AND p.magazine = :magazine'
                     )
-                        ->setParameters(
-                            ['visibility' => VisibilityInterface::VISIBILITY_VISIBLE, 'magazine' => $criteria->magazine]
-                        );
+                        ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
+                        ->setParameter('magazine', $criteria->magazine);
                 }
 
                 try {

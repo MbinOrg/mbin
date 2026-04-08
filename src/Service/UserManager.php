@@ -207,6 +207,8 @@ readonly class UserManager
         try {
             $user->about = $dto->about;
 
+            $user->title = $dto->title;
+
             $oldAvatar = $user->avatar;
             if ($dto->avatar) {
                 $image = $this->imageRepository->find($dto->avatar->id);

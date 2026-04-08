@@ -10,7 +10,10 @@ namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
+use App\Entity\Image;
+use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
 use App\PageView\PostCommentPageView;
@@ -36,13 +39,11 @@ class PostCommentRepository extends ServiceEntityRepository
 {
     public const PER_PAGE = 15;
 
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+    ) {
         parent::__construct($registry, PostComment::class);
-
-        $this->security = $security;
     }
 
     public function findByCriteria(PostCommentPageView $criteria)
@@ -100,6 +101,10 @@ class PostCommentRepository extends ServiceEntityRepository
         $this->addTimeClause($qb, $criteria);
         $this->filter($qb, $criteria);
         $this->addBannedHashtagClause($qb);
+
+        if ($user instanceof User) {
+            $this->filterWords($qb, $user);
+        }
 
         return $qb;
     }
@@ -190,6 +195,48 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->addOrderBy('c.id', 'DESC');
     }
 
+    private function filterWords(QueryBuilder $qb, User $user): QueryBuilder
+    {
+        $i = 0;
+        foreach ($user->getCurrentFilterLists() as $list) {
+            if (!$list->comments) {
+                continue;
+            }
+
+            foreach ($list->words as $word) {
+                if ($word['exactMatch']) {
+                    $qb->andWhere("NOT (c.body LIKE :word$i) or c.user = :filterUser")
+                        ->setParameter("word$i", '%'.$word['word'].'%');
+                } else {
+                    $qb->andWhere("NOT (lower(c.body) LIKE lower(:word$i)) or c.user = :filterUser")
+                        ->setParameter("word$i", '%'.$word['word'].'%');
+                }
+                ++$i;
+            }
+        }
+        if ($i > 0) {
+            $qb->setParameter('filterUser', $user);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @return Image[]
+     */
+    public function findImagesByPost(Post $post): array
+    {
+        $results = $this->createQueryBuilder('c')
+            ->addSelect('i')
+            ->innerJoin('c.image', 'i')
+            ->andWhere('c.post = :post')
+            ->setParameter('post', $post)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (PostComment $comment) => $comment->image, $results);
+    }
+
     public function hydrateChildren(PostComment ...$comments): void
     {
         $children = $this->createQueryBuilder('c')
@@ -202,7 +249,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
     public function hydrate(PostComment ...$comment): void
     {
-        $this->_em->createQueryBuilder()
+        $this->getEntityManager()->createQueryBuilder()
             ->select('PARTIAL c.{id}')
             ->addSelect('u')
             ->addSelect('m')

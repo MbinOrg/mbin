@@ -27,6 +27,9 @@ class UserFrontControllerTest extends WebTestCase
         $this->client = $this->prepareEntries();
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+
+        self::assertResponseIsSuccessful();
+
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Threads')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Threads (1)');
@@ -38,6 +41,7 @@ class UserFrontControllerTest extends WebTestCase
         $this->client = $this->prepareEntries();
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $this->client->click($crawler->filter('#main .options')->selectLink('Comments')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Comments (2)');
@@ -49,6 +53,7 @@ class UserFrontControllerTest extends WebTestCase
         $this->client = $this->prepareEntries();
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Posts')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Posts (1)');
@@ -60,6 +65,7 @@ class UserFrontControllerTest extends WebTestCase
         $this->client = $this->prepareEntries();
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Replies')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Replies (2)');
@@ -79,6 +85,7 @@ class UserFrontControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('subscriptions')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'subscriptions (2)');
@@ -96,6 +103,7 @@ class UserFrontControllerTest extends WebTestCase
         $this->client->loginUser($user1);
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Followers')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Followers (1)');
@@ -113,10 +121,37 @@ class UserFrontControllerTest extends WebTestCase
         $this->client->loginUser($user1);
 
         $crawler = $this->client->request('GET', '/u/JohnDoe');
+        self::assertResponseIsSuccessful();
         $crawler = $this->client->click($crawler->filter('#main .options')->selectLink('Following')->link());
 
         $this->assertSelectorTextContains('.options.options--top .active', 'Following (1)');
         $this->assertEquals(1, $crawler->filter('#main .users ul li')->count());
+    }
+
+    public function testNewIndicator(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorExists('#content.user-main h1 i.fa-solid.fa-leaf.new-user-icon');
+
+        $user->createdAt = new \DateTimeImmutable('now - 31days');
+        $this->entityManager->flush();
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorNotExists('#content.user-main h1 i.fa-solid.fa-leaf.new-user-icon');
+    }
+
+    public function testCakeDayIndicator(): void
+    {
+        $user = $this->getUserByUsername('JohnDoe');
+
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorExists('#content.user-main h1 i.fa-solid.fa-cake-candles');
+
+        $user->createdAt = new \DateTimeImmutable('now - 1days');
+        $this->entityManager->flush();
+        $this->client->request('GET', '/u/JohnDoe');
+        $this->assertSelectorNotExists('#content.user-main h1 i.fa-solid.fa-cake-candles');
     }
 
     private function prepareEntries(): KernelBrowser

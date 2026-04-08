@@ -43,6 +43,7 @@ class EntryFrontController extends AbstractController
         #[MapQueryParameter]
         ?string $type,
         Request $request,
+        #[MapQueryParameter] ?string $cursor = null,
     ): Response {
         $user = $this->getUser();
 
@@ -63,7 +64,7 @@ class EntryFrontController extends AbstractController
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
-        $entities = $this->contentRepository->findByCriteria($criteria);
+        $entities = $this->contentRepository->findByCriteriaCursored($criteria, $this->getCursorByCriteria($criteria->sortOption, $cursor));
         $templatePath = 'content/';
         $dataKey = 'results';
 
@@ -108,6 +109,8 @@ class EntryFrontController extends AbstractController
         #[MapQueryParameter]
         ?string $type,
         Request $request,
+        #[MapQueryParameter] ?string $cursor = null,
+        #[MapQueryParameter] ?string $cursor2 = null,
     ): Response {
         $user = $this->getUser();
         $response = new Response();
@@ -130,11 +133,14 @@ class EntryFrontController extends AbstractController
         if (null !== $user) {
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
+        $cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
+        $cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
+        $results = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
 
         return $this->renderResponse(
             $request,
             $criteria,
-            ['results' => $this->contentRepository->findByCriteria($criteria), 'magazine' => $magazine],
+            ['results' => $results, 'magazine' => $magazine],
             'content/',
             $user
         );
@@ -201,9 +207,15 @@ class EntryFrontController extends AbstractController
         }
     }
 
-    private function setUserPreferences(?User $user, &$criteria)
+    private function setUserPreferences(?User $user, Criteria &$criteria): void
     {
-        if (null !== $user && 0 < \count($user->preferredLanguages)) {
+        if (null === $user) {
+            return;
+        }
+
+        $criteria->includeBoosts = $user->showBoostsOfFollowing;
+
+        if (0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;
         }
     }
@@ -300,5 +312,22 @@ class EntryFrontController extends AbstractController
         $pagerfanta->setCurrentPageResults($results);
 
         return $pagerfanta;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    private function getCursorByCriteria(string $sortOption, ?string $cursor): int|\DateTimeImmutable
+    {
+        $guessedCursor = $this->contentRepository->guessInitialCursor($sortOption);
+        if ($guessedCursor instanceof \DateTimeImmutable) {
+            $currentCursor = null !== $cursor ? new \DateTimeImmutable($cursor) : $guessedCursor;
+        } elseif (\is_int($guessedCursor)) {
+            $currentCursor = null !== $cursor ? \intval($cursor) : $guessedCursor;
+        } else {
+            throw new \LogicException(\get_class($guessedCursor).' is not accounted for');
+        }
+
+        return $currentCursor;
     }
 }

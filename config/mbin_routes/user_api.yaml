@@ -76,6 +76,30 @@ api_user_update_settings:
   methods: [ PUT ]
   format: json
 
+api_user_retrieve_filter_lists:
+    controller: App\Controller\Api\User\UserFilterListApi::retrieve
+    path: /api/users/filterLists
+    methods: [ GET ]
+    format: json
+
+api_user_retrieve_filter_lists_create:
+    controller: App\Controller\Api\User\UserFilterListApi::create
+    path: /api/users/filterLists
+    methods: [ POST ]
+    format: json
+
+api_user_retrieve_filter_lists_edit:
+    controller: App\Controller\Api\User\UserFilterListApi::edit
+    path: /api/users/filterLists/{id}
+    methods: [ PUT ]
+    format: json
+
+api_user_retrieve_filter_lists_delete:
+    controller: App\Controller\Api\User\UserFilterListApi::delete
+    path: /api/users/filterLists/{id}
+    methods: [ DELETE ]
+    format: json
+
 api_user_update_avatar:
   controller: App\Controller\Api\User\UserUpdateImagesApi::avatar
   path: /api/users/avatar

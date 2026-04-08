@@ -1,0 +1,33 @@
+<div class="filter-list">
+    <div class="section">
+        <h3>
+            <a href="{{ path('user_settings_filter_lists_edit', {id: list.id}) }}">{{ list.name }}{% if list.isExpired %} ({{ 'expired'|trans|lower }}){% endif %}</a>
+        </h3>
+        <div>
+            {{ 'filter_lists_filter_words'|trans }}:
+            <span>
+                {{ list.words|map(x => x.word)|join(', ') }}
+            </span>
+        </div>
+        <div>
+            {{ 'filter_lists_filter_location'|trans }}:
+            <span>
+                {{ list.getRealmStrings()|map(location => location|trans)|join(', ') }}
+            </span>
+        </div>
+        <div class="flex flex-reverse">
+            <div class="flex-item flex-item-auto">
+                <a href="{{ path('user_settings_filter_lists_delete', {id: list.id}) }}">
+                    <i class="fas fa-trash"></i>
+                    {{ 'delete'|trans }}
+                </a>
+            </div>
+            <div class="flex-item flex-item-auto">
+                <a href="{{ path('user_settings_filter_lists_edit', {id: list.id}) }}">
+                    <i class="fa fa-edit"></i>
+                    {{ 'edit'|trans }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

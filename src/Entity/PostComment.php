@@ -21,6 +21,7 @@ use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -75,7 +76,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     public ?\DateTime $lastActive;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[Column(type: 'boolean', nullable: false)]
     public bool $isAdult = false;
@@ -263,7 +264,36 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return false;
     }
 
-    public function getChildrenByCriteria(MbinCriteria $postCommentCriteria): array
+    /**
+     * @param 'profile'|'comments' $filterRealm
+     */
+    public function containsFilteredWords(User $loggedInUser, string $filterRealm): bool
+    {
+        foreach ($loggedInUser->getCurrentFilterLists() as $list) {
+            if (!$list->$filterRealm) {
+                continue;
+            }
+
+            foreach ($list->words as $word) {
+                if ($word['exactMatch']) {
+                    if (str_contains($this->body, $word['word'])) {
+                        return true;
+                    }
+                } else {
+                    if (str_contains(strtolower($this->body), strtolower($word['word']))) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param 'profile'|'comments' $filterRealm
+     */
+    public function getChildrenByCriteria(MbinCriteria $postCommentCriteria, ?User $loggedInUser, string $filterRealm): array
     {
         $criteria = Criteria::create();
 
@@ -283,7 +313,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags())
+            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
             ->toArray();
 
         // id sort

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
+use App\Entity\Post;
 use App\Entity\User;
+use App\Pagination\Cursor\CursorPagination;
+use App\Pagination\Cursor\CursorPaginationInterface;
+use App\Pagination\Cursor\NativeQueryCursorAdapter;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Utils\SqlHelpers;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\PagerfantaInterface;
 use Psr\Log\LoggerInterface;
@@ -33,7 +39,72 @@ class ContentRepository
 
     public function findByCriteria(Criteria $criteria): PagerfantaInterface
     {
+        $query = $this->getQueryAndParameters($criteria, false);
+        $conn = $this->entityManager->getConnection();
+
+        $numResults = null;
+        if ('test' !== $this->kernel->getEnvironment() && !$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
+            // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
+            $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
+        }
+        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $query['sql'], $query['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
+        $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
+        $fanta->setCurrentPage($criteria->page);
+
+        return $fanta;
+    }
+
+    /**
+     * @template-covariant TCursor
+     *
+     * @param TCursor|null $currentCursor
+     *
+     * @return CursorPaginationInterface<Entry|Post,TCursor>
+     *
+     * @throws Exception
+     */
+    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null): CursorPaginationInterface
+    {
+        $query = $this->getQueryAndParameters($criteria, true);
+        $conn = $this->entityManager->getConnection();
+        $orderings = $this->getOrderings($criteria);
+        $start = new \DateTimeImmutable();
+        $start = $start->setTimestamp(0);
+
+        $fanta = new CursorPagination(
+            new NativeQueryCursorAdapter(
+                $conn,
+                $query['sql'],
+                $this->getCursorWhereFromCriteria($criteria),
+                $this->getCursorWhereInvertedFromCriteria($criteria),
+                join(',', $orderings),
+                join(',', SqlHelpers::invertOrderings($orderings)),
+                $query['parameters'],
+                $this->getSecondaryCursorWhereFromCriteria($criteria),
+                $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
+                'c.created_at DESC',
+                'c.created_at',
+                transformer: $this->contentPopulationTransformer,
+            ),
+            $this->getCursorFieldFromCriteria($criteria),
+            $criteria->perPage ?? self::PER_PAGE,
+            'createdAt',
+            $start,
+        );
+        $fanta->setCurrentPage($currentCursor ?? $this->guessInitialCursor($criteria->sortOption), $currentCursor2 ?? new \DateTimeImmutable('now + 1 minute'));
+
+        return $fanta;
+    }
+
+    /**
+     * @return array{sql: string, parameters: array}>
+     */
+    private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
+    {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
+        $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
             'private' => VisibilityInterface::VISIBILITY_PRIVATE,
@@ -41,6 +112,7 @@ class ContentRepository
 
         /** @var ?User $user */
         $user = $this->security->getUser();
+        $currenFilterLists = $user?->getCurrentFilterLists() ?? [];
         $parameters['loggedInUser'] = $user?->getId();
 
         $timeClause = '';
@@ -63,9 +135,13 @@ class ContentRepository
 
         $hashtagClauseEntry = '';
         $hashtagClausePost = '';
+        $hashtagClauseEntryComment = '';
+        $hashtagClausePostComment = '';
         if ($criteria->tag) {
             $hashtagClauseEntry = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.entry_id = c.id AND h.tag = :hashtag)';
             $hashtagClausePost = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.post_id = c.id AND h.tag = :hashtag)';
+            $hashtagClauseEntryComment = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.entry_comment_id = c.id AND h.tag = :hashtag)';
+            $hashtagClausePostComment = 'EXISTS (SELECT * FROM hashtag_link hl INNER JOIN hashtag h ON hl.hashtag_id = h.id WHERE hl.post_comment_id = c.id AND h.tag = :hashtag)';
             $parameters['hashtag'] = $criteria->tag;
         }
 
@@ -116,18 +192,40 @@ class ContentRepository
 
         $subClausePost = '';
         $subClauseEntry = '';
+        $subClauseEntryComment = '';
+        $subClausePostComment = '';
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
-                    ' OR EXISTS (SELECT * FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
+                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
                     ' OR m.id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
-                    ' OR EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id)' :
+                    ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                     ' OR c.user_id IN (:cachedUserFollows)');
             $subClauseEntry = $subClausePost
                 .(null === $criteria->cachedUserSubscribedDomains ?
-                    ' OR EXISTS (SELECT * FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
+                    ' OR EXISTS (SELECT 1 FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
                     ' OR c.domain_id IN (:cachedUserSubscribedDomains)');
+
+            if ($criteria->includeBoosts) {
+                $subClauseEntryComment = $subClausePost.
+                    (null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                $subClausePostComment = $subClausePost.
+                    (null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+
+                $subClausePost = $subClausePost
+                    .(null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                $subClauseEntry = $subClauseEntry
+                    .(null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+            }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
                 $parameters['cachedUserSubscribedMagazines'] = $criteria->cachedUserSubscribedMagazines;
@@ -157,9 +255,13 @@ class ContentRepository
 
         $favClauseEntry = '';
         $favClausePost = '';
+        $favClauseEntryComment = '';
+        $favClausePostComment = '';
         if ($user && $criteria->favourite) {
             $favClauseEntry = 'EXISTS (SELECT * FROM favourite f WHERE f.entry_id = c.id AND f.user_id = :loggedInUser)';
             $favClausePost = 'EXISTS (SELECT * FROM favourite f WHERE f.post_id = c.id AND f.user_id = :loggedInUser)';
+            $favClauseEntryComment = 'EXISTS (SELECT * FROM favourite f WHERE f.entry_comment_id = c.id AND f.user_id = :loggedInUser)';
+            $favClausePostComment = 'EXISTS (SELECT * FROM favourite f WHERE f.post_comment_id = c.id AND f.user_id = :loggedInUser)';
         }
 
         $blockingClausePost = '';
@@ -198,9 +300,57 @@ class ContentRepository
 
         $visibilityClauseM = 'm.visibility = :visible';
         if (null === $criteria->cachedUserFollows) {
-            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.following_id = :loggedInUser AND uf.follower_id = c.user_id))';
+            $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND EXISTS (SELECT * FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id))';
         } else {
             $visibilityClauseC = 'c.visibility = :visible OR (c.visibility = :private AND c.user_id IN (:cachedUserFollows))';
+        }
+
+        $filterClauseEntry = '';
+        $filterClausePost = '';
+        $filterClauseComments = '';
+        if (\sizeof($currenFilterLists) > 0) {
+            $listOrsEntry = [];
+            $listOrsPost = [];
+            $listOrsComments = [];
+            $i = 0;
+            foreach ($currenFilterLists as $filterList) {
+                foreach ($filterList->words as $filterListWord) {
+                    $word = $filterListWord['word'];
+                    $exact = $filterListWord['exactMatch'];
+                    if ($exact) {
+                        if ($filterList->feeds) {
+                            $listOrsEntry[] = "(c.title LIKE :word$i)";
+                            $listOrsEntry[] = "(c.body LIKE :word$i)";
+                            $listOrsPost[] = "(c.body LIKE :word$i)";
+                        }
+                        if ($filterList->comments) {
+                            $listOrsComments[] = "(c.body LIKE :word$i)";
+                        }
+                    } else {
+                        if ($filterList->feeds) {
+                            $listOrsEntry[] = "(c.title ILIKE :word$i)";
+                            $listOrsEntry[] = "(c.body ILIKE :word$i)";
+                            $listOrsPost[] = "(c.body ILIKE :word$i)";
+                        }
+                        if ($filterList->comments) {
+                            $listOrsComments[] = "(c.body ILIKE :word$i)";
+                        }
+                    }
+                    if ($filterList->feeds || ($filterList->comments && ($includeEntryComments || $includePostComments))) {
+                        $parameters["word$i"] = '%'.$word.'%';
+                    }
+                    ++$i;
+                }
+            }
+            if (\sizeof($listOrsEntry) > 0) {
+                $filterClauseEntry = 'NOT ('.implode(' OR ', $listOrsEntry).') OR c.user_id = :loggedInUser';
+            }
+            if (\sizeof($listOrsPost) > 0) {
+                $filterClausePost = 'NOT ('.implode(' OR ', $listOrsPost).') OR c.user_id = :loggedInUser';
+            }
+            if (\sizeof($listOrsComments) > 0) {
+                $filterClauseComments = 'NOT ('.implode(' OR ', $listOrsComments).') OR c.user_id = :loggedInUser';
+            }
         }
 
         $deletedClause = 'u.is_deleted = false';
@@ -224,6 +374,8 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
+            $filterClauseEntry,
         ]);
 
         $postWhere = SqlHelpers::makeWhereString([
@@ -244,14 +396,187 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
+            $filterClausePost,
+        ]);
+
+        $entryCommentWhere = SqlHelpers::makeWhereString([
+            $contentClauseEntry,
+            $timeClause,
+            $magazineClause,
+            $userClause,
+            $hashtagClauseEntryComment,
+            $federationClause,
+            $domainClausePost,
+            $languagesClause,
+            $subClauseEntryComment,
+            $modClause,
+            $favClauseEntryComment,
+            $blockingClausePost,
+            $hideAdultClause,
+            $visibilityClauseM,
+            $visibilityClauseC,
+            $allClause,
+            $filterClauseComments,
+        ]);
+
+        $postCommentWhere = SqlHelpers::makeWhereString([
+            $contentClausePost,
+            $timeClause,
+            $magazineClause,
+            $userClause,
+            $hashtagClausePostComment,
+            $federationClause,
+            $domainClausePost,
+            $languagesClause,
+            $contentTypeClausePost,
+            $subClausePostComment,
+            $modClause,
+            $favClausePostComment,
+            $blockingClausePost,
+            $hideAdultClause,
+            $visibilityClauseM,
+            $visibilityClauseC,
+            $allClause,
+            $filterClauseComments,
         ]);
 
         $outerWhere = SqlHelpers::makeWhereString([
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
+        $orderings = $addCursor ? ['%cursorSort%', '%cursorSort2%'] : $this->getOrderings($criteria);
+
+        $orderBy = 'ORDER BY '.join(', ', $orderings);
+        // only join domain if we are explicitly looking at one
+        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
+
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $domainJoin
+            $entryWhere";
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $postWhere";
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $entryCommentWhere";
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+            LEFT JOIN magazine m ON c.magazine_id = m.id
+            $postCommentWhere";
+
+        $innerLimit = $addCursor ? 'LIMIT :limit' : '';
+        $innerSql = '';
+        if (Criteria::CONTENT_THREADS === $criteria->content) {
+            if ($includeEntryComments) {
+                $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($entryCommentSql $orderBy $innerLimit)";
+            } else {
+                $innerSql = "$entrySql $orderBy $innerLimit";
+            }
+        } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
+            if ($includePostComments) {
+                $innerSql = "($postSql $orderBy $innerLimit) UNION ALL ($postCommentSql $orderBy $innerLimit)";
+            } else {
+                $innerSql = "$postSql $orderBy $innerLimit";
+            }
+        } else {
+            $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($postSql $orderBy $innerLimit)";
+            if ($includeEntryComments) {
+                $innerSql .= " UNION ALL ($entryCommentSql $orderBy $innerLimit)";
+            }
+            if ($includePostComments) {
+                $innerSql .= " UNION ALL ($postCommentSql $orderBy $innerLimit)";
+            }
+        }
+
+        $sql = "SELECT c.* FROM ($innerSql) c
+            INNER JOIN \"user\" u ON c.user_id = u.id
+            $outerWhere
+            $orderBy";
+
+        if (!str_contains($sql, ':loggedInUser')) {
+            $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
+        }
+
+        $rewritten = SqlHelpers::rewriteArrayParameters($parameters, $sql);
+
+        $this->logger->debug('{s} | {p}', ['s' => $sql, 'p' => $parameters]);
+        $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
+
+        return $rewritten;
+    }
+
+    private function getCursorFieldFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'score',
+            Criteria::SORT_HOT => 'ranking',
+            Criteria::SORT_COMMENTED => 'commentCount',
+            Criteria::SORT_ACTIVE => 'lastActive',
+            default => 'createdAt',
+        };
+    }
+
+    private function getCursorWhereFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score < :cursor',
+            Criteria::SORT_HOT => 'c.ranking < :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
+            Criteria::SORT_OLD => 'c.created_at > :cursor',
+            default => 'c.created_at < :cursor',
+        };
+    }
+
+    private function getCursorWhereInvertedFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score > :cursor',
+            Criteria::SORT_HOT => 'c.ranking > :cursor',
+            Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
+            Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
+            Criteria::SORT_OLD => 'c.created_at < :cursor',
+            default => 'c.created_at >= :cursor',
+        };
+    }
+
+    private function getSecondaryCursorWhereFromCriteria(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at < :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    private function getSecondaryCursorWhereFromCriteriaInverted(Criteria $criteria): string
+    {
+        return match ($criteria->sortOption) {
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at >= :cursor2',
+            default => 'FALSE',
+        };
+    }
+
+    public function guessInitialCursor(string $sortOption): mixed
+    {
+        return match ($sortOption) {
+            Criteria::SORT_TOP, Criteria::SORT_HOT, Criteria::SORT_COMMENTED => 2147483647, // postgresql max int
+            Criteria::SORT_OLD => (new \DateTimeImmutable())->setTimestamp(0),
+            default => new \DateTimeImmutable('now + 1 minute'),
+        };
+    }
+
+    private function getOrderings(Criteria $criteria): array
+    {
         $orderings = [];
 
         if ($criteria->stickiesFirst) {
@@ -283,51 +608,6 @@ class ContentRepository
                 $orderings[] = 'created_at DESC';
         }
 
-        $orderBy = 'ORDER BY '.join(', ', $orderings);
-        // only join domain if we are explicitly looking at one
-        $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
-
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $domainJoin
-            $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
-            LEFT JOIN magazine m ON c.magazine_id = m.id
-            $postWhere";
-
-        $innerSql = '';
-        if (Criteria::CONTENT_THREADS === $criteria->content) {
-            $innerSql = "$entrySql $orderBy";
-        } elseif (Criteria::CONTENT_MICROBLOG === $criteria->content) {
-            $innerSql = "$postSql $orderBy";
-        } else {
-            $innerSql = "$entrySql UNION ALL $postSql";
-        }
-
-        $sql = "SELECT content.* FROM ($innerSql) content
-            INNER JOIN \"user\" u ON content.user_id = u.id
-            $outerWhere
-            $orderBy";
-
-        if (!str_contains($sql, ':loggedInUser')) {
-            $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
-        }
-
-        $rewritten = SqlHelpers::rewriteArrayParameters($parameters, $sql);
-        $conn = $this->entityManager->getConnection();
-
-        $this->logger->debug('{s} | {p}', ['s' => $sql, 'p' => $parameters]);
-        $this->logger->debug('Rewritten to: {s} | {p}', ['p' => $rewritten['parameters'], 's' => $rewritten['sql']]);
-
-        $numResults = null;
-        if ('test' !== $this->kernel->getEnvironment() && !$criteria->magazine && !$criteria->moderated && !$criteria->favourite && Criteria::TIME_ALL === $criteria->time && Criteria::AP_ALL === $criteria->federation && 'all' === $criteria->type) {
-            // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
-            $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
-        }
-        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $rewritten['sql'], $rewritten['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
-        $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
-        $fanta->setCurrentPage($criteria->page);
-
-        return $fanta;
+        return $orderings;
     }
 }

@@ -162,6 +162,23 @@ php bin/console mbin:user:unsub <username>
 Arguments:
 - `username`: the user from which to remove all local followers.
 
+### Fix user duplicates
+
+This command allows you to fix duplicate usernames. There is a unique index on the usernames, but it is case-sensitive.
+This command will go through all the users with duplicate case-insensitive usernames,
+where the username is not part of the public id (meaning the original URL) and update them from the remote server.
+After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs.
+
+Usage:
+
+```bash
+php bin/console mbin:users:fix-duplicates [--dry-run]
+```
+
+Options:
+- `--dry-run`: don't change anything in the DB
+
+
 ## Magazine Management
 
 ### Magazine-Create
@@ -326,6 +343,44 @@ Arguments:
 
 ## Images
 
+### Remove cached remote media
+
+This command allows you to remove the cached file of remote media, **without** deleting the reference.
+You can run this command as a cron job to only keep cached media from the last 30 days for example.
+
+> [!TIP]
+> If a thread or microblog is opened without a local cache of the attached image existing, the image will be downloaded again.
+> Once an image is downloaded again, it will not get deleted for the number of days you set as a parameter.
+
+> [!NOTE]
+> User avatars and covers and magazine icons and banners are not affected by this command, 
+> only images from threads, microblogs and comments.
+
+Usage:
+
+```bash
+php bin/console mbin:images:remove-remote [--days|-d] [--batch-size] [--dry-run]
+```
+
+Options:
+- `--days`|`-d`: the number of days of media you want to keep. Everything older than the amount of days will be deleted
+- `--batch-size` (default `10000`): the number of images to retrieve per query from the DB. A higher number means less queries, but higher memory usage.
+- `--dry-run`: if set, no images will be deleted
+
+### Refresh the meta data of stored images
+
+This command allows you to refresh the filesize of the stored media, as well as the status.
+If an image is no longer present on storage this command adjusts it in the DB.
+
+Usage:
+
+```bash
+php bin/console mbin:images:refresh-meta [--batch-size] [--dry-run]
+```
+
+Options:
+- `--batch-size` (default `10000`): the number of images to retrieve per query from the DB. A higher number means less queries, but higher memory usage.
+- `--dry-run`: if set, no metadata will be changed
 
 ### Remove old federated images
 

@@ -372,10 +372,18 @@ figure {
 .flex {
   display: flex;
   gap: .25rem;
+
+  &.flex-reverse {
+    flex-direction: row-reverse;
+  }
 }
 
 .flex-item {
   flex-grow: 1;
+
+  &.flex-item-auto {
+    flex-grow: 0;
+  }
 }
 
 @include b.media-breakpoint-down(lg) {

@@ -230,6 +230,26 @@ user_settings_account_deletion:
     path: /settings/account_deletion
     methods: [GET, POST]
 
+user_settings_filter_lists:
+    controller: App\Controller\User\FilterListsController
+    path: /settings/filter_lists
+    methods: [GET, POST]
+
+user_settings_filter_lists_create:
+    controller: App\Controller\User\FilterListsController::create
+    path: /settings/filter_lists/create
+    methods: [GET, POST]
+
+user_settings_filter_lists_edit:
+    controller: App\Controller\User\FilterListsController::edit
+    path: /settings/filter_lists/edit/{id}
+    methods: [GET, POST]
+
+user_settings_filter_lists_delete:
+    controller: App\Controller\User\FilterListsController::delete
+    path: /settings/filter_lists/delete/{id}
+    methods: [GET, POST]
+
 user_settings_avatar_delete:
     controller: App\Controller\User\UserAvatarDeleteController
     path: /settings/edit/delete_avatar

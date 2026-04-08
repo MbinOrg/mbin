@@ -18,6 +18,7 @@ use App\DTO\PostResponseDto;
 use App\DTO\ReportDto;
 use App\DTO\ReportRequestDto;
 use App\DTO\UserDto;
+use App\DTO\UserFilterListResponseDto;
 use App\DTO\UserResponseDto;
 use App\Entity\Client;
 use App\Entity\Contracts\ContentInterface;
@@ -31,6 +32,7 @@ use App\Entity\MagazineLog;
 use App\Entity\OAuth2ClientAccess;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\UserFilterList;
 use App\Enums\ENotificationStatus;
 use App\Exception\SubjectHasBeenReportedException;
 use App\Factory\EntryCommentFactory;
@@ -41,6 +43,7 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Factory\UserFactory;
 use App\Form\Constraint\ImageConstraint;
+use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Repository\BookmarkListRepository;
 use App\Repository\BookmarkRepository;
 use App\Repository\Criteria;
@@ -55,6 +58,7 @@ use App\Repository\PostRepository;
 use App\Repository\ReputationRepository;
 use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
+use App\Schema\CursorPaginationSchema;
 use App\Schema\PaginationSchema;
 use App\Service\BookmarkManager;
 use App\Service\InstanceManager;
@@ -233,6 +237,14 @@ class BaseApi extends AbstractController
         ];
     }
 
+    public function serializeCursorPaginated(array $serializedItems, CursorPaginationInterface $pagerfanta): array
+    {
+        return [
+            'items' => $serializedItems,
+            'pagination' => new CursorPaginationSchema($pagerfanta),
+        ];
+    }
+
     public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): mixed
     {
         $toReturn = null;
@@ -323,6 +335,11 @@ class BaseApi extends AbstractController
         }
 
         return $response;
+    }
+
+    protected function serializeFilterList(UserFilterList $list): UserFilterListResponseDto
+    {
+        return UserFilterListResponseDto::fromList($list);
     }
 
     public static function constrainPerPage(mixed $value, int $min = self::MIN_PER_PAGE, int $max = self::MAX_PER_PAGE): int

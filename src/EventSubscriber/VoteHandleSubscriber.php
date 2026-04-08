@@ -15,7 +15,8 @@ use App\Service\CacheService;
 use App\Service\FavouriteManager;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
-use Doctrine\Common\Util\ClassUtils;
+use App\Utils\SqlHelpers;
+use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -29,6 +30,7 @@ class VoteHandleSubscriber implements EventSubscriberInterface
         private readonly CacheInterface $cache,
         private readonly FavouriteManager $favouriteManager,
         private readonly SettingsManager $settingsManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -51,7 +53,7 @@ class VoteHandleSubscriber implements EventSubscriberInterface
         $this->bus->dispatch(
             new VoteNotificationMessage(
                 $event->votable->getId(),
-                ClassUtils::getRealClass(\get_class($event->votable))
+                SqlHelpers::getRealClassName($this->entityManager, $event->votable)
             )
         );
 
