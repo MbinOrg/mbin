@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ContentInterface;
 use App\Entity\Contracts\FavouriteInterface;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Contracts\VotableInterface;
@@ -38,7 +39,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['last_active'], name: 'entry_comment_last_active_at_idx')]
 #[Index(columns: ['created_at'], name: 'entry_comment_created_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_comment_body_ts_idx')]
-class EntryComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
+class EntryComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, HashtagableInterface
 {
     use VotableTrait;
     use VisibilityTrait;
@@ -47,6 +48,8 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+
+    public const string REPORT_TYPE = 'entry_comment_report';
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'entryComments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -347,5 +350,10 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         }
 
         return $children;
+    }
+
+    public function getReportType(): string
+    {
+        return self::REPORT_TYPE;
     }
 }

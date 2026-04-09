@@ -41,6 +41,13 @@ api_message_retrieve_thread:
   methods: [ GET ]
   format: json
 
+# Delete a thread with a user
+api_message_remove_thread:
+    controller: App\Controller\Api\Message\MessageRemoveApi::removeThread
+    path: /api/messages/thread/{thread_id}
+    methods: [ DELETE ]
+    format: json
+
 # Create a thread with a user
 api_message_create_thread:
   controller: App\Controller\Api\Message\MessageThreadCreateApi

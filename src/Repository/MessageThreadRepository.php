@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Message;
 use App\Entity\MessageThread;
+use App\Entity\Report;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
@@ -91,5 +92,14 @@ class MessageThreadRepository extends ServiceEntityRepository
         }
 
         return [];
+    }
+
+    public function threadContainsReportedMessage(MessageThread $thread): bool {
+        $sql = 'SELECT EXISTS( SELECT 1 FROM message m INNER JOIN report r ON m.id = r.message_id WHERE m.thread_id = :tId AND (r.status = :statusPending OR r.status = :statusAppeal) );';
+        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+        $query->bindValue('tId', $thread->getId(), ParameterType::INTEGER);
+        $query->bindValue('statusPending', Report::STATUS_PENDING);
+        $query->bindValue('statusAppeal', Report::STATUS_APPEAL);
+        return $query->executeQuery()->fetchFirstColumn()[0];
     }
 }

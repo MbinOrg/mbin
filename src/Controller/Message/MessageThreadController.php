@@ -7,6 +7,7 @@ namespace App\Controller\Message;
 use App\Controller\AbstractController;
 use App\Entity\MessageThread;
 use App\Form\MessageType;
+use App\Repository\NotificationRepository;
 use App\Service\MessageManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,13 +16,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageThreadController extends AbstractController
 {
-    public function __construct(private readonly MessageManager $manager)
+    public function __construct(
+        private readonly MessageManager $manager,
+        private readonly NotificationRepository $notificationRepo,
+    )
     {
     }
 
     #[IsGranted('ROLE_USER')]
     #[IsGranted('show', subject: 'thread', statusCode: 403)]
-    public function __invoke(#[MapEntity(id: 'id')] MessageThread $thread, Request $request): Response
+    public function show(#[MapEntity(id: 'id')] MessageThread $thread, Request $request): Response
     {
         $form = $this->createForm(MessageType::class);
         $form->handleRequest($request);
@@ -32,7 +36,8 @@ class MessageThreadController extends AbstractController
             return $this->redirectToRoute('messages_single', ['id' => $thread->getId()]);
         }
 
-        $this->manager->readMessages($thread, $this->getUserOrThrow());
+        //$this->manager->readMessages($thread, $this->getUserOrThrow());
+        $this->notificationRepo->markMessageNotificationsAsRead($this->getUserOrThrow(), $thread);
 
         return $this->render(
             'messages/single.html.twig',
@@ -41,6 +46,17 @@ class MessageThreadController extends AbstractController
                 'thread' => $thread,
                 'form' => $form->createView(),
             ]
+        );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[IsGranted('show', subject: 'thread', statusCode: 403)]
+    public function remove(#[MapEntity(id: 'id')] MessageThread $thread): Response
+    {
+        $this->manager->removeUserFromThread($thread, $this->getUserOrThrow());
+
+        return $this->redirectToRoute(
+            'messages_front'
         );
     }
 }
