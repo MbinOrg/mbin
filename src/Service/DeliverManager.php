@@ -39,7 +39,8 @@ readonly class DeliverManager
                 continue;
             }
 
-            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey));
+            $trace = (new \Exception())->getTraceAsString();
+            $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey, $trace));
         }
     }
 }
