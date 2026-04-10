@@ -113,7 +113,9 @@
                         <li>
                             <a class="stretched-link"
                                href="{{ post_url(comment.post) ~ '#post-comment-' ~ comment.id }}">
-                                {{ 'parent_post'|trans }}
+                                <span data-subject-x="subjectLink">
+                                    {{ 'parent_post'|trans }}
+                                </span>
                             </a>
                         </li>
                         <li>
