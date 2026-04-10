@@ -1,148 +1,171 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 
-{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_PREVIEW'), V_FALSE) -%}
+{%- set SHOW_THUMBNAILS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_THUMBNAILS'), V_TRUE) -%}
+{%- set SHOW_USER_AVATARS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_USERS_AVATARS'), V_TRUE) -%}
+{%- set SHOW_MAGAZINE_ICONS = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_ENTRIES_SHOW_MAGAZINES_ICONS'), V_TRUE) -%}
 {%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
 {%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
 
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
-    <div class="post-container">
-        {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
-            <div class="section section--small">
-                Private
-            </div>
-        {% else %}
-            <blockquote{{ attributes.defaults({
-                class: html_classes('section post subject ', {
-                    'own': app.user and comment.isAuthor(app.user),
-                    'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
-                })}).without('id') }}
-                    id="post-comment-{{ comment.id }}"
-                    data-controller="subject mentions html-refresh"
-                    data-action="notifications:Notification@window->subject#notification">
+    {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
+        <div class="section section--small"
+             style="z-index:3; position:relative;">
+            Private
+        </div>
+    {% else %}
+        <article {{ attributes.defaults({
+            class: html_classes('post section subject', {
+                'no-image': SHOW_THUMBNAILS is same as V_FALSE,
+                'own': app.user and comment.isAuthor(app.user),
+                'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
+            })}).without('id') }}
+                id="post-comment-{{ comment.id }}"
+                data-controller="subject preview mentions html-refresh"
+                data-action="notifications:Notification@window->subject#notification"
+                data-subject-is-on-combined-value="true">
+            {% with %}
+                {% set hasTitle = comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                {% set isAdult = comment.isAdult %}
+                {% set hasLang = comment.lang is not same as app.request.locale and comment.lang is not same as kbin_default_lang() %}
+                {% set isModDeleted = comment.visibility is same as 'trashed' %}
+                {% set isUserDeleted = comment.visibility is same as 'soft_deleted' %}
+                {% set needsHeader = (hasTitle and (isAdult or hasLang)) or isModDeleted or isUserDeleted %}
 
-                {% if comment.visibility in ['visible', 'private'] %}
-                    {{ component('vote', {
-                        subject: comment,
-                        showDownvote: false
-                    }) }}
-                {% endif %}
+                <header {% if not needsHeader %} style="margin: 0 0 var(--kbin-entry-element-spacing) 0;" {% endif %}>
+                    {% if hasTitle %}
+                        <h2>
+                            {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
 
-                <header>
-                    {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
-                    {{ component('user_inline', {user: comment.user, showAvatar: true, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
-
-                    {% if (comment.user.type) == "Service" %}
-                        <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
-                    {% endif %}
-
-                    {% if comment.user.admin() %}
-                        <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
-                    {% elseif comment.user.moderator() %}
-                        <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
-                    {% elseif comment.magazine.userIsModerator(comment.user) %}
-                        <span class="user-badge">{{ 'user_badge_moderator'|trans }}</span>
-                    {% endif %}
-                    <span>, </span>
-                    {% if dateAsUrl %}
-                        <a href="{{ post_url(comment.post) ~ '#post-comment-' ~ comment.id }}"
-                           class="link-muted">{{ component('date', {date: comment.createdAt}) }}</a>
-                    {% else %}
-                        {{ component('date', {date: comment.createdAt}) }}
-                    {% endif %}
-                    {{ component('date_edited', {createdAt: comment.createdAt, editedAt: comment.editedAt}) }}
-                    {% if comment.lang is not same as app.request.locale and comment.lang is not same as kbin_default_lang() %}
-                        <small class="badge-lang kbin-bg">{{ comment.lang|language_name }}</small>
+                            {% if hasLang %}
+                                <small class="badge-lang kbin-bg">{{ comment.lang|language_name }}</small>
+                            {% endif %}
+                        </h2>
+                    {% elseif(isModDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
+                    {% elseif(isUserDeleted) %}
+                        <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                     {% endif %}
                 </header>
+            {% endwith %}
+            {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                {% if comment.body %}
+                    <div class="content short-desc">
+                        <p>{{ get_short_sentence(comment.body|markdown|raw, striptags = true, onlyFirstParagraph = false) }}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <aside class="meta entry__meta">
+                <span>{{ component('user_inline', {user: comment.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
 
-                <!-- body -->
-                <div data-controller="collapsable">
-                    <div data-collapsable-target="content" class="content">
-                        {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                            {{ comment.body|markdown("post")|raw }}
-                        {% elseif(comment.visibility is same as 'trashed') %}
-                            <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                        {% elseif(comment.visibility is same as 'soft_deleted') %}
-                            <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
-                        {% endif %}
+                {% if (comment.user.type) == "Service" %}
+                    <span class="user-badge">{{ 'user_badge_bot'|trans }}</span>
+                {% endif %}
+
+                {% if comment.user.admin() %}
+                    <span class="user-badge">{{ 'user_badge_admin'|trans }}</span>
+                {% elseif comment.user.moderator() %}
+                    <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
+                {% endif %}
+                <span>, </span>
+                <span>{{ component('date', {date: comment.createdAt}) }}</span>
+                <span>{{ component('date_edited', {createdAt: comment.createdAt, editedAt: comment.editedAt}) }}</span>
+            </aside>
+            {% if SHOW_THUMBNAILS is same as V_TRUE %}
+                {% if comment.image %}
+                    {{ include('components/_figure_entry.html.twig', {entry: comment, type: 'image'}) }}
+                {% else %}
+                    <div class="no-image-placeholder">
+                        <a href="{{ post_url(comment.post) ~ '#post-comment-' ~ comment.id }}">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
+            {% if comment.visibility in ['visible', 'private'] %}
+                {{ component('vote', {
+                    subject: comment,
+                    showDownvote: false
+                }) }}
+            {% endif %}
+            <aside class="entry__preview hidden" data-preview-target="container"></aside>
+            <footer>
+                {% if comment.visibility in ['visible', 'private'] %}
+                    <menu>
+                        <li class="meta-link">
+                                <span aria-label="{{ 'comment'|trans }}">
+                                    <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                                </span>
+                        </li>
 
                         {% if comment.image %}
-                            {{ include('components/_figure_image.html.twig', {
-                                image: comment.image,
-                                parent_id: comment.id,
-                                is_adult: comment.isAdult,
-                                thumb_filter: 'post_thumb',
-                                gallery_name: 'pc-%d'|format(comment.id),
-                            }) }}
+                            <li>
+                                <button class="show-preview"
+                                        data-action="preview#show"
+                                        aria-label="{{ 'preview'|trans }}"
+                                        data-preview-url-param="{{ uploaded_asset(comment.image) }}">
+                                    <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
+                                </button>
+                            </li>
                         {% endif %}
-                    </div>
-                    <div data-collapsable-target="button"></div>
+
+                        <li>
+                            <a class="stretched-link"
+                               href="{{ post_url(comment.post) ~ '#post-comment-' ~ comment.id }}">
+                                {{ 'parent_post'|trans }}
+                            </a>
+                        </li>
+                        <li>
+                            {{ component('boost', {
+                                subject: comment
+                            }) }}
+                        </li>
+                        {% if app.user is defined and app.user is not same as null %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
+                        {% include 'post/comment/_menu.html.twig' %}
+
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% elseif (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
+                    <menu>
+                        <li>
+                            <form method="post"
+                                  action="{{ path('post_comment_restore', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}"
+                                  data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
+                                <input type="hidden" name="token" value="{{ csrf_token('post_comment_restore') }}">
+                                <button type="submit">{{ 'restore'|trans }}</button>
+                            </form>
+                        </li>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% else %}
+                    <menu>
+                        {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
+                            {{ component('bookmark_standard', { subject: comment }) }}
+                        {% endif %}
+                        <li data-subject-target="loader" style="display:none">
+                            <div class="loader" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
+                    </menu>
+                {% endif %}
+                <div data-subject-target="container" class="js-container">
                 </div>
-
-                <footer>
-                    {% if comment.visibility in ['visible', 'private'] %}
-                        <menu>
-                            <li>
-                                <a class="stretched-link"
-                                   href="{{ post_comment_create_url(comment) }}#add-comment"
-                                   data-action="subject#getForm">{{ 'reply'|trans }}</a>
-                            </li>
-                            <li>
-                                {{ component('boost', {
-                                    subject: comment
-                                }) }}
-                            </li>
-                            {% if app.user is defined and app.user is not same as null %}
-                                {{ component('bookmark_standard', { subject: comment }) }}
-                            {% endif %}
-                            {% include 'post/comment/_menu.html.twig' %}
-                            <li data-subject-target="loader" style="display:none">
-                                <div class="loader" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </li>
-                        </menu>
-                        {{ component('voters_inline', {
-                            subject: comment,
-                            url: post_comment_voters_url(comment, 'up')
-                        }) }}
-                    {% elseif(comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
-                        <menu>
-                            <li>
-                                <form method="post"
-                                      action="{{ path('post_comment_restore', {magazine_name: comment.magazine.name, post_id: comment.post.id, comment_id: comment.id}) }}"
-                                      data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                                    <input type="hidden" name="token" value="{{ csrf_token('post_comment_restore') }}">
-                                    <button type="submit">{{ 'restore'|trans }}</button>
-                                </form>
-                            </li>
-                            {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
-                                {{ component('bookmark_standard', { subject: comment }) }}
-                            {% endif %}
-                            <li data-subject-target="loader" style="display:none">
-                                <div class="loader" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </li>
-                        </menu>
-                    {% else %}
-                        <menu>
-                            {% if app.user is defined and app.user is not same as null and is_bookmarked(app.user, comment) %}
-                                {{ component('bookmark_standard', { subject: comment }) }}
-                            {% endif %}
-                            <li data-subject-target="loader" style="display:none">
-                                <div class="loader" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </li>
-                        </menu>
-                    {% endif %}
-                    <div data-subject-target="container" class="js-container">
-                    </div>
-                </footer>
-
-            </blockquote>
-        {% endif %}
-    </div>
+            </footer>
+        </article>
+    {% endif %}
 {% endif %}

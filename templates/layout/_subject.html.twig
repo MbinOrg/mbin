@@ -26,7 +26,7 @@
 {% if subject is entry %}
     {{ component('entry', {entry: subject}|merge(attributes)|merge(entryAttributes)) }}
 {% elseif subject is entry_comment %}
-    {{ component('entry_comment', {comment: subject, showEntryTitle: forCombined}|merge(attributes)|merge(entryCommentAttributes)) }}
+    {{ component('entry_comment', {comment: subject, showEntryTitle: forCombined is same as true}|merge(attributes)|merge(entryCommentAttributes)) }}
 {% elseif subject is post %}
     {% if forCombined is same as true %}
         {{ component('post_combined', {post: subject}|merge(attributes)|merge(postAttributes)) }}
