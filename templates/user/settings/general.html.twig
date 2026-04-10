@@ -31,7 +31,13 @@
             {{ form_row(form.customCss, {label: 'custom_css', row_attr: {class: 'textarea'}}) }}
             {{ form_row(form.ignoreMagazinesCustomCss, {label: 'ignore_magazines_custom_css', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.hideAdult, {label: 'hide_adult', row_attr: {class: 'checkbox'}}) }}
-            {{ form_row(form.showFollowingBoosts, {label: 'show_boost_following_label', row_attr: {class: 'checkbox'}}) }}
+            <div class="checkbox">
+                {{ form_label(form.showFollowingBoosts, 'show_boost_following_label') }}
+                {{ form_widget(form.showFollowingBoosts) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.showFollowingBoosts) }}
+            </div>
             <h2>{{ 'writing'|trans }}</h2>
             {{ form_row(form.addMentionsEntries, {label: 'add_mentions_entries', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.addMentionsPosts, {label: 'add_mentions_posts', row_attr: {class: 'checkbox'}}) }}
