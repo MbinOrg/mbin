@@ -152,12 +152,6 @@ class CreateHandler extends MbinMessageHandler
                     } else {
                         $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
                     }
-                } else {
-                    $previousAnnounce = $this->activityRepository->findAllActivitiesByTypeObjectAndActor('Announce', $createActivity, $note->magazine);
-                    if (\sizeof($previousAnnounce)) {
-                        // do not announce the 'Create' activity if the magazine already announced that previously
-                        return;
-                    }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
                 $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
