@@ -161,6 +161,7 @@ class ActivityHandler extends MbinMessageHandler
             return;
         }
 
+        $wasAnnounced = false;
         if ('Announce' === $payload['type']) {
             // we check for an array here, because boosts are announces with an url (string) as the object
             if (\is_array($payload['object'])) {
@@ -173,6 +174,7 @@ class ActivityHandler extends MbinMessageHandler
                     }
                 }
 
+                $wasAnnounced = true;
                 $payload = $payload['object'];
                 $actor = $payload['actor'] ?? $payload['attributedTo'] ?? null;
                 if ($actor) {

@@ -24,6 +24,7 @@ use App\Service\ActivityPubManager;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -44,6 +45,7 @@ class AnnounceHandler extends MbinMessageHandler
         private readonly SettingsManager $settingsManager,
         private readonly ActivityJsonBuilder $activityJsonBuilder,
         private readonly ActivityRepository $activityRepository,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -80,6 +82,16 @@ class AnnounceHandler extends MbinMessageHandler
                 } else {
                     throw new UnrecoverableMessageHandlingException("We need a create activity to announce objects, but none was found and the object (id: '$object->apId' is from a remote instance, so we cannot build a create activity");
                 }
+            }
+            $alreadySentActivities = $this->activityRepository->findAllActivitiesByTypeObjectAndActor('Announce', $object, $actor);
+            if (!$message->removeAnnounce && \sizeof($alreadySentActivities) > 0) {
+                $this->logger->info('[AnnounceHandler::doWork] not sending announcing {object}, because it is not an Undo and the same actor (magazine {magazine}) already announced the Create activity {create}', [
+                    'object' => \get_class($object)." \"{$object->getShortTitle()}\"",
+                    'magazine' => $actor->name,
+                    'create' => $createActivity->uuid,
+                ]);
+
+                return;
             }
             $activity = $this->announceWrapper->build($actor, $createActivity, true);
         } else {
