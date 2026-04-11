@@ -154,7 +154,7 @@ class CreateHandler extends MbinMessageHandler
                     }
                 } else {
                     $previousAnnounce = $this->activityRepository->findAllActivitiesByTypeObjectAndActor('Announce', $createActivity, $note->magazine);
-                    if ($previousAnnounce) {
+                    if (\sizeof($previousAnnounce)) {
                         // do not announce the 'Create' activity if the magazine already announced that previously
                         return;
                     }
