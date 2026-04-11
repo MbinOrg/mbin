@@ -116,6 +116,10 @@ class AnnounceHandler extends MbinMessageHandler
         }
 
         $inboxes = array_filter(array_unique($inboxes));
-        $this->deliverManager->deliver($inboxes, $json);
+        $trace = [];
+        if ($message->originTrace) {
+            $trace[] = $message->originTrace;
+        }
+        $this->deliverManager->deliver($inboxes, $json, previousTrace: $trace);
     }
 }

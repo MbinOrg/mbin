@@ -21,7 +21,7 @@ readonly class DeliverManager
     /**
      * @param string[]|ActivityPubActorTrait[] $inboxes
      */
-    public function deliver(array $inboxes, array $activity, bool $useOldPrivateKey = false): void
+    public function deliver(array $inboxes, array $activity, bool $useOldPrivateKey = false, array $previousTrace = []): void
     {
         foreach ($inboxes as $inbox) {
             if (!$inbox) {
@@ -39,7 +39,7 @@ readonly class DeliverManager
                 continue;
             }
 
-            $trace = (new \Exception())->getTraceAsString();
+            $trace = [...$previousTrace, (new \Exception())->getTraceAsString()];
             $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey, $trace));
         }
     }
