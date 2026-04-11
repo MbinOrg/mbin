@@ -58,12 +58,14 @@ class VoteHandleSubscriber implements EventSubscriberInterface
         );
 
         if (!$event->vote->user->apId && VotableInterface::VOTE_UP === $event->vote->choice && !$event->votedAgain) {
+            $trace = (new \Exception())->getTraceAsString();
             $this->bus->dispatch(
                 new AnnounceMessage(
                     $event->vote->user->getId(),
                     null,
                     $event->votable->getId(),
                     \get_class($event->votable),
+                    originTrace: $trace,
                 ),
             );
         }

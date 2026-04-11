@@ -15,6 +15,7 @@ class AnnounceMessage implements ActivityPubOutboxInterface
         public string $objectType,
         public bool $removeAnnounce = false,
         public ?array $createActivity = null,
+        public ?string $originTrace = null,
     ) {
     }
 }

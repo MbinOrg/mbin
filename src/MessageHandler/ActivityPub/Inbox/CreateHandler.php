@@ -153,8 +153,10 @@ class CreateHandler extends MbinMessageHandler
                         $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
                     }
                 }
+
+                $trace = (new \Exception())->getTraceAsString();
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
-                $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note)));
+                $this->bus->dispatch(new AnnounceMessage(null, $note->magazine->getId(), $note->getId(), \get_class($note), originTrace: $trace));
             }
         }
     }
@@ -180,8 +182,10 @@ class CreateHandler extends MbinMessageHandler
                         $this->logger->warning('[CreateHandler::handlePage] Could not create the activity with the full create payload because it was just missing...');
                     }
                 }
+
+                $trace = (new \Exception())->getTraceAsString();
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
-                $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page)));
+                $this->bus->dispatch(new AnnounceMessage(null, $page->magazine->getId(), $page->getId(), \get_class($page), originTrace: $trace));
             }
         }
     }
