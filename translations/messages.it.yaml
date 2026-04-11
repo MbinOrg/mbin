@@ -1,9 +1,9 @@
-type.article: Filo
+type.article: Argomento
 type.photo: Foto
 type.video: Video
-type.smart_contract: Smart contract
-type.magazine: Magazine
-thread: Thread
+type.smart_contract: Contratto Smart
+type.magazine: Rivista
+thread: Argomento
 people: Persone
 events: Eventi
 magazine: Rivista
@@ -11,7 +11,7 @@ magazines: Riviste
 search: Cerca
 add: Aggiungi
 select_channel: Seleziona un canale
-threads: Thread
+threads: ArgomentiThread
 hot: Popolari
 active: Attivi
 newest: Più recenti
@@ -98,7 +98,7 @@ microblog: Microblog
 top: Migliori
 filter_by_time: Filtra per data
 type_search_term: Digita un termine di ricerca
-favourites: Preferiti
+favourites: voti positivi
 unfollow: Non seguire
 you_cant_login: Hai dimenticato la password?
 reset_check_email_desc: Se esiste un account associato al tuo indirizzo email, 
@@ -383,3 +383,10 @@ report_issue: Segnala un problema
 tokyo_night: Tokyo Night
 boost: Boost
 preferred_languages: Filtra le lingue dei thread e dei post
+sort_by: Ordina per
+filter_by_subscription: Filtra per abbonamento
+filter_by_federation: Filtra per stato della federazione
+created_since: Creato dal
+subscribers_count: '{0}Abbonati|{1}Abbonato|]1,Inf[ Abbonati'
+marked_for_deletion: Contrassegnato per la cancellazione
+marked_for_deletion_at: Contrassegnato per la cancellazione in data %date%
