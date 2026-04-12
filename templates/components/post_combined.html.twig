@@ -43,9 +43,9 @@
                                 <small class="badge-lang kbin-bg">{{ post.lang|language_name }}</small>
                             {% endif %}
                         </h2>
-                    {% elseif(isModDeleted) %}
+                    {% elseif isModDeleted %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
-                    {% elseif(isUserDeleted) %}
+                    {% elseif isUserDeleted %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                     {% endif %}
                 </header>
