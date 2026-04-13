@@ -75,7 +75,7 @@ class ActivityRepository extends ServiceEntityRepository
     /**
      * @return Activity[]|null
      */
-    public function findAllActivitiesByTypeObjectAndActor(string $type, ActivityPubActivityInterface|ActivityPubActorInterface $object, ActivityPubActorInterface $actor): ?array
+    public function findAllActivitiesByTypeObjectAndActor(string $type, Activity|ActivityPubActivityInterface|ActivityPubActorInterface|string $object, ActivityPubActorInterface $actor): ?array
     {
         $qb = $this->createQueryBuilder('a');
         $qb->where('a.type = :type');
@@ -108,7 +108,7 @@ class ActivityRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    private function addObjectFilter(QueryBuilder $qb, ActivityPubActivityInterface|ActivityPubActorInterface|MagazineBan $object): void
+    private function addObjectFilter(QueryBuilder $qb, Activity|ActivityPubActivityInterface|ActivityPubActorInterface|MagazineBan|string $object): void
     {
         if ($object instanceof Entry) {
             $qb->andWhere('a.objectEntry = :entry')
@@ -134,6 +134,12 @@ class ActivityRepository extends ServiceEntityRepository
         } elseif ($object instanceof MagazineBan) {
             $qb->andWhere('a.objectMagazineBan = :magazineBan')
                 ->setParameter('magazineBan', $object);
+        } elseif ($object instanceof Activity) {
+            $qb->andWhere('a.innerActivity = :innerActivity')
+                ->setParameter('innerActivity', $object);
+        } elseif (\is_string($object)) {
+            $qb->andWhere('a.innerActivityUrl = :innerActivityUrl')
+                ->setParameter('innerActivityUrl', $object);
         }
     }
 

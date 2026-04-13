@@ -14,6 +14,7 @@ use App\Service\ActivityPub\Wrapper\AnnounceWrapper;
 use App\Service\DeliverManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,6 +33,7 @@ class GenericAnnounceHandler extends MbinMessageHandler
         private readonly DeliverManager $deliverManager,
         private readonly ActivityRepository $activityRepository,
         private readonly ActivityJsonBuilder $activityJsonBuilder,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
     }
@@ -62,10 +64,25 @@ class GenericAnnounceHandler extends MbinMessageHandler
 
         if (null !== $message->innerActivityUUID) {
             $object = $this->activityRepository->findOneBy(['uuid' => Uuid::fromString($message->innerActivityUUID)]);
+            if (!$object) {
+                // this should literally not be possible, but check for it anyway
+
+                throw new \LogicException('could not find an Object by their Uuid '.$message->innerActivityUUID);
+            }
         } elseif (null !== $message->innerActivityUrl) {
             $object = $message->innerActivityUrl;
         } else {
             throw new \LogicException('expect at least one of innerActivityUUID or innerActivityUrl to not be null');
+        }
+
+        $alreadySentActivities = $this->activityRepository->findAllActivitiesByTypeObjectAndActor('Announce', $object, $magazine);
+        if (\sizeof($alreadySentActivities) > 0) {
+            $this->logger->info('[GenericAnnounceHandler::doWork] not announcing activity {object}, because the same actor (magazine {magazine}) already announced it', [
+                'object' => $object->uuid,
+                'magazine' => $magazine->name,
+            ]);
+
+            return;
         }
 
         $announce = $this->announceWrapper->build($magazine, $object);
