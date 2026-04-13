@@ -433,6 +433,14 @@ export default class extends Controller {
                 if (href) {
                     document.location.href = href;
                 }
+            } else {
+                const link = this.element.querySelector('footer span[data-subject-x="subjectLink"]')?.parentElement;
+                if (link) {
+                    const href = link.getAttribute('href');
+                    if (href) {
+                        document.location.href = href;
+                    }
+                }
             }
         });
     }

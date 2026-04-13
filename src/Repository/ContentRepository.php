@@ -208,23 +208,28 @@ class ContentRepository
                     ' OR c.domain_id IN (:cachedUserSubscribedDomains)');
 
             if ($criteria->includeBoosts) {
-                $subClauseEntryComment = $subClausePost.
+                $repliesCommonWhere = 'c.user_id = :loggedInUser'
+                    .(null === $criteria->cachedUserFollows ?
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
+                        ' OR c.user_id IN (:cachedUserFollows)');
+
+                $subClauseEntryComment = $repliesCommonWhere.
                     (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
-                $subClausePostComment = $subClausePost.
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+                $subClausePostComment = $repliesCommonWhere.
                     (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
 
                 $subClausePost = $subClausePost
                     .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
                 $subClauseEntry = $subClauseEntry
                     .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf INNER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND uf.follower_id = :loggedInUser AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND v.user_id IN (:cachedUserFollows) AND v.choice = 1)');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
             }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
