@@ -166,13 +166,17 @@ Arguments:
 
 This command allows you to fix duplicate usernames. There is a unique index on the usernames, but it is case-sensitive.
 This command will go through all the users with duplicate case-insensitive usernames,
-where the username is not part of the public id (meaning the original URL) and update them from the remote server.
-After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs.
+where the username is not part of the public id (meaning the original URL) or handle (you will be asked what to use for deduplication)
+and update them from the remote server.
+After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs (if you deduplicate by handle) 
+or delete some of them (if you deduplicate by URL).
 
 Usage:
 
 ```bash
-php bin/console mbin:users:fix-duplicates [--dry-run]
+php bin/console mbin:check:duplicates-users-magazines [--dry-run]
+# then select 'users'
+# then select either 'handle' or 'profileUrl'
 ```
 
 Options:
