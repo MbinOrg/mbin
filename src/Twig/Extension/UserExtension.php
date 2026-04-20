@@ -20,6 +20,7 @@ class UserExtension extends AbstractExtension
             new TwigFunction('get_instance_of_user', [UserExtensionRuntime::class, 'getInstanceOfUser']),
             new TwigFunction('get_user_attitude', [UserExtensionRuntime::class, 'getUserAttitude']),
             new TwigFunction('is_instance_of_user_banned', [UserExtensionRuntime::class, 'isInstanceOfUserBanned']),
+            new TwigFunction('get_user_title', [UserExtensionRuntime::class, 'getTitle']),
         ];
     }
 
