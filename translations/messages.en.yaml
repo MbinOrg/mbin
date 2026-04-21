@@ -1051,6 +1051,8 @@ show_rich_mention_magazine_help: Render a magazine component when a magazine is
 show_rich_ap_link: Rich AP links
 show_rich_ap_link_help: Render an inline component when other ActivityPub
   content is linked to.
+posts_harmonize_combined: Use new layout in Combined view
+posts_harmonize_combined_help: Posts will have a layout which is similar to that of threads.
 attitude: Attitude
 type_search_magazine: Limit search to magazine...
 type_search_user: Limit search to author...

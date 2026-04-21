@@ -92,7 +92,7 @@ class PostSingleController extends AbstractController
         $this->dispatcher->dispatch(new PostHasBeenSeenEvent($post));
 
         if ($request->isXmlHttpRequest()) {
-            return $this->getJsonResponse($magazine, $post, $comments);
+            return $this->getJsonResponse($magazine, $post, $criteria, $comments);
         }
 
         $dto = new PostCommentDto();
@@ -119,16 +119,17 @@ class PostSingleController extends AbstractController
         );
     }
 
-    private function getJsonResponse(Magazine $magazine, Post $post, PagerfantaInterface $comments): JsonResponse
+    private function getJsonResponse(Magazine $magazine, Post $post, Criteria $criteria, PagerfantaInterface $comments): JsonResponse
     {
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'post/_single_popup.html.twig',
+                    'post/comments_json.html.twig',
                     [
                         'magazine' => $magazine,
                         'post' => $post,
                         'comments' => $comments,
+                        'criteria' => $criteria,
                     ]
                 ),
             ]
