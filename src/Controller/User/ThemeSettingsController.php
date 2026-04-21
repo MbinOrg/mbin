@@ -34,6 +34,7 @@ class ThemeSettingsController extends AbstractController
     public const MBIN_POSTS_SHOW_RICH_MENTION = 'mbin_posts_show_rich_mention';
     public const MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE = 'mbin_posts_show_rich_mention_magazine';
     public const MBIN_POSTS_SHOW_RICH_AP_LINK = 'mbin_posts_show_rich_ap_link';
+    public const MBIN_POSTS_HARMONIZE_COMBINED = 'mbin_posts_harmonize_combined';
     public const KBIN_GENERAL_ROUNDED_EDGES = 'kbin_general_rounded_edges';
     public const KBIN_GENERAL_INFINITE_SCROLL = 'kbin_general_infinite_scroll';
     public const KBIN_GENERAL_TOPBAR = 'kbin_general_topbar';
@@ -128,6 +129,7 @@ class ThemeSettingsController extends AbstractController
         self::MBIN_POSTS_SHOW_RICH_MENTION,
         self::MBIN_POSTS_SHOW_RICH_MENTION_MAGAZINE,
         self::MBIN_POSTS_SHOW_RICH_AP_LINK,
+        self::MBIN_POSTS_HARMONIZE_COMBINED,
     ];
 
     public const VALUES = [

@@ -1,3 +1,5 @@
+{%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
+
 {% if attributes is not defined %}
     {% set attributes = {} %}
 {% endif %}
@@ -20,6 +22,8 @@
     {% set userAttributes = {} %}
 {% endif %}
 
+{%- set useHarmonizedPostComponent = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_POSTS_HARMONIZE_COMBINED'), V_TRUE) is same as V_TRUE -%}
+
 {% set forCombined = (route_param_exists('content') and get_route_param('content') is same as 'combined')
     or (criteria is defined and criteria.getOption('content') is same as 'combined') %}
 
@@ -28,7 +32,7 @@
 {% elseif subject is entry_comment %}
     {{ component('entry_comment', {comment: subject, showEntryTitle: forCombined is same as true}|merge(attributes)|merge(entryCommentAttributes)) }}
 {% elseif subject is post %}
-    {% if forCombined is same as true %}
+    {% if forCombined is same as true and useHarmonizedPostComponent is same as true %}
         {{ component('post_combined', {post: subject}|merge(attributes)|merge(postAttributes)) }}
     {% else %}
         {{ component('post', {post: subject}|merge(attributes)|merge(postAttributes)) }}
