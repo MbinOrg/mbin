@@ -33,7 +33,7 @@
                     {% if stretchedLink %}
                         <h1>
                             <a class="link-muted stretched-link"
-                              href="{{ path('user_overview', {'username': user.username}) }}">{{ user.title ?? user.username|username(false) }}</a>
+                              href="{{ path('user_overview', {'username': user.username}) }}">{{ get_user_title(user) }}</a>
 
                             {% if (user.type) == "Service" %}
                               <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
@@ -54,7 +54,7 @@
                         </h1>
                     {% else %}
                         <h1>
-                            {{ user.title ?? user.apPreferredUsername ?? user.username|username(false) }}
+                            {{ get_user_title(user) }}
 
                             {% if (user.type) == "Service" %}
                                 <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
