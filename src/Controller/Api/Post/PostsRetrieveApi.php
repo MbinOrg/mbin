@@ -359,7 +359,7 @@ class PostsRetrieveApi extends PostsBaseApi
 
     #[OA\Response(
         response: 200,
-        description: 'A paginated list of posts from user\'s subscribed magazines',
+        description: 'A paginated list of posts from user\'s subscribed magazines (boosted content will only be included if sort is set to "newest")',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
@@ -442,12 +442,6 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
-    #[OA\Parameter(
-        name: 'includeBoosts',
-        description: 'if true then boosted content from followed users are included',
-        in: 'query',
-        schema: new OA\Schema(type: 'boolean', default: false)
-    )]
     #[OA\Tag(name: 'post')]
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -472,7 +466,7 @@ class PostsRetrieveApi extends PostsBaseApi
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->subscribed = true;
-        $criteria->includeBoosts = true;
+        $criteria->includeBoosts = $criteria->sortOption === Criteria::SORT_NEW;
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->handleLanguageCriteria($criteria);
