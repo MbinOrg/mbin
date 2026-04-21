@@ -10,6 +10,7 @@ use App\Controller\User\ThemeSettingsController;
 use App\DTO\EntryCommentDto;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Entity\User;
 use App\Event\Entry\EntryHasBeenSeenEvent;
 use App\Form\EntryCommentType;
 use App\PageView\EntryCommentPageView;
@@ -92,11 +93,11 @@ class EntrySingleController extends AbstractController
 
         $this->dispatcher->dispatch(new EntryHasBeenSeenEvent($entry));
 
-        if ($request->isXmlHttpRequest()) {
-            return $this->getJsonResponse($magazine, $entry, $comments);
-        }
-
         $user = $this->getUser();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->getJsonResponse($comments, $criteria, $entry, $magazine, $user);
+        }
 
         $dto = new EntryCommentDto();
         if ($user && $user->addMentionsEntries && $entry->user !== $user) {
@@ -126,16 +127,18 @@ class EntrySingleController extends AbstractController
         );
     }
 
-    private function getJsonResponse(Magazine $magazine, Entry $entry, PagerfantaInterface $comments): JsonResponse
+    private function getJsonResponse(PagerfantaInterface $comments, Criteria $criteria, Entry $entry, Magazine $magazine, ?User $user): JsonResponse
     {
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'entry/_single_popup.html.twig',
+                    'entry/comments_json.html.twig',
                     [
+                        'user' => $user,
                         'magazine' => $magazine,
                         'comments' => $comments,
                         'entry' => $entry,
+                        'criteria' => $criteria,
                     ]
                 ),
             ]
