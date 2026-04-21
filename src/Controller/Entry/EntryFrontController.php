@@ -213,7 +213,7 @@ class EntryFrontController extends AbstractController
             return;
         }
 
-        $criteria->includeBoosts = $criteria->sortOption === Criteria::SORT_NEW && $user->showBoostsOfFollowing;
+        $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption && $user->showBoostsOfFollowing;
 
         if (0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;

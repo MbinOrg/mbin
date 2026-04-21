@@ -466,7 +466,7 @@ class PostsRetrieveApi extends PostsBaseApi
         $criteria->setFederation($federation ?? Criteria::AP_ALL);
 
         $criteria->subscribed = true;
-        $criteria->includeBoosts = $criteria->sortOption === Criteria::SORT_NEW;
+        $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption;
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->handleLanguageCriteria($criteria);
