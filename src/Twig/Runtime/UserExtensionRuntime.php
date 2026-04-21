@@ -79,4 +79,15 @@ class UserExtensionRuntime implements RuntimeExtensionInterface
 
         return $attitude[$user->getId()] ?? -1;
     }
+
+    public function getTitle(User $user): string
+    {
+        if (null !== $user->title) {
+            return preg_replace('/\p{C}+/u', '', $user->title);
+        } elseif (null !== $user->apPreferredUsername) {
+            return $user->apPreferredUsername;
+        } else {
+            return $this->username($user->getUsername(), false);
+        }
+    }
 }
