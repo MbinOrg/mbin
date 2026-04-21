@@ -36,4 +36,5 @@ return [
     League\Bundle\OAuth2ServerBundle\LeagueOAuth2ServerBundle::class => ['all' => true],
     Scheb\TwoFactorBundle\SchebTwoFactorBundle::class => ['all' => true],
     Omines\AntiSpamBundle\AntiSpamBundle::class => ['all' => true],
+    HeyMoon\DoctrinePostgresEnum\DoctrinePostgresEnumBundle::class => ['all' => true],
 ];
