@@ -107,7 +107,7 @@ class PostRetrieveApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('GET', '/api/posts/subscribedWithBoosts', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/posts/subscribedWithBoosts?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
