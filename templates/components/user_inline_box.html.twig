@@ -26,7 +26,7 @@
                           {% endif %}
                         {% endif %}
                         <h1>
-                            {{ user.title ?? user.apPreferredUsername ?? user.username|username(false) }}
+                            {{ get_user_title(user) }}
 
                             {% if (user.type) == "Service" %}
                                 <code title="{{ 'user_badge_bot'|trans }}">{{ 'user_badge_bot'|trans }}</code>
