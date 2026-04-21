@@ -41,7 +41,7 @@ class CombinedRetrieveApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('GET', '/api/combined/subscribed?includeBoosts=true', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/combined/subscribed?includeBoosts=true&sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -135,7 +135,7 @@ class CombinedRetrieveApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('GET', '/api/combined/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/combined/subscribed?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -151,7 +151,7 @@ class CombinedRetrieveApiTest extends WebTestCase
         $this->userRepository->find($user->getId())->showBoostsOfFollowing = true;
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/combined/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/combined/subscribed?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
