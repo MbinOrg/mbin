@@ -529,7 +529,7 @@ class CombinedRetrieveApi extends BaseApi
         $criteria->perPage = $perPage;
         $user = $security->getUser();
         if ($user instanceof User) {
-            $criteria->includeBoosts = $includeBoosts ?? $user->showBoostsOfFollowing;
+            $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption && ($includeBoosts ?? $user->showBoostsOfFollowing);
             $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 

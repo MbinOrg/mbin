@@ -1076,6 +1076,7 @@ direct_message_setting_label: Who can send you a direct message
 show_boost_following_label: Show boosted content in Microblog and Combined view
 show_boost_following_help: If this is enabled, threads, posts and comments boosted by you or users you follow
   will show up in the Combined view of your subscriptions and Microblog view.
+  This will only have an effect when the sorting is set to 'Newest'.
 delete_magazine_icon: Delete magazine icon
 flash_magazine_theme_icon_detached_success: Magazine icon deleted successfully
 delete_magazine_banner: Delete magazine banner
