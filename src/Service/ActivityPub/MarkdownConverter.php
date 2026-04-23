@@ -72,6 +72,9 @@ class MarkdownConverter
     {
         $res = [];
         foreach ($apTags as $tag) {
+            if (!\is_array($tag) || !isset($tag['type']) || !isset($tag['name']) || !isset($tag['href'])) {
+                continue;
+            }
             if ('Mention' === $tag['type']) {
                 if ($match[2] === $tag['href']) {
                     // the href in the tag array might be the same as the link from the text
