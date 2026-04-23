@@ -27,7 +27,7 @@ class EmbedRepository extends ServiceEntityRepository
 
     public function add(Embed $entity, bool $flush = true): void
     {
-        // Check if embed url does not exists yet (null),
+        // Check if embed url does not exist yet (null),
         // before we try to insert a new DB record
         if (null === $this->findOneByUrl($entity->url)) {
             // Do not exceed URL length limit defined by db schema
@@ -38,7 +38,12 @@ class EmbedRepository extends ServiceEntityRepository
                     $this->getEntityManager()->flush();
                 }
             } catch (\Exception $e) {
-                $this->logger->warning('Embed URL exceeds allowed length: {url, length}', ['url' => $entity->url, \strlen($entity->url)]);
+                $this->logger->warning('Failed to store Embed URL in DB: url = {url} (length = {length}); exception = {ex}; msg = {msg}', [
+                    'url' => $entity->url,
+                    'length' => \strlen($entity->url),
+                    'ex' => get_class($e),
+                    'msg' => $e->getMessage(),
+                ]);
             }
         }
     }
