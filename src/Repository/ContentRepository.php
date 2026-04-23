@@ -422,6 +422,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
@@ -443,6 +444,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
