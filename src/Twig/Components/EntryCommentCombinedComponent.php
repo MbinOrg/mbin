@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Controller\User\ThemeSettingsController;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\EntryComment;
 use App\PageView\EntryCommentPageView;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
