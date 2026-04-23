@@ -201,7 +201,7 @@ class UserFilterListApiTest extends WebTestCase
 
         $this->activateFilterList($token);
 
-        $this->client->jsonRequest('GET', '/api/combined?sortBy=newest', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->jsonRequest('GET', '/api/combined?sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
         self::assertIsArray($data);
