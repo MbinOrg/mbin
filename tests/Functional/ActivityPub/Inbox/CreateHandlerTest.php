@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ActivityPub\Inbox;
 
+use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
@@ -29,6 +31,8 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $createMessage;
     private array $createMastodonPostWithMention;
     private array $createMastodonPostWithMentionWithoutTagArray;
+    private array $createPostWithPublicNS;
+    private array $createPostWithPublicShortURL;
 
     public function setUpRemoteEntities(): void
     {
@@ -44,6 +48,7 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
         $this->setupMastodonPost();
         $this->setupMastodonPostWithoutTagArray();
+        $this->setupPostWithOtherPublicStrings();
     }
 
     public function setUpLocalEntities(): void
@@ -246,6 +251,21 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertEquals('@remoteUser@remote.mbin', $mentions[0]);
     }
 
+    public function testPostWithPublicNs(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createPostWithPublicNS)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->createPostWithPublicNS['object']['id']]);
+        self::assertNotNull($post);
+        self::assertEquals(VisibilityInterface::VISIBILITY_VISIBLE, $post->getVisibility());
+    }
+
+    public function testPostWithPublicShortURL(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createPostWithPublicShortURL)));
+        $post = $this->postRepository->findOneBy(['apId' => $this->createPostWithPublicShortURL['object']['id']]);
+        self::assertNotNull($post);
+    }
+
     private function setupRemoteActor(): void
     {
         $domain = 'some.instance.tld';
@@ -316,5 +336,16 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->entitiesToRemoveAfterSetup[] = $entry;
 
         return $create;
+    }
+
+    private function setupPostWithOtherPublicStrings(): void
+    {
+        $this->createPostWithPublicNS = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        $this->createPostWithPublicNS['to'] = ActivityPubActivityInterface::PUBLIC_URL_NS;
+        $this->createPostWithPublicNS['object']['to'] = ActivityPubActivityInterface::PUBLIC_URL_NS;
+
+        $this->createPostWithPublicShortURL = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        $this->createPostWithPublicShortURL['to'] = ActivityPubActivityInterface::PUBLIC_URL_SHORT;
+        $this->createPostWithPublicShortURL['object']['to'] = ActivityPubActivityInterface::PUBLIC_URL_SHORT;
     }
 }
