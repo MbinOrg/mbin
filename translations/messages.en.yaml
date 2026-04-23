@@ -305,6 +305,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 parent_post: Parent Post
+parent_entry: Parent Thread
 ban_expired: Ban expired
 ban_expires: Ban expires
 purge: Purge
