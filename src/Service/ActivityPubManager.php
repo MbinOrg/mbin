@@ -952,7 +952,7 @@ class ActivityPubManager
                     \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
                     \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
                 ),
-                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, ActivityPubActivityInterface::PUBLIC_URL_NS, ActivityPubActivityInterface::PUBLIC_URL_SHORT, $followersUrl, []])
             )
         );
 
@@ -1091,7 +1091,7 @@ class ActivityPubManager
             $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
         }
 
-        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+        $res = array_filter($res, fn ($i) => null !== $i && ActivityPubActivityInterface::PUBLIC_URL !== $i && ActivityPubActivityInterface::PUBLIC_URL_NS !== $i && ActivityPubActivityInterface::PUBLIC_URL_SHORT !== $i);
 
         return array_unique($res);
     }
