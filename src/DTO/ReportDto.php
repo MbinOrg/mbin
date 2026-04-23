@@ -27,8 +27,8 @@ class ReportDto
         $dto->subject = $subject;
         $dto->reason = $reason;
 
-        $dto->magazine = $subject->magazine;
-        $dto->reported = $subject->user;
+        $dto->magazine = $subject->magazine ?? null;
+        $dto->reported = $subject->getUser();
 
         return $dto;
     }
@@ -40,18 +40,7 @@ class ReportDto
 
     public function getRouteName(): string
     {
-        switch (\get_class($this->getSubject())) {
-            case Entry::class:
-                return 'entry_report';
-            case EntryComment::class:
-                return 'entry_comment_report';
-            case Post::class:
-                return 'post_report';
-            case PostComment::class:
-                return 'post_comment_report';
-        }
-
-        throw new \LogicException();
+        return $this->getSubject()->getReportType();
     }
 
     public function getSubject(): ReportInterface

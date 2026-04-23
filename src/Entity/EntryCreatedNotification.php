@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Factory\Entry\EntryUrlFactory;
+use App\Factory\User\UserUrlFactory;
 use App\Payloads\PushNotification;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -35,16 +39,16 @@ class EntryCreatedNotification extends Notification
         return 'entry_created_notification';
     }
 
-    public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
+    public function getMessage(TranslatorInterface $trans, string $locale, ContainerInterface $serviceContainer): PushNotification
     {
+        /** @var EntryUrlFactory $entryUrlFactory */
+        $entryUrlFactory = $serviceContainer->get(EntryUrlFactory::class);
+        /** @var UserUrlFactory $userUrlFactory */
+        $userUrlFactory = $serviceContainer->get(UserUrlFactory::class);
+
         $message = \sprintf('%s %s - %s', $this->entry->user->username, $trans->trans('added_new_thread'), $this->entry->getShortTitle());
-        $slash = $this->entry->user->avatar && !str_starts_with('/', $this->entry->user->avatar->filePath) ? '/' : '';
-        $avatarUrl = $this->entry->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->entry->user->avatar->filePath : null;
-        $url = $urlGenerator->generate('entry_single', [
-            'entry_id' => $this->entry->getId(),
-            'magazine_name' => $this->entry->magazine->name,
-            'slug' => $this->entry->slug ?? '-',
-        ]);
+        $avatarUrl = $userUrlFactory->getAvatarUrl($this->entry->user);
+        $url = $entryUrlFactory->getLocalUrl($this->entry);
 
         return new PushNotification($this->getId(), $message, $trans->trans('notification_title_new_thread', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }

@@ -86,6 +86,7 @@ class OAuth2UserConsent
         'user:message' => 'oauth2.grant.user.message.all',
         'user:message:read' => 'oauth2.grant.user.message.read',
         'user:message:create' => 'oauth2.grant.user.message.create',
+        'user:message:delete' => 'oauth2.grant.user.message.delete',
         'user:notification' => 'oauth2.grant.user.notification.all',
         'user:notification:read' => 'oauth2.grant.user.notification.read',
         'user:notification:delete' => 'oauth2.grant.user.notification.delete',

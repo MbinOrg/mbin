@@ -21,6 +21,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
@@ -34,7 +35,7 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class PostCommentNotificationManager implements ContentNotificationManagerInterface
+class PostCommentNotificationManager implements SwitchableService, ContentNotificationManagerInterface
 {
     use NotificationTrait;
 
@@ -56,6 +57,11 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
         private readonly NotificationSettingsRepository $notificationSettingsRepository,
         private readonly UserRepository $userRepository,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [PostComment::class];
     }
 
     public function sendCreated(ContentInterface $subject): void
@@ -196,16 +202,22 @@ class PostCommentNotificationManager implements ContentNotificationManagerInterf
         if (!$subject instanceof PostComment) {
             throw new \LogicException();
         }
-        $this->notifyMagazine($notification = new PostCommentDeletedNotification($subject->user, $subject));
+        $this->notifyMagazine(new PostCommentDeletedNotification($subject->user, $subject));
     }
 
-    public function purgeNotifications(PostComment $comment): void
+    public function purgeNotifications(ContentInterface $subject): void
     {
-        $this->notificationRepository->removePostCommentNotifications($comment);
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
+        $this->notificationRepository->removePostCommentNotifications($subject);
     }
 
-    public function purgeMagazineLog(PostComment $comment): void
+    public function purgeMagazineLog(ContentInterface $subject): void
     {
-        $this->magazineLogRepository->removePostCommentLogs($comment);
+        if (!$subject instanceof PostComment) {
+            throw new \LogicException();
+        }
+        $this->magazineLogRepository->removePostCommentLogs($subject);
     }
 }

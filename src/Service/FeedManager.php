@@ -6,6 +6,8 @@ namespace App\Service;
 
 use App\Entity\Entry;
 use App\Entity\Post;
+use App\Factory\Entry\EntryUrlFactory;
+use App\Factory\Post\PostUrlFactory;
 use App\Markdown\MarkdownConverter;
 use App\PageView\ContentPageView;
 use App\Repository\ContentRepository;
@@ -32,6 +34,8 @@ class FeedManager
         private readonly MagazineRepository $magazineRepository,
         private readonly UserRepository $userRepository,
         private readonly TagLinkRepository $tagLinkRepository,
+        private readonly EntryUrlFactory $entryUrlFactory,
+        private readonly PostUrlFactory $postUrlFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
         private readonly MediaExtensionRuntime $mediaExtensionRuntime,
@@ -98,11 +102,7 @@ class FeedManager
             }
 
             if ($subject instanceof Entry) {
-                $link = $this->urlGenerator->generate('entry_single', [
-                    'magazine_name' => $subject->magazine->name,
-                    'entry_id' => $subject->getId(),
-                    'slug' => $subject->slug,
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+                $link = $this->entryUrlFactory->getLocalUrl($subject);
 
                 $item->setContent($this->markdownConverter->convertToHtml($subject->body ?? '', 'entry'));
                 $item->setSummary($subject->getShortDesc());
@@ -110,11 +110,7 @@ class FeedManager
                 $item->setLink($link);
                 $item->set('comments', $link.'#comments');
             } elseif ($subject instanceof Post) {
-                $link = $this->urlGenerator->generate('post_single', [
-                    'magazine_name' => $subject->magazine->name,
-                    'post_id' => $subject->getId(),
-                    'slug' => $subject->slug,
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+                $link = $this->postUrlFactory->getLocalUrl($subject);
 
                 $item->setContent($this->markdownConverter->convertToHtml($subject->body ?? '', 'post'));
                 $item->setSummary($subject->getShortTitle());

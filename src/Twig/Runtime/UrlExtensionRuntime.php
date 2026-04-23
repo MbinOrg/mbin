@@ -6,9 +6,12 @@ namespace App\Twig\Runtime;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Factory\Contract\ContentUrlFactory;
 use App\Service\MentionManager;
+use App\Service\SwitchingServiceRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -17,6 +20,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
         private readonly RequestStack $requestStack,
         private readonly MentionManager $mentionManager,
     ) {
@@ -24,11 +28,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
 
     public function entryUrl(Entry $entry): string
     {
-        return $this->urlGenerator->generate('entry_single', [
-            'magazine_name' => $entry->magazine->name,
-            'entry_id' => $entry->getId(),
-            'slug' => empty($entry->slug) ? '-' : $entry->slug,
-        ]);
+        return $this->serviceRegistry->getService($entry, ContentUrlFactory::class)->getLocalUrl($entry);
     }
 
     public function entryFavouritesUrl(Entry $entry): string
@@ -89,12 +89,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
 
     public function entryCommentViewUrl(EntryComment $comment): string
     {
-        return $this->urlGenerator->generate('entry_comment_view', [
-            'magazine_name' => $comment->magazine->name,
-            'entry_id' => $comment->entry->getId(),
-            'slug' => empty($comment->entry->slug) ? '-' : $comment->entry->slug,
-            'comment_id' => $comment->getId(),
-        ]);
+        return $this->serviceRegistry->getService($comment, ContentUrlFactory::class)->getLocalUrl($comment);
     }
 
     public function entryCommentEditUrl(EntryComment $comment): string
@@ -150,11 +145,7 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
 
     public function postUrl(Post $post): string
     {
-        return $this->urlGenerator->generate('post_single', [
-            'magazine_name' => $post->magazine->name,
-            'post_id' => $post->getId(),
-            'slug' => empty($post->slug) ? '-' : $post->slug,
-        ]);
+        return $this->serviceRegistry->getService($post, ContentUrlFactory::class)->getLocalUrl($post);
     }
 
     public function postEditUrl(Post $post): string
@@ -261,6 +252,10 @@ class UrlExtensionRuntime implements RuntimeExtensionInterface
             'comment_id' => $comment->getId(),
             'slug' => empty($comment->post->slug) ? '-' : $comment->post->slug,
         ]);
+    }
+
+    public function messageUrl(Message $message): string {
+        return $this->serviceRegistry->getService($message, ContentUrlFactory::class)->getLocalUrl($message);
     }
 
     // $additionalParams indicates extra parameters to set in addition to [$name] = $value

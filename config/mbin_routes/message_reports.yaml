@@ -1,0 +1,22 @@
+message_reports:
+  controller: App\Controller\Message\MessageReportController::reports
+  path: /messages/reports/{status}
+  defaults: { status: !php/const \App\Entity\Report::STATUS_ANY }
+  methods: [ GET ]
+
+message_report_approve:
+  controller: App\Controller\Message\MessageReportController::reportApprove
+  path: /messages/reports/{report_id}/approve
+  methods: [ POST ]
+
+message_report_reject:
+  controller: App\Controller\Message\MessageReportController::reportReject
+  path: /messages/reports/{report_id}/reject
+  methods: [ POST ]
+
+message_report:
+  controller: App\Controller\Message\MessageReportController::reportMessage
+  path: /mr/{id}
+  methods: [ GET, POST ]
+  requirements:
+      id: \d+

@@ -7,6 +7,7 @@ namespace App\Service\ActivityPub;
 use App\Entity\Activity;
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\ActivityPubActorInterface;
+use App\Entity\Contracts\ContentInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -24,6 +25,8 @@ use App\Factory\ActivityPub\InstanceFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
+use App\Factory\Contract\ContentUrlFactory;
+use App\Service\SwitchingServiceRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -31,19 +34,18 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityJsonBuilder
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly InstanceFactory $instanceFactory,
-        private readonly PersonFactory $personFactory,
-        private readonly GroupFactory $groupFactory,
-        private readonly ActivityFactory $activityFactory,
-        private readonly ContextsProvider $contextsProvider,
-        private readonly EntryPageFactory $entryPageFactory,
-        private readonly EntryCommentNoteFactory $entryCommentNoteFactory,
-        private readonly PostNoteFactory $postNoteFactory,
-        private readonly PostCommentNoteFactory $postCommentNoteFactory,
-        private readonly LoggerInterface $logger,
-        private readonly ApHttpClientInterface $apHttpClient,
-        private readonly KernelInterface $kernel,
+        private readonly UrlGeneratorInterface    $urlGenerator,
+        private readonly InstanceFactory          $instanceFactory,
+        private readonly PersonFactory            $personFactory,
+        private readonly GroupFactory             $groupFactory,
+        private readonly ActivityFactory          $activityFactory,
+        private readonly ContextsProvider         $contextsProvider,
+        private readonly EntryPageFactory         $entryPageFactory,
+        private readonly PostNoteFactory          $postNoteFactory,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
+        private readonly LoggerInterface          $logger,
+        private readonly ApHttpClientInterface    $apHttpClient,
+        private readonly KernelInterface          $kernel,
     ) {
     }
 
@@ -304,7 +306,11 @@ class ActivityJsonBuilder
         // I created an issue for it: https://github.com/LemmyNet/lemmy/issues/4217
         $lemmyObject = $this->getPublicUrl($activity->getObject());
 
-        if ('random' !== $activity->audience || $activity->audience->apId) {
+        if (null === $activity->audience) {
+            // likely a message and so can either be from Lemmy or Mastodon or something else; defaulting to Lemmy
+            $audience = $this->personFactory->getActivityPubId($activity->objectUser);
+            $object = $lemmyObject;
+        } elseif ('random' !== $activity->audience || $activity->audience->apId) {
             // apAttributedToUrl is not a standardized field,
             // so it is not implemented by every software that supports groups.
             // Some don't have moderation at all, so it will probably remain optional in the future.
@@ -326,7 +332,7 @@ class ActivityJsonBuilder
             'content' => $activity->contentString,
         ];
 
-        if ('random' !== $activity->audience->name || $activity->audience->apId) {
+        if ($activity->audience !== null && ('random' !== $activity->audience->name || $activity->audience->apId)) {
             $result['to'] = [$this->groupFactory->getActivityPubId($activity->audience)];
         }
 
@@ -517,20 +523,8 @@ class ActivityJsonBuilder
         ];
     }
 
-    public function getPublicUrl(ReportInterface|ActivityPubActivityInterface $subject): string
+    public function getPublicUrl(ContentInterface $subject): string
     {
-        if ($subject instanceof Entry) {
-            return $this->entryPageFactory->getActivityPubId($subject);
-        } elseif ($subject instanceof EntryComment) {
-            return $this->entryCommentNoteFactory->getActivityPubId($subject);
-        } elseif ($subject instanceof Post) {
-            return $this->postNoteFactory->getActivityPubId($subject);
-        } elseif ($subject instanceof PostComment) {
-            return $this->postCommentNoteFactory->getActivityPubId($subject);
-        } elseif ($subject instanceof Message) {
-            return $this->urlGenerator->generate('ap_message', ['uuid' => $subject->uuid], UrlGeneratorInterface::ABSOLUTE_URL);
-        }
-
-        throw new \LogicException("can't handle ".\get_class($subject));
+        return $this->serviceRegistry->getService($subject, ContentUrlFactory::class)->getActivityPubId($subject);
     }
 }

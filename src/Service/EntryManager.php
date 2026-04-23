@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\EntryDto;
+use App\Entity\Contracts\ContentInterface;
+use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
@@ -32,6 +34,7 @@ use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\Contracts\ContentManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
 use Doctrine\Common\Collections\Criteria;
@@ -46,7 +49,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
-class EntryManager implements ContentManagerInterface
+class EntryManager implements SwitchableService, ContentManagerInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -69,6 +72,11 @@ class EntryManager implements ContentManagerInterface
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly CacheInterface $cache,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [Entry::class];
     }
 
     /**
@@ -242,10 +250,15 @@ class EntryManager implements ContentManagerInterface
         return $entry;
     }
 
-    public function delete(User $user, Entry $entry): void
+    /**
+     * @param User $user
+     * @param Entry $entry
+     * @return void
+     */
+    public function delete(User $user, ContentInterface $entry): void
     {
         if ($user->apDomain && $user->apDomain !== parse_url($entry->apId ?? '', PHP_URL_HOST) && !$entry->magazine->userIsModerator($user)) {
-            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m]', ['u' => $user->apId, 'm' => $entry->magazine->apId ?? $entry->magazine->name]);
+            $this->logger->info('Got a delete activity from user {u}, but they are not from the same instance as the deleted post and they are not a moderator on {m}', ['u' => $user->apId, 'm' => $entry->magazine->apId ?? $entry->magazine->name]);
 
             return;
         }
@@ -295,7 +308,12 @@ class EntryManager implements ContentManagerInterface
         }
     }
 
-    public function restore(User $user, Entry $entry): void
+    /**
+     * @param User $user
+     * @param Entry $entry
+     * @return void
+     */
+    public function restore(User $user, ContentVisibilityInterface $entry): void
     {
         if (VisibilityInterface::VISIBILITY_TRASHED !== $entry->visibility) {
             throw new \Exception('Invalid visibility');

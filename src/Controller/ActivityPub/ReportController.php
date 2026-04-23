@@ -29,7 +29,7 @@ class ReportController extends AbstractController
             throw new ArgumentException('there is no such report');
         }
 
-        $json = $this->factory->build($report, $this->factory->getPublicUrl($report->getSubject()));
+        $json = $this->factory->build($report);
 
         $response = new JsonResponse($json);
         $response->headers->set('Content-Type', 'application/activity+json');
