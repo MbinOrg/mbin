@@ -75,7 +75,7 @@ class MarkdownConverter
         $res = [];
         foreach ($apTags as $tag) {
             if (!\is_array($tag) || !isset($tag['type']) || !isset($tag['name']) || !isset($tag['href'])) {
-                $this->logger->warning('Ignoring tag (not an array or missing "name", "type" or "href": {t}', ['t' => $tag]);
+                $this->logger->warning('Ignoring tag (not an array or missing "name", "type" or "href"): {t}', ['t' => $tag]);
 
                 continue;
             }
