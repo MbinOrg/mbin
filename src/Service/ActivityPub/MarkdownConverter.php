@@ -11,6 +11,7 @@ use App\Service\MentionManager;
 use App\Service\TagExtractor;
 use League\HTMLToMarkdown\Converter\TableConverter;
 use League\HTMLToMarkdown\HtmlConverter;
+use Psr\Log\LoggerInterface;
 
 class MarkdownConverter
 {
@@ -18,6 +19,7 @@ class MarkdownConverter
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly ActivityPubManager $activityPubManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -73,6 +75,8 @@ class MarkdownConverter
         $res = [];
         foreach ($apTags as $tag) {
             if (!\is_array($tag) || !isset($tag['type']) || !isset($tag['name']) || !isset($tag['href'])) {
+                $this->logger->warning('Ignoring tag (not an array or missing "name", "type" or "href": {t}', ['t' => $tag]);
+
                 continue;
             }
             if ('Mention' === $tag['type']) {
