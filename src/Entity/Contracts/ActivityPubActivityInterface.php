@@ -8,14 +8,16 @@ use App\Entity\User;
 
 interface ActivityPubActivityInterface
 {
-    public const FOLLOWERS = 'followers';
-    public const FOLLOWING = 'following';
-    public const INBOX = 'inbox';
-    public const OUTBOX = 'outbox';
-    public const CONTEXT = 'context';
-    public const CONTEXT_URL = 'https://www.w3.org/ns/activitystreams';
-    public const SECURITY_URL = 'https://w3id.org/security/v1';
-    public const PUBLIC_URL = 'https://www.w3.org/ns/activitystreams#Public';
+    public const string FOLLOWERS = 'followers';
+    public const string FOLLOWING = 'following';
+    public const string INBOX = 'inbox';
+    public const string OUTBOX = 'outbox';
+    public const string CONTEXT = 'context';
+    public const string CONTEXT_URL = 'https://www.w3.org/ns/activitystreams';
+    public const string SECURITY_URL = 'https://w3id.org/security/v1';
+    public const string PUBLIC_URL = 'https://www.w3.org/ns/activitystreams#Public';
+    public const string PUBLIC_URL_NS = 'as:Public';
+    public const string PUBLIC_URL_SHORT = 'Public';
 
     public const ADDITIONAL_CONTEXTS = [
         // namespaces
