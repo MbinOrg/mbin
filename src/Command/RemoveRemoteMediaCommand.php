@@ -60,7 +60,7 @@ class RemoveRemoteMediaCommand extends Command
         $totalDeletedFiles = 0;
         $totalDeletedSize = 0;
 
-        for ($i = 0; $i < $images->getNbPages(); ++$i) {
+        for ($i = 0; \sizeof($images); ++$i) {
             $progressBar->setMessage(\sprintf('Fetching images %s - %s', ($i * $batchSize) + 1, ($i + 1) * $batchSize));
             $progressBar->display();
             foreach ($images->getCurrentPageResults() as $image) {
@@ -81,7 +81,9 @@ class RemoveRemoteMediaCommand extends Command
                 }
             }
             if ($images->hasNextPage()) {
-                $images->setCurrentPage($images->getNextPage());
+                $images = $this->imageRepository->findOldRemoteMediaPaginated($days, $batchSize);
+            } else {
+                $images = [];
             }
         }
         $io->writeln('');
