@@ -1,23 +1,23 @@
 api_tag_entries:
-  controller: App\Controller\Api\Tag\TagContentRetrieveApi::entries
+  controller: App\Controller\Api\Tag\TagContentRetrieveApiController::entries
   path: /api/tag/{name}/entries
   methods: [ GET ]
   format: json
 
 api_tag_entry_comments:
-  controller: App\Controller\Api\Tag\TagContentRetrieveApi::entryComments
+  controller: App\Controller\Api\Tag\TagContentRetrieveApiController::entryComments
   path: /api/tag/{name}/entryComments
   methods: [ GET ]
   format: json
 
 api_tag_posts:
-  controller: App\Controller\Api\Tag\TagContentRetrieveApi::posts
+  controller: App\Controller\Api\Tag\TagContentRetrieveApiController::posts
   path: /api/tag/{name}/posts
   methods: [ GET ]
   format: json
 
 api_tag_post_comments:
-  controller: App\Controller\Api\Tag\TagContentRetrieveApi::postComments
+  controller: App\Controller\Api\Tag\TagContentRetrieveApiController::postComments
   path: /api/tag/{name}/postComments
   methods: [ GET ]
   format: json
