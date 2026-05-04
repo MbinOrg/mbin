@@ -48,6 +48,7 @@ class PostCommentFactory
         $pollDto = null;
         if ($dto->addPoll) {
             $pollDto = new PollResponseDto();
+            $pollDto->endDate = $dto->pollEndsAt;
             $pollDto->voterCount = $comment->poll->voterCount;
             $user = $this->security->getUser();
             $pollDto->currentUserHasVoted = $user instanceof User ? $comment->poll->hasUserVoted($user) : null;

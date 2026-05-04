@@ -43,6 +43,7 @@ class PostFactory
         $pollDto = null;
         if ($dto->addPoll) {
             $pollDto = new PollResponseDto();
+            $pollDto->endDate = $dto->pollEndsAt;
             $pollDto->voterCount = $post->poll->voterCount;
             $user = $this->security->getUser();
             $pollDto->currentUserHasVoted = $user instanceof User ? $post->poll->hasUserVoted($user) : null;

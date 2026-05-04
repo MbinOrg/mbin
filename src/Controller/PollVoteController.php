@@ -9,6 +9,7 @@ use App\Entity\EntryComment;
 use App\Entity\Poll;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\PollManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -23,6 +24,7 @@ class PollVoteController extends AbstractController
     public function __construct(
         private readonly PollManager $pollManager,
         private readonly LoggerInterface $logger,
+        private readonly ApHttpClientInterface $apHttpClient,
     ) {
     }
 
@@ -49,6 +51,28 @@ class PollVoteController extends AbstractController
             throw new BadRequestHttpException(previous: $e);
         }
 
+        return $this->redirectToPollContent($poll);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    public function refreshVoteCounts(#[MapEntity] Poll $poll): Response
+    {
+        if (null === $poll->getSubject()->apId) {
+            throw new BadRequestHttpException('Cannot refresh the vote counts of a local poll');
+        }
+
+        $this->apHttpClient->invalidateActivityObjectCache($poll->getSubject()->apId);
+        $object = $this->apHttpClient->getActivityObject($poll->getSubject()->apId);
+        if ($this->pollManager->hasPollProperties($object)) {
+            $this->pollManager->updatePollCounts($poll, $object);
+        }
+
+        return $this->redirectToPollContent($poll);
+    }
+
+    protected function redirectToPollContent(Poll $poll): Response
+    {
+        $content = $poll->getSubject();
         if ($content instanceof Entry) {
             return $this->redirectToRoute('entry_single', ['entry_id' => $content->getId(), 'magazine_name' => $content->magazine->name]);
         } elseif ($content instanceof EntryComment) {
