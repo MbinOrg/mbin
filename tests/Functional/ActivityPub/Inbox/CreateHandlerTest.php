@@ -6,6 +6,7 @@ namespace App\Tests\Functional\ActivityPub\Inbox;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
@@ -24,6 +25,8 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $announcePost;
     private array $announcePostComment;
     private array $createEntry;
+    private array $createEntryWithPoll;
+    private array $createEntryWithMultipleChoicePoll;
     private array $createEntryWithUrlAndImage;
     private array $createEntryComment;
     private array $createPost;
@@ -33,6 +36,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $createMastodonPostWithMentionWithoutTagArray;
     private array $createPostWithPublicNS;
     private array $createPostWithPublicShortURL;
+    private Entry $localEntryWithPoll;
+    private array $remoteVoteOnLocalPoll;
+    private Entry $localEntryWithMultipleChoicePoll;
+    private array $remoteVoteOnLocalMultipleChoicePoll;
 
     public function setUpRemoteEntities(): void
     {
@@ -41,6 +48,8 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
         $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
+        $this->createEntryWithPoll = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser, addPoll: true);
+        $this->createEntryWithMultipleChoicePoll = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser, addPoll: true, pollMultipleChoice: true);
         $this->createEntryWithUrlAndImage = $this->createRemoteEntryWithUrlAndImageInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
         $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
@@ -54,6 +63,16 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     public function setUpLocalEntities(): void
     {
         $this->setupRemoteActor();
+        $this->localEntryWithPoll = $this->getEntryByTitle('A local entry with a poll');
+        $this->localEntryWithPoll->poll = $this->createSimplePoll(false, false);
+        $this->localEntryWithMultipleChoicePoll = $this->getEntryByTitle('A local entry with a multiple choice poll');
+        $this->localEntryWithMultipleChoicePoll->poll = $this->createSimplePoll(true, false);
+    }
+
+    public function setUpLateRemoteEntities(): void
+    {
+        $this->remoteVoteOnLocalPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithPoll->poll, $this->remoteUser, 'B');
+        $this->remoteVoteOnLocalMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
     }
 
     public function testCreateAnnouncedEntry(): void
@@ -129,6 +148,48 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         // the id of the 'Create' activity should be wrapped in a 'Announce' activity
         self::assertEquals($this->createEntry['id'], $postedObjects[0]['payload']['object']['id']);
         self::assertEquals($this->createEntry['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
+    }
+
+    public function testCreateEntryWithPoll(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithPoll)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithPoll['object']['id']]);
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->poll);
+        self::assertFalse($entry->poll->multipleChoice);
+        self::assertTrue($entry->poll->isRemote);
+        $this->entityManager->refresh($entry->poll);
+        self::assertNotNull($entry->poll->findChoice('A'));
+        self::assertNotNull($entry->poll->findChoice('B'));
+        self::assertNotNull($entry->poll->findChoice('C'));
+        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        self::assertNotEmpty($postedObjects);
+        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
+        self::assertEquals($this->createEntryWithPoll['id'], $postedObjects[0]['payload']['object']['id']);
+        self::assertEquals($this->createEntryWithPoll['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
+        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
+    }
+
+    public function testCreateEntryWithMultipleChoicePoll(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithMultipleChoicePoll)));
+        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithMultipleChoicePoll['object']['id']]);
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->poll);
+        self::assertTrue($entry->poll->multipleChoice);
+        self::assertTrue($entry->poll->isRemote);
+        $this->entityManager->refresh($entry->poll);
+        self::assertNotNull($entry->poll->findChoice('A'));
+        self::assertNotNull($entry->poll->findChoice('B'));
+        self::assertNotNull($entry->poll->findChoice('C'));
+        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
+        $postedObjects = $this->testingApHttpClient->getPostedObjects();
+        self::assertNotEmpty($postedObjects);
+        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
+        self::assertEquals($this->createEntryWithMultipleChoicePoll['id'], $postedObjects[0]['payload']['object']['id']);
+        self::assertEquals($this->createEntryWithMultipleChoicePoll['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
         self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
     }
 
@@ -264,6 +325,39 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createPostWithPublicShortURL)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createPostWithPublicShortURL['object']['id']]);
         self::assertNotNull($post);
+    }
+
+    public function testRemoteVoteOnLocalEntryWithPoll(): void
+    {
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->remoteVoteOnLocalPoll)));
+        $entry = $this->entryRepository->find($this->localEntryWithPoll->getId());
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->poll);
+        self::assertEquals(1, $entry->poll->voterCount);
+        self::assertNotNull($entry->poll->findChoice('B'));
+        self::assertEquals(1, $entry->poll->findChoice('B')->voteCount);
+    }
+
+    public function testRemoteVotesOnLocalEntryWithMultipleChoicePoll(): void
+    {
+        $choiceA = $this->remoteVoteOnLocalMultipleChoicePoll;
+        $choiceB = $this->remoteVoteOnLocalMultipleChoicePoll;
+        $choiceB['object']['name'] = 'B';
+        $choiceC = $this->remoteVoteOnLocalMultipleChoicePoll;
+        $choiceC['object']['name'] = 'C';
+        $this->bus->dispatch(new ActivityMessage(json_encode($choiceA)));
+        $this->bus->dispatch(new ActivityMessage(json_encode($choiceB)));
+        $this->bus->dispatch(new ActivityMessage(json_encode($choiceC)));
+        $entry = $this->entryRepository->find($this->localEntryWithMultipleChoicePoll->getId());
+        self::assertNotNull($entry);
+        self::assertNotNull($entry->poll);
+        self::assertEquals(1, $entry->poll->voterCount);
+        self::assertNotNull($entry->poll->findChoice('A'));
+        self::assertEquals(1, $entry->poll->findChoice('A')->voteCount);
+        self::assertNotNull($entry->poll->findChoice('B'));
+        self::assertEquals(1, $entry->poll->findChoice('B')->voteCount);
+        self::assertNotNull($entry->poll->findChoice('C'));
+        self::assertEquals(1, $entry->poll->findChoice('C')->voteCount);
     }
 
     private function setupRemoteActor(): void

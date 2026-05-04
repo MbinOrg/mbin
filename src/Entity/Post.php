@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping\Index;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Webmozart\Assert\Assert;
 
 #[Entity(repositoryClass: PostRepository::class)]
@@ -85,6 +86,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?string $ip = null;
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
+    #[OneToOne(targetEntity: Poll::class)]
+    public ?Poll $poll = null;
     #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]

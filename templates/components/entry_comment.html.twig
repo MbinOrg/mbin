@@ -76,6 +76,9 @@
                     {% elseif(comment.visibility is same as 'soft_deleted') %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_author'|trans }}</i>&rsqb;</p>
                     {% endif %}
+                    {% if comment.poll is not same as null %}
+                        {{ component('poll', {poll: comment.poll, isExternal: comment.apId is not same as null}) }}
+                    {% endif %}
                 </div>
                 <div data-collapsable-target="button"></div>
             </div>
