@@ -24,11 +24,20 @@ framework:
     # We set our cookie session lifetime to the same value as remember_me token.
     # More info: https://symfony.com/doc/current/session.html#session-idle-time-keep-alive
     session:
-        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        # previous
+        #handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        # transition
+        handler_id: App\MigratePdoToRedisSessionHandler
+        # new
+        #handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
         cookie_secure: auto
         cookie_samesite: lax
         cookie_lifetime: 10512000 # 4 months long lifetime
         storage_factory_id: session.storage.factory.native
+        # see: https://symfony.com/doc/7.4/session.html#configuring-garbage-collection
+        # debian sets this value to 0, so since we cannot control that, make the garbage collection a 1/1000 chance
+        gc_probability: 1
+        gc_divisor: 1000
 
     http_client:
         default_options:
