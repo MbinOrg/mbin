@@ -11,7 +11,7 @@
             "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/devcontainers/features/node:1": {
+        "ghcr.io/devcontainers/features/node:2": {
             "version": "latest"
         },
         "ghcr.io/itsmechlark/features/postgresql:1": {
