@@ -30,7 +30,11 @@
 {% if subject is entry %}
     {{ component('entry', {entry: subject}|merge(attributes)|merge(entryAttributes)) }}
 {% elseif subject is entry_comment %}
-    {{ component('entry_comment', {comment: subject, showEntryTitle: forCombined is same as true}|merge(attributes)|merge(entryCommentAttributes)) }}
+    {% if forCombined is same as true %}
+        {{ component('entry_comment_combined', {comment: subject}|merge(attributes)|merge(entryCommentAttributes)) }}
+    {% else %}
+        {{ component('entry_comment', {comment: subject, showEntryTitle: false}|merge(attributes)|merge(entryCommentAttributes)) }}
+    {% endif %}
 {% elseif subject is post %}
     {% if forCombined is same as true and useHarmonizedPostComponent is same as true %}
         {{ component('post_combined', {post: subject}|merge(attributes)|merge(postAttributes)) }}
