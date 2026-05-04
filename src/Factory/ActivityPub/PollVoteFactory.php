@@ -6,7 +6,9 @@ namespace App\Factory\ActivityPub;
 
 use App\Entity\PollVote;
 use App\Repository\ApActivityRepository;
+use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
+use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Service\ActivityPub\ContextsProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,7 +19,9 @@ class PollVoteFactory
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ContextsProvider $contextsProvider,
         private readonly EntryRepository $entryRepository,
+        private readonly EntryCommentRepository $entryCommentRepository,
         private readonly PostRepository $postRepository,
+        private readonly PostCommentRepository $postCommentRepository,
         private readonly PersonFactory $personFactory,
         private readonly ApActivityRepository $apActivityRepository,
     ) {
@@ -26,7 +30,11 @@ class PollVoteFactory
     public function build(PollVote $vote, bool $includeContext = true): array
     {
         $actorUrl = $this->personFactory->getActivityPubId($vote->getUser());
-        $content = $this->entryRepository->findOneBy(['poll' => $vote->poll]) ?? $this->postRepository->findOneBy(['poll' => $vote->poll]) ?? throw new \LogicException();
+        $content = $this->entryRepository->findOneBy(['poll' => $vote->poll])
+            ?? $this->entryCommentRepository->findOneBy(['poll' => $vote->poll])
+            ?? $this->postRepository->findOneBy(['poll' => $vote->poll])
+            ?? $this->postCommentRepository->findOneBy(['poll' => $vote->poll])
+            ?? throw new \LogicException();
 
         $result = [
             '@context' => $this->contextsProvider->referencedContexts(),

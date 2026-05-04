@@ -8,6 +8,7 @@ use App\Event\Poll\PollEditedEvent;
 use App\Event\Poll\PollPreEditedEvent;
 use App\Event\Poll\PollVoteEvent;
 use App\Message\ActivityPub\Outbox\PollVoteMessage;
+use App\Message\ActivityPub\Outbox\UpdateMessage;
 use App\Service\Notification\PollNotificationManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,6 +39,10 @@ readonly class PollEventSubscriber implements EventSubscriberInterface
             foreach ($event->poll->votes as $vote) {
                 $this->bus->dispatch(new PollVoteMessage($vote->uuid->toString()));
             }
+        } elseif (!$event->poll->isRemote) {
+            // remote poll -> send update with new vote numbers
+            $this->bus->dispatch(new UpdateMessage($event->content->getId(), \get_class($event->content)));
+            $event->content->editedAt = new \DateTimeImmutable();
         }
     }
 

@@ -15,6 +15,7 @@ class PollResponseDto implements \JsonSerializable
 {
     public int $voterCount = 0;
     public ?bool $currentUserHasVoted = null;
+    public ?\DateTimeImmutable $endDate = null;
     #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: PollChoiceResponseDto::class)))]
     public ?array $choices = null;
 
@@ -22,6 +23,7 @@ class PollResponseDto implements \JsonSerializable
     {
         $dto = new PollResponseDto();
         $dto->voterCount = $poll->voterCount;
+        $dto->endDate = $poll->endDate;
         $dto->currentUserHasVoted = $user instanceof User ? $poll->hasUserVoted($user) : null;
         $dto->choices = array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $poll->choices->toArray());
 
@@ -32,6 +34,7 @@ class PollResponseDto implements \JsonSerializable
     {
         return [
             'voterCount' => $this->voterCount,
+            'endDate' => $this->endDate,
             'currentUserHasVoted' => $this->currentUserHasVoted,
             'choices' => $this->choices ? array_map(fn (PollChoiceResponseDto $dto) => $dto->jsonSerialize(), $this->choices) : null,
         ];
