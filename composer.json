@@ -82,7 +82,7 @@
         "symfony/lock": "*",
         "symfony/mailer": "*",
         "symfony/mailgun-mailer": "*",
-        "symfony/mercure-bundle": "0.3.*",
+        "symfony/mercure-bundle": "0.4.*",
         "symfony/messenger": "*",
         "symfony/mime": "*",
         "symfony/monolog-bundle": "^4.0.1",
