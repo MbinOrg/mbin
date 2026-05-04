@@ -86,7 +86,7 @@ services:
         image: valkey/valkey:trixie
         restart: unless-stopped
         user: ${MBIN_USER}
-        command: valkey-server /valkey.conf --requirepass ${VALKEY_PASSWORD}
+        command: valkey-server /valkey.conf --requirepass ${REDIS_PASSWORD}
         healthcheck:
             test: ['CMD', 'valkey-cli', 'ping']
         volumes:
