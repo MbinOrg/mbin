@@ -23,6 +23,7 @@ use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class PollManager
@@ -34,6 +35,7 @@ readonly class PollManager
         private EntryCommentRepository $entryCommentRepository,
         private PostRepository $postRepository,
         private PostCommentRepository $postCommentRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -41,6 +43,7 @@ readonly class PollManager
     {
         $poll = new Poll();
         $poll->multipleChoice = $dto->isMultipleChoicePoll;
+        $poll->endDate = $dto->pollEndsAt;
         $this->entityManager->persist($poll);
 
         $this->createChoices($dto, $poll);
@@ -52,6 +55,7 @@ readonly class PollManager
 
     public function edit(?Poll $poll, ContentWithPollDto $dto, User $editor): void
     {
+        $this->logger->info('[PollManager] the poll {p} was changed, resetting all votes', ['p' => $poll->getId()]);
         $this->eventDispatcher->dispatch(new PollPreEditedEvent($poll, $this->getContentOfPoll($poll), $editor));
         $poll->endDate = $dto->pollEndsAt;
         $poll->multipleChoice = $dto->isMultipleChoicePoll;
@@ -134,7 +138,7 @@ readonly class PollManager
 
     public function hasPollProperties(array $object): bool
     {
-        if ('Question' === $object['type'] && isset($object['votersCount']) && isset($object['endTime']) && (isset($object['anyOf']) || isset($object['oneOf']))) {
+        if ('Question' === $object['type'] && isset($object['votersCount']) && (isset($object['endTime']) || isset($object['closed'])) && (isset($object['anyOf']) || isset($object['oneOf']))) {
             $choices = $object['anyOf'] ?? $object['oneOf'];
             if (\is_array($choices)) {
                 foreach ($choices as $choice) {
@@ -167,7 +171,7 @@ readonly class PollManager
     public function createFromApObject(array $object): Poll
     {
         $poll = new Poll();
-        $poll->endDate = new \DateTimeImmutable($object['endTime']);
+        $poll->endDate = new \DateTimeImmutable($object['endTime'] ?? $object['closed']);
         $poll->createdAt = new \DateTimeImmutable($object['published']);
         $poll->isRemote = true;
         $poll->voterCount = $object['votersCount'];
@@ -197,7 +201,8 @@ readonly class PollManager
      */
     public function updatePollCounts(Poll $poll, array $payload): void
     {
-        $poll->voterCount = $payload['voterCount'];
+        $this->logger->info('[PollManager] Updating vote counts for poll {p}', ['p' => $poll->getId()]);
+        $poll->voterCount = $payload['votersCount'];
 
         $choices = $payload['anyOf'] ?? $payload['oneOf'];
         foreach ($choices as $choice) {
@@ -205,5 +210,55 @@ readonly class PollManager
             $pollChoice->voteCount = $choice['replies']['totalItems'];
         }
         $this->entityManager->flush();
+    }
+
+    public function extractPollChanges(array $object, ContentWithPollDto $dto): bool
+    {
+        $isContentSame = true;
+        $dto->addPoll = true;
+        $isMultipleChoice = isset($object['anyOf']);
+        if ($dto->isMultipleChoicePoll !== $isMultipleChoice) {
+            $isContentSame = false;
+            $this->logger->debug('[PollManager::extractPollChanges] multiple choice setting is not the same: {p} -> {n}', [
+                'p' => $dto->isMultipleChoicePoll,
+                'n' => $isMultipleChoice,
+            ]);
+        }
+        $dto->isMultipleChoicePoll = $isMultipleChoice;
+        $endTime = new \DateTimeImmutable($object['endTime'] ?? $object['closed']);
+        if ($dto->pollEndsAt->getTimestamp() !== $endTime->getTimestamp()) {
+            $isContentSame = false;
+            $this->logger->debug('[PollManager::extractPollChanges] endTime is not the same: {p} -> {n}', [
+                'p' => $dto->pollEndsAt,
+                'n' => $endTime,
+            ]);
+        }
+        $dto->pollEndsAt = $endTime;
+
+        $choicesObject = $object['anyOf'] ?? $object['oneOf'];
+        $choices = [];
+        foreach ($choicesObject as $choice) {
+            $choiceName = $choice['name'];
+            $choices[] = $choiceName;
+            if (!\in_array($choiceName, $dto->choices)) {
+                $isContentSame = false;
+                $this->logger->debug('[PollManager::extractPollChanges] choice {c} did not exist previously', [
+                    'c' => $choiceName,
+                ]);
+            }
+        }
+
+        foreach ($dto->choices as $choice) {
+            if (!\in_array($choice, $choices)) {
+                $isContentSame = false;
+                $this->logger->debug('[PollManager::extractPollChanges] choice {c} did exist previously, but doesn\'t anymore', [
+                    'c' => $choice,
+                ]);
+            }
+        }
+
+        $dto->choices = $choices;
+
+        return $isContentSame;
     }
 }

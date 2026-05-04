@@ -137,7 +137,7 @@ class PostCommentManager implements ContentManagerInterface
     /**
      * @throws \Exception
      */
-    public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null): PostComment
+    public function edit(PostComment $comment, PostCommentDto $dto, ?User $editedBy = null, bool $contentChanged = true): PostComment
     {
         Assert::same($comment->post->getId(), $dto->post->getId());
 
@@ -158,7 +158,7 @@ class PostCommentManager implements ContentManagerInterface
             throw new \Exception('Comment body and image cannot be empty');
         }
 
-        if ($comment->poll) {
+        if ($comment->poll && $contentChanged) {
             $this->pollManager->edit($comment->poll, $dto, $editedBy);
         }
 

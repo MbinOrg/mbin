@@ -1,5 +1,6 @@
 <div class="poll">
-    {% if app.user and poll.hasUserVoted(app.user) is not same as true and poll.hasEnded() is not same as true %}
+    {% set forceResults = app.request.query.get('showResults')|bool %}
+    {% if app.user and poll.hasUserVoted(app.user) is not same as true and poll.hasEnded() is not same as true and forceResults is not same as true %}
         <form action="/poll/{{ poll.id }}/vote" method="get">
             {% if poll.multipleChoice %}
                 {% for choice in poll.choices %}
@@ -16,7 +17,8 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="text-right">
+            <div class="text-right actions">
+                <a href="{{ options_url('showResults', true) }}">{{ 'poll_show_results'|trans }}</a>
                 <button id="poll_vote_submit" class="btn btn__primary" type="submit">{{ 'poll_vote'|trans }}</button>
             </div>
         </form>
@@ -46,11 +48,14 @@
                     <span style="margin-left: 2rem;">{{ 'poll_ends'|trans }} {{ component('date', {date: poll.endDate}) }}</span>
                 {% endif %}
             </div>
-            {% if isExternal %}
-                <div class="flex-item text-right">
-                    <a href="">{{ 'poll_update_results'|trans }}</a>
-                </div>
-            {% endif %}
+            <div class="flex-item text-right actions">
+                {% if forceResults %}
+                    <a href="{{ options_url('showResults', null) }}">{{ 'poll_hide_results'|trans }}</a>
+                {% endif %}
+                {% if isExternal %}
+                    <a href="{{ path('poll_refresh', {id: poll.id}) }}">{{ 'poll_update_results'|trans }}</a>
+                {% endif %}
+            </div>
         </div>
     {% endif %}
 </div>
