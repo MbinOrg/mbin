@@ -473,7 +473,7 @@ class ContentRepository
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postCommentWhere";
 
-        $innerLimit = $addCursor ? 'LIMIT :limit' : '';
+        $innerLimit = $addCursor ? 'LIMIT :innerLimit' : '';
         $innerSql = '';
         if (Criteria::CONTENT_THREADS === $criteria->content) {
             if ($includeEntryComments) {
