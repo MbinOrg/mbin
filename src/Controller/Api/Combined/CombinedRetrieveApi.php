@@ -9,6 +9,7 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ContentResponseDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -24,6 +25,7 @@ use App\Utils\SqlHelpers;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Pagerfanta\PagerfantaInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -142,7 +144,7 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?bool $includeBoosts,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria($p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
 
         $content = $contentRepository->findByCriteria($criteria);
 
@@ -255,16 +257,16 @@ class CombinedRetrieveApi extends BaseApi
         Security $security,
         ContentRepository $contentRepository,
         SqlHelpers $sqlHelpers,
+        string $collectionType,
         #[MapQueryParameter] ?int $p,
         #[MapQueryParameter] ?int $perPage,
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
-        string $collectionType,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria($p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
+        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
 
         $content = $contentRepository->findByCriteria($criteria);
 
@@ -384,7 +386,7 @@ class CombinedRetrieveApi extends BaseApi
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
         $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
         $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
@@ -498,6 +500,7 @@ class CombinedRetrieveApi extends BaseApi
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         Security $security,
         ContentRepository $contentRepository,
+        string $collectionType,
         #[MapQueryParameter] ?string $cursor,
         #[MapQueryParameter] ?string $cursor2,
         #[MapQueryParameter] ?int $perPage,
@@ -505,11 +508,10 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
-        string $collectionType,
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
+        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
         $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
         $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
@@ -518,7 +520,258 @@ class CombinedRetrieveApi extends BaseApi
         return $this->serializeContentCursored($content, $headers);
     }
 
-    private function getCriteria(?int $p, Security $security, ?string $sort, ?string $time, ?string $federation, ?bool $includeBoosts, ?int $perPage, SqlHelpers $sqlHelpers, ?string $collectionType): ContentPageView
+    #[OA\Response(
+        response: 200,
+        description: 'A paginated list of combined entries and posts from the magazine filtered by the query parameters',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'items',
+                    type: 'array',
+                    items: new OA\Items(ref: new Model(type: ContentResponseDto::class))
+                ),
+                new OA\Property(
+                    property: 'pagination',
+                    ref: new Model(type: PaginationSchema::class)
+                ),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'magazine_id',
+        description: 'The magazine to retrieve content from',
+        in: 'path',
+        schema: new OA\Schema(type: 'integer'),
+    )]
+    #[OA\Parameter(
+        name: 'p',
+        description: 'Page of content to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'integer', default: 1, minimum: 1)
+    )]
+    #[OA\Parameter(
+        name: 'perPage',
+        description: 'Number of content items to retrieve per page',
+        in: 'query',
+        schema: new OA\Schema(type: 'integer', default: ContentRepository::PER_PAGE, maximum: self::MAX_PER_PAGE, minimum: self::MIN_PER_PAGE)
+    )]
+    #[OA\Parameter(
+        name: 'sort',
+        description: 'Sort method to use when retrieving content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::SORT_HOT, enum: Criteria::SORT_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'time',
+        description: 'Max age of retrieved content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
+    )]
+    #[OA\Parameter(
+        name: 'lang[]',
+        description: 'Language(s) of content to return',
+        in: 'query',
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'string', default: null, maxLength: 3, minLength: 2)
+        ),
+        explode: true,
+        allowReserved: true
+    )]
+    #[OA\Parameter(
+        name: 'usePreferredLangs',
+        description: 'Filter by a user\'s preferred languages? (Requires authentication and takes precedence over lang[])',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false),
+    )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'includeBoosts',
+        description: 'if true then boosted content from followed users are included',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
+    #[OA\Tag(name: 'combined')]
+    public function magazineCollection(
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
+        Security $security,
+        ContentRepository $contentRepository,
+        SqlHelpers $sqlHelpers,
+        #[MapEntity(id: 'magazine_id')]
+        Magazine $magazine,
+        #[MapQueryParameter] ?int $p,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria($magazine, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+
+        $content = $contentRepository->findByCriteria($criteria);
+
+        return $this->serializeContent($content, $headers);
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'A cursor paginated list of combined entries and posts from the magazine filtered by the query parameters',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'items',
+                    type: 'array',
+                    items: new OA\Items(ref: new Model(type: ContentResponseDto::class))
+                ),
+                new OA\Property(
+                    property: 'pagination',
+                    ref: new Model(type: CursorPaginationSchema::class)
+                ),
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Parameter(
+        name: 'magazine_id',
+        description: 'The magazine to retrieve content from',
+        in: 'path',
+        schema: new OA\Schema(type: 'integer'),
+    )]
+    #[OA\Parameter(
+        name: 'cursor',
+        description: 'The cursor',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
+        name: 'cursor2',
+        description: 'The secondary cursor, always a datetime',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: null)
+    )]
+    #[OA\Parameter(
+        name: 'perPage',
+        description: 'Number of content items to retrieve per page',
+        in: 'query',
+        schema: new OA\Schema(type: 'integer', default: ContentRepository::PER_PAGE, maximum: self::MAX_PER_PAGE, minimum: self::MIN_PER_PAGE)
+    )]
+    #[OA\Parameter(
+        name: 'sort',
+        description: 'Sort method to use when retrieving content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::SORT_HOT, enum: Criteria::SORT_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'time',
+        description: 'Max age of retrieved content',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::TIME_ALL, enum: Criteria::TIME_ROUTES_EN)
+    )]
+    #[OA\Parameter(
+        name: 'lang[]',
+        description: 'Language(s) of content to return',
+        in: 'query',
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'string', default: null, maxLength: 3, minLength: 2)
+        ),
+        explode: true,
+        allowReserved: true
+    )]
+    #[OA\Parameter(
+        name: 'usePreferredLangs',
+        description: 'Filter by a user\'s preferred languages? (Requires authentication and takes precedence over lang[])',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false),
+    )]
+    #[OA\Parameter(
+        name: 'federation',
+        description: 'What type of federated entries to retrieve',
+        in: 'query',
+        schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
+    )]
+    #[OA\Parameter(
+        name: 'includeBoosts',
+        description: 'if true then boosted content from followed users are included',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
+    #[OA\Tag(name: 'combined')]
+    public function cursorMagazineCollection(
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
+        Security $security,
+        ContentRepository $contentRepository,
+        #[MapEntity(id: 'magazine_id')]
+        Magazine $magazine,
+        #[MapQueryParameter] ?string $cursor,
+        #[MapQueryParameter] ?string $cursor2,
+        #[MapQueryParameter] ?int $perPage,
+        #[MapQueryParameter] ?string $sort,
+        #[MapQueryParameter] ?string $time,
+        #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeBoosts,
+        SqlHelpers $sqlHelpers,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+        $criteria = $this->getCriteria($magazine, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
+        $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
+
+        $content = $contentRepository->findByCriteriaCursored($criteria, $currentCursor, $currentCursor2);
+
+        return $this->serializeContentCursored($content, $headers);
+    }
+
+    private function getCriteria(?Magazine $magazine, ?int $p, Security $security, ?string $sort, ?string $time, ?string $federation, ?bool $includeBoosts, ?int $perPage, SqlHelpers $sqlHelpers, ?string $collectionType): ContentPageView
     {
         $criteria = new ContentPageView($p ?? 1, $security);
         $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
@@ -527,10 +780,16 @@ class CombinedRetrieveApi extends BaseApi
         $this->handleLanguageCriteria($criteria);
         $criteria->content = Criteria::CONTENT_COMBINED;
         $criteria->perPage = $perPage;
+
         $user = $security->getUser();
         if ($user instanceof User) {
             $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption && ($includeBoosts ?? $user->showBoostsOfFollowing);
             $criteria->fetchCachedItems($sqlHelpers, $user);
+        }
+
+        if (null !== $magazine) {
+            $criteria->magazine = $magazine;
+            $criteria->stickiesFirst = true;
         }
 
         switch ($collectionType) {

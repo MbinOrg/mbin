@@ -33,13 +33,18 @@ class MessageThreadRepository extends ServiceEntityRepository
         parent::__construct($registry, MessageThread::class);
     }
 
-    public function findUserMessages(?User $user, int $page, int $perPage = self::PER_PAGE)
+    public function findUserMessages(?User $user, int $page, int $perPage = self::PER_PAGE, ?User $interlocutor = null): Pagerfanta
     {
         $qb = $this->createQueryBuilder('mt');
         $qb->where(':user MEMBER OF mt.participants')
             ->andWhere($qb->expr()->exists('SELECT m FROM '.Message::class.' m WHERE m.thread = mt'))
             ->orderBy('mt.updatedAt', 'DESC')
             ->setParameter(':user', $user);
+
+        if (null !== $interlocutor) {
+            $qb = $qb->andWhere(':interlocutor MEMBER OF mt.participants')
+                ->setParameter(':interlocutor', $interlocutor);
+        }
 
         $pager = new Pagerfanta(new QueryAdapter($qb));
         try {
