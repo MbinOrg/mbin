@@ -18,7 +18,7 @@ final class Version20260408134939 extends AbstractMigration
     {
         $this->addSql('CREATE SEQUENCE poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE poll_choice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE poll (id INT NOT NULL, multiple_choice BOOLEAN NOT NULL, voter_count INT DEFAULT 0 NOT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_remote BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, sent_notifications BOOLEAN NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE poll (id INT NOT NULL, multiple_choice BOOLEAN NOT NULL, voter_count INT DEFAULT 0 NOT NULL, end_date TIMESTAMP(0) WITH TIME ZONE NOT NULL, is_remote BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, sent_notifications BOOLEAN NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE TABLE poll_choice (id INT NOT NULL, name VARCHAR(255) NOT NULL, vote_count INT NOT NULL, poll_id INT NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_2DAE19C93C947C0F ON poll_choice (poll_id)');
         $this->addSql('CREATE TABLE poll_vote (uuid UUID NOT NULL, created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL, ap_id VARCHAR(255) DEFAULT NULL, voter_id INT NOT NULL, choice_id INT NOT NULL, poll_id INT NOT NULL, PRIMARY KEY (uuid))');

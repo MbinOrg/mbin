@@ -2,3 +2,8 @@ poll_vote:
   controller: App\Controller\PollVoteController::vote
   path: /poll/{id}/vote
   methods: [GET]
+
+poll_refresh:
+    controller: App\Controller\PollVoteController::refreshVoteCounts
+    path: /poll/{id}/refresh
+    methods: [GET]

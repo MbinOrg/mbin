@@ -147,6 +147,11 @@ class ApHttpClient implements ApHttpClientInterface
         return 'ap_object_'.hash('sha256', $url);
     }
 
+    public function invalidateActivityObjectCache(string $url): void
+    {
+        $this->cache->delete($this->getActivityObjectCacheKey($url));
+    }
+
     /**
      * Retrieve AP actor object (could be a user or magazine).
      *

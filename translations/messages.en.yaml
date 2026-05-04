@@ -1233,6 +1233,8 @@ poll_ends_at: Poll ends at
 poll_choices: Choices
 poll_is_multiple_choice: Is multiple choice
 poll_vote: Vote
+poll_show_results: Show results
+poll_hide_results: Hide results
 poll_ends: Poll ends
 poll_ended: Poll ended
 poll_voters: '{0}Persons|{1}Person|]1,Inf[ Persons'

@@ -135,7 +135,7 @@ class EntryCommentManager implements ContentManagerInterface
         return $entryCommentHost === $userHost || $userHost === $magazineHost || $comment->magazine->userIsModerator($user);
     }
 
-    public function edit(EntryComment $comment, EntryCommentDto $dto, ?User $editedByUser = null): EntryComment
+    public function edit(EntryComment $comment, EntryCommentDto $dto, ?User $editedByUser = null, bool $contentChanged = true): EntryComment
     {
         Assert::same($comment->entry->getId(), $dto->entry->getId());
 
@@ -156,7 +156,7 @@ class EntryCommentManager implements ContentManagerInterface
             throw new \Exception('Comment body and image cannot be empty');
         }
 
-        if ($comment->poll) {
+        if ($comment->poll && $contentChanged) {
             $this->pollManager->edit($comment->poll, $dto, $editedByUser);
         }
 
