@@ -35,7 +35,7 @@ class Poll
     #[Column(options: ['default' => 0])]
     public int $voterCount = 0;
 
-    #[Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Column(type: Types::DATETIMETZ_IMMUTABLE)]
     public \DateTimeImmutable $endDate;
 
     #[Column]

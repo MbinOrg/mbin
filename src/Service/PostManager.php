@@ -146,7 +146,7 @@ class PostManager implements ContentManagerInterface
         return $postHost === $userHost || $userHost === $magazineHost || $post->magazine->userIsModerator($user);
     }
 
-    public function edit(Post $post, PostDto $dto, ?User $editedBy = null): Post
+    public function edit(Post $post, PostDto $dto, ?User $editedBy = null, bool $contentChanged = true): Post
     {
         Assert::same($post->magazine->getId(), $dto->magazine->getId());
 
@@ -167,7 +167,7 @@ class PostManager implements ContentManagerInterface
             throw new \Exception('Post body and image cannot be empty');
         }
 
-        if ($post->poll) {
+        if ($post->poll && $contentChanged) {
             $this->pollManager->edit($post->poll, $dto, $editedBy);
         }
 

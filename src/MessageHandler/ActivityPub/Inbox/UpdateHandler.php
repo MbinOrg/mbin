@@ -149,9 +149,9 @@ class UpdateHandler extends MbinMessageHandler
 
         $dto->title = $payload['object']['name'];
 
-        $this->extractChanges($dto, $payload);
-        $this->entryManager->edit($entry, $dto, $user);
-        $this->updatePollCounts($entry, $payload);
+        $contentChanged = $this->extractChanges($dto, $payload);
+        $this->entryManager->edit($entry, $dto, $user, $contentChanged);
+        $this->updatePollCounts($entry, $payload['object']);
     }
 
     private function editEntryComment(EntryComment $comment, User $user, array $payload): void
@@ -163,10 +163,10 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->entryCommentFactory->createDto($comment);
 
-        $this->extractChanges($dto, $payload);
+        $contentChanged = $this->extractChanges($dto, $payload);
 
-        $this->entryCommentManager->edit($comment, $dto, $user);
-        $this->updatePollCounts($comment, $payload);
+        $this->entryCommentManager->edit($comment, $dto, $user, $contentChanged);
+        $this->updatePollCounts($comment, $payload['object']);
     }
 
     private function editPost(Post $post, User $user, array $payload): void
@@ -178,10 +178,10 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->postFactory->createDto($post);
 
-        $this->extractChanges($dto, $payload);
+        $contentChanged = $this->extractChanges($dto, $payload);
 
-        $this->postManager->edit($post, $dto, $user);
-        $this->updatePollCounts($post, $payload);
+        $this->postManager->edit($post, $dto, $user, $contentChanged);
+        $this->updatePollCounts($post, $payload['object']);
     }
 
     private function editPostComment(PostComment $comment, User $user, array $payload): void
@@ -193,35 +193,54 @@ class UpdateHandler extends MbinMessageHandler
         }
         $dto = $this->postCommentFactory->createDto($comment);
 
-        $this->extractChanges($dto, $payload);
+        $contentChanged = $this->extractChanges($dto, $payload);
 
-        $this->postCommentManager->edit($comment, $dto, $user);
-        $this->updatePollCounts($comment, $payload);
+        $this->postCommentManager->edit($comment, $dto, $user, $contentChanged);
+        $this->updatePollCounts($comment, $payload['object']);
     }
 
     private function updatePollCounts(Entry|EntryComment|Post|PostComment $content, array $payload): void
     {
-        if (($poll = $content->poll) && $this->pollManager->hasPollProperties($payload)) {
+        $poll = $content->poll;
+        if (null !== $poll && $this->pollManager->hasPollProperties($payload)) {
             $this->pollManager->updatePollCounts($poll, $payload);
         }
     }
 
-    private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto, array $payload): void
+    /**
+     * @return bool true if the content of the post has changed (title, body, url, image), otherwise false
+     */
+    private function extractChanges(EntryDto|EntryCommentDto|PostDto|PostCommentDto $dto, array $payload): bool
     {
+        $isContentSame = true;
         $this->logger->debug('[UpdateHandler::extractChanges] extracting changes from {c}', ['c' => \get_class($dto)]);
         if (!empty($payload['object']['content'])) {
+            $previousBody = $dto->body;
             $dto->body = $this->objectExtractor->getMarkdownBody($payload['object']);
+            if ($previousBody !== $dto->body) {
+                $isContentSame = false;
+            }
         } else {
+            if (null !== $dto->body) {
+                $isContentSame = false;
+            }
             $dto->body = null;
         }
         if (!empty($payload['object']['attachment'])) {
             $this->logger->debug('[UpdateHandler::extractChanges] was not empty :)');
             $image = $this->activityPubManager->handleImages($payload['object']['attachment']);
             if (null !== $image) {
+                $previousImage = $dto->image;
                 $dto->image = $this->imageFactory->createDto($image);
+                if ($previousImage->id !== $dto->image->id) {
+                    $isContentSame = false;
+                }
             }
             if ($dto instanceof EntryDto) {
                 $url = ActivityPubManager::extractUrlFromAttachment($payload['object']['attachment']);
+                if ($dto->url !== $url) {
+                    $isContentSame = false;
+                }
                 $dto->url = $url;
                 $this->logger->debug('[UpdateHandler::extractChanges] setting url to {u} which was extracted from the attachment array', ['u' => $url]);
             }
@@ -233,6 +252,17 @@ class UpdateHandler extends MbinMessageHandler
         if (isset($payload['object']['commentsEnabled']) && \is_bool($payload['object']['commentsEnabled']) && ($dto instanceof EntryDto || $dto instanceof PostDto)) {
             $dto->isLocked = !$payload['object']['commentsEnabled'];
         }
+        $this->logger->debug('[UpdateHandler::extractChanges] content was the same: {x}', ['x' => $isContentSame ? 'true' : 'false']);
+
+        if ($this->pollManager->hasPollProperties($payload['object'])) {
+            $pollIsSame = $this->pollManager->extractPollChanges($payload['object'], $dto);
+            $this->logger->debug('[UpdateHandler::extractChanges] poll was the same: {x}', ['x' => $pollIsSame ? 'true' : 'false']);
+            if (!$pollIsSame) {
+                $isContentSame = false;
+            }
+        }
+
+        return !$isContentSame;
     }
 
     private function editMessage(Message $message, User $user, array $payload): void

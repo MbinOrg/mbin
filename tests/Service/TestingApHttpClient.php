@@ -103,6 +103,10 @@ class TestingApHttpClient implements ApHttpClientInterface
         return 'SOME_TESTING_CACHE_KEY';
     }
 
+    public function invalidateActivityObjectCache(string $url): void
+    {
+    }
+
     public function getInboxUrl(string $apProfileId): string
     {
         $actor = $this->getActorObject($apProfileId);
