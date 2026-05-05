@@ -74,6 +74,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -353,6 +354,11 @@ class BaseApi extends AbstractController
     public static function constrainDepth(mixed $value, int $min = self::MIN_DEPTH, int $max = self::MAX_DEPTH): int
     {
         return self::constrainPerPage($value, $min, $max);
+    }
+
+    public function getPerPage(Request $request, int $default): int
+    {
+        return self::constrainPerPage($request->get('perPage', $default));
     }
 
     public function handleLanguageCriteria(Criteria $criteria): void

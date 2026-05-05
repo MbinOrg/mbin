@@ -25,3 +25,15 @@ api_combined_user:
     collectionType: subscribed|moderated|favourited
   methods: [ GET ]
   format: json
+
+api_combined_magazine_cursor:
+    controller: App\Controller\Api\Combined\CombinedRetrieveApi::cursorMagazineCollection
+    path: /api/magazine/{magazine_id}/combined/v2
+    methods: [ GET ]
+    format: json
+
+api_combined_magazine:
+  controller: App\Controller\Api\Combined\CombinedRetrieveApi::magazineCollection
+  path: /api/magazine/{magazine_id}/combined
+  methods: [ GET ]
+  format: json
