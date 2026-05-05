@@ -14,7 +14,7 @@ type.photo: Foto
 type.video: Video
 type.smart_contract: Slim contract
 type.magazine: Tijdschrift
-thread: Gesprek
+thread: Discussie
 microblog: Microblog
 people: Mensen
 events: Evenementen
@@ -1156,90 +1156,150 @@ you_have_been_banned_from_magazine_permanently: Je bent permanent verbannen uit
   het tijdschrift %m.
 you_are_no_longer_banned_from_magazine: Je bent niet langer verbannen uit 
   tijdschrift %m.
-monitoring_duration_mean: '"'
+monitoring_duration_mean: gemiddelde
 monitoring_duration_max: max
 monitoring_query_count: telt
 monitoring_query_total: total loss
-monitoring_duration: 'Vertaling:'
-monitoring_dont_group_similar: vergelijkbare zoektochten
-monitoring_group_similar: groep vergelijkt
-monitoring_http_method: HTP Method
+monitoring_duration: Duur
+monitoring_dont_group_similar: groepeer niet vergelijkbare zoektochten
+monitoring_group_similar: groep vergelijkbare queries
+monitoring_http_method: HTTP-methode
 monitoring_url: URL
-monitoring_request_successful: Succes
+monitoring_request_successful: Succesvol
 monitoring_user_type: Gebruik Type
 monitoring_handler: Controller/Transport
-monitoring_started: Begon
+monitoring_started: Gestart
 monitoring_twig_renders: Twig Renders
-monitoring_curl_requests: Verzoek
-monitoring_route_overview: 'Vertaling:'
-monitoring_route_overview_description: Dit graf toont aan dat de samengestelde 
-  milliseconden gegroepeerd zijn door de route/message gecomputeerd worden
-monitoring_duration_query: Que
-monitoring_duration_twig_render: Twit Render
-monitoring_duration_curl_request: Curl Request
-monitoring_duration_sending_response: 'Vertaling:'
-monitoring_dont_format_query: 'vertaling:'
-monitoring_format_query: format query
+monitoring_curl_requests: Curl-verzoeken
+monitoring_route_overview: Besteed uitvoeringstijd, opgeteld per route
+monitoring_route_overview_description: Deze grafiek toont de totale tijd die in 
+  milliseconden is besteed, gegroepeerd per route/bericht dat wordt verwerkt
+monitoring_duration_query: Query
+monitoring_duration_twig_render: Twig Render
+monitoring_duration_curl_request: Curl Verzoek
+monitoring_duration_sending_response: Reactie verzenden
+monitoring_dont_format_query: Formatteer de query niet
+monitoring_format_query: formaat query
 monitoring_dont_show_parameters: laat de parameters niet zien
 monitoring_show_parameters: toon parameters
 monitoring_execution_type: Executie Type
-monitoring_request: HTP Request
-monitoring_messenger: Messen
+monitoring_request: HTTP Verzoek
+monitoring_messenger: Boodschapper
 monitoring_anonymous: Anoniem
-monitoring_created_to: Begon eerder
-monitoring_duration_minimum: Minimum dure
+monitoring_created_to: Begonnen vóór
+monitoring_duration_minimum: Minimale duur
 monitoring_submit: Filter
 monitoring_has_exception: Heeft uitzondering
-monitoring_chart_ordering: Chart besteld
-monitoring_twig_compare_to_total: 'Vertaling:'
-monitoring_twig_compare_to_parent: 'Quality over Quantity (QoQ) Releases Vertaling:'
-monitoring_disabled: Monitoring is gehandicapt.
-monitoring_queries_enabled_persisted: De vraag is ingeschakeld.
-monitoring_queries_enabled_not_persisted: De vraag is ingeschakeld, maar alleen 
-  de executietijd.
-monitoring_queries_disabled: Query monitoring is gehandicapt.
-monitoring_twig_renders_enabled_persisted: Twig render monitoring is in staat.
-monitoring_twig_renders_enabled_not_persisted: Twig rendering is in staat, maar 
-  alleen de executietijd.
-monitoring_twig_renders_disabled: Twig render monitoring is gehandicapt.
-monitoring_curl_requests_enabled_persisted: Curl verzoek monitoren is in staat.
-monitoring_curl_requests_enabled_not_persisted: Curl verzoek monitoren is in 
-  staat, maar alleen de executietijd.
-monitoring_curl_requests_disabled: Curl verzoek monitoren is gehandicapt.
-magazine_name_as_tag_help: De tags van een magazine zijn gebruikt om microblog 
-  posten te vergelijken met dit tijdschrift. Bijvoorbeeld als de naam 
-  'fediverse' is en de tijdschriften 'fediverse' bevatten, dan zal elke 
-  microblog post met 'fediverse' in dit tijdschrift worden gezet.
+monitoring_chart_ordering: Chart volgorde
+monitoring_twig_compare_to_total: Vergelijk met de totale duur
+monitoring_twig_compare_to_parent: Vergelijk met de duur van de ouderlijke zorg
+monitoring_disabled: Monitoring is uitgeschakeld.
+monitoring_queries_enabled_persisted: Monitoring is ingeschakeld.
+monitoring_queries_enabled_not_persisted: Querymonitoring is ingeschakeld, maar 
+  alleen de uitvoeringstijd wordt geregistreerd.
+monitoring_queries_disabled: Querymonitoring is uitgeschakeld.
+monitoring_twig_renders_enabled_persisted: Twig-renderingmonitoring is 
+  ingeschakeld.
+monitoring_twig_renders_enabled_not_persisted: Twig-rendering is ingeschakeld, 
+  maar alleen de uitvoeringstijd.
+monitoring_twig_renders_disabled: Twig renderingmonitoring is uitgeschakeld.
+monitoring_curl_requests_enabled_persisted: Het monitoren van Curl-verzoeken is 
+  ingeschakeld.
+monitoring_curl_requests_enabled_not_persisted: Het monitoren van curl-verzoeken
+  is ingeschakeld, maar alleen de uitvoeringstijd wordt geregistreerd.
+monitoring_curl_requests_disabled: Het monitoren van curl-verzoeken is 
+  uitgeschakeld.
+magazine_name_as_tag_help: De tags van een magazine worden gebruikt om 
+  microblogberichten aan dat magazine te koppelen. Als de naam bijvoorbeeld 
+  "fediverse" is en de tags van het magazine "fediverse" bevatten, dan wordt elk
+  microblogbericht met "#fediverse" in dat magazine geplaatst.
 magazine_rules_deprecated: het regelsveld wordt gedepreceerd en zal in de 
   toekomst worden verwijderd. Leg uw regels in de beschrijvingsbak.
 monitoring: Monitor
-monitoring_queries: 0 Queries1 Query
+monitoring_queries: '{0}SQL Queries|{1}SQL Query|]1,Inf[ SQL Queries'
 monitoring_duration_min: min
 monitoring_path: Route/Message klas
-monitoring_duration_overall: Andere
-monitoring_user: Gebruik
-monitoring_activity_pub: Active
+monitoring_duration_overall: Ander
+monitoring_user: Gebruiker
+monitoring_activity_pub: ActivityPub
 monitoring_ajax: AJAX
-monitoring_created_from: Begon na
+monitoring_created_from: Begonnen na
 monitoring_total_duration: Totale duur
-monitoring_mean_duration: Gemene duur
-reached_end: Dit is het einde
+monitoring_mean_duration: Gemiddelde duur
+reached_end: Je hebt het einde bereikt
 first_page: Eerste pagina
-next_page: Volgende
+next_page: Volgende pagina
 previous_page: Vorige pagina
 filter_list_create: Creëer Filter List
 filter_lists: Filter lijst
 filter_lists_where_to_filter: Waar je de filter kunt toepassen
 filter_lists_filter_words: Filter woorden
 expiration_date: Vervaldatum
-filter_lists_filter_location: Actief
-filter_lists_word_exact_match: Precies
-filter_lists_word_exact_match_help: Als de exacte match waar is, dan zal de 
-  zoektocht gevoelig zijn
+filter_lists_filter_location: Actief in
+filter_lists_word_exact_match: Exacte overeenkomst
+filter_lists_word_exact_match_help: Als er sprake is van een exacte 
+  overeenkomst, dan zal de zoekopdracht hoofdlettergevoelig zijn
 feeds: Feeds
-filter_lists_feeds_help: Filter woorden in draden, microblogs en opmerkingen in 
-  feeds, zoals allemaal, /sub, magazine feeds, etc.
-filter_lists_comments_help: Filter woorden bekijken terwijl ze een draad of 
-  microblog in de commentaarboom zien.
-filter_lists_profile_help: Filter woorden bekijken in hun inhoud.
+filter_lists_feeds_help: Filter woorden in discussies, microblogs en opmerkingen
+  in feeds, zoals /all, /sub, magazine feeds, etc.
+filter_lists_comments_help: Filter woorden tijdens het bekijken van een 
+  discussie of microblog in de reactiestructuur.
+filter_lists_profile_help: Filter woorden tijdens het bekijken van een 
+  gebruikersprofiel in hun content.
 expired: Verlopen
+created_since: Gemaakt sinds
+displayname: Weergavenaam
+parent_post: Bovenliggende Bericht
+oauth2.grant.moderate.entry.lock: Vergrendel discussies in je gemodereerde 
+  tijdschriften, zodat niemand er meer op kan reageren
+oauth2.grant.moderate.post.lock: Vergrendel microblogs in je gemodereerde 
+  tijdschriften, zodat niemand er reacties op kan plaatsen
+posts_harmonize_combined: Gebruik de nieuwe lay-out in de gecombineerde weergave
+posts_harmonize_combined_help: Berichten krijgen een lay-out die vergelijkbaar 
+  is met die van discussieforums.
+show_boost_following_label: Toon gepromote content in de microblog en de 
+  gecombineerde weergave
+show_boost_following_help: Als deze functie is ingeschakeld, worden discussies, 
+  berichten en reacties die door jou of door gebruikers die je volgt zijn 
+  gepromoot, weergegeven in het gecombineerde overzicht van je abonnementen en 
+  microblogs. Dit heeft alleen effect als de sortering is ingesteld op 
+  'Nieuwste'.
+discoverable: Ontdekbaar
+user_discoverable_help: Als deze functie is ingeschakeld, zijn je profiel, 
+  discussies, microblogs en reacties te vinden via de zoekfunctie en de 
+  willekeurige panelen. Je profiel kan ook verschijnen in het paneel met actieve
+  gebruikers en op de pagina met personen. Als deze functie is uitgeschakeld, 
+  blijven je berichten zichtbaar voor andere gebruikers, maar verschijnen ze 
+  niet in de algemene feed.
+magazine_discoverable_help: Als deze optie is ingeschakeld, zijn dit tijdschrift
+  en de bijbehorende discussies, microblogs en reacties te vinden via de 
+  zoekfunctie en de willekeurige zoekresultaten. Als deze optie is 
+  uitgeschakeld, blijft het tijdschrift wel in de tijdschriftenlijst staan, maar
+  verschijnen de discussies en microblogs niet in de algemene feed.
+flash_thread_lock_success: De discussie is succesvol vergrendeld
+flash_thread_unlock_success: Discussie is succesful ontgrengeld
+flash_post_lock_success: Microblog succesvol vergrendeld
+flash_post_unlock_success: Microblog succesvol ontgrendeld
+lock: Vergrendelen
+unlock: Ontgrendelen
+comments_locked: De reacties zijn vergrendeld.
+magazine_log_entry_locked: vergrendel de reacties van
+magazine_log_entry_unlocked: ontgrendeld de reacties van
+modlog_type_entry_lock: Discussie vergrendeld
+modlog_type_entry_unlock: Discussie ontgrendeld
+modlog_type_post_lock: Microblog vergrendeld
+modlog_type_post_unlock: Microblog ontgrendeld
+contentnotification.muted: Dempen | geen meldingen ontvangen
+contentnotification.default: Standaard | ontvang meldingen volgens uw 
+  standaardinstellingen
+contentnotification.loud: Luid | ontvang alle meldingen
+indexable_by_search_engines: Indexeerbaar door zoekmachines
+user_indexable_by_search_engines_help: Als deze instelling is uitgeschakeld, 
+  wordt zoekmachines geadviseerd uw threads en microblogs niet te indexeren. Uw 
+  reacties worden hierdoor echter niet beïnvloed en kwaadwillenden kunnen dit 
+  negeren. Deze instelling wordt ook gefedereerd naar andere servers.
+magazine_indexable_by_search_engines_help: Als deze instelling is uitgeschakeld,
+  wordt zoekmachines geadviseerd uw threads en microblogs niet te indexeren. Uw 
+  reacties worden hierdoor echter niet beïnvloed en kwaadwillenden kunnen dit 
+  negeren. Deze instelling wordt ook gefedereerd naar andere servers.
+magazine_name_as_tag: Gebruik de tijdschriftnaam als tag
