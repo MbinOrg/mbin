@@ -1156,3 +1156,90 @@ you_have_been_banned_from_magazine_permanently: Je bent permanent verbannen uit
   het tijdschrift %m.
 you_are_no_longer_banned_from_magazine: Je bent niet langer verbannen uit 
   tijdschrift %m.
+monitoring_duration_mean: '"'
+monitoring_duration_max: max
+monitoring_query_count: telt
+monitoring_query_total: total loss
+monitoring_duration: 'Vertaling:'
+monitoring_dont_group_similar: vergelijkbare zoektochten
+monitoring_group_similar: groep vergelijkt
+monitoring_http_method: HTP Method
+monitoring_url: URL
+monitoring_request_successful: Succes
+monitoring_user_type: Gebruik Type
+monitoring_handler: Controller/Transport
+monitoring_started: Begon
+monitoring_twig_renders: Twig Renders
+monitoring_curl_requests: Verzoek
+monitoring_route_overview: 'Vertaling:'
+monitoring_route_overview_description: Dit graf toont aan dat de samengestelde 
+  milliseconden gegroepeerd zijn door de route/message gecomputeerd worden
+monitoring_duration_query: Que
+monitoring_duration_twig_render: Twit Render
+monitoring_duration_curl_request: Curl Request
+monitoring_duration_sending_response: 'Vertaling:'
+monitoring_dont_format_query: 'vertaling:'
+monitoring_format_query: format query
+monitoring_dont_show_parameters: laat de parameters niet zien
+monitoring_show_parameters: toon parameters
+monitoring_execution_type: Executie Type
+monitoring_request: HTP Request
+monitoring_messenger: Messen
+monitoring_anonymous: Anoniem
+monitoring_created_to: Begon eerder
+monitoring_duration_minimum: Minimum dure
+monitoring_submit: Filter
+monitoring_has_exception: Heeft uitzondering
+monitoring_chart_ordering: Chart besteld
+monitoring_twig_compare_to_total: 'Vertaling:'
+monitoring_twig_compare_to_parent: 'Quality over Quantity (QoQ) Releases Vertaling:'
+monitoring_disabled: Monitoring is gehandicapt.
+monitoring_queries_enabled_persisted: De vraag is ingeschakeld.
+monitoring_queries_enabled_not_persisted: De vraag is ingeschakeld, maar alleen 
+  de executietijd.
+monitoring_queries_disabled: Query monitoring is gehandicapt.
+monitoring_twig_renders_enabled_persisted: Twig render monitoring is in staat.
+monitoring_twig_renders_enabled_not_persisted: Twig rendering is in staat, maar 
+  alleen de executietijd.
+monitoring_twig_renders_disabled: Twig render monitoring is gehandicapt.
+monitoring_curl_requests_enabled_persisted: Curl verzoek monitoren is in staat.
+monitoring_curl_requests_enabled_not_persisted: Curl verzoek monitoren is in 
+  staat, maar alleen de executietijd.
+monitoring_curl_requests_disabled: Curl verzoek monitoren is gehandicapt.
+magazine_name_as_tag_help: De tags van een magazine zijn gebruikt om microblog 
+  posten te vergelijken met dit tijdschrift. Bijvoorbeeld als de naam 
+  'fediverse' is en de tijdschriften 'fediverse' bevatten, dan zal elke 
+  microblog post met 'fediverse' in dit tijdschrift worden gezet.
+magazine_rules_deprecated: het regelsveld wordt gedepreceerd en zal in de 
+  toekomst worden verwijderd. Leg uw regels in de beschrijvingsbak.
+monitoring: Monitor
+monitoring_queries: 0 Queries1 Query
+monitoring_duration_min: min
+monitoring_path: Route/Message klas
+monitoring_duration_overall: Andere
+monitoring_user: Gebruik
+monitoring_activity_pub: Active
+monitoring_ajax: AJAX
+monitoring_created_from: Begon na
+monitoring_total_duration: Totale duur
+monitoring_mean_duration: Gemene duur
+reached_end: Dit is het einde
+first_page: Eerste pagina
+next_page: Volgende
+previous_page: Vorige pagina
+filter_list_create: Creëer Filter List
+filter_lists: Filter lijst
+filter_lists_where_to_filter: Waar je de filter kunt toepassen
+filter_lists_filter_words: Filter woorden
+expiration_date: Vervaldatum
+filter_lists_filter_location: Actief
+filter_lists_word_exact_match: Precies
+filter_lists_word_exact_match_help: Als de exacte match waar is, dan zal de 
+  zoektocht gevoelig zijn
+feeds: Feeds
+filter_lists_feeds_help: Filter woorden in draden, microblogs en opmerkingen in 
+  feeds, zoals allemaal, /sub, magazine feeds, etc.
+filter_lists_comments_help: Filter woorden bekijken terwijl ze een draad of 
+  microblog in de commentaarboom zien.
+filter_lists_profile_help: Filter woorden bekijken in hun inhoud.
+expired: Verlopen
