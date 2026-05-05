@@ -8,6 +8,8 @@ use App\Entity\PostComment;
 use App\Repository\Criteria;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('post_comment_combined')]
 final class PostCommentCombinedComponent extends AbstractSubjectComponent
@@ -25,6 +27,7 @@ final class PostCommentCombinedComponent extends AbstractSubjectComponent
     public int $level = 1;
     public Criteria $criteria;
 
+    #[PostMount]
     public function postMount(array $attr): array
     {
         $this->init($this->comment);

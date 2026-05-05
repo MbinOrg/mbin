@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('entry')]
 final class EntryComponent extends AbstractSubjectComponent

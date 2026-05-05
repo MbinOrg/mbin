@@ -13,12 +13,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 abstract class AbstractSubjectComponent
 {
-    public function __construct(
+    protected function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
-    private Entry|EntryComment|Post|PostComment $subject;
+    protected Entry|EntryComment|Post|PostComment $subject;
 
     public bool $canSeeTrash = false;
 

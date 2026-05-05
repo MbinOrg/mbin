@@ -8,6 +8,7 @@ use App\Entity\Post;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('post')]
 class PostComponent extends AbstractSubjectComponent

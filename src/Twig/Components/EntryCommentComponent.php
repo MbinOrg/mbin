@@ -10,6 +10,8 @@ use App\PageView\EntryCommentPageView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('entry_comment')]
 final class EntryCommentComponent extends AbstractSubjectComponent
@@ -29,6 +31,7 @@ final class EntryCommentComponent extends AbstractSubjectComponent
     public bool $dateAsUrl = true;
     public EntryCommentPageView $criteria;
 
+    #[PostMount]
     public function postMount(array $attr): array
     {
         $this->init($this->comment);

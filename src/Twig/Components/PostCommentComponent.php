@@ -10,6 +10,8 @@ use App\Repository\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('post_comment')]
 final class PostCommentComponent extends AbstractSubjectComponent
@@ -28,6 +30,7 @@ final class PostCommentComponent extends AbstractSubjectComponent
     public int $level = 1;
     public Criteria $criteria;
 
+    #[PostMount]
     public function postMount(array $attr): array
     {
         $this->init($this->comment);
