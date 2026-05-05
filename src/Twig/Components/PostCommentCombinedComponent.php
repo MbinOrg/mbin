@@ -9,7 +9,6 @@ use App\Repository\Criteria;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
-use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('post_comment_combined')]
 final class PostCommentCombinedComponent extends AbstractSubjectComponent
