@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -14,9 +13,8 @@ use Symfony\UX\TwigComponent\Attribute\PostMount;
 final class EntryComponent extends AbstractSubjectComponent
 {
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker
-    )
-    {
+        AuthorizationCheckerInterface $authorizationChecker,
+    ) {
         parent::__construct($authorizationChecker);
     }
 

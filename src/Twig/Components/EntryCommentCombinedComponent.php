@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\EntryComment;
 use App\PageView\EntryCommentPageView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
