@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 abstract class AbstractSubjectComponent
 {
     protected function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        protected readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
