@@ -51,6 +51,7 @@ class SettingsManager
         private readonly bool $mbinNewUsersNeedApproval,
         private readonly LoggerInterface $logger,
         private readonly bool $mbinUseFederationAllowList,
+        private readonly string $mbinSearchLang,
     ) {
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
@@ -258,6 +259,11 @@ class SettingsManager
         $megaBytes = round($bytes / pow(1000, 2), 2);
 
         return $megaBytes.' MB';
+    }
+
+    public function getSearchLang(): string
+    {
+        return $this->mbinSearchLang;
     }
 
     /**
