@@ -36,7 +36,6 @@
                         <small>
                             {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
 
-                            {{ 'to'|trans }} {{ component('magazine_inline', {magazine: comment.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
                             {{ 'in'|trans }} {{ component('entry_inline', {entry: comment.entry}) }}
 
                             {% if hasLang %}
@@ -81,6 +80,8 @@
                 <span>, </span>
                 <span>{{ component('date', {date: comment.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: comment.createdAt, editedAt: comment.editedAt}) }}</span>
+
+                {{ 'to'|trans }} {{ component('magazine_inline', {magazine: comment.magazine, fullName: SHOW_MAGAZINE_FULLNAME is same as V_TRUE}) }}
             </aside>
 
             {% if SHOW_THUMBNAILS is same as V_TRUE %}
