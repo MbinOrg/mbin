@@ -13,12 +13,13 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent('entry_comment')]
-final class EntryCommentComponent
+final class EntryCommentComponent extends AbstractSubjectComponent
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
+        parent::__construct($authorizationChecker);
     }
 
     public EntryComment $comment;
@@ -26,12 +27,13 @@ final class EntryCommentComponent
     public bool $showEntryTitle = true;
     public bool $showNested = false;
     public int $level = 1;
-    public bool $canSeeTrash = false;
     public bool $dateAsUrl = true;
     public EntryCommentPageView $criteria;
 
     public function postMount(array $attr): array
     {
+        $this->init($this->comment);
+
         $this->canSeeTrashed();
 
         return $attr;
@@ -46,25 +48,5 @@ final class EntryCommentComponent
         }
 
         return min($this->level, 10);
-    }
-
-    public function canSeeTrashed(): bool
-    {
-        if (VisibilityInterface::VISIBILITY_VISIBLE === $this->comment->visibility) {
-            return true;
-        }
-
-        if (VisibilityInterface::VISIBILITY_TRASHED === $this->comment->visibility
-            && $this->authorizationChecker->isGranted(
-                'moderate',
-                $this->comment
-            )
-            && $this->canSeeTrash) {
-            return true;
-        }
-
-        $this->comment->image = null;
-
-        return false;
     }
 }

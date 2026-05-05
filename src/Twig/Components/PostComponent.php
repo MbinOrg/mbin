@@ -11,7 +11,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsTwigComponent('post')]
-class PostComponent
+class PostComponent extends AbstractSubjectComponent
 {
     public Post $post;
     public bool $isSingle = false;
@@ -19,16 +19,18 @@ class PostComponent
     public bool $dateAsUrl = true;
     public bool $showCommentsPreview = false;
     public bool $showExpand = true;
-    public bool $canSeeTrash = false;
 
     public function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
+        parent::__construct($authorizationChecker);
     }
 
     #[PostMount]
     public function postMount(array $attr): array
     {
+        $this->init($this->post);
+
         $this->canSeeTrashed();
 
         if ($this->isSingle) {
@@ -42,25 +44,5 @@ class PostComponent
         }
 
         return $attr;
-    }
-
-    public function canSeeTrashed(): bool
-    {
-        if (VisibilityInterface::VISIBILITY_VISIBLE === $this->post->visibility) {
-            return true;
-        }
-
-        if (VisibilityInterface::VISIBILITY_TRASHED === $this->post->visibility
-            && $this->authorizationChecker->isGranted(
-                'moderate',
-                $this->post
-            )
-            && $this->canSeeTrash) {
-            return true;
-        }
-
-        $this->post->image = null;
-
-        return false;
     }
 }

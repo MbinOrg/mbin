@@ -11,11 +11,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent('post_comment_combined')]
-final class PostCommentCombinedComponent
+final class PostCommentCombinedComponent extends AbstractSubjectComponent
 {
     public function __construct(
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
+        parent::__construct($authorizationChecker);
     }
 
     public PostComment $comment;
@@ -23,33 +24,14 @@ final class PostCommentCombinedComponent
     public bool $showNested = false;
     public bool $withPost = false;
     public int $level = 1;
-    public bool $canSeeTrash = false;
     public Criteria $criteria;
 
     public function postMount(array $attr): array
     {
+        $this->init($this->comment);
+
         $this->canSeeTrashed();
 
         return $attr;
-    }
-
-    public function canSeeTrashed(): bool
-    {
-        if (VisibilityInterface::VISIBILITY_VISIBLE === $this->comment->visibility) {
-            return true;
-        }
-
-        if (VisibilityInterface::VISIBILITY_TRASHED === $this->comment->visibility
-            && $this->authorizationChecker->isGranted(
-                'moderate',
-                $this->comment
-            )
-            && $this->canSeeTrash) {
-            return true;
-        }
-
-        $this->comment->image = null;
-
-        return false;
     }
 }
