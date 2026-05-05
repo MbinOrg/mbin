@@ -155,7 +155,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
         if ($criteria->tag) {
             $qb->andWhere('t.tag = :tag')
-                ->join('p.hashtags', 'h')
+                ->join('c.hashtags', 'h')
                 ->join('h.hashtag', 't')
                 ->setParameter('tag', $criteria->tag);
         }

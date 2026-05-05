@@ -26,6 +26,13 @@ api_message_retrieve_threads:
   methods: [ GET ]
   format: json
 
+# Retrieve message threads between the current user and the given user
+api_message_retrieve_interlocutor_threads:
+  controller: App\Controller\Api\Message\MessageRetrieveApi::interlocutorCollection
+  path: /api/users/{user_id}/messages
+  methods: [ GET ]
+  format: json
+
 # Create a reply to a thread
 api_message_create_reply:
   controller: App\Controller\Api\Message\MessageThreadReplyApi
