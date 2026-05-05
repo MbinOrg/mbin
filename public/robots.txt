@@ -1,14 +1,16 @@
 # Ban several AI bots from indexing Mbin instances at all, in order to prevent training their models on users' data.
 
 # Using: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/blob/master/robots.txt/robots.txt
-### Version Information for nginx-ultimate-bad-bot-blocker #
 ### Version Information #
 ###################################################
-### Version: V4.2025.11.5580
-### Updated: Sun Nov  9 10:09:12 UTC 2025
-### Bad Bot Count: 681
+### Version: V4.2026.05.5908
+### Updated: Sun May  3 10:27:16 UTC 2026
+### Bad Bot Count: 683
 ###################################################
 ### Version Information ##
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
 User-agent: 01h4x.com
 Disallow:/
 User-agent: 360Spider
@@ -1273,6 +1275,10 @@ User-agent: isitwp.com
 Disallow:/
 User-agent: iubenda-radar
 Disallow:/
+User-agent: l9scan
+Disallow:/
+User-agent: leakix
+Disallow:/
 User-agent: linkdexbot
 Disallow:/
 User-agent: linkfluence
@@ -1372,6 +1378,7 @@ Disallow:/
 User-agent: zgrab
 Disallow:/
 
+
 # Extra bad bots
 User-agent: ChatGPT Agent
 Disallow: /
@@ -1422,7 +1429,8 @@ Disallow: /
 
 # Rest of indexing robots
 User-agent: *
-Request-rate: 1/1s
+Request-rate: 1/5s
+Crawl-delay: 5
 Disallow: /login
 Disallow: /login*
 Disallow: /register
