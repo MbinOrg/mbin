@@ -43,6 +43,11 @@ After changing the setting, the server needs to be restarted and also the follow
 php bin/console mbin:db:migrate-search-lang
 ```
 
+To see which languages are supported by your database, run the following SQL query:
+```sql
+SELECT cfgname FROM pg_ts_config;
+```
+
 ### Mercure
 
 If you are not going to use Mercure, you have to disable it in the admin panel.
