@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Controller\User\ThemeSettingsController;
-use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\PostComment;
 use App\Repository\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsTwigComponent('post_comment')]
-final class PostCommentComponent
+final class PostCommentComponent extends AbstractSubjectComponent
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        AuthorizationCheckerInterface $authorizationChecker,
     ) {
+        parent::__construct($authorizationChecker);
     }
 
     public PostComment $comment;
@@ -26,11 +27,13 @@ final class PostCommentComponent
     public bool $showNested = false;
     public bool $withPost = false;
     public int $level = 1;
-    public bool $canSeeTrash = false;
     public Criteria $criteria;
 
+    #[PostMount]
     public function postMount(array $attr): array
     {
+        $this->init($this->comment);
+
         $this->canSeeTrashed();
 
         return $attr;
@@ -45,25 +48,5 @@ final class PostCommentComponent
         }
 
         return min($this->level, 10);
-    }
-
-    public function canSeeTrashed(): bool
-    {
-        if (VisibilityInterface::VISIBILITY_VISIBLE === $this->comment->visibility) {
-            return true;
-        }
-
-        if (VisibilityInterface::VISIBILITY_TRASHED === $this->comment->visibility
-            && $this->authorizationChecker->isGranted(
-                'moderate',
-                $this->comment
-            )
-            && $this->canSeeTrash) {
-            return true;
-        }
-
-        $this->comment->image = null;
-
-        return false;
     }
 }
