@@ -119,7 +119,8 @@ class SettingsManagerTest extends WebTestCase
             mbinDownvotesMode: DownvotesMode::Enabled,
             mbinNewUsersNeedApproval: false,
             logger: $logger,
-            mbinUseFederationAllowList: false
+            mbinUseFederationAllowList: false,
+            mbinSearchLang: 'english',
         );
 
         // Assert
