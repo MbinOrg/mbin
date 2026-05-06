@@ -527,6 +527,16 @@ Usage:
 php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] <username> <email> <password>
 ```
 
+### Migrate-Search-Lang
+
+This command recreates all ts_vector columns and indexes in the database used for the search.
+As the index is language-sensitive, it needs to be recreated whenever you change the language 
+in the `MBIN_SEARCH_LANGUAGE` environment variable or after installation with a language different from `english`.
+
+```bash
+php bin/console mbin:db:migrate-search-lang
+```
+
 ### Update-Local-Domain
 
 This command will remove all remote posts from belonging to the local domain. This command is only relevant for instances
