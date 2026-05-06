@@ -305,6 +305,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 parent_post: Parent Post
+parent_entry: Parent Thread
 ban_expired: Ban expired
 ban_expires: Ban expires
 purge: Purge
@@ -1175,7 +1176,7 @@ monitoring_route_overview_description: This graph shows the summed milliseconds 
   being computed
 monitoring_duration_overall: Other
 monitoring_duration_query: Query
-monitoring_duration_twig_render: Twit Render
+monitoring_duration_twig_render: Twig Render
 monitoring_duration_curl_request: Curl Request
 monitoring_duration_sending_response: Sending Response
 monitoring_dont_format_query: don't format query

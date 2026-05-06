@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\PostComment;
-use App\Repository\Criteria;
+use App\Entity\EntryComment;
+use App\PageView\EntryCommentPageView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
-#[AsTwigComponent('post_comment_combined')]
-final class PostCommentCombinedComponent extends AbstractSubjectComponent
+#[AsTwigComponent('entry_comment_combined')]
+final class EntryCommentCombinedComponent extends AbstractSubjectComponent
 {
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -19,12 +19,8 @@ final class PostCommentCombinedComponent extends AbstractSubjectComponent
         parent::__construct($authorizationChecker);
     }
 
-    public PostComment $comment;
-    public bool $dateAsUrl = true;
-    public bool $showNested = false;
-    public bool $withPost = false;
-    public int $level = 1;
-    public Criteria $criteria;
+    public EntryComment $comment;
+    public EntryCommentPageView $criteria;
 
     #[PostMount]
     public function postMount(array $attr): array
