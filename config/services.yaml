@@ -127,7 +127,8 @@ parameters:
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
     #todo add in env files
-    mbin_search_lang: '%env(string:default:english:MBIN_SEARCH_LANGUAGE)%'
+    mbin_search_lang_default: 'english'
+    mbin_search_lang: '%env(string:default:mbin_search_lang_default:MBIN_SEARCH_LANGUAGE)%'
 
     trueVal: 'true'
     mbin_monitoring_enabled: '%env(bool:default::MBIN_MONITORING_ENABLED)%'
