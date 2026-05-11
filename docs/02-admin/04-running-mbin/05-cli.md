@@ -487,7 +487,7 @@ php bin/console mbin:messenger:dead:remove_all
 This command provides a guided tour to search for, and remove duplicate magazines or users.
 This has been added to make the creation of unique indexes easier if the migration failed.
 
-Usage for users:
+**Usage for users:**
 
 ```bash
 php bin/console mbin:check:duplicates-users-magazines [--dry-run]
@@ -501,7 +501,7 @@ and update them from the remote server.
 After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs (if you deduplicate by handle)
 or delete some of them (if you deduplicate by URL).
 
-Usage for users:
+**Usage for magazines:**
 
 ```bash
 php bin/console mbin:check:duplicates-users-magazines
