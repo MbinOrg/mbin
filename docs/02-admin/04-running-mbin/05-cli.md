@@ -440,7 +440,7 @@ php bin/console mbin:cache:build
 
 ### Delete monitoring data
 
-> [!HINT]
+> [!TIP]
 > For information about monitoring see [Optional Features/Monitoring](../03-optional-features/08-monitoring.md).
 
 This command allows you to delete monitoring data according to the passed parameters.
