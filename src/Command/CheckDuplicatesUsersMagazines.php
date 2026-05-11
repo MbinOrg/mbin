@@ -25,7 +25,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'mbin:check:duplicates-users-magazines',
+    name: 'mbin:maintenance:deduplicate-users-magazines',
     description: 'Check for duplicate users and magazines.',
 )]
 class CheckDuplicatesUsersMagazines extends Command

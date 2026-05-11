@@ -482,6 +482,10 @@ Usage:
 php bin/console mbin:messenger:dead:remove_all
 ```
 
+## Maintenance
+
+Commands for unbreaking stuff.
+
 ### Search for duplicate magazines or users and remove them
 
 This command provides a guided tour to search for, and remove duplicate magazines or users.
@@ -490,7 +494,7 @@ This has been added to make the creation of unique indexes easier if the migrati
 **Usage for users:**
 
 ```bash
-php bin/console mbin:check:duplicates-users-magazines [--dry-run]
+php bin/console mbin:maintenance:deduplicate-users-magazines [--dry-run]
 # then select 'users'
 # then select either 'handle' or 'profileUrl'
 ```
@@ -504,7 +508,7 @@ or delete some of them (if you deduplicate by URL).
 **Usage for magazines:**
 
 ```bash
-php bin/console mbin:check:duplicates-users-magazines
+php bin/console mbin:maintenance:deduplicate-users-magazines
 # then select 'magazines'
 ```
 
@@ -512,7 +516,7 @@ This command will go through all the magazines with duplicate case-insensitive n
 and display a table with the results.
 Then you can enter the IDs of all the entities you want to delete.
 
-### Post-Remove-Duplicates
+### Remove-Posts-And-Users-Duplicates
 
 This command removes post and user duplicates by their ActivityPub ID.
 
@@ -522,7 +526,7 @@ This command removes post and user duplicates by their ActivityPub ID.
 Usage:
 
 ```bash
-php bin/console mbin:post:remove-duplicates
+php bin/console mbin:maintenance:remove-posts-and-users-duplicates
 ```
 
 ### Update-Local-Domain
