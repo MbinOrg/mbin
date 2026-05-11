@@ -162,27 +162,6 @@ php bin/console mbin:user:unsub <username>
 Arguments:
 - `username`: the user from which to remove all local followers.
 
-### Fix user duplicates
-
-This command allows you to fix duplicate usernames. There is a unique index on the usernames, but it is case-sensitive.
-This command will go through all the users with duplicate case-insensitive usernames,
-where the username is not part of the public id (meaning the original URL) or handle (you will be asked what to use for deduplication)
-and update them from the remote server.
-After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs (if you deduplicate by handle) 
-or delete some of them (if you deduplicate by URL).
-
-Usage:
-
-```bash
-php bin/console mbin:check:duplicates-users-magazines [--dry-run]
-# then select 'users'
-# then select either 'handle' or 'profileUrl'
-```
-
-Options:
-- `--dry-run`: don't change anything in the DB
-
-
 ## Magazine Management
 
 ### Magazine-Create
@@ -464,17 +443,6 @@ This way you could still view the average request times without the query data f
 and the newer requests would not be affected at all. This way you can limit the space consumed by query data.
 You can also mix and match the `--queries`, `--twig` and `--requests` options.
 
-### Search for duplicate magazines or users and remove them
-
-This command provides a guided tour to search for, and remove duplicate magazines or users.
-This has been added to make the creation of unique indexes easier if the migration failed.
-
-Usage:
-
-```bash
-php bin/console mbin:check:duplicates-users-magazines
-```
-
 ### Users-Remove-Marked-For-Deletion
 
 > [!NOTE]
@@ -514,6 +482,36 @@ Usage:
 php bin/console mbin:messenger:dead:remove_all
 ```
 
+### Search for duplicate magazines or users and remove them
+
+This command provides a guided tour to search for, and remove duplicate magazines or users.
+This has been added to make the creation of unique indexes easier if the migration failed.
+
+Usage for users:
+
+```bash
+php bin/console mbin:check:duplicates-users-magazines [--dry-run]
+# then select 'users'
+# then select either 'handle' or 'profileUrl'
+```
+
+This command will go through all the users with duplicate case-insensitive usernames,
+where the username is not part of the public id (meaning the original URL) or handle (you will be asked what to use for deduplication)
+and update them from the remote server.
+After that it will go through the rest of the duplicates and ask you whether you want to merge matching pairs (if you deduplicate by handle)
+or delete some of them (if you deduplicate by URL).
+
+Usage for users:
+
+```bash
+php bin/console mbin:check:duplicates-users-magazines
+# then select 'magazines'
+```
+
+This command will go through all the magazines with duplicate case-insensitive name,
+and display a table with the results.
+Then you can enter the IDs of all the entities you want to delete.
+
 ### Post-Remove-Duplicates
 
 This command removes post and user duplicates by their ActivityPub ID.
@@ -524,7 +522,7 @@ This command removes post and user duplicates by their ActivityPub ID.
 Usage:
 
 ```bash
-php bin/console mbin:user:create [-r|--remove] [--admin] [--moderator] <username> <email> <password>
+php bin/console mbin:post:remove-duplicates
 ```
 
 ### Update-Local-Domain
