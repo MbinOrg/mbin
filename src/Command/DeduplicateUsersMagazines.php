@@ -28,7 +28,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'mbin:maintenance:deduplicate-users-magazines',
     description: 'Check for duplicate users and magazines.',
 )]
-class CheckDuplicatesUsersMagazines extends Command
+class DeduplicateUsersMagazines extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
