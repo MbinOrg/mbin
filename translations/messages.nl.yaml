@@ -1303,3 +1303,4 @@ magazine_indexable_by_search_engines_help: Als deze instelling is uitgeschakeld,
   reacties worden hierdoor echter niet beïnvloed en kwaadwillenden kunnen dit 
   negeren. Deze instelling wordt ook gefedereerd naar andere servers.
 magazine_name_as_tag: Gebruik de tijdschriftnaam als tag
+parent_entry: Hoofd discussie
