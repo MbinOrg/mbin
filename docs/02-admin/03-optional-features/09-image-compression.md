@@ -6,7 +6,7 @@ for increased compatibility, to save on size and for a better user experience.
 To enable image compression set `MBIN_IMAGE_COMPRESSION_QUALITY` in your `.env` file to a value between 0.1 and 0.95.
 This setting is used as a starting point to compress the image. It is gradually lowered (in 0.05 steps) until the maximum size is no longer exceeded.
 
-> [!HINT]
+> [!TIP]
 > The maximum file size is determined by the `MBIN_MAX_IMAGE_BYTES` setting in your `.env` file
 
 > [!NOTE]
