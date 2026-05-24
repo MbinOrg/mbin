@@ -65,9 +65,9 @@ class EntryFrontController extends AbstractController
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
-        $cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
-        $cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
-        $entities = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
+        //$cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
+        //$cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
+        $entities = $this->contentRepository->findByCriteria($criteria);
         $templatePath = 'content/';
         $dataKey = 'results';
 
@@ -136,9 +136,10 @@ class EntryFrontController extends AbstractController
         if (null !== $user) {
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
-        $cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
-        $cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
-        $results = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
+        #$cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
+        #$cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
+        #$results = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
+        $results = $this->contentRepository->findByCriteria($criteria);
 
         return $this->renderResponse(
             $request,
