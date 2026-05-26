@@ -38,4 +38,6 @@ interface VotableInterface
     public function getUserChoice(User $user): int;
 
     public function getUserVote(User $user): ?Vote;
+
+    public function updateLastBoostDate(): self;
 }

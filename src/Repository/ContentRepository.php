@@ -461,17 +461,17 @@ class ContentRepository
         // only join domain if we are explicitly looking at one
         $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $domainJoin
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postCommentWhere";
 
@@ -523,7 +523,7 @@ class ContentRepository
             Criteria::SORT_HOT => 'ranking',
             Criteria::SORT_COMMENTED => 'commentCount',
             Criteria::SORT_ACTIVE => 'lastActive',
-            default => 'createdAt',
+            default => $criteria->includeBoosts ? 'lastBoostedAt' : 'createdAt',
         };
     }
 
@@ -534,8 +534,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking < :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
-            Criteria::SORT_OLD => 'c.created_at > :cursor',
-            default => 'c.created_at < :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at > :cursor' : 'c.created_at > :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
         };
     }
 
@@ -546,8 +546,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking > :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
-            Criteria::SORT_OLD => 'c.created_at < :cursor',
-            default => 'c.created_at >= :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at >= :cursor' : 'c.created_at >= :cursor',
         };
     }
 
@@ -608,11 +608,11 @@ class ContentRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_OLD:
-                $orderings[] = 'created_at ASC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at ASC' : 'created_at ASC';
                 break;
             case Criteria::SORT_NEW:
             default:
-                $orderings[] = 'created_at DESC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at DESC' : 'created_at DESC';
         }
 
         return $orderings;

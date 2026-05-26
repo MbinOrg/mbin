@@ -43,6 +43,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['comment_count'], name: 'entry_comment_count_idx')]
 #[Index(columns: ['created_at'], name: 'entry_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'entry_last_active_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'entry_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_body_ts_idx')]
 #[Index(columns: ['title_ts'], name: 'entry_title_ts_idx')]
 class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, ContentVisibilityInterface
@@ -173,8 +174,9 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $user->addEntry($this);
 
         $this->createdAtTraitConstruct();
-
         $this->updateLastActive();
+
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
