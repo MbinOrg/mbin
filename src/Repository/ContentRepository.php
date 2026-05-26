@@ -82,8 +82,8 @@ class ContentRepository
                 $query['parameters'],
                 $this->getSecondaryCursorWhereFromCriteria($criteria),
                 $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
-                'sort_date DESC',
-                'sort_date',
+                'c.created_at DESC',
+                'c.created_at',
                 transformer: $this->contentPopulationTransformer,
             ),
             $this->getCursorFieldFromCriteria($criteria),
@@ -215,21 +215,21 @@ class ContentRepository
 
                 $subClauseEntryComment = $repliesCommonWhere.
                     (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = v.user_id) OR v.user_id = :loggedInUser' :
-                        ' OR v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
                 $subClausePostComment = $repliesCommonWhere.
                     (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = v.user_id) OR v.user_id = :loggedInUser' :
-                        ' OR v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
 
                 $subClausePost = $subClausePost
                     .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = v.user_id) OR v.user_id = :loggedInUser' :
-                        ' OR v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
                 $subClauseEntry = $subClauseEntry
                     .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = v.user_id) OR v.user_id = :loggedInUser' :
-                        ' OR v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser');
+                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
             }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
@@ -379,7 +379,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor && !$criteria->includeBoosts ? '%cursor% OR (%cursor2%)' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseEntry,
         ]);
 
@@ -401,7 +401,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor && !$criteria->includeBoosts ? '%cursor% OR (%cursor2%)' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClausePost,
         ]);
 
@@ -422,7 +422,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor && !$criteria->includeBoosts ? '%cursor% OR (%cursor2%)' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
@@ -444,7 +444,7 @@ class ContentRepository
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
-            $addCursor && !$criteria->includeBoosts ? '%cursor% OR (%cursor2%)' : '',
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
@@ -461,53 +461,19 @@ class ContentRepository
         // only join domain if we are explicitly looking at one
         $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        if($criteria->includeBoosts) {
-            $boostJoinEntry = 'LEFT JOIN entry_vote v ON (c.id = v.entry_id AND v.choice = 1)';
-            $boostJoinEntryComment = 'LEFT JOIN entry_comment_vote v ON (c.id = v.comment_id AND v.choice = 1)';
-            $boostJoinPost = 'LEFT JOIN post_vote v ON (c.id = v.post_id AND v.choice = 1)';
-            $boostJoinPostComment = 'LEFT JOIN post_comment_vote v ON (c.id = v.comment_id AND v.choice = 1)';
-
-            $sortDateSelect = 'greatest(max(c.created_at), max(v.created_at)) AS sort_date';
-        } else {
-            $boostJoinEntry = '';
-            $boostJoinEntryComment = '';
-            $boostJoinPost = '';
-            $boostJoinPostComment = '';
-
-            $sortDateSelect = 'c.created_at AS sort_date';
-        }
-
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id, $sortDateSelect FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $domainJoin
-            $boostJoinEntry
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id, $sortDateSelect FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
-            $boostJoinPost
             $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id, $sortDateSelect FROM entry_comment c
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
-            $boostJoinEntryComment
             $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id, $sortDateSelect FROM post_comment c
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
-            $boostJoinPostComment
             $postCommentWhere";
-
-        if($criteria->includeBoosts) {
-            $entrySql = $entrySql.' GROUP BY c.id';
-            $postSql = $postSql.' GROUP BY c.id';
-            $entryCommentSql = $entryCommentSql.' GROUP BY c.id';
-            $postCommentSql = $postCommentSql.' GROUP BY c.id';
-
-            if($addCursor) {
-                $entrySql = $entrySql.' WHERE %cursor% OR (%cursor2%)';
-                $postSql = $postSql.' WHERE %cursor% OR (%cursor2%)';
-                $entryCommentSql = $entryCommentSql.' WHERE %cursor% OR (%cursor2%)';
-                $postCommentSql = $postCommentSql.' WHERE %cursor% OR (%cursor2%)';
-            }
-        }
 
         $innerLimit = $addCursor ? 'LIMIT :innerLimit' : '';
         $innerSql = '';
@@ -557,7 +523,7 @@ class ContentRepository
             Criteria::SORT_HOT => 'ranking',
             Criteria::SORT_COMMENTED => 'commentCount',
             Criteria::SORT_ACTIVE => 'lastActive',
-            default => 'sort_date',
+            default => 'createdAt',
         };
     }
 
@@ -568,8 +534,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking < :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
-            Criteria::SORT_OLD => 'sort_date > :cursor',
-            default => 'sort_date < :cursor',
+            Criteria::SORT_OLD => 'c.created_at > :cursor',
+            default => 'c.created_at < :cursor',
         };
     }
 
@@ -580,18 +546,18 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking > :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
-            Criteria::SORT_OLD => 'sort_date < :cursor',
-            default => 'sort_date >= :cursor',
+            Criteria::SORT_OLD => 'c.created_at < :cursor',
+            default => 'c.created_at >= :cursor',
         };
     }
 
     private function getSecondaryCursorWhereFromCriteria(Criteria $criteria): string
     {
         return match ($criteria->sortOption) {
-            Criteria::SORT_TOP => 'c.score = :cursor AND sort_date < :cursor2',
-            Criteria::SORT_HOT => 'c.ranking = :cursor AND sort_date < :cursor2',
-            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND sort_date < :cursor2',
-            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND sort_date < :cursor2',
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at < :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at < :cursor2',
             default => 'FALSE',
         };
     }
@@ -599,10 +565,10 @@ class ContentRepository
     private function getSecondaryCursorWhereFromCriteriaInverted(Criteria $criteria): string
     {
         return match ($criteria->sortOption) {
-            Criteria::SORT_TOP => 'c.score = :cursor AND sort_date >= :cursor2',
-            Criteria::SORT_HOT => 'c.ranking = :cursor AND sort_date >= :cursor2',
-            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND sort_date >= :cursor2',
-            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND sort_date >= :cursor2',
+            Criteria::SORT_TOP => 'c.score = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_HOT => 'c.ranking = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_COMMENTED => 'c.comment_count = :cursor AND c.created_at >= :cursor2',
+            Criteria::SORT_ACTIVE => 'c.last_active = :cursor AND c.created_at >= :cursor2',
             default => 'FALSE',
         };
     }
@@ -642,11 +608,11 @@ class ContentRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_OLD:
-                $orderings[] = 'sort_date ASC';
+                $orderings[] = 'created_at ASC';
                 break;
             case Criteria::SORT_NEW:
             default:
-                $orderings[] = 'sort_date DESC';
+                $orderings[] = 'created_at DESC';
         }
 
         return $orderings;
