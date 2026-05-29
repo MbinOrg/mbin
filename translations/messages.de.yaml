@@ -360,7 +360,7 @@ federation_enabled: Föderation aktiviert
 purge_account: Konto endgültig löschen
 unban_account: Konto entsperren
 kbin_intro_desc: ist eine dezentralisierte Plattform zur Inhaltssammlung und für
-  Mikroblogs im Fediverse.
+  Beiträge im Fediverse.
 magazine_panel_tags_info: Nur benutzen wenn du möchtest, dass Inhalte aus dem 
   Fediverse, basierend auf Tags, in dieses Magazin eingefügt werden
 sticky_navbar: Statische Navigationsleiste
@@ -1088,7 +1088,7 @@ type_search_term_url_handle: Suchbegriff, URL oder Nutzername eingeben
 search_type_magazine: Magazine
 search_type_user: Nutzer
 search_type_actors: Magazine + Nutzer
-search_type_content: Themen + Mikroblogs
+search_type_content: Themen + Beiträge
 type_search_magazine: Suche auf Magazin eingrenzen...
 type_search_user: Suche auf Author eingrenzen...
 modlog_type_entry_deleted: Thema gelöscht
@@ -1161,17 +1161,17 @@ random_local_only_performance_warning: Aktivierung von "Zufällige nur lokal"
   kann zu SQL Performance Problemen führen.
 oauth2.grant.moderate.entry.lock: Themen in deinen moderierten Magazinen 
   sperren, damit niemand darunter Kommentieren kann
-oauth2.grant.moderate.post.lock: Mikroblogs in deinen moderierten Magazinen 
+oauth2.grant.moderate.post.lock: Beiträge in deinen moderierten Magazinen 
   sperren, damit niemand darunter kommentieren kann
 discoverable: Auffindbar
 user_discoverable_help: Wenn dies aktiviert ist können dein Profil, deine 
-  Themen, Mikroblogs und Kommentare über die Suche und die zufälligen Panele 
+  Themen, Beiträge und Kommentare über die Suche und die zufälligen Panele 
   gefunden werden. Dein Profil könnte außerdem in dem aktive Nutzer Panel und 
   auf der Personen Seite angezeigt werden. Wenn dies deaktiviert ist sind deine 
   Posts nach wie vor sichtbar für andere Nutzer, sie werden aber nicht in dem 
   Alle Feed angezeigt.
 magazine_discoverable_help: Wenn dies aktiviert ist kann dieses Magazin und alle
-  Themen, Mikroblogs und Kommentar in diesem Magazin über die Suche und die 
+  Themen, Beiträge und Kommentare in diesem Magazin über die Suche und die 
   zufälligen Panele gefunden werden. Wenn dies deaktiviert ist wird dieses 
   Magazin nach wie vor in der Magazinliste angezeigt, aber Themen und Mikroblogs
   werden nicht in dem Alle Feed angezeigt.
@@ -1194,18 +1194,18 @@ contentnotification.default: Standard | erhalte Benachrichtigungen anhand deiner
 contentnotification.loud: Laut | erhalte alle Benachrichtigungen
 indexable_by_search_engines: Indizierbar von Suchmaschinen
 user_indexable_by_search_engines_help: Wenn diese Einstellung aus ist, werden 
-  Suchmaschinen angewiesen deine Themen und Mikroblogs nicht zu indizieren, 
+  Suchmaschinen angewiesen deine Themen und Beiträge nicht zu indizieren, 
   allerdings werden deine Kommentare davon nicht beeinflusst und böswillige 
   Akteure könnten es ignorieren. Diese Einstellung wird auch an andere Server 
   föderiert.
 magazine_indexable_by_search_engines_help: Wenn diese Einstellung aus ist, 
-  werden Suchmaschinen angewiesen keins der Themen und Mikroblogs dieses 
-  Magazins zu indizieren. Das beinhaltet die Front Seite und alle 
-  Kommentar-Seiten. Diese Einstellung wird auch an andere Server föderiert.
+  werden Suchmaschinen angewiesen keins der Themen und Beiträge dieses Magazins 
+  zu indizieren. Das beinhaltet die Front Seite und alle Kommentar-Seiten. Diese
+  Einstellung wird auch an andere Server föderiert.
 magazine_name_as_tag: Nutze den Magazinnamen als Hashtag
 magazine_name_as_tag_help: Die Hashtags eines Magazine werden genutzt um 
-  Mikroblogs einem Magazin zuzuweise. Wenn ein Magazin den Namen "fediverse" hat
-  und dieses Magazine den Hashtag "fediverse" enthält, wird jeder Mikroblog mit 
+  Beiträge einem Magazin zuzuweisen. Wenn ein Magazin den Namen "fediverse" hat 
+  und dieses Magazine den Hashtag "fediverse" enthält, wird jeder Beitrag mit 
   dem Hashtag "#fediverse" diesem Magazine zugewiesen.
 magazine_rules_deprecated: das Regel-Feld ist veraltet und wird in der Zukunft 
   entfernt werden. Bitte schreib die Regeln in das Beschreibungs-Feld.
@@ -1290,10 +1290,19 @@ filter_lists_word_exact_match: Exakte Übereinstimmung
 filter_lists_word_exact_match_help: Wenn exakte Übereinstimmung aktiviert ist, 
   wird die Suche die Groß-/Kleinschreibung beachten
 feeds: Feeds
-filter_lists_feeds_help: Filtere die Wörter in Themen, Mikroblogs und 
-  Kommentaren in Feeds, wie zum Beispiel /all, /sub, Magazin-Feeds, etc.
-filter_lists_comments_help: Filtere die Wörter während du Themen oder Mikroblogs
+filter_lists_feeds_help: Filtere die Wörter in Themen, Beiträgen und Kommentaren
+  in Feeds, wie zum Beispiel /all, /sub, Magazin-Feeds, etc.
+filter_lists_comments_help: Filtere die Wörter während du Themen oder Beiträge 
   anschaust in den Kommentaren.
 filter_lists_profile_help: Filtere die Wörter während du dir das Profil eines 
   Nutzers und seine Inhalte ansiehst.
 expired: Abgelaufen
+parent_post: Übergeordneter Post
+parent_entry: Übergeordnetes Thema
+posts_harmonize_combined: Neues Layout in der Kombiniert Ansicht verwenden
+posts_harmonize_combined_help: Beiträge bekommen ein Layout ähnlich dem von 
+  Themen.
+show_boost_following_help: Wenn diese Einstellung aktiviert ist werden Themen, 
+  Beiträge und Kommentare die von dir oder jemandem dem du folgst, in der 
+  Kombiniert Ansicht deiner Abonnements und in der Mikroblog Ansicht angezeigt. 
+  Das wirkt sich nur aus wenn die Sortierung auf 'Neu' gestellt ist.
