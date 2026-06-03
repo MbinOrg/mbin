@@ -6,7 +6,9 @@ namespace App\Service;
 
 use App\DTO\ModeratorDto;
 use App\Entity\Instance;
+use App\Entity\InstanceBlock;
 use App\Entity\User;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,6 +18,7 @@ readonly class InstanceManager
         private EntityManagerInterface $entityManager,
         private SettingsManager $settingsManager,
         private InstanceRepository $instanceRepository,
+        private InstanceBlockRepository $instanceBlockRepository,
     ) {
     }
 
@@ -92,5 +95,19 @@ readonly class InstanceManager
         $instance->isExplicitlyAllowed = false;
 
         $this->entityManager->flush();
+    }
+
+    public function blockInstance(Instance $instance, User $user): void {
+        $block = new InstanceBlock($user, $instance);
+        $this->entityManager->persist($block);
+        $this->entityManager->flush();
+    }
+
+    public function unblockInstance(Instance $instance, User $user): void {
+        $block = $this->instanceBlockRepository->findByUserAndInstance($user, $instance);
+        if(null !== $block) {
+            $this->entityManager->remove($block);
+            $this->entityManager->flush();
+        }
     }
 }

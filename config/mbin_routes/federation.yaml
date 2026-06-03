@@ -1,0 +1,14 @@
+page_federation:
+  controller: App\Controller\FederationController
+  path: /federation
+  methods: [ GET ]
+
+federation_user_block_instance:
+    controller: App\Controller\FederationController::userBlockInstance
+    path: /federation/user/block
+    methods: [GET]
+
+federation_user_unblock_instance:
+    controller: App\Controller\FederationController::userUnblockInstance
+    path: /federation/user/unblock
+    methods: [GET]

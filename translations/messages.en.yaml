@@ -1227,3 +1227,6 @@ filter_lists_feeds_help: Filter words in threads, microblogs and comments in fee
 filter_lists_comments_help: Filter words while viewing a thread or microblog in the comment tree.
 filter_lists_profile_help: Filter words while viewing a users' profile in their content.
 expired: Expired
+block_unblock_instance: Block / Unblock Instance
+block_instance: Block Instance
+unblock_instance: Unblock Instance

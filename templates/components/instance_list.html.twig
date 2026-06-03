@@ -4,6 +4,9 @@
         <th>{{ 'domain'|trans }}</th>
         <th>{{ 'server_software'|trans }}</th>
         <th>{{ 'version'|trans }}</th>
+        {% if blockedInstances is defined and blockedInstances is not same as null %}
+            <th></th>
+        {% endif %}
         {% if app.user is defined and app.user is not same as null and app.user.admin %}
             <th>{{ 'last_successful_deliver'|trans }}</th>
             <th>{{ 'last_successful_receive'|trans }}</th>
@@ -19,6 +22,27 @@
             <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
             <td>{{ instance.software ?? '' }}</td>
             <td>{{ instance.version ?? '' }}</td>
+
+            {% if blockedInstances is defined and blockedInstances is not same as null %}
+                <td>
+                    {% if blockedInstances|find(b => b.instance === instance) %}
+                        <form action="{{ url('federation_user_unblock_instance') }}">
+                            <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <button type="submit" class="btn btn__secondary" aria-label="{{ 'unblock_instance'|trans }}">
+                                <i class="fa-solid fa-eye" title="{{ 'unblock_instance'|trans }}"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url('federation_user_block_instance') }}">
+                            <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <button type="submit" class="btn btn__secondary" aria-label="{{ 'block_instance'|trans }}">
+                                <i class="fa-solid fa-eye-slash" title="{{ 'block_instance'|trans }}"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+                </td>
+            {% endif %}
+
             {% if app.user is defined and app.user is not same as null and app.user.admin %}
                 <td>
                     {% if instance.lastSuccessfulDeliver is not same as null %}
