@@ -1,3 +1,5 @@
+{% set blockRedirTarget = app.request.attributes.get('_route') === 'user_settings_instance_blocks' ? 'blocks' : 'federation' %}
+
 <table>
     <thead>
     <tr>
@@ -28,13 +30,15 @@
                     {% if blockedInstances|find(b => b.instance === instance) %}
                         <form action="{{ url('federation_user_unblock_instance') }}">
                             <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <input type="hidden" name="redirTarget" value="{{ blockRedirTarget }}">
                             <button type="submit" class="btn btn__secondary" aria-label="{{ 'unblock_instance'|trans }}">
                                 <i class="fa-solid fa-eye" title="{{ 'unblock_instance'|trans }}"></i>
                             </button>
                         </form>
                     {% else %}
-                        <form action="{{ url('federation_user_block_instance') }}">
+                        <form action="{{ url('federation_user_block_instance', {redirTarget: blockRedirTarget}) }}">
                             <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <input type="hidden" name="redirTarget" value="{{ blockRedirTarget }}">
                             <button type="submit" class="btn btn__secondary" aria-label="{{ 'block_instance'|trans }}">
                                 <i class="fa-solid fa-eye-slash" title="{{ 'block_instance'|trans }}"></i>
                             </button>

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FederationController extends AbstractController
 {
@@ -53,6 +54,7 @@ class FederationController extends AbstractController
         );
     }
 
+    #[IsGranted('ROLE_USER')]
     public function userBlockInstance(#[MapQueryParameter] string $instanceDomain): Response
     {
         $user = $this->getUserOrThrow();
@@ -67,7 +69,13 @@ class FederationController extends AbstractController
         return $this->redirectToRoute('page_federation');
     }
 
-    public function userUnblockInstance(#[MapQueryParameter] string $instanceDomain): Response
+    #[IsGranted('ROLE_USER')]
+    public function userUnblockInstance(
+        #[MapQueryParameter]
+        string $instanceDomain,
+        #[MapQueryParameter]
+        ?string $redirTarget,
+    ): Response
     {
         $user = $this->getUserOrThrow();
         $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
@@ -78,6 +86,9 @@ class FederationController extends AbstractController
 
         $this->instanceManager->unblockInstance($instance, $user);
 
-        return $this->redirectToRoute('page_federation');
+        return match ($redirTarget) {
+            'blocks' => $this->redirectToRoute('user_settings_instance_blocks'),
+            default => $this->redirectToRoute('page_federation'),
+        };
     }
 }
