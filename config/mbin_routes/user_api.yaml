@@ -100,6 +100,24 @@ api_user_retrieve_filter_lists_delete:
     methods: [ DELETE ]
     format: json
 
+api_user_instance_blocks_retrieve:
+  controller: App\Controller\Api\User\InstanceUserBlockApi::retrieve
+  path: /api/users/instanceBlocks
+  methods: [ GET ]
+  format: json
+
+api_user_instance_blocks_block:
+  controller: App\Controller\Api\User\InstanceUserBlockApi::block
+  path: /api/users/instanceBlocks/block
+  methods: [ POST ]
+  format: json
+
+api_user_instance_blocks_unblock:
+  controller: App\Controller\Api\User\InstanceUserBlockApi::unblock
+  path: /api/users/instanceBlocks/unblock
+  methods: [ POST ]
+  format: json
+
 api_user_update_avatar:
   controller: App\Controller\Api\User\UserUpdateImagesApi::avatar
   path: /api/users/avatar
