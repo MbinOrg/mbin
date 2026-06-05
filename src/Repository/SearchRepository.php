@@ -196,6 +196,7 @@ class SearchRepository
                 AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND (ib.instance_domain = u.ap_domain OR ib.instance_domain = m.ap_domain))
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_id = e.id)
                 $authorWhere $magazineWhere $createdWhere
         UNION ALL
@@ -209,6 +210,7 @@ class SearchRepository
                 AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND (ib.instance_domain = u.ap_domain OR ib.instance_domain = m.ap_domain))
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.entry_comment_id = e.id)
                 $authorWhere $magazineWhere $createdWhere
         ";
@@ -222,6 +224,7 @@ class SearchRepository
                 AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND (ib.instance_domain = u.ap_domain OR ib.instance_domain = m.ap_domain))
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_id = e.id)
                 $authorWhere $magazineWhere $createdWhere
         UNION ALL
@@ -235,6 +238,7 @@ class SearchRepository
                 AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND (ib.instance_domain = u.ap_domain OR ib.instance_domain = m.ap_domain))
                 AND NOT EXISTS (SELECT hl.id FROM hashtag_link hl INNER JOIN hashtag h ON h.id = hl.hashtag_id AND h.banned = true WHERE hl.post_comment_id = e.id)
                 $authorWhere $magazineWhere $createdWhere
         ";
@@ -246,6 +250,7 @@ class SearchRepository
                 AND m.marked_for_deletion_at IS NULL
                 AND (m.ap_discoverable = true OR m.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND ib.instance_domain = m.ap_domain)
                 $createdWhereMagazine $blockMagazineAndUserResult
         ";
 
@@ -257,6 +262,7 @@ class SearchRepository
                 AND u.ap_deleted_at IS NULL
                 AND (u.ap_discoverable = true OR u.ap_discoverable IS NULL)
                 AND NOT EXISTS (SELECT id FROM user_block ub WHERE ub.blocked_id = u.id AND ub.blocker_id = :queryingUser)
+                AND NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :queryingUser AND ib.instance_domain = u.ap_domain)
                 $createdWhereUser $blockMagazineAndUserResult
         ";
 

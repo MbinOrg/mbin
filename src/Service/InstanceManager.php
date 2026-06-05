@@ -8,9 +8,11 @@ use App\DTO\ModeratorDto;
 use App\Entity\Instance;
 use App\Entity\InstanceBlock;
 use App\Entity\User;
+use App\Event\InstanceBlockedEvent;
 use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 readonly class InstanceManager
 {
@@ -19,6 +21,7 @@ readonly class InstanceManager
         private SettingsManager $settingsManager,
         private InstanceRepository $instanceRepository,
         private InstanceBlockRepository $instanceBlockRepository,
+        private EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -101,6 +104,8 @@ readonly class InstanceManager
         $block = new InstanceBlock($user, $instance);
         $this->entityManager->persist($block);
         $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
     }
 
     public function unblockInstance(Instance $instance, User $user): void {
@@ -109,5 +114,7 @@ readonly class InstanceManager
             $this->entityManager->remove($block);
             $this->entityManager->flush();
         }
+
+        $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, false));
     }
 }

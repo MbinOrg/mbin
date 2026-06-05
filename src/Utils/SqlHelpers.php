@@ -27,6 +27,7 @@ class SqlHelpers
     public const string USER_BLOCKS_KEY = 'cached_user_blocks_';
     public const string USER_MAGAZINE_BLOCKS_KEY = 'cached_user_magazine_block_';
     public const string USER_DOMAIN_BLOCKS_KEY = 'cached_user_domain_block_';
+    public const string USER_INSTANCE_BLOCKS_KEY = 'cached_user_instance_block_';
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -363,6 +364,37 @@ class SqlHelpers
             $this->cache->delete(self::USER_DOMAIN_BLOCKS_KEY.$user->getId());
         } catch (InvalidArgumentException $exception) {
             $this->logger->warning('There was an error clearing the cached blocked domains of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * @return string[] the ids of the domains $user is subscribed to
+     */
+    public function getCachedUserInstanceBlocks(User $user): array
+    {
+        try {
+            $sql = 'SELECT instance_domain FROM instance_block WHERE user_id = :uId';
+            if ('test' === $this->kernel->getEnvironment()) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            }
+
+            return $this->cache->get(self::USER_INSTANCE_BLOCKS_KEY.$user->getId(), function (ItemInterface $item) use ($user, $sql) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            });
+        } catch (InvalidArgumentException|Exception $exception) {
+            $this->logger->error('There was an error getting the cached instance blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+
+            return [];
+        }
+    }
+
+    public function clearCachedUserInstanceBlocks(User $user): void
+    {
+        $this->logger->debug('Clearing cached instance blocks for user {u}', ['u' => $user->username]);
+        try {
+            $this->cache->delete(self::USER_INSTANCE_BLOCKS_KEY.$user->getId());
+        } catch (InvalidArgumentException $exception) {
+            $this->logger->warning('There was an error clearing the cached blocked instances of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
         }
     }
 

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: InstanceBlockRepository::class)]
-#[UniqueConstraint(name: 'instance_block_idx', columns: ['user_id', 'instance_id'])]
+#[UniqueConstraint(name: 'instance_block_idx', columns: ['user_id', 'instance_domain'])]
 class InstanceBlock
 {
 
@@ -19,6 +19,7 @@ class InstanceBlock
     {
         $this->user = $user;
         $this->instance = $instance;
+        $this->instanceDomain = $instance->domain;
     }
 
     #[Column, Id, GeneratedValue]
@@ -32,4 +33,7 @@ class InstanceBlock
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Instance $instance;
 
+    // denormalized schema to avoid many JOINs
+    #[Column]
+    public string $instanceDomain;
 }

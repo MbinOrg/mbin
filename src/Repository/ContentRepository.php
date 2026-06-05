@@ -271,6 +271,8 @@ class ContentRepository
 
         $blockingClausePost = '';
         $blockingClauseEntry = '';
+        $instanceBlockClauseUser = '';
+        $instanceBlockClauseMagazine = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
                 $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
@@ -295,6 +297,19 @@ class ContentRepository
                 if ($includeEntries) {
                     $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
                 }
+            }
+
+            if(null === $criteria->cachedUserBlockedInstances) {
+                $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
+                if (!$criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = m.ap_domain)';
+                }
+            } else {
+                $instanceBlockClauseUser = 'u.ap_domain IS NULL OR u.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                if ($criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR m.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                }
+                $parameters['cachedUserBlockedInstances'] = $criteria->cachedUserBlockedInstances;
             }
         }
 
@@ -375,6 +390,7 @@ class ContentRepository
             $modClause,
             $favClauseEntry,
             $blockingClauseEntry,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -397,6 +413,7 @@ class ContentRepository
             $modClause,
             $favClausePost,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -418,6 +435,7 @@ class ContentRepository
             $modClause,
             $favClauseEntryComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -440,6 +458,7 @@ class ContentRepository
             $modClause,
             $favClausePostComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -452,6 +471,7 @@ class ContentRepository
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
+            $instanceBlockClauseUser,
             $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
