@@ -97,7 +97,7 @@ For more information, read the [Testing](#testing) section on this page.
 
 Requirements:
 
-- PHP v8.3 or higher
+- PHP v8.4 or higher
 - NodeJS v20 or higher
 - Valkey / KeyDB / Redis (pick one)
 - PostgreSQL
