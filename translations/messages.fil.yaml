@@ -315,3 +315,7 @@ someone: May
 edit_post: Baguhin ang post
 oauth2.grant.post.report: Iulat ang anumang post.
 oauth2.grant.post.create: Gumawa ng mga bagong post.
+created_since: Ginawa noong
+disabled: ''
+add_ban: Idagdag and pagbabawal
+resend_account_activation_email_question: Hindi aktibong account?
