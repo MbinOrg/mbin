@@ -113,14 +113,14 @@ class InstanceUserBlockApi extends InstanceBaseApi
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    public function blockInstance(
+    public function block(
         RateLimiterFactoryInterface $apiUpdateLimiter,
         Request $request,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
         $user = $this->getUserOrThrow();
 
-        $domain = $request->request->get('domain');
+        $domain = json_decode($request->getContent(), true)['domain'];
         if(null === $domain) {
             throw new BadRequestHttpException('domain parameter required');
         }
@@ -179,14 +179,14 @@ class InstanceUserBlockApi extends InstanceBaseApi
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    public function unblockInstance(
+    public function unblock(
         RateLimiterFactoryInterface $apiUpdateLimiter,
         Request $request,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
         $user = $this->getUserOrThrow();
 
-        $domain = $request->request->get('domain');
+        $domain = json_decode($request->getContent(), true)['domain'];
         if(null === $domain) {
             throw new BadRequestHttpException('domain parameter required');
         }

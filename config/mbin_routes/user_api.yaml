@@ -101,19 +101,19 @@ api_user_retrieve_filter_lists_delete:
     format: json
 
 api_user_instance_blocks_retrieve:
-  controller: App\Controller\Api\User\InstanceUserBlockApi::retrieve
+  controller: App\Controller\Api\Instance\InstanceUserBlockApi::retrieve
   path: /api/users/instanceBlocks
   methods: [ GET ]
   format: json
 
 api_user_instance_blocks_block:
-  controller: App\Controller\Api\User\InstanceUserBlockApi::block
+  controller: App\Controller\Api\Instance\InstanceUserBlockApi::block
   path: /api/users/instanceBlocks/block
   methods: [ POST ]
   format: json
 
 api_user_instance_blocks_unblock:
-  controller: App\Controller\Api\User\InstanceUserBlockApi::unblock
+  controller: App\Controller\Api\Instance\InstanceUserBlockApi::unblock
   path: /api/users/instanceBlocks/unblock
   methods: [ POST ]
   format: json
