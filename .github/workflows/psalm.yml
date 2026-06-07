@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Psalm Security Scan by Mbin
         uses: docker://ghcr.io/mbinorg/psalm-security-scan
