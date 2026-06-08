@@ -101,7 +101,8 @@ readonly class InstanceManager
         $this->entityManager->flush();
     }
 
-    public function blockInstance(Instance $instance, User $user): void {
+    public function blockInstance(Instance $instance, User $user): void
+    {
         $block = new InstanceBlock($user, $instance);
         $this->entityManager->persist($block);
         $this->entityManager->flush();
@@ -109,9 +110,10 @@ readonly class InstanceManager
         $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
     }
 
-    public function unblockInstance(Instance $instance, User $user): void {
+    public function unblockInstance(Instance $instance, User $user): void
+    {
         $block = $this->instanceBlockRepository->findByUserAndInstance($user, $instance);
-        if(null !== $block) {
+        if (null !== $block) {
             $this->entityManager->remove($block);
             $this->entityManager->flush();
         }
@@ -121,9 +123,9 @@ readonly class InstanceManager
 
     /**
      * @param Instance[] $instances
-     * @return void
      */
-    public function blockInstancesGlobally(array $instances): void {
+    public function blockInstancesGlobally(array $instances): void
+    {
         foreach ($instances as $instance) {
             $this->instanceBlockRepository->insertForAllUsers($instance);
         }

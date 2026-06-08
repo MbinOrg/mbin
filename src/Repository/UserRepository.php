@@ -155,24 +155,24 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         bool $excludeBanned = true,
         bool $excludeDeleted = true,
         ?string $searchTerm = null,
-        ?OrderBy $orderBy = null
+        ?OrderBy $orderBy = null,
     ): PagerfantaInterface {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, $onlyVerified);
 
-        if($onlyApproved) {
+        if ($onlyApproved) {
             $builder->andWhere('u.applicationStatus = :status')
                 ->setParameter('status', EApplicationStatus::Approved->value);
         }
 
-        if($excludeBanned) {
+        if ($excludeBanned) {
             $builder->andWhere('u.isBanned = false');
         }
 
-        if($excludeDeleted) {
+        if ($excludeDeleted) {
             $builder->andWhere('u.isDeleted = false');
         }
 
-        if($onlyVisible) {
+        if ($onlyVisible) {
             $builder->andWhere('u.visibility = :visibility')
                 ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
         }

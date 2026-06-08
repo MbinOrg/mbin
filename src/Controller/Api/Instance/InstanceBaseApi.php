@@ -20,17 +20,17 @@ class InstanceBaseApi extends BaseApi
         /** @var InstanceDomainsRequestDto $domains */
         $domains = $this->serializer->deserialize($this->request->getCurrentRequest()->getContent(), InstanceDomainsRequestDto::class, 'json');
 
-        if(empty($domains->domains)) {
+        if (empty($domains->domains)) {
             throw new BadRequestException('domains must not be empty');
         }
 
-        return \array_map(function ($domain) {
+        return array_map(function ($domain) {
             $instance = $this->instanceRepository->findOneBy(['domain' => $domain]);
-            if(null === $instance) {
+            if (null === $instance) {
                 throw new NotFoundHttpException('instance '.$domain.' not found');
             }
+
             return $instance;
         }, $domains->domains);
     }
-
 }

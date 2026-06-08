@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 readonly class InstancesGlobalBlockSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private SqlHelpers     $sqlHelpers,
+        private SqlHelpers $sqlHelpers,
         private UserRepository $userRepository,
     ) {
     }

@@ -16,18 +16,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FederationController extends AbstractController
 {
-
     public function __construct(
-        private readonly InstanceRepository      $instanceRepository,
+        private readonly InstanceRepository $instanceRepository,
         private readonly InstanceBlockRepository $instanceBlockRepository,
-        private readonly InstanceManager         $instanceManager,
-        private readonly SettingsManager         $settings,
-    ){}
+        private readonly InstanceManager $instanceManager,
+        private readonly SettingsManager $settings,
+    ) {
+    }
 
     public function __invoke(
-        Request $request
-    ): Response
-    {
+        Request $request,
+    ): Response {
         if (!$this->settings->get('KBIN_FEDERATION_PAGE_ENABLED')) {
             return $this->redirectToRoute('front');
         }
@@ -37,7 +36,7 @@ class FederationController extends AbstractController
         $deadInstances = $this->instanceRepository->getDeadInstances();
 
         $user = $this->getUser();
-        if(null !== $user) {
+        if (null !== $user) {
             $userInstanceBlocks = $this->instanceBlockRepository->findBlocksForUser($user);
         } else {
             $userInstanceBlocks = null;
@@ -60,7 +59,7 @@ class FederationController extends AbstractController
         $user = $this->getUserOrThrow();
         $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
 
-        if(null === $instance) {
+        if (null === $instance) {
             throw new NotFoundHttpException('instance '.$instanceDomain.' not found');
         }
 
@@ -75,12 +74,11 @@ class FederationController extends AbstractController
         string $instanceDomain,
         #[MapQueryParameter]
         ?string $redirTarget,
-    ): Response
-    {
+    ): Response {
         $user = $this->getUserOrThrow();
         $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
 
-        if(null === $instance) {
+        if (null === $instance) {
             throw new NotFoundHttpException('instance '.$instanceDomain.' not found');
         }
 

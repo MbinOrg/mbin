@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller\Api\Instance;
 
 use App\Entity\Instance;
@@ -7,8 +9,8 @@ use App\Tests\WebTestCase;
 
 class InstanceBlockApiTest extends WebTestCase
 {
-
-    public function testApiCannotGetListWithoutScope(): void {
+    public function testApiCannotGetListWithoutScope(): void
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
@@ -21,7 +23,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCannotBlockWithoutScope(): void {
+    public function testApiCannotBlockWithoutScope(): void
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
@@ -34,7 +37,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCannotUnblockWithoutScope(): void {
+    public function testApiCannotUnblockWithoutScope(): void
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
@@ -47,7 +51,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCannotGlobalBlockWithoutScope(): void {
+    public function testApiCannotGlobalBlockWithoutScope(): void
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
@@ -60,7 +65,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCanCreateAndListBlocks(): void {
+    public function testApiCanCreateAndListBlocks(): void
+    {
         $user1 = $this->getUserByUsername('JohnDoe');
         $user2 = $this->getUserByUsername('JaneDoe');
 
@@ -73,7 +79,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domains' => [ '3.example.com' ],
+                'domains' => ['3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -104,7 +110,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertCount(0, $jsonData['instances']);
     }
 
-    public function testApiCanDeleteBlocks(): void {
+    public function testApiCanDeleteBlocks(): void
+    {
         $user1 = $this->getUserByUsername('JohnDoe');
 
         $this->prepareContent();
@@ -116,7 +123,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domains' => [ '3.example.com' ],
+                'domains' => ['3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -124,7 +131,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domains' => [ '2.example.com' ],
+                'domains' => ['2.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -133,7 +140,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/unblock',
             parameters: [
-                'domains' => [ '3.example.com' ],
+                'domains' => ['3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -164,7 +171,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domains' => [ '3.example.com' ],
+                'domains' => ['3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -193,7 +200,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domains' => [ '3.example.com' ],
+                'domains' => ['3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -209,7 +216,8 @@ class InstanceBlockApiTest extends WebTestCase
         $this->checkContent($items, false);
     }
 
-    public function testApiCanBlockGloballyBlocks(): void {
+    public function testApiCanBlockGloballyBlocks(): void
+    {
         $user1 = $this->getUserByUsername('JohnDoe');
         $user2 = $this->getUserByUsername('JaneDoe');
         $admin = $this->getUserByUsername('admin');
@@ -224,7 +232,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/admin/instance/block',
             parameters: [
-                'domains' => [ '2.example.com', '3.example.com' ],
+                'domains' => ['2.example.com', '3.example.com'],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -250,7 +258,7 @@ class InstanceBlockApiTest extends WebTestCase
         $jsonData = self::getJsonResponse($this->client);
 
         self::assertCount(2, $jsonData['instances']);
-        $blockedDomains = \array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
+        $blockedDomains = array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
         self::assertContains('2.example.com', $blockedDomains);
         self::assertContains('3.example.com', $blockedDomains);
 
@@ -265,7 +273,7 @@ class InstanceBlockApiTest extends WebTestCase
         $jsonData = self::getJsonResponse($this->client);
 
         self::assertCount(2, $jsonData['instances']);
-        $blockedDomains = \array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
+        $blockedDomains = array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
         self::assertContains('2.example.com', $blockedDomains);
         self::assertContains('3.example.com', $blockedDomains);
     }
@@ -319,20 +327,21 @@ class InstanceBlockApiTest extends WebTestCase
         $this->createPostComment('test invisible postComment by user', post: $post1, user: $remoteUser2);
     }
 
-    private function checkContent(array $items, bool $hasComments): void {
+    private function checkContent(array $items, bool $hasComments): void
+    {
         self::assertCount($hasComments ? 4 : 2, $items);
 
         foreach ($items as $item) {
-            if(null !== $item['entry']) {
+            if (null !== $item['entry']) {
                 self::assertSame('test visible', $item['entry']['title']);
-            } elseif(null !== $item['post']) {
+            } elseif (null !== $item['post']) {
                 self::assertSame('test visible', $item['post']['body']);
-            } elseif(null !== $item['entryComment']) {
+            } elseif (null !== $item['entryComment']) {
                 self::assertSame('test visible', $item['entryComment']['body']);
-            } elseif(null !== $item['postComment']) {
+            } elseif (null !== $item['postComment']) {
                 self::assertSame('test visible', $item['postComment']['body']);
             } else {
-                throw new \AssertionError('unreachable: '.\json_encode($item));
+                throw new \AssertionError('unreachable: '.json_encode($item));
             }
         }
     }

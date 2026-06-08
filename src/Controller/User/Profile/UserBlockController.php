@@ -64,7 +64,7 @@ class UserBlockController extends AbstractController
         $user = $this->getUserOrThrow();
 
         $blocks = $repository->findBlocksForUser($user);
-        $instances = \array_map(function (InstanceBlock $block) {
+        $instances = array_map(function (InstanceBlock $block) {
             return $block->instance;
         }, $blocks);
 

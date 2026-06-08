@@ -60,8 +60,7 @@ class UserFilterListApi extends UserBaseApi
     public function retrieve(
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $user = $this->getUserOrThrow();
@@ -71,7 +70,7 @@ class UserFilterListApi extends UserBaseApi
         }
 
         return new JsonResponse(
-            [ 'items' => $items ],
+            ['items' => $items],
             headers: $headers
         );
     }

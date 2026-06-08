@@ -143,7 +143,7 @@ class AdminFederationController extends AbstractController
     {
         $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
 
-        if(null === $instance) {
+        if (null === $instance) {
             throw new NotFoundHttpException('instance '.$instanceDomain.' not found');
         }
 

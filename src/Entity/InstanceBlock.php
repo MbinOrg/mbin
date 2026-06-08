@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
+
 use App\Repository\InstanceBlockRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -14,7 +17,6 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[UniqueConstraint(name: 'instance_block_idx', columns: ['user_id', 'instance_domain'])]
 class InstanceBlock
 {
-
     public function __construct(User $user, Instance $instance)
     {
         $this->user = $user;

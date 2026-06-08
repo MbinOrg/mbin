@@ -1,30 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Api\Instance;
 
 use App\DTO\InstanceDomainsRequestDto;
 use App\DTO\InstanceDto;
 use App\DTO\InstancesDtoV2;
-use App\Entity\Instance;
 use App\Entity\InstanceBlock;
-use App\Repository\InstanceBlockRepository;
 use App\Schema\Errors\BadRequestErrorSchema;
 use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use OpenApi\Attributes as OA;
 
 class InstanceUserBlockApi extends InstanceBaseApi
 {
-
     #[OA\Response(
         response: 200,
         description: 'Instance is unblocked',

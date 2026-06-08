@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Instance;
@@ -11,14 +13,12 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class InstanceBlockRepository extends ServiceEntityRepository
 {
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, InstanceBlock::class);
     }
 
     /**
-     * @param User $user
      * @return InstanceBlock[]
      */
     public function findBlocksForUser(User $user): array
@@ -29,15 +29,17 @@ class InstanceBlockRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
-    public function findByUserAndInstance(User $user, Instance $instance): ?InstanceBlock {
+    public function findByUserAndInstance(User $user, Instance $instance): ?InstanceBlock
+    {
         return $this->createQueryBuilder('b')
             ->where('b.user = :user')->andWhere('b.instance = :instance')
             ->setParameter('user', $user)->setParameter('instance', $instance)
             ->getQuery()->getOneOrNullResult();
     }
 
-    public function insertForAllUsers(Instance $instance, bool $excludeAdmins = true): void {
-        if($excludeAdmins) {
+    public function insertForAllUsers(Instance $instance, bool $excludeAdmins = true): void
+    {
+        if ($excludeAdmins) {
             $excludeAdminClause = 'WHERE NOT (u.roles @> \'["ROLE_ADMIN"]\')';
         } else {
             $excludeAdminClause = '';

@@ -299,7 +299,7 @@ class ContentRepository
                 }
             }
 
-            if(null === $criteria->cachedUserBlockedInstances) {
+            if (null === $criteria->cachedUserBlockedInstances) {
                 $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
                 if (!$criteria->magazine) {
                     $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = m.ap_domain)';
