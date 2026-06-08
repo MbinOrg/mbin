@@ -100,6 +100,12 @@ api_admin_deny_instance:
     methods: [ PUT ]
     format: json
 
+api_admin_block_instance:
+  controller: App\Controller\Api\Instance\Admin\InstanceBlockGloballyApi::blockForAll
+  path: /api/admin/instance/block
+  methods: [ POST ]
+  format: json
+
 api_admin_update_pages:
   controller: App\Controller\Api\Instance\Admin\InstanceUpdatePagesApi
   path: /api/instance/{page}

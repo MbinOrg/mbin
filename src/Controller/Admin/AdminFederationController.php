@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminFederationController extends AbstractController
@@ -135,5 +136,19 @@ class AdminFederationController extends AbstractController
             'counts' => $this->instanceRepository->getInstanceCounts($instance),
             'useAllowList' => $this->settingsManager->getUseAllowList(),
         ], new Response(status: $form->isSubmitted() && !$form->isValid() ? 422 : 200));
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function blockInstanceGlobally(#[MapQueryParameter] string $instanceDomain): Response
+    {
+        $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
+
+        if(null === $instance) {
+            throw new NotFoundHttpException('instance '.$instanceDomain.' not found');
+        }
+
+        $this->instanceManager->blockInstancesGlobally([$instance]);
+
+        return $this->redirectToRoute('admin_federation');
     }
 }

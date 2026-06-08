@@ -57,6 +57,11 @@ admin_federation_deny_instance:
     path: /admin/federation/deny
     methods: [GET, POST]
 
+admin_federation_block_instance:
+    controller: App\Controller\Admin\AdminFederationController::blockInstanceGlobally
+    path: /admin/federation/block
+    methods: [GET]
+
 admin_pages:
     controller: App\Controller\Admin\AdminPagesController
     path: /admin/pages/{page}

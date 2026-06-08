@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\Instance;
 
+use App\DTO\InstanceDomainsRequestDto;
 use App\DTO\InstanceDto;
 use App\DTO\InstancesDtoV2;
 use App\Entity\Instance;
@@ -69,13 +70,9 @@ class InstanceUserBlockApi extends InstanceBaseApi
         );
     }
 
-    #[OA\Parameter(
-        name: 'domain',
-        description: 'The domain of the instance',
-        required: true,
-        in: 'path',
-        schema: new OA\Schema(type: 'string')
-    )]
+    #[OA\RequestBody(content: new Model(
+        type: InstanceDomainsRequestDto::class,
+    ))]
     #[OA\Response(
         response: 204,
         description: 'Instance is blocked',
@@ -115,33 +112,22 @@ class InstanceUserBlockApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
     public function block(
         RateLimiterFactoryInterface $apiUpdateLimiter,
-        Request $request,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
         $user = $this->getUserOrThrow();
 
-        $domain = json_decode($request->getContent(), true)['domain'];
-        if(null === $domain) {
-            throw new BadRequestHttpException('domain parameter required');
-        }
+        $instances = $this->getInstancesFromDomainsRequest();
 
-        $instance = $this->instanceRepository->findOneBy(['domain' => $domain]);
-        if(null === $instance) {
-            throw new NotFoundHttpException('instance '.$domain.' not found');
+        foreach ($instances as $instance) {
+            $this->instanceManager->blockInstance($instance, $user);
         }
-
-        $this->instanceManager->blockInstance($instance, $user);
 
         return new JsonResponse(status: 204, headers: $headers);
     }
 
-    #[OA\Parameter(
-        name: 'domain',
-        description: 'The domain of the instance',
-        required: true,
-        in: 'path',
-        schema: new OA\Schema(type: 'string')
-    )]
+    #[OA\RequestBody(content: new Model(
+        type: InstanceDomainsRequestDto::class,
+    ))]
     #[OA\Response(
         response: 204,
         description: 'Instance is unblocked',
@@ -181,22 +167,15 @@ class InstanceUserBlockApi extends InstanceBaseApi
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
     public function unblock(
         RateLimiterFactoryInterface $apiUpdateLimiter,
-        Request $request,
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
         $user = $this->getUserOrThrow();
 
-        $domain = json_decode($request->getContent(), true)['domain'];
-        if(null === $domain) {
-            throw new BadRequestHttpException('domain parameter required');
-        }
+        $instances = $this->getInstancesFromDomainsRequest();
 
-        $instance = $this->instanceRepository->findOneBy(['domain' => $domain]);
-        if(null === $instance) {
-            throw new NotFoundHttpException('instance '.$domain.' not found');
+        foreach ($instances as $instance) {
+            $this->instanceManager->unblockInstance($instance, $user);
         }
-
-        $this->instanceManager->unblockInstance($instance, $user);
 
         return new JsonResponse(status: 204, headers: $headers);
     }

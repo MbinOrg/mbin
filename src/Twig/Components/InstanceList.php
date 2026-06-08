@@ -14,9 +14,12 @@ class InstanceList
     public array $instances;
 
     public bool $showUnBanButton = false;
+
     public bool $showBanButton = false;
 
     public bool $showDenyButton = false;
 
     public bool $showAllowButton = false;
+
+    public bool $showAdminBlockButton = false;
 }

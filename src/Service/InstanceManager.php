@@ -9,6 +9,7 @@ use App\Entity\Instance;
 use App\Entity\InstanceBlock;
 use App\Entity\User;
 use App\Event\InstanceBlockedEvent;
+use App\Event\InstancesGlobalBlockedEvent;
 use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,5 +117,18 @@ readonly class InstanceManager
         }
 
         $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, false));
+    }
+
+    /**
+     * @param Instance[] $instances
+     * @return void
+     */
+    public function blockInstancesGlobally(array $instances): void {
+        foreach ($instances as $instance) {
+            $this->instanceBlockRepository->insertForAllUsers($instance);
+        }
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
     }
 }

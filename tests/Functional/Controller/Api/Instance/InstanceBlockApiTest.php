@@ -12,10 +12,49 @@ class InstanceBlockApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
         $this->client->loginUser($testUser);
-        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:read');
 
         $this->client->request(
             'GET', '/api/users/instanceBlocks',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCannotBlockWithoutScope(): void {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:read');
+
+        $this->client->request(
+            'POST', '/api/users/instanceBlocks/block',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCannotUnblockWithoutScope(): void {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:read');
+
+        $this->client->request(
+            'POST', '/api/users/instanceBlocks/unblock',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCannotGlobalBlockWithoutScope(): void {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:edit');
+
+        $this->client->request(
+            'POST', '/api/admin/instance/block',
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
         self::assertResponseStatusCodeSame(403);
@@ -34,7 +73,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domain' => '3.example.com',
+                'domains' => [ '3.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -77,7 +116,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domain' => '3.example.com',
+                'domains' => [ '3.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -85,7 +124,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domain' => '2.example.com',
+                'domains' => [ '2.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -94,7 +133,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/unblock',
             parameters: [
-                'domain' => '3.example.com',
+                'domains' => [ '3.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -125,7 +164,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domain' => '3.example.com',
+                'domains' => [ '3.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -154,7 +193,7 @@ class InstanceBlockApiTest extends WebTestCase
         $this->client->jsonRequest(
             'POST', '/api/users/instanceBlocks/block',
             parameters: [
-                'domain' => '3.example.com',
+                'domains' => [ '3.example.com' ],
             ],
             server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
         );
@@ -168,6 +207,67 @@ class InstanceBlockApiTest extends WebTestCase
         $items = self::getJsonResponse($this->client)['items'];
 
         $this->checkContent($items, false);
+    }
+
+    public function testApiCanBlockGloballyBlocks(): void {
+        $user1 = $this->getUserByUsername('JohnDoe');
+        $user2 = $this->getUserByUsername('JaneDoe');
+        $admin = $this->getUserByUsername('admin');
+        $this->setAdmin($admin);
+
+        $this->prepareContent();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($admin);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'admin:federation:update user:profile:edit');
+
+        $this->client->jsonRequest(
+            'POST', '/api/admin/instance/block',
+            parameters: [
+                'domains' => [ '2.example.com', '3.example.com' ],
+            ],
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(204);
+
+        $this->client->request(
+            'GET', '/api/users/instanceBlocks',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertCount(0, $jsonData['instances']);
+
+        $this->client->loginUser($user1);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:edit');
+
+        $this->client->request(
+            'GET', '/api/users/instanceBlocks',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertCount(2, $jsonData['instances']);
+        $blockedDomains = \array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
+        self::assertContains('2.example.com', $blockedDomains);
+        self::assertContains('3.example.com', $blockedDomains);
+
+        $this->client->loginUser($user2);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:edit');
+
+        $this->client->jsonRequest(
+            'GET', '/api/users/instanceBlocks',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertCount(2, $jsonData['instances']);
+        $blockedDomains = \array_map(fn ($instance) => $instance['domain'], $jsonData['instances']);
+        self::assertContains('2.example.com', $blockedDomains);
+        self::assertContains('3.example.com', $blockedDomains);
     }
 
     private function prepareContent(): void
