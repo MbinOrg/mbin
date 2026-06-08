@@ -22,7 +22,7 @@ jobs:
     container:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get NPM cache directory path
         id: npm-cache-dir-path
@@ -35,13 +35,13 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-no-dev-${{ hashFiles('**/composer.lock') }}
@@ -74,7 +74,7 @@ jobs:
     container:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -87,13 +87,13 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
@@ -188,7 +188,7 @@ jobs:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -198,7 +198,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache vendor directory
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -219,7 +219,7 @@ jobs:
     container:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -228,7 +228,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
@@ -252,7 +252,7 @@ jobs:
     container:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -261,7 +261,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-tools-${{ hashFiles('**/composer.lock') }}
@@ -280,7 +280,7 @@ jobs:
     container:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -293,13 +293,13 @@ jobs:
         id: npm-cache-dir-path
         run: echo "dir=$(npm get cache)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('*/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
@@ -326,7 +326,7 @@ jobs:
       contents: write
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Login to ghcr
         if: github.event_name != 'pull_request'
@@ -338,12 +338,12 @@ jobs:
 
       - name: Docker meta data
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/mbinorg/mbin
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./docker/Dockerfile
