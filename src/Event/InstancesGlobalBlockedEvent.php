@@ -13,6 +13,7 @@ class InstancesGlobalBlockedEvent
 {
     /**
      * @param Instance[] $instances
+     *
      * @psalm-mutation-free
      */
     public function __construct(public array $instances)

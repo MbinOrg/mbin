@@ -18,9 +18,6 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 class InstanceBlock
 {
     /**
-     * @param User $user
-     * @param Instance $instance
-     * @param bool $blockedByAdmin
      * @psalm-mutation-free
      */
     public function __construct(User $user, Instance $instance, bool $blockedByAdmin)

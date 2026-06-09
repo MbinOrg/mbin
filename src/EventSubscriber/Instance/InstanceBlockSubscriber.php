@@ -11,7 +11,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class InstanceBlockSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param SqlHelpers $sqlHelpers
      * @psalm-mutation-free
      */
     public function __construct(
@@ -21,6 +20,7 @@ class InstanceBlockSubscriber implements EventSubscriberInterface
 
     /**
      * @return string[]
+     *
      * @psalm-pure
      */
     #[\Override]

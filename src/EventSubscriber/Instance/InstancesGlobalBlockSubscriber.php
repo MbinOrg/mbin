@@ -12,8 +12,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 readonly class InstancesGlobalBlockSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param SqlHelpers $sqlHelpers
-     * @param UserRepository $userRepository
      * @psalm-mutation-free
      */
     public function __construct(
@@ -24,6 +22,7 @@ readonly class InstancesGlobalBlockSubscriber implements EventSubscriberInterfac
 
     /**
      * @return string[]
+     *
      * @psalm-pure
      */
     #[\Override]
