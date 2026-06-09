@@ -12,6 +12,7 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
+            <directory name="templates" />
         </ignoreFiles>
     </projectFiles>
     <plugins>
