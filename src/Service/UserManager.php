@@ -69,7 +69,6 @@ readonly class UserManager
         private Security $security,
         private CacheInterface $cache,
         private ReputationRepository $reputationRepository,
-        private InstanceManager $instanceManager,
         private SettingsManager $settingsManager,
         private EventDispatcherInterface $eventDispatcher,
         private LoggerInterface $logger,

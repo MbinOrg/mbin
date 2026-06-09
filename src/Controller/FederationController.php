@@ -16,6 +16,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FederationController extends AbstractController
 {
+    /**
+     * @param InstanceRepository $instanceRepository
+     * @param InstanceBlockRepository $instanceBlockRepository
+     * @param InstanceManager $instanceManager
+     * @param SettingsManager $settings
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly InstanceRepository $instanceRepository,
         private readonly InstanceBlockRepository $instanceBlockRepository,

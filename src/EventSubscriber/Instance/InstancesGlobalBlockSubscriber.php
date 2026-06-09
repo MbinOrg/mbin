@@ -11,12 +11,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class InstancesGlobalBlockSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @param SqlHelpers $sqlHelpers
+     * @param UserRepository $userRepository
+     * @psalm-mutation-free
+     */
     public function __construct(
         private SqlHelpers $sqlHelpers,
         private UserRepository $userRepository,
     ) {
     }
 
+    /**
+     * @return string[]
+     * @psalm-pure
+     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [InstancesGlobalBlockedEvent::class => 'handleInstancesBlockedEvent'];

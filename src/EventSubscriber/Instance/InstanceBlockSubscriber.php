@@ -10,11 +10,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class InstanceBlockSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @param SqlHelpers $sqlHelpers
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly SqlHelpers $sqlHelpers,
     ) {
     }
 
+    /**
+     * @return string[]
+     * @psalm-pure
+     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [InstanceBlockedEvent::class => 'handleInstanceBlockedEvent'];

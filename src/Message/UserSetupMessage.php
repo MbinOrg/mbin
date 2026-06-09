@@ -11,6 +11,10 @@ use App\Message\Contracts\AsyncMessageInterface;
  */
 class UserSetupMessage implements AsyncMessageInterface
 {
+    /**
+     * @param int $userId
+     * @psalm-mutation-free
+     */
     public function __construct(public int $userId)
     {
     }

@@ -17,6 +17,12 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[UniqueConstraint(name: 'instance_block_idx', columns: ['user_id', 'instance_domain'])]
 class InstanceBlock
 {
+    /**
+     * @param User $user
+     * @param Instance $instance
+     * @param bool $blockedByAdmin
+     * @psalm-mutation-free
+     */
     public function __construct(User $user, Instance $instance, bool $blockedByAdmin)
     {
         $this->user = $user;

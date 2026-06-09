@@ -11,6 +11,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @psalm-pure
+ */
 class InstanceBlockRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
