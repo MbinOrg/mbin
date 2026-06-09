@@ -17,11 +17,12 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 #[UniqueConstraint(name: 'instance_block_idx', columns: ['user_id', 'instance_domain'])]
 class InstanceBlock
 {
-    public function __construct(User $user, Instance $instance)
+    public function __construct(User $user, Instance $instance, bool $blockedByAdmin)
     {
         $this->user = $user;
         $this->instance = $instance;
         $this->instanceDomain = $instance->domain;
+        $this->blockedByAdmin = $blockedByAdmin;
     }
 
     #[Column, Id, GeneratedValue]
@@ -38,4 +39,7 @@ class InstanceBlock
     // denormalized schema to avoid many JOINs
     #[Column]
     public string $instanceDomain;
+
+    #[Column]
+    public bool $blockedByAdmin;
 }

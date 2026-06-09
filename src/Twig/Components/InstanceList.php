@@ -13,6 +13,12 @@ class InstanceList
     /** @var Instance[] */
     public array $instances;
 
+    /** @var Instance[] */
+    public ?array $blockedInstances = null;
+
+    /** @var Instance[] */
+    public ?array $globallyBlockedInstances = null;
+
     public bool $showUnBanButton = false;
 
     public bool $showBanButton = false;

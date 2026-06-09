@@ -23,6 +23,7 @@ use App\Message\DeleteImageMessage;
 use App\Message\DeleteUserMessage;
 use App\Message\Notification\SentNewSignupNotificationMessage;
 use App\Message\UserCreatedMessage;
+use App\Message\UserSetupMessage;
 use App\Message\UserUpdatedMessage;
 use App\MessageHandler\ClearDeletedUserHandler;
 use App\Repository\ImageRepository;
@@ -68,6 +69,7 @@ readonly class UserManager
         private Security $security,
         private CacheInterface $cache,
         private ReputationRepository $reputationRepository,
+        private InstanceManager $instanceManager,
         private SettingsManager $settingsManager,
         private EventDispatcherInterface $eventDispatcher,
         private LoggerInterface $logger,
@@ -186,6 +188,10 @@ readonly class UserManager
             try {
                 $this->bus->dispatch(new SentNewSignupNotificationMessage($user->getId()));
             } catch (\Throwable $e) {
+                $this->logger->error('UserManager::create(): error when dispatching SentNewSignupNotificationMessage: {ex} - {msg}', [
+                    'msg' => $e->getMessage(),
+                    'ex' => \get_class($e),
+                ]);
             }
         }
 
@@ -193,7 +199,20 @@ readonly class UserManager
             try {
                 $this->bus->dispatch(new UserCreatedMessage($user->getId()));
             } catch (\Throwable $e) {
+                $this->logger->error('UserManager::create(): error when dispatching UserCreatedMessage: {ex} - {msg}', [
+                    'msg' => $e->getMessage(),
+                    'ex' => \get_class($e),
+                ]);
             }
+        }
+
+        try {
+            $this->bus->dispatch(new UserSetupMessage($user->getId()));
+        } catch (\Throwable $e) {
+            $this->logger->error('UserManager::create(): error when dispatching UserSetupMessage: {ex} - {msg}', [
+                'msg' => $e->getMessage(),
+                'ex' => \get_class($e),
+            ]);
         }
 
         return $user;

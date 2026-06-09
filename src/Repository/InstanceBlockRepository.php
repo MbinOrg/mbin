@@ -37,6 +37,16 @@ class InstanceBlockRepository extends ServiceEntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @return Instance[]
+     */
+    public function findAllGlobalBlockedInstances(): array
+    {
+        return $this->getEntityManager()
+            ->createQuery('SELECT i FROM App\Entity\Instance i INNER JOIN App\Entity\InstanceBlock b ON i.id = b.instance WHERE b.blockedByAdmin = true')
+            ->getResult();
+    }
+
     public function insertForAllUsers(Instance $instance, bool $excludeAdmins = true): void
     {
         if ($excludeAdmins) {
@@ -46,9 +56,19 @@ class InstanceBlockRepository extends ServiceEntityRepository
         }
 
         $stmt = $this->getEntityManager()->getConnection()
-            ->prepare('INSERT INTO instance_block SELECT nextval(\'instance_block_id_seq\'), u.id, :instance, :domain FROM "user" u '.$excludeAdminClause.' ON CONFLICT DO NOTHING;');
+            ->prepare('INSERT INTO instance_block SELECT nextval(\'instance_block_id_seq\'), u.id, :instance, :domain, true FROM "user" u '.$excludeAdminClause.' ON CONFLICT DO NOTHING;');
         $stmt->bindValue('instance', $instance->getId(), ParameterType::INTEGER);
         $stmt->bindValue('domain', $instance->domain, ParameterType::STRING);
         $stmt->executeStatement();
+    }
+
+    public function deleteForAllUsers(Instance $instance): void
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete(InstanceBlock::class, 'b')
+            ->where('b.instance = :instance')
+            ->andWhere('b.blockedByAdmin = true')
+            ->setParameter('instance', $instance)
+            ->getQuery()->execute();
     }
 }

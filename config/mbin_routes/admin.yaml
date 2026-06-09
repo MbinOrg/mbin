@@ -62,6 +62,11 @@ admin_federation_block_instance:
     path: /admin/federation/block
     methods: [GET]
 
+admin_federation_unblock_instance:
+    controller: App\Controller\Admin\AdminFederationController::unblockInstanceGlobally
+    path: /admin/federation/unblock
+    methods: [GET]
+
 admin_pages:
     controller: App\Controller\Admin\AdminPagesController
     path: /admin/pages/{page}

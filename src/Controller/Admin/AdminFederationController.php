@@ -9,10 +9,10 @@ use App\DTO\ConfirmDefederationDto;
 use App\DTO\FederationSettingsDto;
 use App\Form\ConfirmDefederationType;
 use App\Form\FederationSettingsType;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use App\Service\InstanceManager;
 use App\Service\SettingsManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -24,7 +24,7 @@ class AdminFederationController extends AbstractController
     public function __construct(
         private readonly SettingsManager $settingsManager,
         private readonly InstanceRepository $instanceRepository,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly InstanceBlockRepository $instanceBlockRepository,
         private readonly InstanceManager $instanceManager,
     ) {
     }
@@ -62,6 +62,7 @@ class AdminFederationController extends AbstractController
                 'useAllowList' => $useAllowList,
                 'instances' => $useAllowList ? $this->settingsManager->getAllowedInstances() : $this->settingsManager->getBannedInstances(),
                 'allInstances' => $this->instanceRepository->findAllOrdered(),
+                'allBlockedInstances' => $this->instanceBlockRepository->findAllGlobalBlockedInstances(),
             ]
         );
     }
@@ -148,6 +149,20 @@ class AdminFederationController extends AbstractController
         }
 
         $this->instanceManager->blockInstancesGlobally([$instance]);
+
+        return $this->redirectToRoute('admin_federation');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function unblockInstanceGlobally(#[MapQueryParameter] string $instanceDomain): Response
+    {
+        $instance = $this->instanceRepository->findOneBy(['domain' => $instanceDomain]);
+
+        if (null === $instance) {
+            throw new NotFoundHttpException('instance '.$instanceDomain.' not found');
+        }
+
+        $this->instanceManager->unblockInstancesGlobally([$instance]);
 
         return $this->redirectToRoute('admin_federation');
     }

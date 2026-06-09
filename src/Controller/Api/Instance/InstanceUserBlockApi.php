@@ -23,7 +23,7 @@ class InstanceUserBlockApi extends InstanceBaseApi
 {
     #[OA\Response(
         response: 200,
-        description: 'Instance is unblocked',
+        description: 'blocked Instance',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),

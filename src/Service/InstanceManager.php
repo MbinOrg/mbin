@@ -103,7 +103,17 @@ readonly class InstanceManager
 
     public function blockInstance(Instance $instance, User $user): void
     {
-        $block = new InstanceBlock($user, $instance);
+        /** @var ?InstanceBlock $existing */
+        $existing = $this->instanceBlockRepository->findOneBy(['instance' => $instance, 'user' => $user]);
+        if (null !== $existing) {
+            $existing->blockedByAdmin = false;
+            $this->entityManager->persist($existing);
+            $this->entityManager->flush();
+
+            return;
+        }
+
+        $block = new InstanceBlock($user, $instance, false);
         $this->entityManager->persist($block);
         $this->entityManager->flush();
 
@@ -126,11 +136,43 @@ readonly class InstanceManager
      */
     public function blockInstancesGlobally(array $instances): void
     {
+        $this->entityManager->wrapInTransaction(function () use ($instances) {
+            foreach ($instances as $instance) {
+                $this->instanceBlockRepository->insertForAllUsers($instance);
+            }
+            $this->entityManager->flush();
+        });
+
+        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
+    }
+
+    /**
+     * @param Instance[] $instances
+     */
+    public function unblockInstancesGlobally(array $instances): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($instances) {
+            foreach ($instances as $instance) {
+                $this->instanceBlockRepository->deleteForAllUsers($instance);
+            }
+            $this->entityManager->flush();
+        });
+
+        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
+    }
+
+    public function applyGlobalInstanceBlocksToUser(User $user): void
+    {
+        $instances = $this->instanceBlockRepository->findAllGlobalBlockedInstances();
+
         foreach ($instances as $instance) {
-            $this->instanceBlockRepository->insertForAllUsers($instance);
+            $block = new InstanceBlock($user, $instance, true);
+            $this->entityManager->persist($block);
         }
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
+        foreach ($instances as $instance) {
+            $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
+        }
     }
 }

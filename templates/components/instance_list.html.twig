@@ -6,7 +6,7 @@
         <th>{{ 'domain'|trans }}</th>
         <th>{{ 'server_software'|trans }}</th>
         <th>{{ 'version'|trans }}</th>
-        {% if blockedInstances is defined and blockedInstances is not same as null %}
+        {% if blockedInstances is not same as null %}
             <th></th>
         {% endif %}
         {% if app.user is defined and app.user is not same as null and app.user.admin %}
@@ -96,12 +96,21 @@
                                 </form>
                             {% endif %}
                             {% if showAdminBlockButton %}
-                                <form action="{{ url('admin_federation_block_instance') }}">
-                                    <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
-                                    <button type="submit" class="btn btn__primary" title="{{ 'block_instance_globally_long'|trans }}">
-                                        {{ 'block_instance_globally_short'|trans }}
-                                    </button>
-                                </form>
+                                {% if globallyBlockedInstances|find(i => i === instance) %}
+                                    <form action="{{ url('admin_federation_unblock_instance') }}">
+                                        <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                        <button type="submit" class="btn btn__primary" title="{{ 'unblock_instance_globally_long'|trans }}">
+                                            {{ 'unblock_instance_globally_short'|trans }}
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url('admin_federation_block_instance') }}">
+                                        <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                        <button type="submit" class="btn btn__primary" title="{{ 'block_instance_globally_long'|trans }}">
+                                            {{ 'block_instance_globally_short'|trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </td>

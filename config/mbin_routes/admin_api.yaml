@@ -100,9 +100,21 @@ api_admin_deny_instance:
     methods: [ PUT ]
     format: json
 
+api_admin_block_instance_list:
+  controller: App\Controller\Api\Instance\Admin\InstanceBlockGloballyApi::retrieve
+  path: /api/admin/instance/blocks
+  methods: [ GET ]
+  format: json
+
 api_admin_block_instance:
   controller: App\Controller\Api\Instance\Admin\InstanceBlockGloballyApi::blockForAll
   path: /api/admin/instance/block
+  methods: [ POST ]
+  format: json
+
+api_admin_unblock_instance:
+  controller: App\Controller\Api\Instance\Admin\InstanceBlockGloballyApi::unblockForAll
+  path: /api/admin/instance/unblock
   methods: [ POST ]
   format: json
 
