@@ -176,6 +176,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
 
+        /* @psalm-suppress UninitializedProperty */
         $this->lastBoostedAt = $this->createdAt;
     }
 

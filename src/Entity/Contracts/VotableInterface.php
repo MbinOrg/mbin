@@ -39,5 +39,8 @@ interface VotableInterface
 
     public function getUserVote(User $user): ?Vote;
 
+    /**
+     * @psalm-external-mutation-free
+     */
     public function updateLastBoostDate(): self;
 }

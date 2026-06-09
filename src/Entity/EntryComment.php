@@ -129,6 +129,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
 
+        /* @psalm-suppress UninitializedProperty */
         $this->lastBoostedAt = $this->createdAt;
     }
 

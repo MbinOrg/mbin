@@ -19,5 +19,6 @@
 
     <issueHandlers>
         <PossiblyUnusedReturnValue errorLevel="suppress" />
+        <!-- <MissingAbstractPureAnnotation errorLevel="suppress" /> -->
     </issueHandlers>
 </psalm>
