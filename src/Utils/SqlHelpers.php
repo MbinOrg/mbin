@@ -399,11 +399,7 @@ class SqlHelpers
     }
 
     /**
-     * @template T of int[]|string[]
-     *
      * @param string $sql the sql to fetch the single column, should contain a 'uId' Parameter
-     *
-     * @return T
      *
      * @throws Exception
      */

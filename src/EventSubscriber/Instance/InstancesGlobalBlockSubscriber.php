@@ -21,7 +21,7 @@ readonly class InstancesGlobalBlockSubscriber implements EventSubscriberInterfac
     }
 
     /**
-     * @return string[]
+     * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
      *
      * @psalm-pure
      */
