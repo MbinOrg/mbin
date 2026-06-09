@@ -71,7 +71,7 @@ class InstanceUserBlockApi extends InstanceBaseApi
     ))]
     #[OA\Response(
         response: 204,
-        description: 'Instance is blocked',
+        description: 'Instances were blocked',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
@@ -80,7 +80,7 @@ class InstanceUserBlockApi extends InstanceBaseApi
     )]
     #[OA\Response(
         response: 400,
-        description: 'Instance domain not set in request-body',
+        description: 'Instance domains not set in request-body',
         content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
     )]
     #[OA\Response(
@@ -126,7 +126,7 @@ class InstanceUserBlockApi extends InstanceBaseApi
     ))]
     #[OA\Response(
         response: 204,
-        description: 'Instance is unblocked',
+        description: 'Instances were unblocked',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
@@ -135,7 +135,7 @@ class InstanceUserBlockApi extends InstanceBaseApi
     )]
     #[OA\Response(
         response: 400,
-        description: 'Instance domain not set in request-body',
+        description: 'Instance domains not set in request-body',
         content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
     )]
     #[OA\Response(

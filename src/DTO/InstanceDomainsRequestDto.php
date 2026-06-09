@@ -6,6 +6,9 @@ namespace App\DTO;
 
 use OpenApi\Attributes as OA;
 
+/**
+ * @psalm-suppress all
+ */
 #[OA\Schema(required: ['domains'])]
 class InstanceDomainsRequestDto
 {
