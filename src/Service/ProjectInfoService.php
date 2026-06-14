@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Service;
 
 /**
- * A service that helps retrieving project information, like current version or project name.
+ * A service that helps to retrieve project information, like current version or project name.
  */
 class ProjectInfoService
 {
     // If updating version, please also update http client UA in [/config/packages/framework.yaml]
-    private const VERSION = '1.10.0-rc2'; // TODO: Retrieve the version from git tags or getenv()?
+    private const VERSION = '1.10.0'; // TODO: Retrieve the version from git tags or getenv()?
     private const NAME = 'mbin';
     private const CANONICAL_NAME = 'Mbin';
     private const REPOSITORY_URL = 'https://github.com/MbinOrg/mbin';
@@ -23,7 +23,7 @@ class ProjectInfoService
     /**
      * Get Mbin current project version.
      *
-     * @return version
+     * @return string version
      */
     public function getVersion(): string
     {
@@ -33,7 +33,7 @@ class ProjectInfoService
     /**
      * Get project name.
      *
-     * @return name
+     * @return string name
      */
     public function getName(): string
     {
@@ -53,7 +53,7 @@ class ProjectInfoService
     /**
      * Get user-agent name usable as HTTP client requests.
      *
-     * @return user-agent string
+     * @return string user-agent
      */
     public function getUserAgent(): string
     {
@@ -63,7 +63,7 @@ class ProjectInfoService
     /**
      * Get Mbin repository URL.
      *
-     * @return URL
+     * @return string URL
      */
     public function getRepositoryURL(): string
     {
