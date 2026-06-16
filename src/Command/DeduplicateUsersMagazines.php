@@ -20,14 +20,15 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'mbin:check:duplicates-users-magazines',
+    name: 'mbin:maintenance:deduplicate-users-magazines',
     description: 'Check for duplicate users and magazines.',
 )]
-class CheckDuplicatesUsersMagazines extends Command
+class DeduplicateUsersMagazines extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -45,7 +46,8 @@ class CheckDuplicatesUsersMagazines extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Check for duplicate users and magazines with interactive deletion options.');
+            ->setDescription('Check for duplicate users and magazines with interactive deletion options.')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run, don\'t delete anything (only for users + handle mode)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
