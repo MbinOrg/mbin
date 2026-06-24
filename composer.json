@@ -5,6 +5,12 @@
     "license": "AGPL-3.0-or-later",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "repositories": [
+      {
+          "type": "vcs",
+          "url": "https://github.com/ardentsword/rss-atom-bundle.git"
+      }
+    ],
     "require": {
         "php": ">=8.5",
         "ext-amqp": "*",
@@ -19,15 +25,15 @@
         "ext-redis": "*",
         "aws/aws-sdk-php": "^3.317.0",
         "babdev/pagerfanta-bundle": "^v4.4.0",
-        "debril/rss-atom-bundle": "^5.2.0",
-        "doctrine/doctrine-bundle": "^2.18.2",
-        "doctrine/doctrine-migrations-bundle": "^3.7.0",
-        "doctrine/instantiator": "2.0.0",
-        "doctrine/orm": "^3.6.2",
+        "debril/rss-atom-bundle": "dev-master#962cf0386727e7b872dc9f5487fe4d69c16254c7",
+        "doctrine/doctrine-bundle": "^3.2.4",
+        "doctrine/doctrine-migrations-bundle": "^4.0.0",
+        "doctrine/instantiator": "2.1.0",
+        "doctrine/orm": "^3.6.7",
         "embed/embed": "^4.4.12",
         "endroid/qr-code": "^6.0.3",
         "firebase/php-jwt": "7.0.2 as 6.11.1",
-        "friendsofsymfony/jsrouting-bundle": "^3.5.0",
+        "friendsofsymfony/jsrouting-bundle": "^3.6.0",
         "furqansiddiqui/bip39-mnemonic-php": "^0.1.7",
         "gumlet/php-image-resize": "^2.0.4",
         "imagine/imagine": "^1.5",
@@ -60,10 +66,9 @@
         "phpstan/phpdoc-parser": "^2.0.0",
         "predis/predis": "^3.0.1",
         "privacyportal/oauth2-privacyportal": "^0.1.1",
-        "runtime/frankenphp-symfony": "^0.2.0",
-        "scheb/2fa-backup-code": "^7.5.0",
-        "scheb/2fa-bundle": "^7.5.0",
-        "scheb/2fa-totp": "^7.5.0",
+        "scheb/2fa-backup-code": "^8.6.0",
+        "scheb/2fa-bundle": "^8.6.0",
+        "scheb/2fa-totp": "^8.6.0",
         "scienta/doctrine-json-functions": "^6.1.0",
         "stevenmaguire/oauth2-keycloak": "^5.1.0",
         "symfony/amqp-messenger": "*",
@@ -75,7 +80,7 @@
         "symfony/dotenv": "*",
         "symfony/emoji": "*",
         "symfony/expression-language": "*",
-        "symfony/flex": "^2.4.5",
+        "symfony/flex": "^2.11.0",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/http-client": "*",
@@ -85,7 +90,7 @@
         "symfony/mercure-bundle": "0.4.*",
         "symfony/messenger": "*",
         "symfony/mime": "*",
-        "symfony/monolog-bundle": "^4.0.1",
+        "symfony/monolog-bundle": "^4.0.2",
         "symfony/property-access": "*",
         "symfony/property-info": "*",
         "symfony/rate-limiter": "*",
@@ -100,15 +105,15 @@
         "symfony/twig-bundle": "*",
         "symfony/type-info": "*",
         "symfony/uid": "*",
-        "symfony/ux-autocomplete": "^2.18.0",
-        "symfony/ux-chartjs": "^2.18.0",
-        "symfony/ux-twig-component": "^2.18.1",
+        "symfony/ux-autocomplete": "^3.2.0",
+        "symfony/ux-chartjs": "^3.2.0",
+        "symfony/ux-twig-component": "^3.2.0",
         "symfony/validator": "*",
-        "symfony/webpack-encore-bundle": "^2.1.1",
+        "symfony/webpack-encore-bundle": "^2.4.1",
         "symfony/workflow": "*",
         "symfony/yaml": "*",
-        "symfonycasts/reset-password-bundle": "^1.22.0",
-        "symfonycasts/verify-email-bundle": "^1.17.0",
+        "symfonycasts/reset-password-bundle": "^1.25.0",
+        "symfonycasts/verify-email-bundle": "^1.18.0",
         "thenetworg/oauth2-azure": "^2.2.2",
         "twig/cssinliner-extra": "^3.10.0",
         "twig/extra-bundle": "^3.10.0",
@@ -155,9 +160,10 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true,
             "symfony/flex": true,
-            "symfony/runtime": true,
-            "ergebnis/composer-normalize": true
+            "symfony/runtime": true
         },
         "optimize-autoloader": true,
         "classmap-authoritative": true,
@@ -169,7 +175,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "docker": true,
+            "require": "8.1.*"
         }
     },
     "scripts": {
