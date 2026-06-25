@@ -9,6 +9,7 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\ModeratorRequestRepository;
 use App\Service\MagazineManager;
+use App\Utils\Polyfills;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ class MagazineModeratorRequestsController extends AbstractController
     ): Response {
         return $this->render('magazine/panel/moderator_requests.html.twig', [
             'magazine' => $magazine,
-            'requests' => $this->repository->findAllPaginated($magazine, $request->get('page', 1)),
+            'requests' => $this->repository->findAllPaginated($magazine, Polyfills::requestParam($request, 'page', 1)),
         ]);
     }
 

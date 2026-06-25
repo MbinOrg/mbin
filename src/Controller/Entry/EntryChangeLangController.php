@@ -7,6 +7,7 @@ namespace App\Controller\Entry;
 use App\Controller\AbstractController;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class EntryChangeLangController extends AbstractController
         Entry $entry,
         Request $request,
     ): Response {
-        $entry->lang = $request->get('lang')['lang'];
+        $entry->lang = Polyfills::requestParam($request, 'lang')['lang'];
 
         $this->entityManager->flush();
 

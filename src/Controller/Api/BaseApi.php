@@ -66,6 +66,7 @@ use App\Service\IpResolver;
 use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
@@ -195,7 +196,7 @@ class BaseApi extends AbstractController
             $access = new OAuth2ClientAccess();
             $access->setClient($client);
             $access->setCreatedAt(new \DateTimeImmutable());
-            $access->setPath($this->request->getCurrentRequest()->get('_route'));
+            $access->setPath(Polyfills::requestParam($this->request->getCurrentRequest(), '_route'));
             $this->clientAccessRepository->save($access, flush: true);
         }
     }
@@ -358,19 +359,19 @@ class BaseApi extends AbstractController
 
     public function getPerPage(Request $request, int $default): int
     {
-        return self::constrainPerPage($request->get('perPage', $default));
+        return self::constrainPerPage(Polyfills::requestParam($request, 'perPage', $default));
     }
 
     public function handleLanguageCriteria(Criteria $criteria): void
     {
-        $usePreferred = filter_var($this->request->getCurrentRequest()->get('usePreferredLangs', false), FILTER_VALIDATE_BOOL);
+        $usePreferred = filter_var(Polyfills::requestParam($this->request->getCurrentRequest(), 'usePreferredLangs', false), FILTER_VALIDATE_BOOL);
 
         if ($usePreferred && null === $this->getUser()) {
             // Debating between AccessDenied and BadRequest exceptions for this
             throw new AccessDeniedHttpException('You must be logged in to use your preferred languages');
         }
 
-        $languages = $usePreferred ? $this->getUserOrThrow()->preferredLanguages : $this->request->getCurrentRequest()->get('lang');
+        $languages = $usePreferred ? $this->getUserOrThrow()->preferredLanguages : Polyfills::requestParam($this->request->getCurrentRequest(), 'lang');
         if (null !== $languages) {
             if (\is_string($languages)) {
                 $languages = explode(',', $languages);
@@ -426,7 +427,7 @@ class BaseApi extends AbstractController
                 throw new BadRequestHttpException('Failed to create file');
             }
 
-            $image->altText = $this->request->getCurrentRequest()->get('alt', null);
+            $image->altText = Polyfills::requestParam($this->request->getCurrentRequest(), 'alt', null);
         } catch (\Exception $e) {
             if (null !== $uploaded && file_exists($uploaded->getPathname())) {
                 unlink($uploaded->getPathname());

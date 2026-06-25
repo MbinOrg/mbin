@@ -12,6 +12,7 @@ use App\Entity\MagazineBan;
 use App\Factory\MagazineFactory;
 use App\Repository\MagazineRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -107,7 +108,7 @@ class MagazineBansRetrieveApi extends MagazineBaseApi
         $bans = $repository->findBans(
             $magazine,
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];
