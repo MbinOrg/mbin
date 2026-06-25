@@ -704,12 +704,12 @@
         "version": "v2.4.0"
     },
     "symfony/stimulus-bundle": {
-        "version": "2.32",
+        "version": "3.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.24",
-            "ref": "3357f2fa6627b93658d8e13baa416b2a94a50c5f"
+            "ref": "d21494ed2ddbde38942e8278299a23ce5cf4a9a1"
         },
         "files": [
             "assets/controllers.json",
