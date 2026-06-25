@@ -1,4 +1,4 @@
-const Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore').default;
 //const sass = require('sass');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
@@ -56,14 +56,11 @@ Encore
     .enableVersioning(Encore.isProduction())
 
     // configure Babel
-    // .configureBabel((config) => {
-    //     config.plugins.push('@babel/a-babel-plugin');
-    // })
-
-    // enables and configure @babel/preset-env polyfills
-    .configureBabelPresetEnv((config) => {
-        config.useBuiltIns = 'usage';
-        config.corejs = '3.38';
+    .configureBabel((config) => {
+        config.plugins.push([
+            'polyfill-corejs3',
+            { "method": "usage-global", "version": "3.48" }
+        ]);
     })
 
     // enables Sass/SCSS support

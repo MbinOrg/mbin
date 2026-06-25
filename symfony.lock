@@ -104,9 +104,6 @@
             "config/routes/fos_js_routing.yaml"
         ]
     },
-    "furqansiddiqui/bip39-mnemonic-php": {
-        "version": "0.1.4"
-    },
     "gumlet/php-image-resize": {
         "version": "2.0.1"
     },
