@@ -14,19 +14,6 @@
             "config/packages/dama_doctrine_test_bundle.yaml"
         ]
     },
-    "debril/rss-atom-bundle": {
-        "version": "5.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "4.0",
-            "ref": "2c23ed747eda9f4c13f5e7eb55fffa1091fdd505"
-        },
-        "files": [
-            "config/packages/rss_atom.yaml",
-            "config/routes/rss_atom.yaml"
-        ]
-    },
     "doctrine/collections": {
         "version": "1.6.7"
     },
@@ -152,9 +139,6 @@
         "files": [
             "config/packages/knpu_oauth2_client.yaml"
         ]
-    },
-    "lcobucci/clock": {
-        "version": "2.0.0"
     },
     "lcobucci/jwt": {
         "version": "4.1.4"
@@ -293,18 +277,6 @@
     },
     "paragonie/random_compat": {
         "version": "v9.99.100"
-    },
-    "php-http/discovery": {
-        "version": "1.20",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "1.18",
-            "ref": "f45b5dd173a27873ab19f5e3180b2f661c21de02"
-        },
-        "files": [
-            "config/packages/http_discovery.yaml"
-        ]
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"

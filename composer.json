@@ -5,12 +5,6 @@
     "license": "AGPL-3.0-or-later",
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [
-      {
-          "type": "vcs",
-          "url": "https://github.com/ardentsword/rss-atom-bundle.git"
-      }
-    ],
     "require": {
         "php": ">=8.5",
         "ext-amqp": "*",
@@ -25,7 +19,6 @@
         "ext-redis": "*",
         "aws/aws-sdk-php": "^3.317.0",
         "babdev/pagerfanta-bundle": "^v4.4.0",
-        "debril/rss-atom-bundle": "dev-master#962cf0386727e7b872dc9f5487fe4d69c16254c7",
         "doctrine/doctrine-bundle": "^3.2.4",
         "doctrine/doctrine-migrations-bundle": "^4.0.0",
         "doctrine/instantiator": "2.1.0",
