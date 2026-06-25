@@ -12,7 +12,7 @@
         "@symfony/stimulus-bundle": "file:vendor/symfony/stimulus-bundle/assets",
         "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
         "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets",
-        "@symfony/webpack-encore": "^5.3.1",
+        "@symfony/webpack-encore": "^6.0.0",
         "chart.js": "^3.8.2",
         "core-js": "^3.49.0",
         "emoji-picker-element": "^1.29.1",
@@ -31,7 +31,7 @@
         "tom-select": "^2.5.2",
         "typescript": "^5.9.3",
         "webpack": "^5.105.4",
-        "webpack-cli": "^5.1.4",
+        "webpack-cli": "^6.0.0",
         "webpack-notifier": "^1.15.0"
     },
     "name": "mbin",
