@@ -539,12 +539,12 @@
         ]
     },
     "symfony/mailgun-mailer": {
-        "version": "4.4",
+        "version": "8.1",
         "recipe": {
             "repo": "github.com/symfony/recipes",
-            "branch": "master",
+            "branch": "main",
             "version": "4.4",
-            "ref": "addcb559b32d9dbb4843826b063565e1b15a2a57"
+            "ref": "808e7052971863a6b94df61807f41a71d480885b"
         }
     },
     "symfony/maker-bundle": {
