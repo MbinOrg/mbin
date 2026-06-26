@@ -53,6 +53,7 @@
         "pagerfanta/doctrine-dbal-adapter": "^v4.8.0",
         "pagerfanta/doctrine-orm-adapter": "^v4.8.0",
         "pagerfanta/twig": "^4.8.0",
+        "php-feed-io/feed-io": "^6.3",
         "phpdocumentor/reflection-docblock": "^6.0.3",
         "phpseclib/phpseclib": "^3.0.55",
         "phpstan/phpdoc-parser": "^2.3.2",

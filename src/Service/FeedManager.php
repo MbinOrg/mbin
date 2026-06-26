@@ -21,31 +21,34 @@ use FeedIo\Feed\Item;
 use FeedIo\Feed\Node\Category;
 use FeedIo\FeedInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class FeedManager
+readonly class FeedManager
 {
+
     public function __construct(
-        private readonly SettingsManager $settings,
-        private readonly ContentRepository $contentRepository,
-        private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository,
-        private readonly TagLinkRepository $tagLinkRepository,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Security $security,
-        private readonly MediaExtensionRuntime $mediaExtensionRuntime,
-        private readonly MentionManager $mentionManager,
-        private readonly ImageManager $imageManager,
-        private readonly MarkdownConverter $markdownConverter,
+        private SettingsManager       $settings,
+        private ContentRepository     $contentRepository,
+        private MagazineRepository    $magazineRepository,
+        private UserRepository        $userRepository,
+        private TagLinkRepository     $tagLinkRepository,
+        private UrlGeneratorInterface $urlGenerator,
+        private Security              $security,
+        private MediaExtensionRuntime $mediaExtensionRuntime,
+        private MentionManager        $mentionManager,
+        private ImageManager          $imageManager,
+        private MarkdownConverter     $markdownConverter,
+        private Packages              $packages
     ) {
     }
 
     public function getFeed(Request $request): FeedInterface
     {
         $criteria = $this->getCriteriaFromRequest($request);
-        $feed = $this->createFeed($criteria);
+        $feed = $this->createFeed($criteria, $request->getUriForPath(''));
 
         $content = $this->contentRepository->findByCriteriaCursored($criteria, $this->contentRepository->guessInitialCursor($criteria->sortOption));
 
@@ -56,7 +59,7 @@ class FeedManager
         return $feed;
     }
 
-    private function createFeed(Criteria $criteria): Feed
+    private function createFeed(Criteria $criteria, string $baseUrl): Feed
     {
         $feed = new Feed();
         if ($criteria->magazine) {
@@ -71,7 +74,8 @@ class FeedManager
         }
 
         $feed->setTitle($title);
-        $feed->setDescription($this->settings->get('KBIN_META_DESCRIPTION'));
+        $feed->setDescription($this->settings->getDto()->KBIN_META_DESCRIPTION);
+        $feed->setLogo($baseUrl.$this->packages->getUrl('favicon.svg'));
         $feed->setUrl($url);
 
         return $feed;
