@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28ab55fb959c559296dd9a8d6ed2f293",
+    "content-hash": "c52878e57d471b7b800e79041d72bb06",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -18451,14 +18451,7 @@
             "time": "2025-12-08T11:19:18+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "firebase/php-jwt",
-            "version": "7.1.0.0",
-            "alias": "6.11.1",
-            "alias_normalized": "6.11.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {},
     "prefer-stable": true,
