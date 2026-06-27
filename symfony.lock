@@ -813,8 +813,8 @@
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.1",
-            "ref": "b346dae458e64a1921ded2125993d94bd719a8dd"
+            "version": "2.2",
+            "ref": "3a870e92b23917ae95f0796a0599b1aca11d4bfd"
         },
         "files": [
             "assets/app.js",

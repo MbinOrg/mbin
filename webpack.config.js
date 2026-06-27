@@ -1,5 +1,4 @@
 import Encore from '@symfony/webpack-encore';
-//const sass = require('sass');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -55,33 +54,37 @@ Encore
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
+    // Configure JS and CSS minimizers
+    .configureJsMinimizerPlugin((options, MinimizerPlugin) => {
+        options.minify = MinimizerPlugin.esbuildMinify
+    })
+    .configureCssMinimizerPlugin((options, MinimizerPlugin) => {
+        options.minify = MinimizerPlugin.lightningCssMinify;
+    })
+
     // configure Babel
     .configureBabel((config) => {
         config.plugins.push([
             'polyfill-corejs3',
-            { "method": "usage-global", "version": "3.48" }
+            { method: 'usage-global', version: '3.49' }
         ]);
     })
 
     // enables Sass/SCSS support
-    .enableSassLoader(function(options) {
-        // https://sass-lang.com/documentation/js-api/interfaces/options/
-        // Uncomment this line (and the "require" at the top) to use "pkg:" URLs in Sass
-        //options.sassOptions = {importers: [new sass.NodePackageImporter()]};
-    })
+    .enableSassLoader()
 
-// uncomment if you use TypeScript
-//.enableTypeScriptLoader()
+    // uncomment if you use TypeScript
+    //.enableTypeScriptLoader()
 
-// uncomment if you use React
-//.enableReactPreset()
+    // uncomment if you use React
+    //.enableReactPreset()
 
-// uncomment to get integrity="..." attributes on your script & link tags
-// requires WebpackEncoreBundle 1.4 or higher
-//.enableIntegrityHashes(Encore.isProduction())
+    // uncomment to get integrity="..." attributes on your script & link tags
+    // requires WebpackEncoreBundle 1.4 or higher
+    //.enableIntegrityHashes(Encore.isProduction())
 
-// uncomment if you're having problems with a jQuery plugin
-//.autoProvidejQuery()
+    // uncomment if you're having problems with a jQuery plugin
+    //.autoProvidejQuery()
 ;
 
 export default await Encore.getWebpackConfig();
