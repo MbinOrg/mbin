@@ -51,12 +51,10 @@ final class AddFieldsOnUserEdit implements EventSubscriberInterface
     private function getConstraint(string $maxSize = '2M'): ImageConstraint
     {
         return new ImageConstraint(
-            [
-                'detectCorrupted' => true,
-                'groups' => ['upload'],
-                'maxSize' => $maxSize,
-                'mimeTypes' => ImageManager::IMAGE_MIMETYPES,
-            ]
+            maxSize: $maxSize,
+            mimeTypes: ImageManager::IMAGE_MIMETYPES,
+            detectCorrupted: true,
+            groups: ['upload'],
         );
     }
 }
