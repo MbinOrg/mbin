@@ -31,8 +31,6 @@ doctrine:
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: false
-        controller_resolver:
-            auto_mapping: false
         mappings:
             App:
                 type: attribute

@@ -1,4 +1,4 @@
-const Encore = require('@symfony/webpack-encore').default;
+import Encore from '@symfony/webpack-encore';
 //const sass = require('sass');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
@@ -84,4 +84,4 @@ Encore
 //.autoProvidejQuery()
 ;
 
-module.exports = Encore.getWebpackConfig();
+export default await Encore.getWebpackConfig();
