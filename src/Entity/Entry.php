@@ -181,7 +181,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     {
         $this->comments->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
             ->orderBy(['createdAt' => 'DESC'])
             ->setMaxResults(1);
@@ -245,7 +245,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function updateCounts(): self
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE));
 
         $this->commentCount = $this->comments->matching($criteria)->count();
@@ -381,7 +381,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;

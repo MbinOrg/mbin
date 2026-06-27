@@ -220,7 +220,7 @@ class MagazineRepository extends ServiceEntityRepository
         ?int $page = 1,
         int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->orderBy(['isOwner' => 'DESC'])
             ->orderBy(['createdAt' => 'ASC']);
 
@@ -237,7 +237,7 @@ class MagazineRepository extends ServiceEntityRepository
 
     public function findBans(Magazine $magazine, ?int $page = 1, int $perPage = self::PER_PAGE): PagerfantaInterface
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->orderBy(['createdAt' => 'DESC']);
