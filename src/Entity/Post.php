@@ -21,6 +21,7 @@ use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -134,7 +135,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         $this->comments->get(-1);
 
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -159,7 +160,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getBestComments(?User $user = null): Collection
     {
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
-            ->orderBy(['upVotes' => 'DESC', 'createdAt' => 'ASC']);
+            ->orderBy(['upVotes' => Order::Descending, 'createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
         $comments = $this->handlePrivateComments($comments, $user);
@@ -191,7 +192,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getLastComments(?User $user = null): Collection
     {
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
 

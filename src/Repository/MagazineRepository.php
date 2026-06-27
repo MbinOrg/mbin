@@ -19,6 +19,7 @@ use App\Utils\SubscriptionSort;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Doctrine\Collections\SelectableAdapter;
@@ -221,8 +222,8 @@ class MagazineRepository extends ServiceEntityRepository
         int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
-            ->orderBy(['isOwner' => 'DESC'])
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['isOwner' => Order::Descending])
+            ->orderBy(['createdAt' => Order::Ascending]);
 
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
         try {
@@ -240,7 +241,7 @@ class MagazineRepository extends ServiceEntityRepository
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
-            ->orderBy(['createdAt' => 'DESC']);
+            ->orderBy(['createdAt' => Order::Descending]);
 
         $bans = new Pagerfanta(new SelectableAdapter($magazine->bans, $criteria));
         try {

@@ -23,6 +23,7 @@ use App\Repository\EntryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -183,7 +184,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
         $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
