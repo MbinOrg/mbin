@@ -15,13 +15,12 @@ final class ReportListComponent
     public PagerfantaInterface $reports;
     public string $routeName = 'admin_reports';
     public ?string $magazineName = null;
+    public ?string $requestedStatus;
 
     public function __construct(
-        private readonly RequestStack $requestStack,
-    ) {}
-
-    public function getStatus(): string {
-        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'status');
+        RequestStack $requestStack,
+    ) {
+        $this->requestedStatus = Polyfills::requestParam($requestStack->getCurrentRequest(), 'status', null);
     }
 
 }

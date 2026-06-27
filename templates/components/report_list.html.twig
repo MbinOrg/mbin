@@ -46,7 +46,7 @@
             {{ report.reason }}
         </div>
         <div class="actions">
-            {% if getStatus() is same as REPORT_ANY %}
+            {% if requestedStatus is same as REPORT_ANY %}
                 <small class="text-muted">{{ report.status }}</small>
             {% endif %}
             {% if report.status is not same as REPORT_CLOSED %}
