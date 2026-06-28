@@ -139,9 +139,9 @@ input[type=radio] {
   -webkit-appearance: none;
   appearance: none;
   font-size: 0.9rem;
-  display: grid;
+  display: grid !important;
   margin: 0px;
-  width: 1.5rem;
+  width: 1.5rem !important;
   height: 1.5rem;
   justify-content: center;
   align-items: center;
