@@ -17,7 +17,7 @@ export default class extends Controller {
     emojiAutocompleteActive = false;
     mentionAutocompleteActive = false;
 
-    abortController;
+    abortController = null;
     requestActive = false;
 
     selectedSuggestionIndex = 0;
@@ -114,7 +114,9 @@ export default class extends Controller {
         this.selectedSuggestionIndex = 0;
         this.emojiAutocompleteActive = false;
         this.mentionAutocompleteActive = false;
-        this.abortController.abort();
+        if (null !== this.abortController) {
+            this.abortController.abort();
+        }
         this.requestActive = false;
         document.getElementById('user-suggestions')?.remove();
         document.getElementById('emoji-suggestions')?.remove();
