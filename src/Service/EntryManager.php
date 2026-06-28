@@ -282,7 +282,7 @@ class EntryManager implements ContentManagerInterface
 
         $image = $entry->image?->getId();
 
-        $sort = new Criteria(null, ['createdAt' => Order::Descending]);
+        $sort = new Criteria(expression: null, orderings: ['createdAt' => Order::Descending], accessRawFieldValues: true);
         foreach ($entry->comments->matching($sort) as $comment) {
             $this->entryCommentManager->purge($user, $comment);
         }

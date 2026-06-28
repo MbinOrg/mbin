@@ -102,7 +102,7 @@ class MonitoringExecutionContext
      */
     public function getQueriesSorted(string $sortBy = 'durationMilliseconds', string $sortDirection = 'DESC'): Collection
     {
-        $criteria = new Criteria(orderings: [$sortBy => $sortDirection]);
+        $criteria = new Criteria(orderings: [$sortBy => $sortDirection], accessRawFieldValues: true);
 
         return $this->queries->matching($criteria);
     }
@@ -163,7 +163,7 @@ class MonitoringExecutionContext
      */
     public function getRootTwigRenders(): Collection
     {
-        $criteria = new Criteria(Criteria::expr()->isNull('parent'));
+        $criteria = new Criteria(expression: Criteria::expr()->isNull('parent'), accessRawFieldValues: true);
 
         return $this->twigRenders->matching($criteria);
     }
@@ -173,7 +173,7 @@ class MonitoringExecutionContext
      */
     public function getRequestsSorted(string $sortBy = 'durationMilliseconds', string $sortDirection = 'DESC'): Collection
     {
-        $criteria = new Criteria(orderings: [$sortBy => $sortDirection]);
+        $criteria = new Criteria(orderings: [$sortBy => $sortDirection], accessRawFieldValues: true);
 
         return $this->curlRequests->matching($criteria);
     }
