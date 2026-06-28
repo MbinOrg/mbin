@@ -37,7 +37,7 @@ class Util {
     };
 
     static setAttributes = function(el, attrs) {
-        for (let key in attrs) {
+        for (const key in attrs) {
             el.setAttribute(key, attrs[key]);
         }
     };
