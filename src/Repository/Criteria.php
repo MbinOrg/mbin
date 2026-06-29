@@ -121,6 +121,9 @@ abstract class Criteria
     /** @var int[]|null */
     public ?array $cachedUserBlockedDomains = null;
 
+    /** @var string[]|null */
+    public ?array $cachedUserBlockedInstances = null;
+
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';
     public const THEME_AUTO = 'default';
@@ -360,5 +363,6 @@ abstract class Criteria
         $this->cachedUserBlocks = $sqlHelpers->getCachedUserBlocks($loggedInUser);
         $this->cachedUserBlockedDomains = $sqlHelpers->getCachedUserDomainBlocks($loggedInUser);
         $this->cachedUserBlockedMagazines = $sqlHelpers->getCachedUserMagazineBlocks($loggedInUser);
+        $this->cachedUserBlockedInstances = $sqlHelpers->getCachedUserInstanceBlocks($loggedInUser);
     }
 }

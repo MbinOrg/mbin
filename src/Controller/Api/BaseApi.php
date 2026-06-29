@@ -50,6 +50,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
@@ -127,6 +128,7 @@ class BaseApi extends AbstractController
         protected readonly UserFactory $userFactory,
         protected readonly ReputationRepository $reputationRepository,
         protected readonly InstanceRepository $instanceRepository,
+        protected readonly InstanceBlockRepository $instanceBlockRepository,
         protected readonly InstanceManager $instanceManager,
         protected readonly TranslatorInterface $translator,
     ) {
