@@ -4,7 +4,7 @@ COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt update -y
+RUN apt update && apt upgrade -y
 
 # install other dev dependencies
 RUN apt install -y lsb-release ca-certificates curl wget unzip gnupg apt-transport-https acl nodejs npm
