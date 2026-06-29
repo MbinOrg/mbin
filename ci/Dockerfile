@@ -26,7 +26,7 @@ RUN yes '' | pecl install amqp redis \
 
 # Unlimited memory
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-RUN echo "memory_limit = -1" >>/etc/php/8.5/cli/conf.d/docker-php-memlimit.ini
+RUN sed -i 's/memory_limit = 128M/memory_limit = -1/' "$PHP_INI_DIR/php.ini"
 RUN printf '[www]\nphp_admin_value[memory_limit] = -1\n' > /usr/local/etc/php-fpm.d/memory.conf
 
 # Add cs2pr binary using wget
