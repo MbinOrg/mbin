@@ -32,6 +32,7 @@ use Doctrine\ORM\Mapping\Index;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Webmozart\Assert\Assert;
 
@@ -115,6 +116,8 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public ?string $ip = null;
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
+    #[OneToOne(targetEntity: Poll::class, inversedBy: 'entry')]
+    public ?Poll $poll = null;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
