@@ -10,11 +10,12 @@
               method="post">
             <button type="submit"
                     class="{{ html_classes('btn btn__secondary action', {'active': is_magazine_subscribed(magazine)}) }}"
+                    title="{% if is_magazine_subscribed(magazine) %}{{ 'unsubscribe'|trans }}{% else %}{{ 'subscribe'|trans }}{% endif %}"
                     data-action="subs#send">
                 {% if is_magazine_subscribed(magazine) %}
-                    <i class="fa-sharp fa-solid fa-folder-minus" aria-hidden="true"></i><span>{{ 'unsubscribe'|trans }}</span>
+                    <i class="fa-sharp fa-solid fa-folder-minus" aria-hidden="true"></i><span>{{ 'unsubscribe_short'|trans }}</span>
                 {% else %}
-                    <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe'|trans }}</span>
+                    <i class="fa-sharp fa-solid fa-folder-plus" aria-hidden="true"></i><span>{{ 'subscribe_short'|trans }}</span>
                 {% endif %}
             </button>
         </form>
