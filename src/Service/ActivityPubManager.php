@@ -840,7 +840,7 @@ class ActivityPubManager
             if (null === $modToRemove) {
                 continue;
             }
-            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+            $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)->where(Criteria::expr()->eq('magazine', $magazine));
             $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
             $this->logger->info('[ActivityPubManager::handleModeratorArray] Removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
             $this->magazineManager->removeModerator($modObject, null);

@@ -15,36 +15,40 @@ use App\Repository\TagLinkRepository;
 use App\Repository\UserRepository;
 use App\Twig\Runtime\MediaExtensionRuntime;
 use App\Utils\IriGenerator;
+use App\Utils\Polyfills;
 use FeedIo\Feed;
 use FeedIo\Feed\Item;
 use FeedIo\Feed\Node\Category;
 use FeedIo\FeedInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class FeedManager
+readonly class FeedManager
 {
+
     public function __construct(
-        private readonly SettingsManager $settings,
-        private readonly ContentRepository $contentRepository,
-        private readonly MagazineRepository $magazineRepository,
-        private readonly UserRepository $userRepository,
-        private readonly TagLinkRepository $tagLinkRepository,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Security $security,
-        private readonly MediaExtensionRuntime $mediaExtensionRuntime,
-        private readonly MentionManager $mentionManager,
-        private readonly ImageManager $imageManager,
-        private readonly MarkdownConverter $markdownConverter,
+        private SettingsManager       $settings,
+        private ContentRepository     $contentRepository,
+        private MagazineRepository    $magazineRepository,
+        private UserRepository        $userRepository,
+        private TagLinkRepository     $tagLinkRepository,
+        private UrlGeneratorInterface $urlGenerator,
+        private Security              $security,
+        private MediaExtensionRuntime $mediaExtensionRuntime,
+        private MentionManager        $mentionManager,
+        private ImageManager          $imageManager,
+        private MarkdownConverter     $markdownConverter,
+        private Packages              $packages
     ) {
     }
 
     public function getFeed(Request $request): FeedInterface
     {
         $criteria = $this->getCriteriaFromRequest($request);
-        $feed = $this->createFeed($criteria);
+        $feed = $this->createFeed($criteria, $request->getUriForPath(''));
 
         $content = $this->contentRepository->findByCriteriaCursored($criteria, $this->contentRepository->guessInitialCursor($criteria->sortOption));
 
@@ -55,7 +59,7 @@ class FeedManager
         return $feed;
     }
 
-    private function createFeed(Criteria $criteria): Feed
+    private function createFeed(Criteria $criteria, string $baseUrl): Feed
     {
         $feed = new Feed();
         if ($criteria->magazine) {
@@ -70,7 +74,8 @@ class FeedManager
         }
 
         $feed->setTitle($title);
-        $feed->setDescription($this->settings->get('KBIN_META_DESCRIPTION'));
+        $feed->setDescription($this->settings->getDto()->KBIN_META_DESCRIPTION);
+        $feed->setLogo($baseUrl.$this->packages->getUrl('favicon.svg'));
         $feed->setUrl($url);
 
         return $feed;
@@ -140,14 +145,14 @@ class FeedManager
         $criteria = new ContentPageView(1, $this->security);
         $criteria->sortOption = Criteria::SORT_NEW;
 
-        $content = $request->get('content');
+        $content = Polyfills::requestParam($request, 'content');
         if ($content && \in_array($content, Criteria::CONTENT_OPTIONS, true)) {
             $criteria->setContent($content);
         } else {
             $criteria->setContent(Criteria::CONTENT_THREADS);
         }
 
-        if ($magazineName = $request->get('magazine')) {
+        if ($magazineName = Polyfills::requestParam($request, 'magazine')) {
             $magazine = $this->magazineRepository->findOneBy(['name' => $magazineName]);
             if (!$magazine) {
                 throw new NotFoundHttpException("The magazine $magazineName does not exist");
@@ -155,7 +160,7 @@ class FeedManager
             $criteria->magazine = $magazine;
         }
 
-        if ($userName = $request->get('user')) {
+        if ($userName = Polyfills::requestParam($request, 'user')) {
             $user = $this->userRepository->findOneByUsername($userName);
             if (!$user) {
                 throw new NotFoundHttpException("The user $userName does not exist");
@@ -163,21 +168,21 @@ class FeedManager
             $criteria->user = $user;
         }
 
-        if ($domain = $request->get('domain')) {
+        if ($domain = Polyfills::requestParam($request, 'domain')) {
             $criteria->setDomain($domain);
         }
 
-        if ($tag = $request->get('tag')) {
+        if ($tag = Polyfills::requestParam($request, 'tag')) {
             $criteria->tag = $tag;
         }
 
-        if ($sortBy = $request->get('sortBy')) {
+        if ($sortBy = Polyfills::requestParam($request, 'sortBy')) {
             $criteria->showSortOption($sortBy);
         }
 
         // Since we currently do not have a way of authenticating the user, these feeds do not work.
         // They are also not being generated and therefore not used in the sidebar.
-        // $id = $request->get('id');
+        // $id = Polyfills::requestParam($request, 'id');
         // if ('sub' === $id) {
         //     $criteria->subscribed = true;
         // } elseif ('mod' === $id) {

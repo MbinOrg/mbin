@@ -14,6 +14,7 @@ use App\Factory\UserFactory;
 use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
 use App\Service\UserSettingsManager;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -298,16 +299,16 @@ class UserRetrieveApi extends UserBaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $group = $request->get('group', UserRepository::USERS_ALL);
-        $withAboutRaw = $request->get('withAbout');
+        $group = Polyfills::requestParam($request, 'group', UserRepository::USERS_ALL);
+        $withAboutRaw = Polyfills::requestParam($request, 'withAbout');
         $withAbout = null === $withAboutRaw ? false : \boolval($withAboutRaw);
 
         $users = $userRepository->findPaginated(
             $this->getPageNb($request),
             $withAbout,
             $group,
-            $this->constrainPerPage($request->get('perPage', UserRepository::PER_PAGE)),
-            $request->get('q'),
+            $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE)),
+            Polyfills::requestParam($request, 'q'),
         );
 
         $dtos = [];
@@ -408,7 +409,7 @@ class UserRetrieveApi extends UserBaseApi
         $users = $repository->findFollowing(
             $this->getPageNb($request),
             $user,
-            self::constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -500,7 +501,7 @@ class UserRetrieveApi extends UserBaseApi
         $users = $repository->findFollowers(
             $this->getPageNb($request),
             $user,
-            self::constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -589,7 +590,7 @@ class UserRetrieveApi extends UserBaseApi
         $users = $repository->findFollowing(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -673,7 +674,7 @@ class UserRetrieveApi extends UserBaseApi
         $users = $repository->findFollowers(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -752,7 +753,7 @@ class UserRetrieveApi extends UserBaseApi
         $users = $repository->findBlockedUsers(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];

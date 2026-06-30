@@ -52,7 +52,7 @@ trait VotableTrait
 
     public function getUserVote(User $user): ?Vote
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->votes->matching($criteria)->first() ?: null;
@@ -70,7 +70,7 @@ trait VotableTrait
     {
         $this->votes->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('choice', self::VOTE_UP));
 
         return $this->votes->matching($criteria);
@@ -80,7 +80,7 @@ trait VotableTrait
     {
         $this->votes->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('choice', self::VOTE_DOWN));
 
         return $this->votes->matching($criteria);

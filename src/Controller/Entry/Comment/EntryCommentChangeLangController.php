@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ class EntryCommentChangeLangController extends AbstractController
         EntryComment $comment,
         Request $request,
     ): Response {
-        $comment->lang = $request->get('lang')['lang'];
+        $comment->lang = Polyfills::requestParam($request, 'lang')['lang'];
 
         $this->entityManager->flush();
 

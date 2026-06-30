@@ -23,6 +23,7 @@ use App\Repository\EntryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -181,9 +182,9 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     {
         $this->comments->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -245,7 +246,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function updateCounts(): self
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE));
 
         $this->commentCount = $this->comments->matching($criteria)->count();
@@ -381,7 +382,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;

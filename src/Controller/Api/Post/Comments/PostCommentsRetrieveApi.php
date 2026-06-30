@@ -13,6 +13,7 @@ use App\PageView\PostCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\PostCommentRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -193,9 +194,9 @@ class PostCommentsRetrieveApi extends PostsBaseApi
         $request = $this->request->getCurrentRequest();
         $criteria = new PostCommentPageView($this->getPageNb($request), $security);
         $criteria->post = $post;
-        $criteria->sortOption = $criteria->resolveSort($request->get('sort', Criteria::SORT_HOT));
-        $criteria->time = $criteria->resolveTime($request->get('time', Criteria::TIME_ALL));
-        $criteria->perPage = self::constrainPerPage($request->get('perPage', PostCommentRepository::PER_PAGE));
+        $criteria->sortOption = $criteria->resolveSort(Polyfills::requestParam($request, 'sort', Criteria::SORT_HOT));
+        $criteria->time = $criteria->resolveTime(Polyfills::requestParam($request, 'time', Criteria::TIME_ALL));
+        $criteria->perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', PostCommentRepository::PER_PAGE));
 
         $this->handleLanguageCriteria($criteria);
 
