@@ -349,7 +349,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 
 [See also Symfony requirements](https://symfony.com/doc/current/setup.html#technical-requirements)
 
-- PHP version: 8.2 or higher
+- PHP version: 8.4 or higher
 - GD or Imagemagick PHP extension
 - NGINX / Apache / Caddy
 - PostgreSQL
