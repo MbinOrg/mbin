@@ -85,7 +85,7 @@ class MagazineReportsRetrieveApi extends MagazineBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($magazine->getId() !== $report->magazine->getId()) {
+        if ($magazine->getId() !== $report->magazine?->getId()) {
             throw new NotFoundHttpException('The report was not found in the magazine');
         }
 

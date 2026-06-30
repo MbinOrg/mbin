@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ReportDto;
+use App\Entity\Contracts\ContentInterface;
+use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Report;
 use App\Entity\User;
 use App\Event\Report\ReportApprovedEvent;
 use App\Event\Report\ReportRejectedEvent;
 use App\Event\Report\SubjectReportedEvent;
 use App\Exception\SubjectHasBeenReportedException;
-use App\Factory\ContentManagerFactory;
 use App\Factory\ReportFactory;
 use App\Repository\ReportRepository;
+use App\Service\Contracts\ContentManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -24,7 +26,7 @@ class ReportManager
         private readonly ReportRepository $repository,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ContentManagerFactory $managerFactory,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
     ) {
     }
 
@@ -51,14 +53,14 @@ class ReportManager
 
     public function reject(Report $report, User $moderator): void
     {
-        $manager = $this->managerFactory->createManager($report->getSubject());
-
         $report->status = Report::STATUS_REJECTED;
         $report->consideredBy = $moderator;
         $report->consideredAt = new \DateTimeImmutable();
 
-        if ($report->getSubject()->isTrashed()) {
-            $manager->restore($moderator, $report->getSubject());
+        $subject = $report->getSubject();
+        if ($subject instanceof ContentVisibilityInterface && $subject->isTrashed()) {
+            $manager = $this->serviceRegistry->getService($subject, ContentManagerInterface::class);
+            $manager->restore($moderator, $subject);
         }
 
         $this->entityManager->flush();
@@ -68,13 +70,15 @@ class ReportManager
 
     public function accept(Report $report, User $moderator): void
     {
-        $manager = $this->managerFactory->createManager($report->getSubject());
-
         $report->status = Report::STATUS_APPROVED;
         $report->consideredBy = $moderator;
         $report->consideredAt = new \DateTimeImmutable();
 
-        $manager->delete($moderator, $report->getSubject());
+        $subject = $report->getSubject();
+        if($subject instanceof ContentInterface) {
+            $manager = $this->serviceRegistry->getService($subject, ContentManagerInterface::class);
+            $manager->delete($moderator, $subject);
+        }
 
         $this->entityManager->flush();
 

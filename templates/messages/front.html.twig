@@ -41,7 +41,15 @@
                         </a>
                     </div>
                 </div>
+
                 <span style="margin-top: auto">{{ component('date', {date: thread.updatedAt}) }}</span>
+
+                <form method="post" action="{{path('messages_remove_thread', {'id': thread.id}) }}"
+                      onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                    <button type="submit" class="btn btn__secondary" title="{{ 'delete'|trans }}">
+                        <i class="fa-solid fa-trash" aria-description="{{ 'delete'|trans }}" title="{{ 'delete'|trans }}"></i>
+                    </button>
+                </form>
             </div>
         {% endif %}
     {% endfor %}

@@ -188,6 +188,8 @@ POST /api/client
         - Also allows the client to mark unread messages as read or read messages as unread
       - `user:message:create`
         - Allows the client to create new messages to other users or reply to existing messages
+      - `user:message:delete`
+        - Allows the client to delete message-threads of the current user
     - `user:notification`
       - `user:notification:read`
         - Allows the client to read notifications about threads, posts, or comments being replied to, as well as moderation notifications.

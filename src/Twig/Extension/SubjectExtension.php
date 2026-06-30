@@ -7,6 +7,7 @@ namespace App\Twig\Extension;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -46,6 +47,11 @@ class SubjectExtension extends AbstractExtension
             new TwigTest(
                 'user', function ($subject) {
                     return $subject instanceof User;
+                }
+            ),
+            new TwigTest(
+                'message', function ($subject) {
+                    return $subject instanceof Message;
                 }
             ),
         ];

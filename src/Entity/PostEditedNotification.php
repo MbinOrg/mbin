@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Factory\Post\PostUrlFactory;
+use App\Factory\User\UserUrlFactory;
 use App\Payloads\PushNotification;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -35,16 +39,16 @@ class PostEditedNotification extends Notification
         return 'post_edited_notification';
     }
 
-    public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
+    public function getMessage(TranslatorInterface $trans, string $locale, ContainerInterface $serviceContainer): PushNotification
     {
+        /** @var PostUrlFactory $postUrlFactory */
+        $postUrlFactory = $serviceContainer->get(PostUrlFactory::class);
+        /** @var UserUrlFactory $userUrlFactory */
+        $userUrlFactory = $serviceContainer->get(UserUrlFactory::class);
+
         $message = \sprintf('%s %s - %s', $this->post->user->username, $trans->trans('edited_post'), $this->post->getShortTitle());
-        $slash = $this->post->user->avatar && !str_starts_with('/', $this->post->user->avatar->filePath) ? '/' : '';
-        $avatarUrl = $this->post->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->post->user->avatar->filePath : null;
-        $url = $urlGenerator->generate('post_single', [
-            'magazine_name' => $this->post->magazine->name,
-            'post_id' => $this->post->getId(),
-            'slug' => empty($this->postComment->post->slug) ? '-' : $this->postComment->post->slug,
-        ]);
+        $avatarUrl = $userUrlFactory->getAvatarUrl($this->post->user);
+        $url = $postUrlFactory->getLocalUrl($this->post);
 
         return new PushNotification($this->getId(), $message, $trans->trans('notification_title_edited_post', locale: $locale), actionUrl: $url, avatarUrl: $avatarUrl);
     }

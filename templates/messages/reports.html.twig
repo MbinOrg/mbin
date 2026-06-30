@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'reports'|trans }} - {{ parent() -}}
+{%- endblock -%}
+
+{% block mainClass %}page-magazine-reports{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    <h1 hidden>{{ 'reports'|trans }}</h1>
+    {{ component('report_list', {reports: reports, routeName: 'message_reports'}) }}
+{% endblock %}

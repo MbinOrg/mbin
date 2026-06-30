@@ -90,10 +90,6 @@ class MessageThreadCreateApi extends MessageBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiMessageLimiter);
 
-        if ($receiver->apId) {
-            throw new AccessDeniedHttpException();
-        }
-
         $dto = $this->deserializeMessage();
 
         $errors = $validator->validate($dto);

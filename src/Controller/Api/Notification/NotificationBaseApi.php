@@ -9,6 +9,8 @@ use App\DTO\EntryCommentResponseDto;
 use App\DTO\EntryResponseDto;
 use App\DTO\PostCommentResponseDto;
 use App\DTO\PostResponseDto;
+use App\Entity\Contracts\ContentInterface;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -19,17 +21,25 @@ use App\Entity\PostComment;
 use App\Entity\ReportApprovedNotification;
 use App\Entity\ReportCreatedNotification;
 use App\Entity\ReportRejectedNotification;
+use App\Factory\Contract\ContentDtoFactory;
 use App\Factory\MessageFactory;
+use App\Service\SwitchingServiceRegistry;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class NotificationBaseApi extends BaseApi
 {
     private MessageFactory $messageFactory;
+    private SwitchingServiceRegistry $serviceRegistry;
 
     #[Required]
     public function setMessageFactory(MessageFactory $messageFactory)
     {
         $this->messageFactory = $messageFactory;
+    }
+
+    #[Required]
+    public function setServiceRegistry(SwitchingServiceRegistry $serviceRegistry) {
+        $this->serviceRegistry = $serviceRegistry;
     }
 
     /**
@@ -139,15 +149,7 @@ class NotificationBaseApi extends BaseApi
 
     private function createResponseDtoForReport(ReportInterface $subject): EntryCommentResponseDto|EntryResponseDto|PostCommentResponseDto|PostResponseDto
     {
-        if ($subject instanceof Entry) {
-            return $this->entryFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
-        } elseif ($subject instanceof EntryComment) {
-            return $this->entryCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
-        } elseif ($subject instanceof Post) {
-            return $this->postFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
-        } elseif ($subject instanceof PostComment) {
-            return $this->postCommentFactory->createResponseDto($subject, $this->tagLinkRepository->getTagsOfContent($subject));
-        }
-        throw new \InvalidArgumentException("cannot work with: '".\get_class($subject)."'");
+        $tags = $subject instanceof HashtagableInterface ? $this->tagLinkRepository->getTagsOfContent($subject) : [];
+        return $this->serviceRegistry->getService($subject, ContentDtoFactory::class)->createResponseDto($subject, $tags);
     }
 }

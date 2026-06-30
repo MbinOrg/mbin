@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Factory\Magazine\MagazineUrlFactory;
 use App\Payloads\PushNotification;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -35,8 +38,11 @@ class MagazineBanNotification extends Notification
         return 'magazine_ban_notification';
     }
 
-    public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
+    public function getMessage(TranslatorInterface $trans, string $locale, ContainerInterface $serviceContainer): PushNotification
     {
+        /** @var MagazineUrlFactory $magazineUrlFactory */
+        $magazineUrlFactory = $serviceContainer->get(MagazineUrlFactory::class);
+
         $intl = new \IntlDateFormatter($locale, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT, calendar: \IntlDateFormatter::GREGORIAN);
 
         if ($this->ban->expiredAt) {
@@ -54,8 +60,8 @@ class MagazineBanNotification extends Notification
                 $this->ban->reason
             );
         }
-        $slash = $this->ban->magazine->icon && !str_starts_with('/', $this->ban->magazine->icon->filePath) ? '/' : '';
-        $avatarUrl = $this->ban->magazine->icon ? '/media/cache/resolve/avatar_thumb'.$slash.$this->ban->magazine->icon->filePath : null;
+
+        $avatarUrl = $magazineUrlFactory->getAvatarUrl($this->ban->magazine);
 
         return new PushNotification($this->getId(), $message, $trans->trans('notification_title_ban', locale: $locale), avatarUrl: $avatarUrl);
     }

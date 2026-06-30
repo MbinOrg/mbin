@@ -5,34 +5,28 @@ declare(strict_types=1);
 namespace App\Factory\ActivityPub;
 
 use App\Entity\Contracts\ActivityPubActivityInterface;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Factory\Contract\ActivityFactoryInterface;
 use App\Repository\TagLinkRepository;
+use App\Service\SwitchingServiceRegistry;
 
 class ActivityFactory
 {
     public function __construct(
         private readonly TagLinkRepository $tagLinkRepository,
-        private readonly EntryPageFactory $pageFactory,
-        private readonly EntryCommentNoteFactory $entryNoteFactory,
-        private readonly PostNoteFactory $postNoteFactory,
-        private readonly PostCommentNoteFactory $postCommentNoteFactory,
-        private readonly MessageFactory $messageFactory,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
     ) {
     }
 
     public function create(ActivityPubActivityInterface $activity, bool $context = false): array
     {
-        return match (true) {
-            $activity instanceof Entry => $this->pageFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
-            $activity instanceof EntryComment => $this->entryNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
-            $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
-            $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
-            $activity instanceof Message => $this->messageFactory->build($activity, $context),
-            default => throw new \LogicException('Cannot handle activity of type '.\get_class($activity)),
-        };
+        $hashtags = $activity instanceof HashtagableInterface ? $this->tagLinkRepository->getTagsOfContent($activity) : [];
+        $factory = $this->serviceRegistry->getService($activity, ActivityFactoryInterface::class);
+        return $factory->create($activity, $hashtags, $context);
     }
 }

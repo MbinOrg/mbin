@@ -6,6 +6,7 @@ namespace App\Service\Notification;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Kernel;
 use App\Payloads\PushNotification;
 use App\Repository\SiteRepository;
 use App\Repository\UserPushSubscriptionRepository;
@@ -16,20 +17,27 @@ use Minishlink\WebPush\MessageSentReport;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserPushSubscriptionManager
 {
+
+    private readonly ContainerInterface $serviceContainer;
+
     public function __construct(
         private readonly SettingsManager $settingsManager,
         private readonly SiteRepository $siteRepository,
         private readonly UserPushSubscriptionRepository $pushSubscriptionRepository,
         private readonly TranslatorInterface $translator,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
+        Kernel $kernel,
     ) {
+        $this->serviceContainer = $kernel->getContainer();
     }
 
     /**
@@ -48,7 +56,7 @@ class UserPushSubscriptionManager
         $subs = $this->pushSubscriptionRepository->findBy($criteria);
         foreach ($subs as $sub) {
             if ($pushNotification instanceof Notification) {
-                $toSend = $pushNotification->getMessage($this->translator, $sub->locale ?? $this->settingsManager->get('KBIN_DEFAULT_LANG'), $this->urlGenerator);
+                $toSend = $pushNotification->getMessage($this->translator, $sub->locale ?? $this->settingsManager->get('KBIN_DEFAULT_LANG'), $this->serviceContainer);
             } elseif ($pushNotification instanceof PushNotification) {
                 $toSend = $pushNotification;
             } else {

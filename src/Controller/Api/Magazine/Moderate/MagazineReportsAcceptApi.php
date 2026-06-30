@@ -10,7 +10,9 @@ use App\DTO\ReportResponseDto;
 use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Factory\ContentManagerFactory;
+use App\Service\Contracts\ContentManagerInterface;
 use App\Service\ReportManager;
+use App\Service\SwitchingServiceRegistry;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -84,17 +86,17 @@ class MagazineReportsAcceptApi extends MagazineBaseApi
         #[MapEntity(id: 'report_id')]
         Report $report,
         ReportManager $reportManager,
-        ContentManagerFactory $managerFactory,
+        SwitchingServiceRegistry $serviceRegistry,
         RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($magazine->getId() !== $report->magazine->getId()) {
+        //TODO create api endpoints for reports without magazine (or maybe not)
+        if ($magazine->getId() !== $report->magazine?->getId()) {
             throw new NotFoundHttpException('Report not found in magazine');
         }
 
-        $manager = $managerFactory->createManager($report->getSubject());
-
+        $manager = $serviceRegistry->getService($report->getSubject(), ContentManagerInterface::class);
         $manager->delete($this->getUserOrThrow(), $report->getSubject());
 
         return new JsonResponse(

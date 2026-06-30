@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Message;
+use App\Entity\MessageReport;
+use App\Entity\Report;
 use App\PageView\MessageThreadPageView;
+use App\Pagination\NativeQueryAdapter;
 use App\Service\SettingsManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
@@ -96,5 +100,38 @@ class MessageRepository extends ServiceEntityRepository
         }
 
         return null;
+    }
+
+    public function findReports(
+        ?int $page = 1,
+        int $perPage = self::PER_PAGE,
+        string $status = Report::STATUS_PENDING,
+    ): PagerfantaInterface {
+        $dql = 'SELECT r FROM '.MessageReport::class.' r';
+
+        if (Report::STATUS_ANY !== $status) {
+            $dql .= ' WHERE r.status = :status';
+        }
+
+        $dql .= " ORDER BY CASE WHEN r.status = 'pending' THEN 1 ELSE 2 END, r.weight DESC, r.createdAt DESC";
+
+        $query = $this->getEntityManager()->createQuery($dql);
+
+        if (Report::STATUS_ANY !== $status) {
+            $query->setParameter('status', $status);
+        }
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter($query)
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 }

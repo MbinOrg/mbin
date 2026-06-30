@@ -10,6 +10,7 @@ use App\Entity\Message;
 use App\Entity\MessageNotification;
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Service\Contracts\ContentNotificationManagerInterface;
 use App\Service\Notification\MagazineBanNotificationManager;
 use App\Service\Notification\MessageNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class NotificationManager
 {
     public function __construct(
-        private readonly NotificationManagerTypeResolver $resolver,
+        private readonly SwitchingServiceRegistry $serviceRegistry,
         private readonly MessageNotificationManager $messageNotificationManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MagazineBanNotificationManager $magazineBanNotificationManager,
@@ -26,17 +27,17 @@ class NotificationManager
 
     public function sendCreated(ContentInterface $subject): void
     {
-        $this->resolver->resolve($subject)->sendCreated($subject);
+        $this->serviceRegistry->getService($subject, ContentNotificationManagerInterface::class)->sendCreated($subject);
     }
 
     public function sendEdited(ContentInterface $subject): void
     {
-        $this->resolver->resolve($subject)->sendEdited($subject);
+        $this->serviceRegistry->getService($subject, ContentNotificationManagerInterface::class)->sendEdited($subject);
     }
 
     public function sendDeleted(ContentInterface $subject): void
     {
-        $this->resolver->resolve($subject)->sendDeleted($subject);
+        $this->serviceRegistry->getService($subject, ContentNotificationManagerInterface::class)->sendDeleted($subject);
     }
 
     public function sendMessageNotification(Message $message, User $sender): void

@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\EntryReport;
+use App\Entity\Message;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
@@ -59,10 +65,11 @@ class ReportResponseDto implements \JsonSerializable
     #[OA\Property(
         'type',
         enum: [
-            'entry_report',
-            'entry_comment_report',
-            'post_report',
-            'post_comment_report',
+            Entry::REPORT_TYPE,
+            EntryComment::REPORT_TYPE,
+            Post::REPORT_TYPE,
+            PostComment::REPORT_TYPE,
+            Message::REPORT_TYPE,
             'null_report',
         ]
     )]
@@ -75,13 +82,15 @@ class ReportResponseDto implements \JsonSerializable
 
         switch (\get_class($this->subject)) {
             case EntryResponseDto::class:
-                return 'entry_report';
+                return Entry::REPORT_TYPE;
             case EntryCommentResponseDto::class:
-                return 'entry_comment_report';
+                return EntryComment::REPORT_TYPE;
             case PostResponseDto::class:
-                return 'post_report';
+                return Post::REPORT_TYPE;
             case PostCommentResponseDto::class:
-                return 'post_comment_report';
+                return PostComment::REPORT_TYPE;
+            case MessageResponseDto::class:
+                return Message::REPORT_TYPE;
         }
 
         throw new \LogicException();

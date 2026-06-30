@@ -7,16 +7,21 @@ namespace App\Repository;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\Message;
+use App\Entity\MessageThread;
 use App\Entity\Notification;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -158,6 +163,34 @@ class NotificationRepository extends ServiceEntityRepository
         $stmt->executeQuery();
     }
 
+    public function removeMessageNotifications(Message $message): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'DELETE FROM notification AS n WHERE n.message_id = :messageId';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('messageId', $message->getId());
+
+        $stmt->executeQuery();
+    }
+
+    public function markMessageNotificationsAsRead(User $user, MessageThread $thread): void {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'UPDATE notification n SET status = :s
+                        WHERE n.user_id = :uId
+                        AND EXISTS(
+                            SELECT 1 FROM report r
+                            INNER JOIN message m ON r.message_id = m.id
+                            INNER JOIN message_thread t ON m.thread_id = t.id
+                            WHERE t.id = :tId AND n.report_id = r.id
+                        )';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('s', Notification::STATUS_READ);
+        $stmt->bindValue('uId', $user->getId(), ParameterType::INTEGER);
+        $stmt->bindValue('tId', $thread->getId(), ParameterType::INTEGER);
+        $stmt->executeQuery();
+    }
+
     public function markReportNotificationsAsRead(User $user): void
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -181,6 +214,26 @@ class NotificationRepository extends ServiceEntityRepository
         $stmt->bindValue('s', Notification::STATUS_READ);
         $stmt->bindValue('uId', $user->getId());
         $stmt->bindValue('mId', $magazine->getId());
+        $stmt->executeQuery();
+    }
+
+    public function markReportNotificationsOfMessagesAsRead(User $user, array $reportIds): void
+    {
+        $sql = 'UPDATE notification n SET status = :s
+                      WHERE n.user_id = :uId
+                        AND n.report_id IN (:reports)';
+        $params = [
+            'uId' => $user->getId(),
+            'reports' => $reportIds,
+            's' => Notification::STATUS_READ,
+        ];
+        $rewritten = SqlHelpers::rewriteArrayParameters($params, $sql);
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($rewritten['sql']);
+
+        foreach ($rewritten['parameters'] as $param => $value) {
+            $stmt->bindValue($param, $value, SqlHelpers::getSqlType($value));
+        }
         $stmt->executeQuery();
     }
 

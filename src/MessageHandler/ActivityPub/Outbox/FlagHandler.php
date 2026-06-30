@@ -75,14 +75,16 @@ class FlagHandler extends MbinMessageHandler
     {
         $urls = [];
 
-        if (null === $report->magazine->apId) {
-            foreach ($report->magazine->moderators as /* @var Moderator $moderator */ $moderator) {
-                if ($moderator->user->apId and !\in_array($moderator->user->apInboxUrl, $urls)) {
-                    $urls[] = $moderator->user->apInboxUrl;
+        if (null !== $report->magazine) {
+            if (null === $report->magazine->apId) {
+                foreach ($report->magazine->moderators as /* @var Moderator $moderator */ $moderator) {
+                    if ($moderator->user->apId and !\in_array($moderator->user->apInboxUrl, $urls)) {
+                        $urls[] = $moderator->user->apInboxUrl;
+                    }
                 }
+            } else {
+                $urls[] = $report->magazine->apInboxUrl;
             }
-        } else {
-            $urls[] = $report->magazine->apInboxUrl;
         }
 
         if ($report->reported->apId and !\in_array($report->reported->apInboxUrl, $urls)) {
