@@ -7,7 +7,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
 
 # install other dev dependencies
-RUN apt install -y lsb-release ca-certificates curl wget unzip gnupg apt-transport-https acl nodejs npm
+RUN apt install -y lsb-release ca-certificates curl wget unzip gnupg apt-transport-https acl
+
+# install Node.js
+# https://nodesource.com/products/distributions
+RUN curl -fsSL https://deb.nodesource.com/setup_26.x | bash - \
+    && apt-get install -y nodejs
 
 # Install PHP extensions
 RUN apt install -y \
@@ -20,7 +25,7 @@ RUN apt install -y \
     libbz2-dev \
     icu-devtools \
     libicu-dev
-RUN docker-php-ext-install bcmath pgsql gd curl xml mbstring zip bz2 intl
+RUN docker-php-ext-install bcmath pgsql pdo_pgsql gd curl xml mbstring zip bz2 intl
 RUN yes '' | pecl install amqp redis \
     && docker-php-ext-enable redis amqp
 
