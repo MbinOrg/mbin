@@ -13,6 +13,7 @@ use App\PageView\EntryPageView;
 use App\PageView\PostPageView;
 use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
+use App\Repository\ContentRepositoryHotfix;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
 use App\Utils\SqlHelpers;
@@ -28,6 +29,7 @@ class EntryFrontController extends AbstractController
 {
     public function __construct(
         private readonly ContentRepository $contentRepository,
+        private readonly ContentRepositoryHotfix $contentRepositoryHotfix,
         private readonly MagazineRepository $magazineRepository,
         private readonly Security $security,
         private readonly SqlHelpers $sqlHelpers,
@@ -65,9 +67,10 @@ class EntryFrontController extends AbstractController
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
-        $cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
-        $cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
-        $entities = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
+        //$cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
+        //$cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
+        //$entities = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
+        $entities = $this->contentRepositoryHotfix->findByCriteria($criteria);
         $templatePath = 'content/';
         $dataKey = 'results';
 
