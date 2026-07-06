@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
 
 # install other dev dependencies
-RUN apt install -y lsb-release ca-certificates curl wget unzip gnupg apt-transport-https acl
+RUN apt install -y lsb-release ca-certificates curl wget unzip gnupg apt-transport-https acl git
 
 # install Node.js
 # https://nodesource.com/products/distributions
