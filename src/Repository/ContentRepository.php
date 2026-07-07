@@ -197,8 +197,8 @@ class ContentRepository
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
-                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
-                    ' OR m.id IN (:cachedUserSubscribedMagazines)')
+                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = c.magazine_id)' :
+                    ' OR c.magazine_id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
                     ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                     ' OR c.user_id IN (:cachedUserFollows)');
@@ -243,9 +243,9 @@ class ContentRepository
         $modClause = '';
         if ($user && $criteria->moderated) {
             if (null === $criteria->cachedUserModeratedMagazines) {
-                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = m.id AND mod.user_id = :loggedInUser)';
+                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = c.magazine_id AND mod.user_id = :loggedInUser)';
             } else {
-                $modClause = 'm.id IN (:cachedUserModeratedMagazines)';
+                $modClause = 'c.magazine_id IN (:cachedUserModeratedMagazines)';
                 $parameters['cachedUserModeratedMagazines'] = $criteria->cachedUserModeratedMagazines;
             }
         }
@@ -283,9 +283,9 @@ class ContentRepository
 
             if (!$criteria->domain) {
                 if (null === $criteria->cachedUserBlockedMagazines) {
-                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :loggedInUser)';
+                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = c.magazine_id AND mb.user_id = :loggedInUser)';
                 } else {
-                    $blockingClausePost .= ' AND (m IS NULL OR m.id NOT IN (:cachedUserBlockedMagazines))';
+                    $blockingClausePost .= ' AND (m IS NULL OR c.magazine_id NOT IN (:cachedUserBlockedMagazines))';
                     $parameters['cachedUserBlockedMagazines'] = $criteria->cachedUserBlockedMagazines;
                 }
             }
