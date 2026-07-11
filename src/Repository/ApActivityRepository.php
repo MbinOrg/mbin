@@ -168,16 +168,22 @@ class ApActivityRepository extends ServiceEntityRepository
         return $this->getLocalUrlOfEntity($entity);
     }
 
-    public function getLocalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity): ?string
+    public function getLocalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity, bool $absoluteUrl = false): ?string
     {
+        return self::s_getLocalUrlOfEntity($this->urlGenerator, $entity, $absoluteUrl);
+    }
+
+    public static function s_getLocalUrlOfEntity(UrlGeneratorInterface $urlGenerator, Entry|EntryComment|Post|PostComment $entity, bool $absoluteUrl = false): ?string
+    {
+        $reference = $absoluteUrl ? UrlGeneratorInterface::ABSOLUTE_URL : UrlGeneratorInterface::ABSOLUTE_PATH;
         if ($entity instanceof Entry) {
-            return $this->urlGenerator->generate('entry_single', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('entry_single', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof EntryComment) {
-            return $this->urlGenerator->generate('entry_comment_view', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('entry_comment_view', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof Post) {
-            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('post_single', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof PostComment) {
-            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name])."#post-comment-{$entity->getId()}";
+            return $urlGenerator->generate('post_single', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name], $reference)."#post-comment-{$entity->getId()}";
         }
 
         return null;

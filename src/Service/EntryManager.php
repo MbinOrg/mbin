@@ -68,6 +68,7 @@ class EntryManager implements ContentManagerInterface
         private readonly ImageRepository $imageRepository,
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly CacheInterface $cache,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -144,6 +145,10 @@ class EntryManager implements ContentManagerInterface
         $this->entityManager->persist($entry);
         $this->entityManager->flush();
 
+        if ($dto->addPoll) {
+            $this->pollManager->createPoll($dto, $entry);
+        }
+
         $tags = array_unique(array_merge($this->tagExtractor->extract($entry->body) ?? [], $dto->tags ?? []));
         $this->tagManager->updateEntryTags($entry, $tags);
 
@@ -189,7 +194,7 @@ class EntryManager implements ContentManagerInterface
         return $entryHost === $userHost || $userHost === $magazineHost || $entry->magazine->userIsModerator($user);
     }
 
-    public function edit(Entry $entry, EntryDto $dto, User $editedBy): Entry
+    public function edit(Entry $entry, EntryDto $dto, User $editedBy, bool $contentChanged = true): Entry
     {
         Assert::same($entry->magazine->getId(), $dto->magazine->getId());
 
@@ -221,6 +226,10 @@ class EntryManager implements ContentManagerInterface
             throw new \Exception('Entry body, name, url and image cannot all be empty');
         }
 
+        if ($entry->poll && $contentChanged) {
+            $this->pollManager->edit($entry->poll, $dto, $editedBy);
+        }
+
         $entry->apLikeCount = $dto->apLikeCount;
         $entry->apDislikeCount = $dto->apDislikeCount;
         $entry->apShareCount = $dto->apShareCount;
@@ -240,6 +249,19 @@ class EntryManager implements ContentManagerInterface
         $this->dispatcher->dispatch(new EntryEditedEvent($entry, $editedBy));
 
         return $entry;
+    }
+
+    public function refreshFromRemote(Entry $entry, EntryDto $dto): void
+    {
+        if ($entry->poll) {
+            $this->pollManager->refreshFromRemote($entry->poll, $dto);
+        }
+
+        $entry->apLikeCount = $dto->apLikeCount;
+        $entry->apDislikeCount = $dto->apDislikeCount;
+        $entry->apShareCount = $dto->apShareCount;
+        $entry->updateScore();
+        $entry->updateRanking();
     }
 
     public function delete(User $user, Entry $entry): void

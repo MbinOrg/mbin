@@ -25,6 +25,9 @@
         'data-input-length-max-value': constant('App\\DTO\\PostCommentDto::MAX_BODY_LENGTH')
     }}) }}
 </div>
+
+{{ include('form/_poll_form.html.twig') }}
+
 <div class="row actions">
     <ul>
         {% if hasImage %}
