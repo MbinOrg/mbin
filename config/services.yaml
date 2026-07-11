@@ -302,5 +302,5 @@ services:
                 - '%env(int:REDIS_PORT)%'
 
             # uncomment the following if your Redis server requires a password
-            - auth:
-                - '%env(REDIS_PASSWORD)%'
+            #- auth:
+            #    - '%env(REDIS_PASSWORD)%'
