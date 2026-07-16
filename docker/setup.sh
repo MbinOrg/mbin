@@ -134,3 +134,4 @@ openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage
 echo
 echo "Mbin environment setup complete!"
 echo "Please refer back to the documentation for finishing touches."
+echo "If you use rootless Podman, you have to run 'chmod 777 storage/* && chmod 666 storage/oauth/*'!"

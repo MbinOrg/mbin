@@ -221,7 +221,7 @@ MERCURE_JWT_SECRET="{!SECRET!!KEY!-32_3-!}"
 KBIN_STORAGE_URL=https://domain.tld/media
 
 # Ubuntu 22.04 installs PostgreSQL v14 by default, Debian 12 PostgreSQL v15 is the default
-POSTGRES_VERSION=14
+POSTGRES_VERSION=18
 
 # Configure email, eg. using SMTP
 MAILER_DSN=smtp://127.0.0.1 # When you have a local SMTP server listening
