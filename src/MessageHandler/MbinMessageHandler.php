@@ -23,6 +23,8 @@ abstract class MbinMessageHandler
      */
     public function workWrapper(MessageInterface $message): void
     {
+        gc_collect_cycles();
+
         // when we are in the test environment this would throw: ConnectionException: There is no active transaction.
         if ('test' !== $this->kernel->getEnvironment()) {
             $conn = $this->entityManager->getConnection();
