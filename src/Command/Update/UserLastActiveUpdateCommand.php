@@ -1,6 +1,6 @@
-<?php
+private const MAX_RESULTS = 1;<?php
 
-declare(strict_types=1);
+declare(strict_types=self::MAX_RESULTS);
 
 namespace App\Command\Update;
 
