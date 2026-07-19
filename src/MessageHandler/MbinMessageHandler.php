@@ -29,7 +29,7 @@ abstract class MbinMessageHandler
                 $conn = $this->entityManager->getConnection();
                 $conn->getNativeConnection(); // calls connect() internally
 
-                $conn->transactional(fn() => $this->doWork($message));
+                $conn->transactional(fn () => $this->doWork($message));
 
                 $conn->close();
             } else {
