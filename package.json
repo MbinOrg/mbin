@@ -44,5 +44,9 @@
         "build": "encore production --progress",
         "lint": "eslint .",
         "lint-fix": "eslint --fix ."
+    },
+    "allowScripts": {
+        "@parcel/watcher@2.5.6": true,
+        "core-js@3.49.0": true
     }
 }
