@@ -9,6 +9,8 @@ $finder = (new PhpCsFixer\Finder())
         'node_modules',
         'vendor',
         'docker',
+        'public',
+        'storage',
     ])
 ;
 
