@@ -13,4 +13,8 @@ interface ContentNotificationManagerInterface extends ManagerInterface
     public function sendEdited(ContentInterface $subject): void;
 
     public function sendDeleted(ContentInterface $subject): void;
+
+    public function purgeNotifications(ContentInterface $subject): void;
+
+    public function purgeMagazineLog(ContentInterface $subject): void;
 }

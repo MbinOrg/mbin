@@ -9,6 +9,7 @@ use App\Entity\Contracts\CommentInterface;
 use App\Entity\Contracts\ContentVisibilityInterface;
 use App\Entity\Contracts\DomainInterface;
 use App\Entity\Contracts\FavouriteInterface;
+use App\Entity\Contracts\HashtagableInterface;
 use App\Entity\Contracts\RankingInterface;
 use App\Entity\Contracts\ReportInterface;
 use App\Entity\Contracts\VisibilityInterface;
@@ -45,7 +46,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['last_active'], name: 'entry_last_active_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_body_ts_idx')]
 #[Index(columns: ['title_ts'], name: 'entry_title_ts_idx')]
-class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, ContentVisibilityInterface
+class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, ContentVisibilityInterface, HashtagableInterface
 {
     use VotableTrait;
     use RankingTrait;
@@ -68,6 +69,8 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     ];
     public const MAX_TITLE_LENGTH = 255;
     public const MAX_BODY_LENGTH = 35000;
+
+    public const string REPORT_TYPE = 'entry_report';
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'entries')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -395,6 +398,11 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     public function getDescription(): string
     {
         return ''; // @todo get first author comment
+    }
+
+    public function getReportType(): string
+    {
+        return self::REPORT_TYPE;
     }
 
     public function __sleep()

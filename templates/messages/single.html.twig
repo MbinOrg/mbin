@@ -57,6 +57,13 @@
                                 ({{ 'edited'|trans }} {{ component('date', {date: message.editedAt}) }})
                             {% endif %}
                         </small>
+
+                        <form method="post" action="{{path('message_report', {'id': message.id}) }}"
+                              onsubmit="return confirm('{{ 'are_you_sure'|trans }}');">
+                            <button type="submit" class="btn btn__secondary" title="{{ 'delete'|trans }}">
+                                {{ 'report'|trans }}
+                            </button>
+                        </form>
                     </div>
                 </div>
             {% endfor %}

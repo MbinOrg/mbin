@@ -21,6 +21,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
@@ -34,7 +35,7 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class EntryCommentNotificationManager implements ContentNotificationManagerInterface
+class EntryCommentNotificationManager implements SwitchableService, ContentNotificationManagerInterface
 {
     use NotificationTrait;
 
@@ -56,6 +57,11 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         private readonly NotificationSettingsRepository $notificationSettingsRepository,
         private readonly UserRepository $userRepository,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [EntryComment::class];
     }
 
     public function sendCreated(ContentInterface $subject): void
@@ -198,16 +204,22 @@ class EntryCommentNotificationManager implements ContentNotificationManagerInter
         if (!$subject instanceof EntryComment) {
             throw new \LogicException();
         }
-        $this->notifyMagazine($notification = new EntryCommentDeletedNotification($subject->user, $subject));
+        $this->notifyMagazine(new EntryCommentDeletedNotification($subject->user, $subject));
     }
 
-    public function purgeNotifications(EntryComment $comment): void
+    public function purgeNotifications(ContentInterface $subject): void
     {
-        $this->notificationRepository->removeEntryCommentNotifications($comment);
+        if (!$subject instanceof EntryComment) {
+            throw new \LogicException();
+        }
+        $this->notificationRepository->removeEntryCommentNotifications($subject);
     }
 
-    public function purgeMagazineLog(EntryComment $comment): void
+    public function purgeMagazineLog(ContentInterface $subject): void
     {
-        $this->magazineLogRepository->removeEntryCommentLogs($comment);
+        if (!$subject instanceof EntryComment) {
+            throw new \LogicException();
+        }
+        $this->magazineLogRepository->removeEntryCommentLogs($subject);
     }
 }

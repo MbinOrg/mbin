@@ -13,6 +13,7 @@ use App\Message\Contracts\MessageInterface;
 use App\MessageHandler\MbinMessageHandler;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
+use App\Repository\MessageRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\PostRepository;
 use App\Service\ActivityPubManager;
@@ -35,6 +36,7 @@ class FlagHandler extends MbinMessageHandler
         private readonly EntryCommentRepository $entryCommentRepository,
         private readonly PostRepository $postRepository,
         private readonly PostCommentRepository $postCommentRepository,
+        private readonly MessageRepository $messageRepository,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
     ) {
@@ -85,21 +87,11 @@ class FlagHandler extends MbinMessageHandler
 
     private function findRemoteSubject(string $apUrl): ?ReportInterface
     {
-        $entry = $this->entryRepository->findOneBy(['apId' => $apUrl]);
-        $entryComment = null;
-        $post = null;
-        $postComment = null;
-        if (!$entry) {
-            $entryComment = $this->entryCommentRepository->findOneBy(['apId' => $apUrl]);
-        }
-        if (!$entry and !$entryComment) {
-            $post = $this->postRepository->findOneBy(['apId' => $apUrl]);
-        }
-        if (!$entry and !$entryComment and !$post) {
-            $postComment = $this->postCommentRepository->findOneBy(['apId' => $apUrl]);
-        }
-
-        return $entry ?? $entryComment ?? $post ?? $postComment;
+        return $this->entryRepository->findOneBy(['apId' => $apUrl])
+            ?? $this->entryCommentRepository->findOneBy(['apId' => $apUrl])
+            ?? $this->postRepository->findOneBy(['apId' => $apUrl])
+            ?? $this->postCommentRepository->findOneBy(['apId' => $apUrl])
+            ?? $this->messageRepository->findOneBy(['apId' => $apUrl]);
     }
 
     private function findLocalSubject(string $apUrl): ?ReportInterface
@@ -116,6 +108,9 @@ class FlagHandler extends MbinMessageHandler
         }
         if (preg_match_all("/\/m\/([a-zA-Z0-9\-_:@.]+)\/p\/([1-9][0-9]*)/", $apUrl, $matches)) {
             return $this->postRepository->findOneBy(['id' => $matches[2][0]]);
+        }
+        if (preg_match_all("/\/message\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/", $apUrl, $matches)) {
+            return $this->messageRepository->findOneBy(['uuid' => $matches[1][0]]);
         }
 
         return null;

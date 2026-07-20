@@ -20,6 +20,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\UserRepository;
 use App\Service\Contracts\ContentNotificationManagerInterface;
+use App\Service\Contracts\SwitchableService;
 use App\Service\GenerateHtmlClassService;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
@@ -34,7 +35,7 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class EntryNotificationManager implements ContentNotificationManagerInterface
+class EntryNotificationManager implements SwitchableService, ContentNotificationManagerInterface
 {
     use NotificationTrait;
 
@@ -56,6 +57,11 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         private readonly NotificationSettingsRepository $notificationSettingsRepository,
         private readonly UserRepository $userRepository,
     ) {
+    }
+
+    public function getSupportedTypes(): array
+    {
+        return [Entry::class];
     }
 
     public function sendCreated(ContentInterface $subject): void
@@ -165,16 +171,22 @@ class EntryNotificationManager implements ContentNotificationManagerInterface
         if (!$subject instanceof Entry) {
             throw new \LogicException();
         }
-        $this->notifyMagazine($notification = new EntryDeletedNotification($subject->user, $subject));
+        $this->notifyMagazine(new EntryDeletedNotification($subject->user, $subject));
     }
 
-    public function purgeNotifications(Entry $entry): void
+    public function purgeNotifications(ContentInterface $subject): void
     {
-        $this->notificationRepository->removeEntryNotifications($entry);
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
+        $this->notificationRepository->removeEntryNotifications($subject);
     }
 
-    public function purgeMagazineLog(Entry $entry): void
+    public function purgeMagazineLog(ContentInterface $subject): void
     {
-        $this->magazineLogRepository->removeEntryLogs($entry);
+        if (!$subject instanceof Entry) {
+            throw new \LogicException();
+        }
+        $this->magazineLogRepository->removeEntryLogs($subject);
     }
 }

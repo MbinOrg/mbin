@@ -25,6 +25,7 @@ class AdminReportController extends AbstractController
     {
         $page = (int) $request->get('p', 1);
 
+        //TODO rest api for this
         $reports = $this->repository->findAllPaginated($page, $status);
         $this->notificationRepository->markReportNotificationsAsRead($this->getUserOrThrow());
 

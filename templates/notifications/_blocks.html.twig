@@ -140,14 +140,21 @@
         <a href="{{ path('post_single', { 'magazine_name': postComment.post.magazine.name, 'post_id': postComment.post.id, 'slug': postComment.post.slug }) }}#post-comment-{{ postComment.id }}">
             {{ postComment.getShortTitle() }}
         </a>
+    {% elseif notification.report.message is defined and notification.report.message is not same as null %}
+        {% set message = notification.report.message %}
+        <a href="{{ message_url(message) }}">{{ message.shortTitle }}</a>
     {% endif %}
 {% endblock %}
 
 {% block report_created_notification %}
     {{ component('user_inline', {user: notification.report.reporting, showNewIcon: true}) }} {{ 'reported'|trans|lower }} {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
-        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or (notification.report.magazine is not same as null and notification.report.magazine.userIsModerator(app.user)) %}
+        {% if notification.report.subject is message %}
+            <a href="{{ path('message_reports', { 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% else %}
+            <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'pending' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% endif %}
     {% endif %}
 {% endblock report_created_notification %}
 
@@ -155,8 +162,12 @@
     {{ 'own_report_rejected'|trans }} <br />
     {{ 'reported_user'|trans }}: {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
-        <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or (notification.report.magazine is not same as null and notification.report.magazine.userIsModerator(app.user)) %}
+        {% if notification.report.subject is message %}
+            <a href="{{ path('message_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% else %}
+            <a href="{{ path('user_settings_reports', {'status': 'rejected' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% endif %}
     {% endif %}
 {% endblock report_rejected_notification %}
 
@@ -171,8 +182,12 @@
         {{ 'reporting_user'|trans }}: {{ component('user_inline', {user: notification.report.reported, showNewIcon: true}) }}<br />
     {% endif %}
     {{ 'report_subject'|trans }}: {{ block('reportlink') }}<br />
-    {% if app.user.admin or app.user.moderator or notification.report.magazine.userIsModerator(app.user) %}
-        <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+    {% if app.user.admin or app.user.moderator or (notification.report.magazine is not same as null and notification.report.magazine.userIsModerator(app.user)) %}
+        {% if notification.report.subject is message %}
+            <a href="{{ path('message_reports', {'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% else %}
+            <a href="{{ path('magazine_panel_reports', { 'name': notification.report.magazine.name, 'status': 'approved' }) }}#report-id-{{ notification.report.id }}">{{ 'open_report'|trans }}</a>
+        {% endif %}
     {% endif %}
 {% endblock report_approved_notification %}
 

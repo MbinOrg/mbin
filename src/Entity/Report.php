@@ -28,6 +28,7 @@ use Symfony\Component\Uid\Uuid;
     'entry_comment' => 'EntryCommentReport',
     'post' => 'PostReport',
     'post_comment' => 'PostCommentReport',
+    'message' => 'MessageReport',
 ])]
 #[UniqueConstraint(name: 'report_uuid_idx', columns: ['uuid'])]
 abstract class Report
@@ -54,8 +55,8 @@ abstract class Report
     ];
 
     #[ManyToOne(targetEntity: Magazine::class, inversedBy: 'reports')]
-    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    public Magazine $magazine;
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    public ?Magazine $magazine;
     #[ManyToOne(targetEntity: User::class, inversedBy: 'reports')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $reporting;
@@ -80,7 +81,7 @@ abstract class Report
     #[Column(type: 'integer')]
     private int $id;
 
-    public function __construct(User $reporting, User $reported, Magazine $magazine, ?string $reason = null)
+    public function __construct(User $reporting, User $reported, ?Magazine $magazine, ?string $reason = null)
     {
         $this->reporting = $reporting;
         $this->reported = $reported;
