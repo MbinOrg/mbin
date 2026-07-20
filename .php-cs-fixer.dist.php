@@ -9,6 +9,8 @@ $finder = (new PhpCsFixer\Finder())
         'node_modules',
         'vendor',
         'docker',
+        'public',
+        'storage',
     ])
 ;
 
@@ -23,7 +25,18 @@ return (new PhpCsFixer\Config())
         'native_function_invocation' => true,
         'phpdoc_to_comment' => [
             'ignored_tags' => ['var']
-        ]
+        ],
+
+        # new rules which have yet to be applied to our codebase
+        # TODO enable later
+        'no_useless_else' => false,
+        'no_trailing_whitespace' => false,
+        'statement_indentation' => false,
+        'no_extra_blank_lines' => false,
+        'no_whitespace_in_blank_line' => false,
+        'no_unneeded_control_parentheses' => false,
+        'blank_line_before_statement' => false,
+        'blank_line_after_opening_tag' => false,
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

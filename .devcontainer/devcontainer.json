@@ -3,21 +3,18 @@
 {
     "name": "PHP",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/php:3.0.3-8.4-trixie",
+    "image": "mcr.microsoft.com/devcontainers/php:3-8.5-trixie",
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
-        "ghcr.io/yassinedoghri/devcontainers/php-extensions-installer:1": {
-            "extensions": "amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis"
-        },
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/devcontainers/features/node:1": {
+        "ghcr.io/devcontainers/features/node:2": {
             "version": "latest"
         },
         "ghcr.io/itsmechlark/features/postgresql:1": {
             "version": "18"
         },
-        "ghcr.io/itsmechlark/features/rabbitmq-server:1": {},
+        // "ghcr.io/itsmechlark/features/rabbitmq-server:1": {}, // broken, see https://github.com/itsmechlark/features/issues/124
         "ghcr.io/itsmechlark/features/redis-server:1": {}
     },
 
@@ -41,8 +38,7 @@
                 "sanderronde.phpstan-vscode"
             ],
             "settings": {
-                "javascript.suggest.paths": false,
-                "typescript.suggest.paths": false,
+                "js/ts.suggest.paths": false,
                 "pgsql.connections": [
                     {
                         "server": "127.0.0.1",
@@ -62,6 +58,7 @@
 
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": {
+        "php-ext": "sudo -E .devcontainer/install-php-extensions.sh amqp apcu bcmath exif gd intl opcache pcntl pdo_pgsql pgsql redis",
         "webdir": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html",
         "deps": "if [ -f composer.json ]; then composer install; fi",
         "config": "cp .devcontainer/.env.devcontainer .env",
