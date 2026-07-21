@@ -413,26 +413,7 @@ class ActivityPubManager
             $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
-            $actorUrlValue = $actor['url'] ?? $actorUrl;
-            if (\is_array($actorUrlValue)) {
-                // Pick the link with the fewest path segments as the most canonical profile URL.
-                // Fall back to $actorUrl if no valid href is found.
-                $best = null;
-                $bestCount = PHP_INT_MAX;
-                foreach ($actorUrlValue as $link) {
-                    $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
-                    if (null === $href) {
-                        continue;
-                    }
-                    $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
-                    if ($pathSegments < $bestCount) {
-                        $bestCount = $pathSegments;
-                        $best = $href;
-                    }
-                }
-                $actorUrlValue = $best ?? $actorUrl;
-            }
-            $user->apPublicUrl = \is_string($actorUrlValue) ? $actorUrlValue : $actorUrl;
+            $user->apPublicUrl = $this->findBestActorUrl($actorUrl, $actor['url'] ?? null);
             $user->apDeletedAt = null;
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
@@ -712,7 +693,7 @@ class ActivityPubManager
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? null;
-            $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $magazine->apPublicUrl = $this->findBestActorUrl($actorUrl, $actor['url'] ?? null);
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
@@ -1319,5 +1300,34 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    private function findBestActorUrl(string $actorUrl, mixed $actorUrlValue): string
+    {
+        if (null === $actorUrlValue) {
+            return $actorUrl;
+        } elseif (\is_string($actorUrlValue)) {
+            return $actorUrlValue;
+        } elseif (\is_array($actorUrlValue)) {
+            // Pick the link with the fewest path segments as the most canonical profile URL.
+            // Fall back to $actorUrl if no valid href is found.
+            $best = null;
+            $bestCount = PHP_INT_MAX;
+            foreach ($actorUrlValue as $link) {
+                $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
+                if (null === $href) {
+                    continue;
+                }
+                $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
+                if ($pathSegments > 0 && $pathSegments < $bestCount) {
+                    $bestCount = $pathSegments;
+                    $best = $href;
+                }
+            }
+            return $best ?? $actorUrl;
+        } else {
+            $this->logger->warning('[ActivityPubManager::getEntityObject] got an actorUrlValue which was neither a string, array nor null: {o}', ['o' => $actorUrlValue]);
+            return $actorUrl;
+        }
     }
 }
