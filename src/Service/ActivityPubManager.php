@@ -1306,9 +1306,13 @@ class ActivityPubManager
     {
         if (null === $actorUrlValue) {
             return $actorUrl;
-        } elseif (\is_string($actorUrlValue)) {
+        }
+
+        if (\is_string($actorUrlValue)) {
             return $actorUrlValue;
-        } elseif (\is_array($actorUrlValue)) {
+        }
+
+        if (\is_array($actorUrlValue)) {
             // Pick the link with the fewest path segments as the most canonical profile URL.
             // Fall back to $actorUrl if no valid href is found.
             $best = null;
@@ -1325,9 +1329,9 @@ class ActivityPubManager
                 }
             }
             return $best ?? $actorUrl;
-        } else {
-            $this->logger->warning('[ActivityPubManager::getEntityObject] got an actorUrlValue which was neither a string, array nor null: {o}', ['o' => $actorUrlValue]);
-            return $actorUrl;
         }
+
+        $this->logger->warning('[ActivityPubManager::getEntityObject] got an actorUrlValue which was neither a string, array nor null: {o}', ['o' => $actorUrlValue]);
+        return $actorUrl;
     }
 }
