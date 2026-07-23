@@ -94,13 +94,13 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public Collection $ownershipRequests;
     #[OneToMany(mappedBy: 'magazine', targetEntity: ModeratorRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorRequests;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Entry::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entries;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: Post::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $posts;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineSubscription::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $subscriptions;
-    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineBan::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'magazine', targetEntity: MagazineBan::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $bans;
     #[OneToMany(mappedBy: 'magazine', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]

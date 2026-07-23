@@ -11,11 +11,11 @@ services:
             MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
             MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
         volumes:
-            - ./storage/caddy_config:/config
-            - ./storage/caddy_data:/data
-            - ./storage/media:/app/public/media
-            - ./storage/oauth:/app/config/oauth2
-            - ./storage/php_logs:/app/var/log
+            - ./storage/caddy_config:/config:rw,Z
+            - ./storage/caddy_data:/data:rw,Z
+            - ./storage/media:/app/public/media:rw,z
+            - ./storage/oauth:/app/config/oauth2:ro,Z
+            - ./storage/php_logs:/app/var/log:rw,z
         ports:
             - 80:80
             - 443:443
@@ -37,8 +37,8 @@ services:
             test: ['CMD-SHELL', "ps aux | grep 'messenger[:]consume' || exit 1"]
         env_file: .env
         volumes:
-            - ./storage/media:/app/public/media
-            - ./storage/messenger_logs:/app/var/log
+            - ./storage/media:/app/public/media:rw,z
+            - ./storage/messenger_logs:/app/var/log:rw,z
         depends_on:
             - amqproxy
             - postgres
@@ -48,7 +48,7 @@ services:
             replicas: 6
 
     amqproxy:
-        image: cloudamqp/amqproxy
+        image: docker.io/cloudamqp/amqproxy
         restart: unless-stopped
         user: ${MBIN_USER}
         command: amqp://rabbitmq:5672
@@ -57,22 +57,22 @@ services:
                 condition: service_healthy
 
     rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: docker.io/library/rabbitmq:3-management-alpine
         restart: unless-stopped
         user: ${MBIN_USER}
         healthcheck:
             test: ['CMD', 'rabbitmq-diagnostics', 'check_port_connectivity']
         env_file: .env
         volumes:
-            - ./storage/rabbitmq_data:/var/lib/rabbitmq
-            - ./storage/rabbitmq_logs:/var/log/rabbitmq
+            - ./storage/rabbitmq_data:/var/lib/rabbitmq:rw,Z
+            - ./storage/rabbitmq_logs:/var/log/rabbitmq:rw,z
         ports:
             - 15672:15672
         # Hostname specified to ensure persistent data: https://stackoverflow.com/questions/41330514
         hostname: rabbitmq
 
     postgres:
-        image: postgres:${POSTGRES_VERSION}-trixie
+        image: docker.io/library/postgres:${POSTGRES_VERSION}-trixie
         restart: unless-stopped
         user: ${MBIN_USER}
         shm_size: '2gb'
@@ -80,14 +80,14 @@ services:
             test: ['CMD', 'pg_isready']
         env_file: .env
         volumes:
-            - ./storage/postgres:/var/lib/postgresql/data
+            - ./storage/postgres:/var/lib/postgresql:rw,Z
 
     valkey:
-        image: valkey/valkey:trixie
+        image: docker.io/valkey/valkey:trixie
         restart: unless-stopped
         user: ${MBIN_USER}
         command: valkey-server /valkey.conf --requirepass ${VALKEY_PASSWORD}
         healthcheck:
             test: ['CMD', 'valkey-cli', 'ping']
         volumes:
-            - ./docker/valkey.conf:/valkey.conf
+            - ./docker/valkey.conf:/valkey.conf:ro,Z

@@ -86,7 +86,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?string $ip = null;
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
@@ -178,7 +178,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return new ArrayCollection(iterator_to_array($iterator));
     }
 
-    private function handlePrivateComments(ArrayCollection $comments, ?User $user): ArrayCollection
+    private function handlePrivateComments(Collection $comments, ?User $user): Collection
     {
         return $comments->filter(function (PostComment $val) use ($user) {
             if ($user && VisibilityInterface::VISIBILITY_PRIVATE === $val->visibility) {

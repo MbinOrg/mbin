@@ -194,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $magazineOwnershipRequests;
     #[OneToMany(mappedBy: 'user', targetEntity: ModeratorRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorRequests;
-    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Entry::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entries;
     #[OneToMany(mappedBy: 'user', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $entryVotes;
