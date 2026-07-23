@@ -162,6 +162,9 @@ class SearchRetrieveApi extends BaseApi
         if ('entry' !== $type && 'post' !== $type && null !== $type) {
             throw new BadRequestHttpException();
         }
+        if (null === $type) {
+            $type = 'entry+post';
+        }
 
         $items = $manager->findPaginated($this->getUser(), $q, $page, $perPage, authorId: $authorId, magazineId: $magazineId, specificType: $type);
         $dtos = [];
