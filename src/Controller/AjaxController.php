@@ -27,6 +27,7 @@ use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
+use App\Utils\Polyfills;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -88,7 +89,7 @@ class AjaxController extends AbstractController
      */
     public function fetchEmbed(Embed $embed, Request $request): JsonResponse
     {
-        $data = $embed->fetch($request->get('url'));
+        $data = $embed->fetch(Polyfills::requestParam($request, 'url'));
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
         if ($data->isImageUrl()) {
             $html = \sprintf(

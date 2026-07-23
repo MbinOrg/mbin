@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Service;
 
 use App\Entity\MonitoringExecutionContext;
 use App\Entity\MonitoringQuery;
+use App\Entity\MonitoringQueryString;
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Depends;
 
@@ -14,11 +15,13 @@ class MonitoringParameterEncodingTest extends WebTestCase
     public function testThrowOnParameterEncoding(): void
     {
         $prepared = $this->prepareContextAndQuery();
+        /** @var MonitoringQuery $query */
         $query = $prepared['query'];
 
         $exception = null;
         try {
             $this->entityManager->persist($prepared['context']);
+            $this->entityManager->persist($query->queryString);
             $this->entityManager->persist($query);
             $this->entityManager->flush();
         } catch (\Exception $e) {
@@ -33,11 +36,13 @@ class MonitoringParameterEncodingTest extends WebTestCase
     public function testNotThrowOnEscape(): void
     {
         $prepared = $this->prepareContextAndQuery();
+        /** @var MonitoringQuery $query */
         $query = $prepared['query'];
         $query->cleanParameterArray();
         $exception = null;
         try {
             $this->entityManager->persist($prepared['context']);
+            $this->entityManager->persist($query->queryString);
             $this->entityManager->persist($query);
             $this->entityManager->flush();
         } catch (\Exception $e) {
@@ -56,7 +61,10 @@ class MonitoringParameterEncodingTest extends WebTestCase
         $context->setStartedAt();
 
         $query = new MonitoringQuery();
-        $query->query = 'INSERT SOME STUFF';
+        $queryString = new MonitoringQueryString();
+        $queryString->query = 'INSERT SOME STUFF';
+        $queryString->queryHash = hash('sha1', $queryString->query);
+        $query->queryString = $queryString;
         $query->parameters = [
             // deliberately create a broken string
             // see https://stackoverflow.com/questions/4663743/how-to-keep-json-encode-from-dropping-strings-with-invalid-characters

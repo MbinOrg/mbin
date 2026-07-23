@@ -10,6 +10,7 @@ use App\Repository\MagazineSubscriptionRepository;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
 use App\Service\ActivityPub\Wrapper\CollectionItemsWrapper;
 use App\Service\ActivityPubManager;
+use App\Utils\Polyfills;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,10 +31,10 @@ class MagazineFollowersController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if (!$request->get('page')) {
+        if (!Polyfills::requestParam($request, 'page')) {
             $data = $this->collectionInfoWrapper->build('ap_magazine_followers', ['name' => $magazine->name], $magazine->subscriptionsCount);
         } else {
-            $data = $this->getCollectionItems($magazine, (int) $request->get('page'));
+            $data = $this->getCollectionItems($magazine, (int) Polyfills::requestParam($request, 'page'));
         }
 
         $response = new JsonResponse($data);

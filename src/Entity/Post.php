@@ -21,6 +21,7 @@ use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -133,8 +134,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     {
         $this->comments->get(-1);
 
-        $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'DESC'])
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+            ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -158,8 +159,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function getBestComments(?User $user = null): Collection
     {
-        $criteria = Criteria::create()
-            ->orderBy(['upVotes' => 'DESC', 'createdAt' => 'ASC']);
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+            ->orderBy(['upVotes' => Order::Descending, 'createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
         $comments = $this->handlePrivateComments($comments, $user);
@@ -190,8 +191,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function getLastComments(?User $user = null): Collection
     {
-        $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'ASC']);
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+            ->orderBy(['createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
 
@@ -216,7 +217,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function updateCounts(): self
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE));
 
         $this->commentCount = $this->comments->matching($criteria)->count();
@@ -342,7 +343,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;

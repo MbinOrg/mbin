@@ -10,6 +10,7 @@ use App\DTO\SiteResponseDto;
 use App\Entity\Site;
 use App\Repository\SiteRepository;
 use App\Service\SettingsManager;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -79,7 +80,7 @@ class InstanceUpdatePagesApi extends InstanceBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $page = $request->get('page');
+        $page = Polyfills::requestParam($request, 'page');
 
         if (null === $page || false === array_search($page, SiteResponseDto::PAGES)) {
             throw new BadRequestHttpException('Page parameter is invalid!');

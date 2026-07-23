@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Utils\Polyfills;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -78,7 +79,7 @@ abstract class AbstractController extends BaseAbstractController
 
     protected function getPageNb(Request $request): int
     {
-        return (int) $request->get('p', 1);
+        return (int) Polyfills::requestParam($request, 'p', 1);
     }
 
     protected function redirectToEntry(Entry $entry): Response

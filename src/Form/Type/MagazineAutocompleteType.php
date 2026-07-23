@@ -43,12 +43,15 @@ class MagazineAutocompleteType extends AbstractType
                     return;
                 }
 
-                $qb->andWhere('entity.name LIKE :filter OR entity.title LIKE :filter')
+                $qb->andWhere('lower(entity.name) LIKE lower(:filter) OR lower(entity.title) LIKE lower(:filter)')
                     ->andWhere('entity.visibility = :visibility')
                     ->setParameter('filter', '%'.$query.'%')
                     ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
                 ;
             },
+            'attr' => [
+                'data-controller' => 'tomselect-clear-on-load',
+            ]
         ]);
     }
 

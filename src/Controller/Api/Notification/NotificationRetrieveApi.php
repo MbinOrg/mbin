@@ -9,6 +9,7 @@ use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use App\Schema\NotificationSchema;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -166,7 +167,7 @@ class NotificationRetrieveApi extends NotificationBaseApi
             $this->getUserOrThrow(),
             $this->getPageNb($request),
             $status,
-            $this->constrainPerPage($request->get('perPage', NotificationRepository::PER_PAGE))
+            $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', NotificationRepository::PER_PAGE))
         );
 
         $dtos = [];

@@ -1,4 +1,4 @@
-import { ThrowResponseIfNotOk, fetch } from '../utils/http';
+import { ThrowResponseIfNotOk, fetch } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {

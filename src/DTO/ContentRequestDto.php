@@ -6,7 +6,7 @@ namespace App\DTO;
 
 use App\Entity\Entry;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[OA\Schema()]
 class ContentRequestDto extends ImageUploadDto
