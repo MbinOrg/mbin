@@ -730,7 +730,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "6.4",
-            "ref": "f250159ebe99153d0c640a3e7742876fc7453f2c"
+            "ref": "06dacf16872358cb1f2494e089070ff2d045233a"
         },
         "files": [
             "config/packages/twig.yaml",
