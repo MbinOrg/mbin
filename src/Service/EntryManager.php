@@ -165,6 +165,9 @@ class EntryManager implements ContentManagerInterface
             if (ImageManager::isImageUrl($dto->url)) {
                 $entry->type = Entry::ENTRY_TYPE_IMAGE;
                 $entry->hasEmbed = true;
+            } elseif (VideoManager::isVideoUrl($dto->url)) {
+                $entry->type = Entry::ENTRY_TYPE_VIDEO;
+                $entry->hasEmbed = true;
             } else {
                 $entry->type = Entry::ENTRY_TYPE_LINK;
             }
@@ -174,8 +177,6 @@ class EntryManager implements ContentManagerInterface
             $this->logger->warning('entry has neither image nor url nor body; defaulting to article');
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         }
-
-        // TODO handle ENTRY_TYPE_VIDEO
 
         return $entry;
     }
