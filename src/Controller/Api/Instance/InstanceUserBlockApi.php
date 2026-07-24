@@ -2,42 +2,34 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Api\User;
+namespace App\Controller\Api\Instance;
 
-use App\DTO\UserFilterListDto;
-use App\DTO\UserFilterListResponseDto;
-use App\Entity\UserFilterList;
+use App\DTO\InstanceDomainsRequestDto;
+use App\DTO\InstanceDto;
+use App\DTO\InstancesDtoV2;
+use App\Entity\InstanceBlock;
+use App\Schema\Errors\BadRequestErrorSchema;
+use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
-use App\Security\Voter\FilterListVoter;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class UserFilterListApi extends UserBaseApi
+class InstanceUserBlockApi extends InstanceBaseApi
 {
     #[OA\Response(
         response: 200,
-        description: 'The List',
+        description: 'blocked Instance',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
         ],
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(
-                    property: 'items',
-                    type: 'array',
-                    items: new OA\Items(ref: new Model(type: UserFilterListResponseDto::class))
-                ),
-            ]
-        )
+        content: new Model(type: InstancesDtoV2::class)
     )]
     #[OA\Response(
         response: 401,
@@ -62,130 +54,24 @@ class UserFilterListApi extends UserBaseApi
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-
         $user = $this->getUserOrThrow();
-        $items = [];
-        foreach ($user->filterLists as $list) {
-            $items[] = $this->serializeFilterList($list);
-        }
+
+        $userInstanceBlocks = $this->instanceBlockRepository->findBlocksForUser($user);
+        $instances = array_map(fn (InstanceBlock $b) => new InstanceDto($b->instance->domain, $b->instance->software, $b->instance->version), $userInstanceBlocks);
+        $dto = new InstancesDtoV2($instances);
 
         return new JsonResponse(
-            ['items' => $items],
+            $dto,
             headers: $headers
         );
     }
 
-    #[OA\Response(
-        response: 200,
-        description: 'Filter list created',
-        headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
-        ],
-        content: new Model(type: UserFilterListResponseDto::class)
-    )]
-    #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
-        response: 429,
-        description: 'You are being rate limited',
-        headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
-        ],
-        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
-    )]
-    #[OA\RequestBody(content: new Model(type: UserFilterListDto::class))]
-    #[OA\Tag(name: 'user')]
-    #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
-    #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    public function create(
-        #[MapRequestPayload] UserFilterListDto $dto,
-        RateLimiterFactoryInterface $apiUpdateLimiter,
-    ): JsonResponse {
-        $headers = $this->rateLimit($apiUpdateLimiter);
-
-        $user = $this->getUserOrThrow();
-        $list = new UserFilterList();
-        $list->name = $dto->name;
-        $list->expirationDate = $dto->expirationDate;
-        $list->feeds = $dto->feeds;
-        $list->comments = $dto->comments;
-        $list->profile = $dto->profile;
-        $list->user = $user;
-        $list->words = $dto->wordsToArray();
-        $this->entityManager->persist($list);
-        $this->entityManager->flush();
-
-        $freshList = $this->entityManager->getRepository(UserFilterList::class)->find($list->getId());
-
-        return new JsonResponse(
-            $this->serializeFilterList($freshList),
-            headers: $headers
-        );
-    }
-
-    #[OA\Response(
-        response: 200,
-        description: 'Filter list updated',
-        headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
-        ],
-        content: new Model(type: UserFilterListResponseDto::class)
-    )]
-    #[OA\Response(
-        response: 401,
-        description: 'Permission denied due to missing or expired token',
-        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
-    )]
-    #[OA\Response(
-        response: 429,
-        description: 'You are being rate limited',
-        headers: [
-            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
-            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
-        ],
-        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
-    )]
-    #[OA\RequestBody(content: new Model(type: UserFilterListDto::class))]
-    #[OA\Tag(name: 'user')]
-    #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
-    #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    #[IsGranted(FilterListVoter::EDIT, 'list')]
-    public function edit(
-        RateLimiterFactoryInterface $apiUpdateLimiter,
-        #[MapEntity] UserFilterList $list,
-        #[MapRequestPayload] UserFilterListDto $dto,
-    ): JsonResponse {
-        $headers = $this->rateLimit($apiUpdateLimiter);
-        $list->name = $dto->name;
-        $list->expirationDate = $dto->expirationDate;
-        $list->feeds = $dto->feeds;
-        $list->comments = $dto->comments;
-        $list->profile = $dto->profile;
-        $list->words = $dto->wordsToArray();
-
-        $this->entityManager->persist($list);
-        $this->entityManager->flush();
-        $freshList = $this->entityManager->getRepository(UserFilterList::class)->find($list->getId());
-
-        return new JsonResponse(
-            $this->serializeFilterList($freshList),
-            headers: $headers
-        );
-    }
-
+    #[OA\RequestBody(content: new Model(
+        type: InstanceDomainsRequestDto::class,
+    ))]
     #[OA\Response(
         response: 204,
-        description: 'Filter list deleted',
+        description: 'Instances were blocked',
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
             new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
@@ -193,9 +79,19 @@ class UserFilterListApi extends UserBaseApi
         ],
     )]
     #[OA\Response(
+        response: 400,
+        description: 'Instance domains not set in request-body',
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
+    )]
+    #[OA\Response(
         response: 401,
         description: 'Permission denied due to missing or expired token',
         content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Instance with given domain was not found',
+        content: new OA\JsonContent(ref: new Model(type: NotFoundErrorSchema::class))
     )]
     #[OA\Response(
         response: 429,
@@ -210,18 +106,73 @@ class UserFilterListApi extends UserBaseApi
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    #[IsGranted(FilterListVoter::DELETE, 'list')]
-    public function delete(
-        RateLimiterFactoryInterface $apiDeleteLimiter,
-        #[MapEntity(class: UserFilterList::class)] UserFilterList $list,
+    public function block(
+        RateLimiterFactoryInterface $apiUpdateLimiter,
     ): JsonResponse {
-        $headers = $this->rateLimit($apiDeleteLimiter);
+        $headers = $this->rateLimit($apiUpdateLimiter);
+        $user = $this->getUserOrThrow();
 
-        $this->entityManager->remove($list);
-        $this->entityManager->flush();
+        $instances = $this->getInstancesFromDomainsRequest();
 
-        return new JsonResponse(
-            headers: $headers
-        );
+        foreach ($instances as $instance) {
+            $this->instanceManager->blockInstance($instance, $user);
+        }
+
+        return new JsonResponse(status: 204, headers: $headers);
+    }
+
+    #[OA\RequestBody(content: new Model(
+        type: InstanceDomainsRequestDto::class,
+    ))]
+    #[OA\Response(
+        response: 204,
+        description: 'Instances were unblocked',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Instance domains not set in request-body',
+        content: new OA\JsonContent(ref: new Model(type: BadRequestErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Instance with given domain was not found',
+        content: new OA\JsonContent(ref: new Model(type: NotFoundErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', description: 'Number of requests left until you will be rate limited', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Retry-After', description: 'Unix timestamp to retry the request after', schema: new OA\Schema(type: 'integer')),
+            new OA\Header(header: 'X-RateLimit-Limit', description: 'Number of requests available', schema: new OA\Schema(type: 'integer')),
+        ],
+        content: new OA\JsonContent(ref: new Model(type: TooManyRequestsErrorSchema::class))
+    )]
+    #[OA\Tag(name: 'user')]
+    #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
+    #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
+    public function unblock(
+        RateLimiterFactoryInterface $apiUpdateLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiUpdateLimiter);
+        $user = $this->getUserOrThrow();
+
+        $instances = $this->getInstancesFromDomainsRequest();
+
+        foreach ($instances as $instance) {
+            $this->instanceManager->unblockInstance($instance, $user);
+        }
+
+        return new JsonResponse(status: 204, headers: $headers);
     }
 }

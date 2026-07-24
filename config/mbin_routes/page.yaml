@@ -24,11 +24,6 @@ stats:
   path: /stats/{statsType}/{statsPeriod}/{withFederated}
   methods: [ GET ]
 
-page_federation:
-  controller: App\Controller\FederationController
-  path: /federation
-  methods: [ GET ]
-
 redirect_instances:
   controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
   path: /instances
