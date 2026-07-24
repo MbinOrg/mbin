@@ -37,6 +37,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['up_votes'], name: 'entry_comment_up_votes_idx')]
 #[Index(columns: ['last_active'], name: 'entry_comment_last_active_at_idx')]
 #[Index(columns: ['created_at'], name: 'entry_comment_created_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'entry_comment_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_comment_body_ts_idx')]
 class EntryComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -127,6 +128,9 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        /* @psalm-suppress UninitializedProperty */
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void

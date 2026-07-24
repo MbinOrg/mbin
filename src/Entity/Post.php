@@ -40,6 +40,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['comment_count'], name: 'post_comment_count_idx')]
 #[Index(columns: ['created_at'], name: 'post_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'post_last_active_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'post_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_body_ts_idx')]
 class Post implements VotableInterface, CommentInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -127,6 +128,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
