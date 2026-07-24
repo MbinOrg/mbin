@@ -264,10 +264,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $this->getEntityManager()->flush();
     }
 
-    public function findOneByUsername(string $username): ?User
+    public function findOneByUsername(string $username, bool $caseInsensitive = false): ?User
     {
         return $this->createQueryBuilder('u')
-            ->Where('LOWER(u.username) = LOWER(:username)')
+            ->Where($caseInsensitive ? 'LOWER(u.username) = LOWER(:username)' : 'u.username = :username')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('username', $username)
