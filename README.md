@@ -124,17 +124,17 @@ Unofficial magazines:
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/cooperaj">
-                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
-                    <br />
-                    <sub><b>Adam Cooper</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/blued-gear">
                     <img src="https://avatars.githubusercontent.com/u/164888202?v=4" width="100;" alt="blued-gear"/>
                     <br />
                     <sub><b>blued_gear</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/cooperaj">
+                    <img src="https://avatars.githubusercontent.com/u/400210?v=4" width="100;" alt="cooperaj"/>
+                    <br />
+                    <sub><b>Adam Cooper</b></sub>
                 </a>
             </td>
             <td align="center">
