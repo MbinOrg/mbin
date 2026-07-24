@@ -64,6 +64,7 @@ class VoteManager
 
                 if (VotableInterface::VOTE_UP === $choice && null !== $votable->apShareCount) {
                     ++$votable->apShareCount;
+                    $votable->updateLastBoostDate();
                 } elseif (VotableInterface::VOTE_DOWN === $choice && null !== $votable->apDislikeCount) {
                     ++$votable->apDislikeCount;
                 }
@@ -132,6 +133,7 @@ class VoteManager
 
         $votable->updateVoteCounts();
 
+        $votable->updateLastBoostDate();
         $votable->lastActive = new \DateTime();
 
         if ($votable instanceof PostComment) {
