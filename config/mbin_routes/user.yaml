@@ -160,6 +160,11 @@ user_settings_domain_blocks:
     path: /settings/blocked/domains
     methods: [GET]
 
+user_settings_tag_blocks:
+    controller: App\Controller\User\Profile\UserBlockController::hashtags
+    path: /settings/blocked/tags
+    methods: [GET]
+
 user_settings_user_blocks:
     controller: App\Controller\User\Profile\UserBlockController::users
     path: /settings/blocked/people

@@ -140,6 +140,8 @@ title: Title
 body: Body
 tags: Tags
 tag: Tag
+hashtag: Hashtag
+hashtags: Hashtags
 badges: Badges
 is_adult: 18+ / NSFW
 eng: ENG

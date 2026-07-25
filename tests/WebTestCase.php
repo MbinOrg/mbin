@@ -31,6 +31,7 @@ use App\Repository\ReportRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SiteRepository;
 use App\Repository\TagLinkRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
@@ -149,6 +150,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected SettingsRepository $settingsRepository;
     protected UserRepository $userRepository;
     protected TagLinkRepository $tagLinkRepository;
+    protected TagRepository $tagRepository;
     protected BookmarkRepository $bookmarkRepository;
     protected BookmarkListRepository $bookmarkListRepository;
     protected UserFollowRepository $userFollowRepository;
@@ -253,6 +255,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->settingsRepository = $this->getService(SettingsRepository::class);
         $this->userRepository = $this->getService(UserRepository::class);
         $this->tagLinkRepository = $this->getService(TagLinkRepository::class);
+        $this->tagRepository = $this->getService(TagRepository::class);
         $this->bookmarkRepository = $this->getService(BookmarkRepository::class);
         $this->bookmarkListRepository = $this->getService(BookmarkListRepository::class);
         $this->userFollowRepository = $this->getService(UserFollowRepository::class);

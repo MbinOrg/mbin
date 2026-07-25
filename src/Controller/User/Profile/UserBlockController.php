@@ -7,6 +7,7 @@ namespace App\Controller\User\Profile;
 use App\Controller\AbstractController;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,6 +53,20 @@ class UserBlockController extends AbstractController
             [
                 'user' => $user,
                 'domains' => $repository->findBlockedDomains($this->getPageNb($request), $user),
+            ]
+        );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    public function hashtags(TagRepository $repository, Request $request): Response
+    {
+        $user = $this->getUserOrThrow();
+
+        return $this->render(
+            'user/settings/block_hashtags.html.twig',
+            [
+                'user' => $user,
+                'hashtags' => $repository->findBlockedTags($this->getPageNb($request), $user),
             ]
         );
     }
