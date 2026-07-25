@@ -40,3 +40,13 @@ tag_unban:
   path: /tag/{name}/unban
   methods: [POST]
   controller: App\Controller\Tag\TagBanController::unban
+
+tag_block:
+  controller: App\Controller\Tag\TagBlockController::block
+  path: /tag/{name}/block
+  methods: [ POST ]
+
+tag_unblock:
+  controller: App\Controller\Tag\TagBlockController::unblock
+  path: /tag/{name}/unblock
+  methods: [ POST ]

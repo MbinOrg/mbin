@@ -1,0 +1,27 @@
+<aside{{ attributes.defaults({class: 'hashtag__subscribe', 'data-controller': 'subs'}) }}>
+    {#
+    <div class="action"
+        title="{{ domain.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': domain.subscriptionsCount}) }}"
+        aria-label="{{ domain.subscriptionsCount ~ ' ' ~ 'subscribers_count'|trans({'%count%': domain.subscriptionsCount}) }}">
+        <i class="fa-solid fa-users" aria-hidden="true"></i> <span>{{ domain.subscriptionsCount }}</span>
+    </div>
+    <form action="{{ path('domain_' ~ (is_domain_subscribed(domain) ? 'unsubscribe' : 'subscribe'), {name: domain.name}) }}"
+          name="domain_subscribe"
+          method="post">
+        <button type="submit"
+                class="{{ html_classes('btn btn__secondary', {'active': is_domain_subscribed(domain)}) }}"
+                data-action="subs#send">
+            {{ is_domain_subscribed(domain) ? 'unsubscribe'|trans : 'subscribe'|trans }}
+        </button>
+    </form>
+    #}
+    <form action="{{ path('tag_' ~ (isHashtagBlocked ? 'unblock' : 'block'), {name: hashtag.tag}) }}"
+          name="hashtag_block"
+          method="post">
+        <button type="submit"
+                class="{{ html_classes('btn btn__secondary', {'active danger': isHashtagBlocked}) }}"
+                data-action="subs#send">
+            <i class="fa-solid fa-ban" aria-hidden="true"></i><span>{{ isHashtagBlocked ? 'unblock'|trans : 'block'|trans  }}</span>
+        </button>
+    </form>
+</aside>
