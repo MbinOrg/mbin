@@ -55,11 +55,13 @@ use App\Service\PostManager;
 use App\Service\ProjectInfoService;
 use App\Service\ReportManager;
 use App\Service\SettingsManager;
+use App\Service\TagManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
 use App\Twig\Runtime\FormattingExtensionRuntime;
+use App\Utils\SqlHelpers;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
@@ -108,6 +110,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ArrayCollection $users;
     protected ArrayCollection $magazines;
     protected ArrayCollection $entries;
+    protected ArrayCollection $hashtags;
 
     protected EntityManagerInterface $entityManager;
     protected KernelBrowser $client;
@@ -123,6 +126,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected VoteManager $voteManager;
     protected SettingsManager $settingsManager;
     protected DomainManager $domainManager;
+    protected TagManager $tagManager;
     protected ReportManager $reportManager;
     protected BadgeManager $badgeManager;
     protected NotificationManager $notificationManager;
@@ -177,6 +181,8 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ActivityJsonBuilder $activityJsonBuilder;
     protected Security $security;
 
+    protected SqlHelpers $sqlHelpers;
+
     protected DeliverHandler $deliverHandler;
 
     protected string $kibbyPath;
@@ -186,6 +192,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->users = new ArrayCollection();
         $this->magazines = new ArrayCollection();
         $this->entries = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
+
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->client = static::createClient();
 
@@ -220,6 +228,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->voteManager = $this->getService(VoteManager::class);
         $this->settingsManager = $this->getService(SettingsManager::class);
         $this->domainManager = $this->getService(DomainManager::class);
+        $this->tagManager = $this->getService(TagManager::class);
         $this->reportManager = $this->getService(ReportManager::class);
         $this->badgeManager = $this->getService(BadgeManager::class);
         $this->notificationManager = $this->getService(NotificationManager::class);
@@ -271,6 +280,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->bus = $this->getService(MessageBusInterface::class);
         $this->projectInfoService = $this->getService(ProjectInfoService::class);
         $this->logger = $this->getService(LoggerInterface::class);
+
+        $this->sqlHelpers = $this->getService(SqlHelpers::class);
 
         // clear all cache before every test
         $app = new Application($this->client->getKernel());

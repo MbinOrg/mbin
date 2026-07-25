@@ -37,9 +37,9 @@ class ContentRepository
     ) {
     }
 
-    public function findByCriteria(Criteria $criteria): PagerfantaInterface
+    public function findByCriteria(Criteria $criteria, ?User $loggedInUser = null): PagerfantaInterface
     {
-        $query = $this->getQueryAndParameters($criteria, false);
+        $query = $this->getQueryAndParameters($criteria, false, $loggedInUser);
         $conn = $this->entityManager->getConnection();
 
         $numResults = null;
@@ -63,9 +63,9 @@ class ContentRepository
      *
      * @throws Exception
      */
-    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null): CursorPaginationInterface
+    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null, ?User $loggedInUser = null): CursorPaginationInterface
     {
-        $query = $this->getQueryAndParameters($criteria, true);
+        $query = $this->getQueryAndParameters($criteria, true, $loggedInUser);
         $conn = $this->entityManager->getConnection();
         $orderings = $this->getOrderings($criteria);
         $start = new \DateTimeImmutable();
@@ -99,11 +99,12 @@ class ContentRepository
     /**
      * @return array{sql: string, parameters: array}>
      */
-    private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
+    private function getQueryAndParameters(Criteria $criteria, bool $addCursor, ?User $user): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
+        $includePosts = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content;
         $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includePostComments = $includePosts && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
@@ -111,7 +112,7 @@ class ContentRepository
         ];
 
         /** @var ?User $user */
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
         $currenFilterLists = $user?->getCurrentFilterLists() ?? [];
         $parameters['loggedInUser'] = $user?->getId();
 
@@ -271,6 +272,8 @@ class ContentRepository
 
         $blockingClausePost = '';
         $blockingClauseEntry = '';
+        $blockingClausePostComment = '';
+        $blockingClauseEntryComment = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
                 $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
@@ -295,6 +298,23 @@ class ContentRepository
                 if ($includeEntries) {
                     $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
                 }
+            }
+
+            $blockingClauseEntryComment = $blockingClausePost;
+            $blockingClausePostComment = $blockingClausePost;
+
+            if(null == $criteria->cachedUserBlockedHashtags) {
+                $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_id = c.id AND hb.user_id = :loggedInUser)';
+                $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_id = c.id AND hb.user_id = :loggedInUser)';
+                $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_comment_id = c.id AND hb.user_id = :loggedInUser)';
+                $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_comment_id = c.id AND hb.user_id = :loggedInUser)';
+            } else {
+                $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+
+                $parameters['cachedUserBlockedHashtags'] = $criteria->cachedUserBlockedHashtags;
             }
         }
 
@@ -417,7 +437,7 @@ class ContentRepository
             $subClauseEntryComment,
             $modClause,
             $favClauseEntryComment,
-            $blockingClausePost,
+            $blockingClauseEntryComment,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -439,7 +459,7 @@ class ContentRepository
             $subClausePostComment,
             $modClause,
             $favClausePostComment,
-            $blockingClausePost,
+            $blockingClausePostComment,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -489,7 +509,7 @@ class ContentRepository
             } else {
                 $innerSql = "$postSql $orderBy $innerLimit";
             }
-        } else {
+        } else { // Criteria::CONTENT_COMBINED
             $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($postSql $orderBy $innerLimit)";
             if ($includeEntryComments) {
                 $innerSql .= " UNION ALL ($entryCommentSql $orderBy $innerLimit)";

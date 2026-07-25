@@ -18,6 +18,7 @@ use App\Entity\Client;
 use App\Entity\Contracts\VotableInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\Hashtag;
 use App\Entity\Image;
 use App\Entity\Magazine;
 use App\Entity\Message;
@@ -500,6 +501,28 @@ trait FactoryTrait
         $this->entityManager->flush();
 
         return $image;
+    }
+
+    public function createHashtag(string $name): Hashtag {
+        $tag = new Hashtag();
+        $tag->tag = $name;
+
+        $this->entityManager->persist($tag);
+        $this->entityManager->flush();
+
+        $this->hashtags[] = $tag;
+
+        return $tag;
+    }
+
+    public function getHashtag(string $name): Hashtag {
+        $tag = $this->hashtags->filter(fn (Hashtag $tag) => $tag->tag === $name)->first();
+
+        if(!$tag) {
+            $tag = $this->createHashtag($name);
+        }
+
+        return $tag;
     }
 
     public function createMessageNotification(?User $to = null, ?User $from = null): Notification
