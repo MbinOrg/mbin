@@ -48,16 +48,16 @@ class TagSubscriptionTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('interesting');
 
-        $magazine = $this->getMagazineByName('TagSubscriptionTest');
+        $magazine = $this->getMagazineByName('testSubscribedHashtagIsIncludedInCombinedWithCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #interesting');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notInteresting');
-        usleep(10000);
+        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #interesting', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notInteresting', $entryShowing, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postShowing = $this->createPost('some text #interesting', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notInteresting', $magazine, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #interesting', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notInteresting', $postShowing, $contentCreator);
 
@@ -85,16 +85,16 @@ class TagSubscriptionTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('interesting');
 
-        $magazine = $this->getMagazineByName('TagSubscriptionTest');
+        $magazine = $this->getMagazineByName('testSubscribedHashtagIsIncludedInCombinedWithoutCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #interesting');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notInteresting');
-        usleep(10000);
+        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #interesting', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notInteresting', $entryShowing, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postShowing = $this->createPost('some text #interesting', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notInteresting', $magazine, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #interesting', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notInteresting', $postShowing, $contentCreator);
 

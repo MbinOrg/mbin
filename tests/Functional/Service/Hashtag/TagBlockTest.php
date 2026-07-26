@@ -50,16 +50,16 @@ class TagBlockTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
 
-        $magazine = $this->getMagazineByName('HashtagBlockTest');
+        $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInCombinedWithCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #wanted');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notWanted');
-        usleep(10000);
+        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #wanted', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notWanted', $entryShowing, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postShowing = $this->createPost('some text #wanted', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notWanted', $magazine, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #wanted', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notWanted', $postShowing, $contentCreator);
 
@@ -90,16 +90,16 @@ class TagBlockTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
 
-        $magazine = $this->getMagazineByName('HashtagBlockTest');
+        $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInCombinedWithoutCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #wanted');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notWanted');
-        usleep(10000);
+        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #wanted', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notWanted', $entryShowing, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postShowing = $this->createPost('some text #wanted', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notWanted', $magazine, $contentCreator);
-        usleep(10000);
+        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #wanted', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notWanted', $postShowing, $contentCreator);
 
@@ -129,7 +129,7 @@ class TagBlockTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
 
-        $magazine = $this->getMagazineByName('HashtagBlockTest');
+        $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInEntryComments');
         $entry = $this->createEntry('something', $magazine, $contentCreator, body: 'some text');
         $commentShowing = $this->createEntryComment('some text #wanted', $entry, $contentCreator);
         $commentHidden = $this->createEntryComment('some text #notWanted', $entry, $contentCreator);
@@ -153,7 +153,7 @@ class TagBlockTest extends WebTestCase
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
 
-        $magazine = $this->getMagazineByName('HashtagBlockTest');
+        $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInPostComments');
         $post = $this->createPost('something', $magazine, $contentCreator);
         $commentShowing = $this->createPostComment('some text #wanted', $post, $contentCreator);
         $commentHidden = $this->createPostComment('some text #notWanted', $post, $contentCreator);
