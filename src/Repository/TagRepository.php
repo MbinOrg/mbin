@@ -119,6 +119,24 @@ class TagRepository extends ServiceEntityRepository
         ];
     }
 
+    public function findSubscribedTags(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
+    {
+        $pagerfanta = new Pagerfanta(
+            new CollectionAdapter(
+                $user->subscribedHashtags
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
     public function findBlockedTags(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(

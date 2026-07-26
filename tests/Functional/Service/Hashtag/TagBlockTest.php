@@ -42,7 +42,7 @@ class TagBlockTest extends WebTestCase
         self::assertSame($tag1->tag, $user2->blockedHashtags->first()->hashtag->tag);
     }
 
-    public function testBlockedHashtagIsHiddenInCombined() {
+    public function testBlockedHashtagIsHiddenInCombinedWithCache() {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
@@ -70,6 +70,44 @@ class TagBlockTest extends WebTestCase
         $criteria->includeBoosts = true;
         $criteria->perPage = 5;
         $criteria->fetchCachedItems($this->sqlHelpers, $user);
+
+        $fanta = $this->contentRepository->findByCriteria($criteria, $user);
+        $result = $fanta->getCurrentPageResults();
+
+        self::assertSame($entryShowing->getId(), $result[0]->getId());
+        self::assertSame($entryCommentShowing->getId(), $result[1]->getId());
+        self::assertSame($postShowing->getId(), $result[2]->getId());
+        self::assertSame($postCommentShowing->getId(), $result[3]->getId());
+        self::assertCount(4, $result);
+    }
+
+    public function testBlockedHashtagIsHiddenInCombinedWithoutCache() {
+        $user = $this->getUserByUsername('John Doe');
+        $contentCreator = $this->getUserByUsername('poster');
+        $tag = $this->getHashtag('notWanted');
+
+        $magazine = $this->getMagazineByName('HashtagBlockTest');
+        $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #wanted');
+        $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notWanted');
+        usleep(10000);
+        $entryCommentShowing = $this->createEntryComment('some text #wanted', $entryShowing, $contentCreator);
+        $entryCommentHidden = $this->createEntryComment('some text #notWanted', $entryShowing, $contentCreator);
+        usleep(10000);
+        $postShowing = $this->createPost('some text #wanted', $magazine, $contentCreator);
+        $postHidden = $this->createPost('some text #notWanted', $magazine, $contentCreator);
+        usleep(10000);
+        $postCommentShowing = $this->createPostComment('some text #wanted', $postShowing, $contentCreator);
+        $postCommentHidden = $this->createPostComment('some text #notWanted', $postShowing, $contentCreator);
+
+        $user->follow($contentCreator);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new EntryPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_COMBINED)
+            ->showSortOption(Criteria::SORT_NEW);
+        $criteria->magazine = $magazine;
+        $criteria->includeBoosts = true;
+        $criteria->perPage = 5;
 
         $fanta = $this->contentRepository->findByCriteria($criteria, $user);
         $result = $fanta->getCurrentPageResults();

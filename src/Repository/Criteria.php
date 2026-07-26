@@ -113,6 +113,9 @@ abstract class Criteria
     public ?array $cachedUserSubscribedDomains = null;
 
     /** @var int[]|null */
+    public ?array $cachedUserSubscribedHashtags = null;
+
+    /** @var int[]|null */
     public ?array $cachedUserBlocks = null;
 
     /** @var int[]|null */
@@ -354,6 +357,7 @@ abstract class Criteria
         if ($this->subscribed) {
             $this->cachedUserSubscribedDomains = $sqlHelpers->getCachedUserSubscribedDomains($loggedInUser);
             $this->cachedUserSubscribedMagazines = $sqlHelpers->getCachedUserSubscribedMagazines($loggedInUser);
+            $this->cachedUserSubscribedHashtags = $sqlHelpers->getCachedUserSubscribedHashtags($loggedInUser);
         }
 
         if ($this->moderated) {

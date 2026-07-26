@@ -214,6 +214,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $subscriptions;
     #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedDomains;
+    #[OneToMany(mappedBy: 'user', targetEntity: HashtagSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    public Collection $subscribedHashtags;
     #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $follows;
@@ -310,6 +312,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->postCommentVotes = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->subscribedDomains = new ArrayCollection();
+        $this->subscribedHashtags = new ArrayCollection();
         $this->follows = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->blocks = new ArrayCollection();
