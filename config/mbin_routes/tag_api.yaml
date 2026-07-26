@@ -21,3 +21,21 @@ api_tag_post_comments:
   path: /api/tag/{name}/postComments
   methods: [ GET ]
   format: json
+
+api_tag_block:
+  controller: App\Controller\Api\Tag\TagBlockApi::block
+  path: /api/tag/{name}/block
+  methods: [ PUT ]
+  format: json
+
+api_tag_unblock:
+  controller: App\Controller\Api\Tag\TagBlockApi::unblock
+  path: /api/tag/{name}/unblock
+  methods: [ PUT ]
+  format: json
+
+api_tag_blocked:
+  controller: App\Controller\Api\Tag\TagBlockApi::list
+  path: /api/tags/blocked
+  methods: [ GET ]
+  format: json

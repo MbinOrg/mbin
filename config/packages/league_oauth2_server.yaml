@@ -28,6 +28,8 @@ league_oauth2_server:
                 "domain",
                 "domain:subscribe",
                 "domain:block",
+                "hashtag",
+                "hashtag:block",
                 "entry",
                 "entry:create",
                 "entry:edit",

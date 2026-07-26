@@ -202,11 +202,14 @@ security:
         ROLE_OAUTH2_BLOCK:
             [
                 'ROLE_OAUTH2_DOMAIN:BLOCK',
+                'ROLE_OAUTH2_HASHTAG:BLOCK',
                 'ROLE_OAUTH2_MAGAZINE:BLOCK',
                 'ROLE_OAUTH2_USER:BLOCK',
             ]
         ROLE_OAUTH2_DOMAIN:
             ['ROLE_OAUTH2_DOMAIN:SUBSCRIBE', 'ROLE_OAUTH2_DOMAIN:BLOCK']
+        ROLE_OAUTH2_HASHTAG:
+            ['ROLE_OAUTH2_HASHTAG:BLOCK']
         ROLE_OAUTH2_ENTRY:
             [
                 'ROLE_OAUTH2_ENTRY:CREATE',
