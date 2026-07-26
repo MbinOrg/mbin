@@ -1,17 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Functional\Service\Hashtag;
 
-use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
-use App\PageView\PostCommentPageView;
 use App\Repository\Criteria;
 use App\Tests\WebTestCase;
 
 class TagSubscriptionTest extends WebTestCase
 {
-
-    public function testSubscribe() {
+    public function testSubscribe()
+    {
         $user1 = $this->getUserByUsername('John Doe');
         $user2 = $this->getUserByUsername('Jane Doe');
         $tagNeutral = $this->getHashtag('abc');
@@ -24,7 +23,8 @@ class TagSubscriptionTest extends WebTestCase
         self::assertCount(0, $user2->subscribedHashtags);
     }
 
-    public function testUnsubscribe() {
+    public function testUnsubscribe()
+    {
         $user1 = $this->getUserByUsername('John Doe');
         $user2 = $this->getUserByUsername('Jane Doe');
         $tag1 = $this->getHashtag('abc');
@@ -42,7 +42,8 @@ class TagSubscriptionTest extends WebTestCase
         self::assertSame($tag1->tag, $user2->subscribedHashtags->first()->hashtag->tag);
     }
 
-    public function testSubscribedHashtagIsIncludedInCombinedWithCache() {
+    public function testSubscribedHashtagIsIncludedInCombinedWithCache()
+    {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('interesting');
@@ -78,7 +79,8 @@ class TagSubscriptionTest extends WebTestCase
         self::assertCount(2, $result);
     }
 
-    public function testSubscribedHashtagIsIncludedInCombinedWithoutCache() {
+    public function testSubscribedHashtagIsIncludedInCombinedWithoutCache()
+    {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('interesting');

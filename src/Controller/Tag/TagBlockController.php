@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Tag;
 
 use App\Controller\AbstractController;
-use App\Entity\Domain;
 use App\Entity\Hashtag;
-use App\Service\DomainManager;
 use App\Service\TagManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;

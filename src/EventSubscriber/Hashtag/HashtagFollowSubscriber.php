@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\Hashtag;
 
-use App\Event\DomainSubscribedEvent;
 use App\Event\HashtagSubscriptionChangedEvent;
 use App\Utils\SqlHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

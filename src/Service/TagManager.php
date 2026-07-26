@@ -6,14 +6,12 @@ namespace App\Service;
 
 use App\DTO\EntryCommentDto;
 use App\DTO\EntryDto;
-use App\Entity\Domain;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Hashtag;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
-use App\Event\DomainSubscribedEvent;
 use App\Event\HashtagBlockChangedEvent;
 use App\Event\HashtagSubscriptionChangedEvent;
 use App\Repository\TagLinkRepository;
@@ -205,14 +203,16 @@ class TagManager
         $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($tag, $user, false));
     }
 
-    public function block(User $user, Hashtag $hashtag): void {
+    public function block(User $user, Hashtag $hashtag): void
+    {
         $user->blockHashtag($hashtag);
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, true));
     }
 
-    public function unblock(User $user, Hashtag $hashtag): void {
+    public function unblock(User $user, Hashtag $hashtag): void
+    {
         $user->unblockHashtag($hashtag);
         $this->entityManager->flush();
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\DTO;
 
@@ -21,8 +22,7 @@ class HashtagResponseDto implements \JsonSerializable
         int $entryCommentCount,
         int $postCount,
         int $postCommentCount,
-    ): self
-    {
+    ): self {
         $toReturn = new HashtagResponseDto();
         $toReturn->tag = $tag;
         $toReturn->entryCount = $entryCount;

@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\EventSubscriber\Hashtag;
 
-use App\Event\DomainBlockedEvent;
 use App\Event\HashtagBlockChangedEvent;
 use App\Utils\SqlHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

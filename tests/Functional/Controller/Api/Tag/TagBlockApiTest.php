@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Tag;
 
-use App\Tests\Functional\Controller\Api\Domain\DomainRetrieveApiTest;
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 class TagBlockApiTest extends WebTestCase
 {
-
     public function testApiCannotBlockHashtagAnonymous()
     {
         $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/block");
+        $this->client->request('PUT', '/api/tag/sometag/block');
         self::assertResponseStatusCodeSame(401);
     }
 
@@ -28,7 +26,7 @@ class TagBlockApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/block', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
@@ -42,7 +40,7 @@ class TagBlockApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/block', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -58,7 +56,7 @@ class TagBlockApiTest extends WebTestCase
         self::assertTrue($jsonData['isBlockedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/block', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -78,7 +76,7 @@ class TagBlockApiTest extends WebTestCase
     {
         $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock");
+        $this->client->request('PUT', '/api/tag/sometag/unblock');
         self::assertResponseStatusCodeSame(401);
     }
 
@@ -91,7 +89,7 @@ class TagBlockApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unblock', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
@@ -108,7 +106,7 @@ class TagBlockApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unblock', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -124,7 +122,7 @@ class TagBlockApiTest extends WebTestCase
         self::assertFalse($jsonData['isBlockedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unblock', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -171,9 +169,9 @@ class TagBlockApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/tag1/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/tag1/block', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $this->client->request('PUT', "/api/tag/tag2/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/tag2/block', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $this->client->request('GET', '/api/tags/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
@@ -202,8 +200,8 @@ class TagBlockApiTest extends WebTestCase
             self::assertNull($block['isSubscribedByUser']);
             self::assertTrue($block['isBlockedByUser']);
 
-            $tag1Found = ($tag1Found or $block['tag'] === 'tag1');
-            $tag2Found = ($tag2Found or $block['tag'] === 'tag2');
+            $tag1Found = ($tag1Found or 'tag1' === $block['tag']);
+            $tag2Found = ($tag2Found or 'tag2' === $block['tag']);
         }
         self::assertTrue($tag1Found);
         self::assertTrue($tag2Found);

@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Tag;
 
-use App\Controller\Api\BaseApi;
-use App\Controller\Api\Domain\DomainBaseApi;
 use App\DTO\DomainDto;
 use App\DTO\HashtagResponseDto;
-use App\Entity\Domain;
 use App\Entity\Hashtag;
-use App\Entity\HashtagBlock;
 use App\Entity\HashtagSubscription;
-use App\Factory\DomainFactory;
-use App\Factory\HashtagFactory;
 use App\Repository\TagRepository;
 use App\Schema\PaginationSchema;
-use App\Service\DomainManager;
 use App\Service\TagManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;

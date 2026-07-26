@@ -198,8 +198,8 @@ class ContentRepository
         if ($user && $criteria->subscribed) {
             $clauseFragmentHashtag = '';
             // only include the subclause if there are (/ might be) subscriptions
-            if($criteria->cachedUserSubscribedHashtags === null || !empty($criteria->cachedUserSubscribedHashtags)) {
-                if($criteria->cachedUserSubscribedHashtags === null) {
+            if (null === $criteria->cachedUserSubscribedHashtags || !empty($criteria->cachedUserSubscribedHashtags)) {
+                if (null === $criteria->cachedUserSubscribedHashtags) {
                     $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_subscription hs INNER JOIN hashtag_link hl ON hs.hashtag_id = hl.hashtag_id WHERE hs.user_id = :loggedInUser AND hl.%hl_type%_id = c.id)';
                 } else {
                     $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.%hl_type%_id = c.id AND hl.hashtag_id IN (:cachedUserSubscribedHashtags))';
@@ -224,7 +224,7 @@ class ContentRepository
             $subClauseEntry = str_replace('%hl_type%', 'entry', $subClauseEntry);
 
             if ($criteria->includeBoosts) {
-                //TODO should comments with a subscribed hashtag be included too?
+                // TODO should comments with a subscribed hashtag be included too?
                 $repliesCommonWhere = 'c.user_id = :loggedInUser'
                     .(null === $criteria->cachedUserFollows ?
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
@@ -320,17 +320,17 @@ class ContentRepository
             $blockingClausePostComment = $blockingClausePost;
 
             // only include the subcluase if there are (/ might be) blocks
-            if(null == $criteria->cachedUserBlockedHashtags || !empty($criteria->cachedUserBlockedHashtags)) {
-                if (null == $criteria->cachedUserBlockedHashtags) {
-                    $blockingClauseEntry = $blockingClauseEntry . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_id = c.id AND hb.user_id = :loggedInUser)';
-                    $blockingClausePost = $blockingClausePost . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_id = c.id AND hb.user_id = :loggedInUser)';
-                    $blockingClauseEntryComment = $blockingClauseEntryComment . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_comment_id = c.id AND hb.user_id = :loggedInUser)';
-                    $blockingClausePostComment = $blockingClausePostComment . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_comment_id = c.id AND hb.user_id = :loggedInUser)';
+            if (null === $criteria->cachedUserBlockedHashtags || !empty($criteria->cachedUserBlockedHashtags)) {
+                if (null === $criteria->cachedUserBlockedHashtags) {
+                    $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_comment_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_comment_id = c.id AND hb.user_id = :loggedInUser)';
                 } else {
-                    $blockingClauseEntry = $blockingClauseEntry . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
-                    $blockingClausePost = $blockingClausePost . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
-                    $blockingClauseEntryComment = $blockingClauseEntryComment . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
-                    $blockingClausePostComment = $blockingClausePostComment . ' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
 
                     $parameters['cachedUserBlockedHashtags'] = $criteria->cachedUserBlockedHashtags;
                 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Functional\Service\Hashtag;
 
@@ -10,8 +11,8 @@ use App\Tests\WebTestCase;
 
 class TagBlockTest extends WebTestCase
 {
-
-    public function testBlock() {
+    public function testBlock()
+    {
         $user1 = $this->getUserByUsername('John Doe');
         $user2 = $this->getUserByUsername('Jane Doe');
         $tagNeutral = $this->getHashtag('abc');
@@ -24,7 +25,8 @@ class TagBlockTest extends WebTestCase
         self::assertCount(0, $user2->blockedHashtags);
     }
 
-    public function testUnblock() {
+    public function testUnblock()
+    {
         $user1 = $this->getUserByUsername('John Doe');
         $user2 = $this->getUserByUsername('Jane Doe');
         $tag1 = $this->getHashtag('abc');
@@ -42,7 +44,8 @@ class TagBlockTest extends WebTestCase
         self::assertSame($tag1->tag, $user2->blockedHashtags->first()->hashtag->tag);
     }
 
-    public function testBlockedHashtagIsHiddenInCombinedWithCache() {
+    public function testBlockedHashtagIsHiddenInCombinedWithCache()
+    {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
@@ -81,7 +84,8 @@ class TagBlockTest extends WebTestCase
         self::assertCount(4, $result);
     }
 
-    public function testBlockedHashtagIsHiddenInCombinedWithoutCache() {
+    public function testBlockedHashtagIsHiddenInCombinedWithoutCache()
+    {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('notWanted');
@@ -166,5 +170,4 @@ class TagBlockTest extends WebTestCase
         self::assertSame($commentShowing->getId(), $result[0]->getId());
         self::assertCount(1, $result);
     }
-
 }

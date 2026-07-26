@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Api\Tag;
 
-use App\Tests\Functional\Controller\Api\Domain\DomainRetrieveApiTest;
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 class TagSubscribeApiTest extends WebTestCase
 {
-
     public function testApiCannotSubscribeHashtagAnonymous()
     {
         $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/subscribe");
+        $this->client->request('PUT', '/api/tag/sometag/subscribe');
         self::assertResponseStatusCodeSame(401);
     }
 
@@ -28,7 +26,7 @@ class TagSubscribeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/subscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
@@ -42,7 +40,7 @@ class TagSubscribeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/subscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -58,7 +56,7 @@ class TagSubscribeApiTest extends WebTestCase
         self::assertTrue($jsonData['isSubscribedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/subscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -78,7 +76,7 @@ class TagSubscribeApiTest extends WebTestCase
     {
         $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/unsubscribe");
+        $this->client->request('PUT', '/api/tag/sometag/unsubscribe');
         self::assertResponseStatusCodeSame(401);
     }
 
@@ -91,7 +89,7 @@ class TagSubscribeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unsubscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
@@ -108,7 +106,7 @@ class TagSubscribeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unsubscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -124,7 +122,7 @@ class TagSubscribeApiTest extends WebTestCase
         self::assertFalse($jsonData['isSubscribedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/sometag/unsubscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -171,9 +169,9 @@ class TagSubscribeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/tag1/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/tag1/subscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $this->client->request('PUT', "/api/tag/tag2/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', '/api/tag/tag2/subscribe', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $this->client->request('GET', '/api/tags/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
@@ -202,8 +200,8 @@ class TagSubscribeApiTest extends WebTestCase
             self::assertNull($sub['isBlockedByUser']);
             self::assertTrue($sub['isSubscribedByUser']);
 
-            $tag1Found = ($tag1Found or $sub['tag'] === 'tag1');
-            $tag2Found = ($tag2Found or $sub['tag'] === 'tag2');
+            $tag1Found = ($tag1Found or 'tag1' === $sub['tag']);
+            $tag2Found = ($tag2Found or 'tag2' === $sub['tag']);
         }
         self::assertTrue($tag1Found);
         self::assertTrue($tag2Found);

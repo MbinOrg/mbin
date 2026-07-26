@@ -503,7 +503,8 @@ trait FactoryTrait
         return $image;
     }
 
-    public function createHashtag(string $name): Hashtag {
+    public function createHashtag(string $name): Hashtag
+    {
         $tag = new Hashtag();
         $tag->tag = $name;
 
@@ -515,10 +516,11 @@ trait FactoryTrait
         return $tag;
     }
 
-    public function getHashtag(string $name): Hashtag {
+    public function getHashtag(string $name): Hashtag
+    {
         $tag = $this->hashtags->filter(fn (Hashtag $tag) => $tag->tag === $name)->first();
 
-        if(!$tag) {
+        if (!$tag) {
             $tag = $this->createHashtag($name);
         }
 

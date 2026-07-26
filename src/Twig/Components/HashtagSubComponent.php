@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\Domain;
 use App\Entity\Hashtag;
 use App\Entity\User;
-use App\Service\TagManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
@@ -23,7 +21,8 @@ final class HashtagSubComponent
 
     public function __construct(
         private readonly Security $security,
-    ) {}
+    ) {
+    }
 
     #[PostMount]
     public function postMount(): void
