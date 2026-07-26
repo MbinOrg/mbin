@@ -203,6 +203,7 @@ class ContentRepository
                     $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_subscription hs INNER JOIN hashtag_link hl ON hs.hashtag_id = hl.hashtag_id WHERE hs.user_id = :loggedInUser AND hl.%hl_type%_id = c.id)';
                 } else {
                     $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.%hl_type%_id = c.id AND hl.hashtag_id IN (:cachedUserSubscribedHashtags))';
+                    $parameters['cachedUserSubscribedHashtags'] = $criteria->cachedUserSubscribedHashtags;
                 }
             }
 
@@ -253,9 +254,6 @@ class ContentRepository
             }
             if (null !== $criteria->cachedUserSubscribedDomains && $includeEntries) {
                 $parameters['cachedUserSubscribedDomains'] = $criteria->cachedUserSubscribedDomains;
-            }
-            if (null !== $criteria->cachedUserSubscribedHashtags) {
-                $parameters['cachedUserSubscribedHashtags'] = $criteria->cachedUserSubscribedHashtags;
             }
         }
 

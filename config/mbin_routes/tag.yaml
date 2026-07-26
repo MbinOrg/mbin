@@ -50,3 +50,13 @@ tag_unblock:
   controller: App\Controller\Tag\TagBlockController::unblock
   path: /tag/{name}/unblock
   methods: [ POST ]
+
+tag_subscribe:
+  controller: App\Controller\Tag\TagSubscriptionController::subscribe
+  path: /tag/{name}/subscribe
+  methods: [ POST ]
+
+tag_unsubscribe:
+  controller: App\Controller\Tag\TagSubscriptionController::unsubscribe
+  path: /tag/{name}/unsubscribe
+  methods: [ POST ]

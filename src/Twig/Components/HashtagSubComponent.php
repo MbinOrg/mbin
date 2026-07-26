@@ -17,7 +17,9 @@ final class HashtagSubComponent
 {
     public Hashtag $hashtag;
 
+    public bool $isHashtagSubscribed;
     public bool $isHashtagBlocked;
+    public int $hashtagSubscriptionCount;
 
     public function __construct(
         private readonly Security $security,
@@ -28,9 +30,13 @@ final class HashtagSubComponent
     {
         $user = $this->security->getUser();
         if ($user instanceof User) {
+            $this->isHashtagSubscribed = $this->hashtag->isSubscribed($user);
             $this->isHashtagBlocked = $user->isBlockedHashtag($this->hashtag);
         } else {
+            $this->isHashtagSubscribed = false;
             $this->isHashtagBlocked = false;
         }
+
+        $this->hashtagSubscriptionCount = $this->hashtag->subscriptions->count();
     }
 }

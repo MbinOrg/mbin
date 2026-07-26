@@ -180,6 +180,11 @@ user_settings_domain_subscriptions:
     path: /settings/subscriptions/domains
     methods: [GET]
 
+user_settings_hashtag_subscriptions:
+    controller: App\Controller\User\Profile\UserSubController::hashtags
+    path: /settings/subscriptions/hashtags
+    methods: [GET]
+
 user_settings_user_subscriptions:
     controller: App\Controller\User\Profile\UserSubController::users
     path: /settings/subscriptions/people
