@@ -186,6 +186,7 @@ security:
             [
                 'ROLE_OAUTH2_DOMAIN:SUBSCRIBE',
                 'ROLE_OAUTH2_MAGAZINE:SUBSCRIBE',
+                'ROLE_OAUTH2_HASHTAG:SUBSCRIBE',
                 'ROLE_OAUTH2_USER:FOLLOW',
             ]
         'ROLE_OAUTH2_BOOKMARK':
@@ -209,7 +210,7 @@ security:
         ROLE_OAUTH2_DOMAIN:
             ['ROLE_OAUTH2_DOMAIN:SUBSCRIBE', 'ROLE_OAUTH2_DOMAIN:BLOCK']
         ROLE_OAUTH2_HASHTAG:
-            ['ROLE_OAUTH2_HASHTAG:BLOCK']
+            ['ROLE_OAUTH2_HASHTAG:BLOCK', 'ROLE_OAUTH2_HASHTAG:SUBSCRIBE']
         ROLE_OAUTH2_ENTRY:
             [
                 'ROLE_OAUTH2_ENTRY:CREATE',

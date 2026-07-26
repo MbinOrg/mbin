@@ -105,7 +105,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus', 'discoverable', 'indexable'];
     protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId', 'discoverable', 'indexable'];
     protected const DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
-    protected const array HASHTAG_RESPONSE_KEYS = [ 'tag', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isBlockedByUser' ];
+    protected const array HASHTAG_RESPONSE_KEYS = [ 'tag', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isBlockedByUser', 'isSubscribedByUser' ];
 
     protected const KIBBY_PNG_URL_RESULT = 'a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png';
 

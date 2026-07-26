@@ -13,6 +13,7 @@ class HashtagResponseDto implements \JsonSerializable
     public int $postCount;
     public int $postCommentCount;
     public ?bool $isBlockedByUser = null;
+    public ?bool $isSubscribedByUser = null;
 
     public static function create(
         string $tag,
@@ -42,6 +43,7 @@ class HashtagResponseDto implements \JsonSerializable
             'postCount' => $this->postCount,
             'postCommentCount' => $this->postCommentCount,
             'isBlockedByUser' => $this->isBlockedByUser,
+            'isSubscribedByUser' => $this->isSubscribedByUser,
         ];
     }
 }

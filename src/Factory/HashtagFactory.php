@@ -38,6 +38,7 @@ class HashtagFactory
         if($currentUser instanceof User) {
             // Only return the user's settings if permission to control settings has been given
             $dto->isBlockedByUser = $this->security->isGranted('ROLE_OAUTH2_HASHTAG:BLOCK') ? $currentUser->isBlockedHashtag($tag) : null;
+            $dto->isSubscribedByUser = $this->security->isGranted('ROLE_OAUTH2_HASHTAG:SUBSCRIBE') ? $tag->isSubscribed($currentUser) : null;
         }
 
         return $dto;

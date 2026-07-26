@@ -33,6 +33,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
         'domain:block',
         'hashtag',
         'hashtag:block',
+        'hashtag:subscribe',
         'entry',
         'entry:create',
         'entry:edit',

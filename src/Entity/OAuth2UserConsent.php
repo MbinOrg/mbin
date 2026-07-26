@@ -40,7 +40,7 @@ class OAuth2UserConsent
         'domain:block' => 'oauth2.grant.domain.block',
         // Grants allowing applications to (un)subscribe or (un)block hashtags on behalf of the user
         'hashtag' => 'oauth2.grant.hashtag.all',
-        //'hashtag:subscribe' => 'oauth2.grant.hashtag.subscribe',
+        'hashtag:subscribe' => 'oauth2.grant.hashtag.subscribe',
         'hashtag:block' => 'oauth2.grant.hashtag.block',
         // Grants allowing the application to create, edit, delete, (up/down)vote, boost, or report entries on behalf of the user
         'entry' => 'oauth2.grant.entry.all',

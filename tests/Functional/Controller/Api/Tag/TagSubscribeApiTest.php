@@ -8,41 +8,41 @@ use App\Tests\Functional\Controller\Api\Domain\DomainRetrieveApiTest;
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
-class TagBlockApiTest extends WebTestCase
+class TagSubscribeApiTest extends WebTestCase
 {
 
-    public function testApiCannotBlockHashtagAnonymous()
+    public function testApiCannotSubscribeHashtagAnonymous()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/block");
+        $this->client->request('PUT', "/api/tag/sometag/subscribe");
         self::assertResponseStatusCodeSame(401);
     }
 
-    public function testApiCannotBlockHashtagWithoutScope()
+    public function testApiCannotSubscribeHashtagWithoutScope()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     #[Group(name: 'NonThreadSafe')]
-    public function testApiCanBlockHashtag()
+    public function testApiCanSubscribeHashtag()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
-        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -54,11 +54,11 @@ class TagBlockApiTest extends WebTestCase
         self::assertSame(0, $jsonData['entryCommentCount']);
         self::assertSame(0, $jsonData['postCount']);
         self::assertSame(0, $jsonData['postCommentCount']);
-        self::assertNull($jsonData['isSubscribedByUser']);
-        self::assertTrue($jsonData['isBlockedByUser']);
+        self::assertNull($jsonData['isBlockedByUser']);
+        self::assertTrue($jsonData['isSubscribedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -70,45 +70,45 @@ class TagBlockApiTest extends WebTestCase
         self::assertSame(0, $jsonData['entryCommentCount']);
         self::assertSame(0, $jsonData['postCount']);
         self::assertSame(0, $jsonData['postCommentCount']);
-        self::assertNull($jsonData['isSubscribedByUser']);
-        self::assertTrue($jsonData['isBlockedByUser']);
+        self::assertNull($jsonData['isBlockedByUser']);
+        self::assertTrue($jsonData['isSubscribedByUser']);
     }
 
-    public function testApiCannotUnblockHashtagAnonymous()
+    public function testApiCannotUnsubscribeHashtagAnonymous()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock");
+        $this->client->request('PUT', "/api/tag/sometag/unsubscribe");
         self::assertResponseStatusCodeSame(401);
     }
 
-    public function testApiCannotUnblockHashtagWithoutScope()
+    public function testApiCannotUnsubscribeHashtagWithoutScope()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
     #[Group(name: 'NonThreadSafe')]
-    public function testApiCanUnblockHashtag()
+    public function testApiCanUnsubscribeHashtag()
     {
         $user = $this->getUserByUsername('JohnDoe');
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
 
-        $this->tagManager->block($user, $this->tagRepository->findOneBy(['tag' => 'sometag']));
+        $this->tagManager->subscribe($user, $this->tagRepository->findOneBy(['tag' => 'sometag']));
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -120,11 +120,11 @@ class TagBlockApiTest extends WebTestCase
         self::assertSame(0, $jsonData['entryCommentCount']);
         self::assertSame(0, $jsonData['postCount']);
         self::assertSame(0, $jsonData['postCommentCount']);
-        self::assertNull($jsonData['isSubscribedByUser']);
-        self::assertFalse($jsonData['isBlockedByUser']);
+        self::assertNull($jsonData['isBlockedByUser']);
+        self::assertFalse($jsonData['isSubscribedByUser']);
 
         // Idempotent when called multiple times
-        $this->client->request('PUT', "/api/tag/sometag/unblock", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/sometag/unsubscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
         $jsonData = self::getJsonResponse($this->client);
@@ -136,47 +136,47 @@ class TagBlockApiTest extends WebTestCase
         self::assertSame(0, $jsonData['entryCommentCount']);
         self::assertSame(0, $jsonData['postCount']);
         self::assertSame(0, $jsonData['postCommentCount']);
-        self::assertNull($jsonData['isSubscribedByUser']);
-        self::assertFalse($jsonData['isBlockedByUser']);
+        self::assertNull($jsonData['isBlockedByUser']);
+        self::assertFalse($jsonData['isSubscribedByUser']);
     }
 
-    public function testApiCannotRetrieveBlockedHashtagsAnonymous()
+    public function testApiCannotRetrieveSubscribedHashtagsAnonymous()
     {
-        $this->client->request('GET', '/api/tags/blocked');
+        $this->client->request('GET', '/api/tags/subscribed');
         self::assertResponseStatusCodeSame(401);
     }
 
-    public function testApiCannotRetrieveBlockedHashtagWithoutScope()
+    public function testApiCannotRetrieveSubscribedHashtagWithoutScope()
     {
-        $this->getEntryByTitle('TagBlockApiTest', body: 'some text with #someTag');
+        $this->getEntryByTitle('TagSubscribeApiTest', body: 'some text with #someTag');
         $user = $this->getUserByUsername('JohnDoe');
-        $this->tagManager->block($user, $this->tagRepository->findOneBy(['tag' => 'sometag']));
+        $this->tagManager->subscribe($user, $this->tagRepository->findOneBy(['tag' => 'sometag']));
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('GET', '/api/tags/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/tags/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseStatusCodeSame(403);
     }
 
-    public function testApiCanRetrieveBlockedHashtags()
+    public function testApiCanRetrieveSubscribedHashtags()
     {
-        $this->getEntryByTitle('testApiCanRetrieveBlockedHashtags', body: 'some text with #tag1 #tag2 #tag3');
+        $this->getEntryByTitle('testApiCanRetrieveSubscribedHashtags', body: 'some text with #tag1 #tag2 #tag3');
         $user = $this->getUserByUsername('JohnDoe');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
-        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:block');
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read hashtag:subscribe');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $this->client->request('PUT', "/api/tag/tag1/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/tag1/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
-        $this->client->request('PUT', "/api/tag/tag2/block", server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('PUT', "/api/tag/tag2/subscribe", server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
 
-        $this->client->request('GET', '/api/tags/blocked', server: ['HTTP_AUTHORIZATION' => $token]);
+        $this->client->request('GET', '/api/tags/subscribed', server: ['HTTP_AUTHORIZATION' => $token]);
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -186,24 +186,24 @@ class TagBlockApiTest extends WebTestCase
         self::assertIsArray($jsonData['pagination']);
         self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
 
-        $blocked = $jsonData['items'];
-        self::assertIsArray($blocked);
-        self::assertCount(2, $blocked);
+        $subscribed = $jsonData['items'];
+        self::assertIsArray($subscribed);
+        self::assertCount(2, $subscribed);
 
         $tag1Found = false;
         $tag2Found = false;
-        foreach ($blocked as $block) {
-            self::assertIsArray($block);
-            self::assertArrayKeysMatch(self::HASHTAG_RESPONSE_KEYS, $block);
-            self::assertSame(1, $block['entryCount']);
-            self::assertSame(0, $block['entryCommentCount']);
-            self::assertSame(0, $block['postCount']);
-            self::assertSame(0, $block['postCommentCount']);
-            self::assertNull($block['isSubscribedByUser']);
-            self::assertTrue($block['isBlockedByUser']);
+        foreach ($subscribed as $sub) {
+            self::assertIsArray($sub);
+            self::assertArrayKeysMatch(self::HASHTAG_RESPONSE_KEYS, $sub);
+            self::assertSame(1, $sub['entryCount']);
+            self::assertSame(0, $sub['entryCommentCount']);
+            self::assertSame(0, $sub['postCount']);
+            self::assertSame(0, $sub['postCommentCount']);
+            self::assertNull($sub['isBlockedByUser']);
+            self::assertTrue($sub['isSubscribedByUser']);
 
-            $tag1Found = ($tag1Found or $block['tag'] === 'tag1');
-            $tag2Found = ($tag2Found or $block['tag'] === 'tag2');
+            $tag1Found = ($tag1Found or $sub['tag'] === 'tag1');
+            $tag2Found = ($tag2Found or $sub['tag'] === 'tag2');
         }
         self::assertTrue($tag1Found);
         self::assertTrue($tag2Found);

@@ -116,6 +116,7 @@ nelmio_api_doc:
                                 domain:block: Block or unblock domains and view the domains you have blocked.
                                 hashtag: Block hashtags, and view the hashtags you subscribed to.
                                 hashtag:block: Block or unblock hashtags and view the hashtags you have blocked.
+                                hashtag:subscribe: Subscribe or unsubscribe to hashtags and view the hashtags you subscribed to.
                                 entry: Create, edit, or delete your threads, and vote, boost, or report any thread.
                                 entry:create: Create new threads.
                                 entry:edit: Edit your existing threads.
@@ -235,6 +236,7 @@ nelmio_api_doc:
                                 domain:block: Block or unblock domains and view the domains you have blocked.
                                 hashtag: Block hashtags, and view the hashtags you block.
                                 hashtag:block: Block or unblock hashtags and view the hashtags you have blocked.
+                                hashtag:subscribe: Subscribe or unsubscribe to hashtags and view the hashtags you subscribed to.
                                 entry: Create, edit, or delete your threads, and vote, boost, or report any thread.
                                 entry:create: Create new threads.
                                 entry:edit: Edit your existing threads.

@@ -131,6 +131,8 @@ POST /api/client
         - Allows viewing and editing domain subscriptions
     - `magazine:subscribe`
         - Allows viewing and editing magazine subscriptions
+    - `hashtag:subscribe`
+        - Allows viewing and editing hashtag subscriptions
     - `user:follow`
         - Allows viewing and editing user follows
 5. `block` - Provides the following nested scopes
@@ -157,6 +159,7 @@ POST /api/client
     - `domain:block`
 9. `hashtag` - Provides all hashtag scopes
     - `hashtag:block`
+    - `hashtag:subscribe`
 10. `entry` - Provides all entry scopes
     - `entry:create`
     - `entry:edit`

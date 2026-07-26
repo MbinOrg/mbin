@@ -11,6 +11,7 @@ use App\DTO\HashtagResponseDto;
 use App\Entity\Domain;
 use App\Entity\Hashtag;
 use App\Entity\HashtagBlock;
+use App\Entity\HashtagSubscription;
 use App\Factory\DomainFactory;
 use App\Factory\HashtagFactory;
 use App\Repository\TagRepository;
@@ -25,11 +26,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class TagBlockApi extends TagBaseApi
+class TagSubscriptionApiController extends TagBaseApi
 {
     #[OA\Response(
         response: 200,
-        description: 'Hashtag blocked',
+        description: 'Hashtag subscribed',
         content: new Model(type: HashtagResponseDto::class),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
@@ -60,13 +61,13 @@ class TagBlockApi extends TagBaseApi
     #[OA\Parameter(
         name: 'name',
         in: 'path',
-        description: 'The hashtag to block',
+        description: 'The hashtag to subscribe to',
         schema: new OA\Schema(type: 'string'),
     )]
     #[OA\Tag(name: 'tag')]
-    #[Security(name: 'oauth2', scopes: ['hashtag:block'])]
-    #[IsGranted('ROLE_OAUTH2_HASHTAG:BLOCK')]
-    public function block(
+    #[Security(name: 'oauth2', scopes: ['hashtag:subscribe'])]
+    #[IsGranted('ROLE_OAUTH2_HASHTAG:SUBSCRIBE')]
+    public function subscribe(
         #[MapEntity(mapping: ['name' => 'tag'])]
         Hashtag $tag,
         TagManager $manager,
@@ -74,7 +75,7 @@ class TagBlockApi extends TagBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
-        $manager->block($this->getUserOrThrow(), $tag);
+        $manager->subscribe($this->getUserOrThrow(), $tag);
 
         return new JsonResponse(
             $this->serializeHashtag($tag),
@@ -84,7 +85,7 @@ class TagBlockApi extends TagBaseApi
 
     #[OA\Response(
         response: 200,
-        description: 'Hashtag unblocked',
+        description: 'Hashtag unsubscribed',
         content: new Model(type: DomainDto::class),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
@@ -115,13 +116,13 @@ class TagBlockApi extends TagBaseApi
     #[OA\Parameter(
         name: 'name',
         in: 'path',
-        description: 'The hashtag to unblock',
+        description: 'The hashtag to unsubscribe',
         schema: new OA\Schema(type: 'string'),
     )]
-    #[OA\Tag(name: 'domain')]
-    #[Security(name: 'oauth2', scopes: ['hashtag:block'])]
-    #[IsGranted('ROLE_OAUTH2_HASHTAG:BLOCK')]
-    public function unblock(
+    #[OA\Tag(name: 'tag')]
+    #[Security(name: 'oauth2', scopes: ['hashtag:subscribe'])]
+    #[IsGranted('ROLE_OAUTH2_HASHTAG:SUBSCRIBE')]
+    public function unsubscribe(
         #[MapEntity(mapping: ['name' => 'tag'])]
         Hashtag $tag,
         TagManager $manager,
@@ -129,7 +130,7 @@ class TagBlockApi extends TagBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
-        $manager->unblock($this->getUserOrThrow(), $tag);
+        $manager->unsubscribe($this->getUserOrThrow(), $tag);
 
         return new JsonResponse(
             $this->serializeHashtag($tag),
@@ -139,7 +140,7 @@ class TagBlockApi extends TagBaseApi
 
     #[OA\Response(
         response: 200,
-        description: 'Returns a paginated list of blocked hashtags',
+        description: 'Returns a paginated list of subscribed hashtags',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
@@ -188,28 +189,28 @@ class TagBlockApi extends TagBaseApi
         schema: new OA\Schema(type: 'integer', default: TagRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
     #[OA\Tag(name: 'tag')]
-    #[Security(name: 'oauth2', scopes: ['hashtag:block'])]
-    #[IsGranted('ROLE_OAUTH2_HASHTAG:BLOCK')]
+    #[Security(name: 'oauth2', scopes: ['hashtag:subscribe'])]
+    #[IsGranted('ROLE_OAUTH2_HASHTAG:SUBSCRIBE')]
     public function list(
         RateLimiterFactoryInterface $apiReadLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $blocks = $this->repository->findBlockedTags(
+        $subs = $this->repository->findSubscribedTags(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
             self::constrainPerPage($request->get('perPage', TagRepository::PER_PAGE))
         );
 
         $dtos = [];
-        foreach ($blocks->getCurrentPageResults() as $value) {
-            \assert($value instanceof HashtagBlock);
+        foreach ($subs->getCurrentPageResults() as $value) {
+            \assert($value instanceof HashtagSubscription);
             $dtos[] = $this->serializeHashtag($value->hashtag);
         }
 
         return new JsonResponse(
-            $this->serializePaginated($dtos, $blocks),
+            $this->serializePaginated($dtos, $subs),
             headers: $headers
         );
     }
