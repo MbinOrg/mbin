@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Service\Hashtag;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use App\PageView\PostCommentPageView;
@@ -53,22 +57,26 @@ class TagBlockTest extends WebTestCase
         $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInCombinedWithCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #wanted');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notWanted');
-        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #wanted', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notWanted', $entryShowing, $contentCreator);
-        usleep(20000);
         $postShowing = $this->createPost('some text #wanted', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notWanted', $magazine, $contentCreator);
-        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #wanted', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notWanted', $postShowing, $contentCreator);
+        $this->setContentTime($entryHidden, $entryShowing, 2);
+        $this->setContentTime($entryCommentShowing, $entryShowing, 4);
+        $this->setContentTime($entryCommentHidden, $entryShowing, 6);
+        $this->setContentTime($postShowing, $entryShowing, 8);
+        $this->setContentTime($postHidden, $entryShowing, 10);
+        $this->setContentTime($postCommentShowing, $entryShowing, 12);
+        $this->setContentTime($postCommentHidden, $entryShowing, 14);
 
         $user->follow($contentCreator);
         $this->tagManager->block($user, $tag);
 
         $criteria = new EntryPageView(1, $this->security)
             ->setContent(Criteria::CONTENT_COMBINED)
-            ->showSortOption(Criteria::SORT_NEW);
+            ->showSortOption(Criteria::SORT_OLD);
         $criteria->magazine = $magazine;
         $criteria->includeBoosts = true;
         $criteria->perPage = 5;
@@ -77,9 +85,13 @@ class TagBlockTest extends WebTestCase
         $fanta = $this->contentRepository->findByCriteria($criteria, $user);
         $result = $fanta->getCurrentPageResults();
 
+        self::assertInstanceOf(Entry::class, $result[0]);
         self::assertSame($entryShowing->getId(), $result[0]->getId());
+        self::assertInstanceOf(EntryComment::class, $result[1]);
         self::assertSame($entryCommentShowing->getId(), $result[1]->getId());
+        self::assertInstanceOf(Post::class, $result[2]);
         self::assertSame($postShowing->getId(), $result[2]->getId());
+        self::assertInstanceOf(PostComment::class, $result[3]);
         self::assertSame($postCommentShowing->getId(), $result[3]->getId());
         self::assertCount(4, $result);
     }
@@ -93,22 +105,26 @@ class TagBlockTest extends WebTestCase
         $magazine = $this->getMagazineByName('testBlockedHashtagIsHiddenInCombinedWithoutCache');
         $entryShowing = $this->createEntry('showing', $magazine, $contentCreator, body: 'some text #wanted');
         $entryHidden = $this->createEntry('hidden', $magazine, $contentCreator, body: 'some text #notWanted');
-        usleep(20000);
         $entryCommentShowing = $this->createEntryComment('some text #wanted', $entryShowing, $contentCreator);
         $entryCommentHidden = $this->createEntryComment('some text #notWanted', $entryShowing, $contentCreator);
-        usleep(20000);
         $postShowing = $this->createPost('some text #wanted', $magazine, $contentCreator);
         $postHidden = $this->createPost('some text #notWanted', $magazine, $contentCreator);
-        usleep(20000);
         $postCommentShowing = $this->createPostComment('some text #wanted', $postShowing, $contentCreator);
         $postCommentHidden = $this->createPostComment('some text #notWanted', $postShowing, $contentCreator);
+        $this->setContentTime($entryHidden, $entryShowing, 2);
+        $this->setContentTime($entryCommentShowing, $entryShowing, 4);
+        $this->setContentTime($entryCommentHidden, $entryShowing, 6);
+        $this->setContentTime($postShowing, $entryShowing, 8);
+        $this->setContentTime($postHidden, $entryShowing, 10);
+        $this->setContentTime($postCommentShowing, $entryShowing, 12);
+        $this->setContentTime($postCommentHidden, $entryShowing, 14);
 
         $user->follow($contentCreator);
         $this->tagManager->block($user, $tag);
 
         $criteria = new EntryPageView(1, $this->security)
             ->setContent(Criteria::CONTENT_COMBINED)
-            ->showSortOption(Criteria::SORT_NEW);
+            ->showSortOption(Criteria::SORT_OLD);
         $criteria->magazine = $magazine;
         $criteria->includeBoosts = true;
         $criteria->perPage = 5;
@@ -116,9 +132,13 @@ class TagBlockTest extends WebTestCase
         $fanta = $this->contentRepository->findByCriteria($criteria, $user);
         $result = $fanta->getCurrentPageResults();
 
+        self::assertInstanceOf(Entry::class, $result[0]);
         self::assertSame($entryShowing->getId(), $result[0]->getId());
+        self::assertInstanceOf(EntryComment::class, $result[1]);
         self::assertSame($entryCommentShowing->getId(), $result[1]->getId());
+        self::assertInstanceOf(Post::class, $result[2]);
         self::assertSame($postShowing->getId(), $result[2]->getId());
+        self::assertInstanceOf(PostComment::class, $result[3]);
         self::assertSame($postCommentShowing->getId(), $result[3]->getId());
         self::assertCount(4, $result);
     }
@@ -137,7 +157,7 @@ class TagBlockTest extends WebTestCase
         $this->tagManager->block($user, $tag);
 
         $criteria = new EntryCommentPageView(1, $this->security);
-        $criteria->showSortOption(Criteria::SORT_NEW);
+        $criteria->showSortOption(Criteria::SORT_OLD);
         $criteria->entry = $entry;
 
         $fanta = $this->entryCommentRepository->findByCriteria($criteria, $user);
@@ -161,7 +181,7 @@ class TagBlockTest extends WebTestCase
         $this->tagManager->block($user, $tag);
 
         $criteria = new PostCommentPageView(1, $this->security);
-        $criteria->showSortOption(Criteria::SORT_NEW);
+        $criteria->showSortOption(Criteria::SORT_OLD);
         $criteria->post = $post;
 
         $fanta = $this->postCommentRepository->findByCriteria($criteria, $user);

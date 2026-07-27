@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
@@ -337,6 +341,14 @@ abstract class WebTestCase extends BaseWebTestCase
         $pattern = '/<time[ \w="\n-:]*>[\w \n]+<\/time>/m';
 
         return preg_replace($pattern, '', $content);
+    }
+
+    public function setContentTime(Entry|EntryComment|Post|PostComment $subject, Entry|EntryComment|Post|PostComment $reference, int $seconds): void
+    {
+        $subject->createdAt = $reference->getCreatedAt()->add(\DateInterval::createFromDateString($seconds.' seconds'));
+        $subject->lastBoostedAt = $subject->createdAt;
+        $this->entityManager->persist($subject);
+        $this->entityManager->flush();
     }
 
     protected function tearDown(): void
