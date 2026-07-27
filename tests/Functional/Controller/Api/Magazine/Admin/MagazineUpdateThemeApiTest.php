@@ -7,10 +7,17 @@ namespace App\Tests\Functional\Controller\Api\Magazine\Admin;
 use App\DTO\ModeratorDto;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineUpdateThemeApiTest extends WebTestCase
 {
     public const MAGAZINE_THEME_RESPONSE_KEYS = ['magazine', 'customCss', 'icon', 'banner'];
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
+    }
 
     public function testApiCannotUpdateMagazineThemeAnonymous(): void
     {
@@ -68,7 +75,10 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         $customCss = 'a {background: red;}';
 
@@ -108,10 +118,13 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         $imageManager = $this->imageManager;
-        $expectedPath = $imageManager->getFilePath($this->imageUploadTmpDir.$image->getFilename());
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         $backgroundImage = 'shape1';
 
@@ -150,7 +163,10 @@ class MagazineUpdateThemeApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read write moderate:magazine_admin:theme');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         $this->client->request(
             'PUT', "/api/moderate/magazine/{$magazine->getId()}/banner",

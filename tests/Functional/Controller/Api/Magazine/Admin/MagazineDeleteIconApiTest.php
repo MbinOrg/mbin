@@ -8,9 +8,16 @@ use App\DTO\ModeratorDto;
 use App\Tests\Functional\Controller\Api\Magazine\MagazineRetrieveApiTest;
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MagazineDeleteIconApiTest extends WebTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->kibbyPath = \dirname(__FILE__, 6).'/assets/kibby_emoji.png';
+    }
+
     public function testApiCannotDeleteMagazineIconAnonymous(): void
     {
         $magazine = $this->getMagazineByName('test');
@@ -66,7 +73,9 @@ class MagazineDeleteIconApiTest extends WebTestCase
 
         $magazine = $this->getMagazineByName('test');
 
-        $upload = $this->getKibbyImageUpload();
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $upload = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         $imageRepository = $this->imageRepository;
         $image = $imageRepository->findOrCreateFromUpload($upload);

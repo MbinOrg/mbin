@@ -9,6 +9,12 @@ use PHPUnit\Framework\Attributes\Group;
 
 class PostCommentCreateControllerTest extends WebTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
+    }
+
     public function testUserCanCreatePostComment(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));

@@ -9,6 +9,14 @@ use PHPUnit\Framework\Attributes\Group;
 
 class EntryCreateControllerTest extends WebTestCase
 {
+    public string $kibbyPath;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->kibbyPath = \dirname(__FILE__, 4).'/assets/kibby_emoji.png';
+    }
+
     public function testUserCanCreateEntry()
     {
         $this->client->loginUser($this->getUserByUsername('user'));

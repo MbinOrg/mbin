@@ -634,43 +634,26 @@ trait FactoryTrait
         return $this->getKibbyImageVariantDto('_flipped');
     }
 
-    public function getKibbyImageUpload(): UploadedFile
-    {
-        return $this->getKibbyImageVariantUpload('');
-    }
-
-    public function getKibbyFlippedImageUpload(): UploadedFile
-    {
-        return $this->getKibbyImageVariantUpload('_flipped');
-    }
-
-    private function getKibbyImageVariantUpload(string $suffix): UploadedFile
-    {
-        if (!file_exists($this->imageUploadTmpDir)) {
-            if (!mkdir($this->imageUploadTmpDir)) {
-                throw new \Exception('The copy dir could not be created');
-            }
-        }
-
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = $this->imageUploadTmpDir.bin2hex(random_bytes(32)).'.png';
-        $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
-        if (!file_exists($srcPath)) {
-            throw new \Exception('For some reason the kibby image got deleted');
-        }
-        copy($srcPath, $tmpPath);
-
-        return new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png');
-    }
-
     private function getKibbyImageVariantDto(string $suffix): ImageDto
     {
         $imageRepository = $this->imageRepository;
         $imageFactory = $this->imageFactory;
 
-        $imgUpload = $this->getKibbyImageVariantUpload($suffix);
+        if (!file_exists(\dirname($this->kibbyPath).'/copy')) {
+            if (!mkdir(\dirname($this->kibbyPath).'/copy')) {
+                throw new \Exception('The copy dir could not be created');
+            }
+        }
+
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = \dirname($this->kibbyPath).'/copy/'.bin2hex(random_bytes(32)).'.png';
+        $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
+        if (!file_exists($srcPath)) {
+            throw new \Exception('For some reason the kibby image got deleted');
+        }
+        copy($srcPath, $tmpPath);
         /** @var Image $image */
-        $image = $imageRepository->findOrCreateFromUpload($imgUpload);
+        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png'));
         self::assertNotNull($image);
         $image->altText = 'kibby';
         $this->entityManager->persist($image);

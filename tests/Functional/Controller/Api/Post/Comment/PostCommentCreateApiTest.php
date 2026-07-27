@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Post\Comment;
 
 use App\Tests\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class PostCommentCreateApiTest extends WebTestCase
 {
@@ -188,7 +189,9 @@ class PostCommentCreateApiTest extends WebTestCase
             'alt' => 'It\'s Kibby!',
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
+        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         $this->client->request(
             'POST', "/api/posts/{$post->getId()}/comments/image",
@@ -209,7 +212,10 @@ class PostCommentCreateApiTest extends WebTestCase
             'alt' => 'It\'s Kibby!',
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('user'));
@@ -237,7 +243,9 @@ class PostCommentCreateApiTest extends WebTestCase
             'alt' => 'It\'s Kibby!',
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
+        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
@@ -283,7 +291,9 @@ class PostCommentCreateApiTest extends WebTestCase
             'alt' => 'It\'s Kibby!',
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
+        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         $this->client->request(
             'POST', "/api/posts/{$post->getId()}/comments/{$postComment->getId()}/reply/image",
@@ -304,7 +314,10 @@ class PostCommentCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.tmp');
+        $image = new UploadedFile($tmpPath.'.tmp', 'kibby_emoji.png', 'image/png');
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('user'));
@@ -333,10 +346,13 @@ class PostCommentCreateApiTest extends WebTestCase
             'alt' => 'It\'s Kibby!',
         ];
 
-        $image = $this->getKibbyImageUpload();
+        // Uploading a file appears to delete the file at the given path, so make a copy before upload
+        $tmpPath = bin2hex(random_bytes(32));
+        copy($this->kibbyPath, $tmpPath.'.png');
+        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
 
         $imageManager = $this->imageManager;
-        $expectedPath = $imageManager->getFilePath($this->imageUploadTmpDir.$image->getFilename());
+        $expectedPath = $imageManager->getFilePath($image->getFilename());
 
         self::createOAuth2AuthCodeClient();
         $user = $this->getUserByUsername('user');
