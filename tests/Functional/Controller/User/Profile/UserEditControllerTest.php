@@ -11,14 +11,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class UserEditControllerTest extends WebTestCase
 {
-    public string $kibbyPath;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
-    }
-
     public function testUserCanSeeSettingsLink(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
