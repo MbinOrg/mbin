@@ -165,6 +165,11 @@ user_settings_user_blocks:
     path: /settings/blocked/people
     methods: [GET]
 
+user_settings_instance_blocks:
+    controller: App\Controller\User\Profile\UserBlockController::instances
+    path: /settings/blocked/instances
+    methods: [GET]
+
 user_settings_magazine_subscriptions:
     controller: App\Controller\User\Profile\UserSubController::magazines
     path: /settings/subscriptions/magazines
