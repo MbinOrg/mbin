@@ -9,6 +9,13 @@ use phpseclib3\Crypt\RSA;
 
 class KeysGenerator
 {
+    /**
+     * @template T of ActivityPubActorInterface
+     *
+     * @param T $actor
+     *
+     * @return T
+     */
     public static function generate(ActivityPubActorInterface $actor): ActivityPubActorInterface
     {
         $privateKey = RSA::createKey(4096);
