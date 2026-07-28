@@ -146,6 +146,40 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
+    public function findAllPaginated(
+        int $page,
+        bool $onlyLocal = false,
+        bool $onlyVerified = true,
+        bool $onlyApproved = true,
+        bool $onlyVisible = true,
+        bool $excludeBanned = true,
+        bool $excludeDeleted = true,
+        ?string $searchTerm = null,
+        ?OrderBy $orderBy = null,
+    ): PagerfantaInterface {
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, $onlyVerified);
+
+        if ($onlyApproved) {
+            $builder->andWhere('u.applicationStatus = :status')
+                ->setParameter('status', EApplicationStatus::Approved->value);
+        }
+
+        if ($excludeBanned) {
+            $builder->andWhere('u.isBanned = false');
+        }
+
+        if ($excludeDeleted) {
+            $builder->andWhere('u.isDeleted = false');
+        }
+
+        if ($onlyVisible) {
+            $builder->andWhere('u.visibility = :visibility')
+                ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+        }
+
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
+    }
+
     public function findAllActivePaginated(int $page, bool $onlyLocal, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
@@ -264,10 +298,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $this->getEntityManager()->flush();
     }
 
-    public function findOneByUsername(string $username): ?User
+    public function findOneByUsername(string $username, bool $caseInsensitive = false): ?User
     {
         return $this->createQueryBuilder('u')
-            ->Where('LOWER(u.username) = LOWER(:username)')
+            ->Where($caseInsensitive ? 'LOWER(u.username) = LOWER(:username)' : 'u.username = :username')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('username', $username)

@@ -32,7 +32,7 @@
     <div class="section">
         <h3 id="allowed-instances" style="margin-top: 0">{{'federation_page_allowed_description'|trans}}</h3>
         {% if allowedInstances is not empty %}
-            {{ component('instance_list', {'instances': allowedInstances}) }}
+            {{ component('instance_list', {'instances': allowedInstances, 'blockedInstances': userInstanceBlocks}) }}
         {% else %}
             <aside class="section--muted">
                 <p>{{ 'empty'|trans }}</p>
@@ -42,7 +42,7 @@
     <div class="section">
         <h3 id="banned-instances" style="margin-top: 0">{{'federation_page_disallowed_description'|trans}}</h3>
         {% if defederatedInstances is not empty %}
-            {{ component('instance_list', {'instances': defederatedInstances}) }}
+            {{ component('instance_list', {'instances': defederatedInstances, 'blockedInstances': userInstanceBlocks}) }}
         {% else %}
             <aside class="section--muted">
                 <p>{{ 'empty'|trans }}</p>
@@ -54,7 +54,7 @@
         <p>{{ 'federation_page_dead_description'|trans }}</p>
 
         {% if deadInstances is not empty %}
-            {{ component('instance_list', {'instances': deadInstances}) }}
+            {{ component('instance_list', {'instances': deadInstances, 'blockedInstances': userInstanceBlocks}) }}
         {% else %}
             <aside class="section--muted">
                 <p>{{ 'empty'|trans }}</p>
