@@ -193,6 +193,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected DeliverHandler $deliverHandler;
 
     protected string $kibbyPath;
+    protected string $imageUploadTmpDir;
 
     public function setUp(): void
     {
@@ -202,6 +203,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->hashtags = new ArrayCollection();
 
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
+        $this->imageUploadTmpDir = \dirname($this->kibbyPath).'/copy/';
         $this->client = static::createClient();
 
         $this->testingApHttpClient = new TestingApHttpClient();

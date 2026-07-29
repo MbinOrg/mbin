@@ -1,13 +1,18 @@
+{% set blockRedirTarget = app.request.attributes.get('_route') === 'user_settings_instance_blocks' ? 'blocks' : 'federation' %}
+
 <table>
     <thead>
     <tr>
         <th>{{ 'domain'|trans }}</th>
         <th>{{ 'server_software'|trans }}</th>
         <th>{{ 'version'|trans }}</th>
+        {% if blockedInstances is not same as null %}
+            <th></th>
+        {% endif %}
         {% if app.user is defined and app.user is not same as null and app.user.admin %}
             <th>{{ 'last_successful_deliver'|trans }}</th>
             <th>{{ 'last_successful_receive'|trans }}</th>
-            {% if showUnBanButton or showBanButton or showDenyButton or showAllowButton %}
+            {% if showUnBanButton or showBanButton or showDenyButton or showAllowButton or showAdminBlockButton %}
                 <th></th>
             {% endif %}
         {% endif %}
@@ -19,6 +24,29 @@
             <td><a href="https://{{ instance.domain }}" rel="noopener noreferrer nofollow">{{instance.domain}}</a></td>
             <td>{{ instance.software ?? '' }}</td>
             <td>{{ instance.version ?? '' }}</td>
+
+            {% if blockedInstances is defined and blockedInstances is not same as null %}
+                <td>
+                    {% if blockedInstances|find(b => b.instance === instance) %}
+                        <form action="{{ url('federation_user_unblock_instance') }}">
+                            <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <input type="hidden" name="redirTarget" value="{{ blockRedirTarget }}">
+                            <button type="submit" class="btn btn__secondary" title="{{ 'unblock_instance'|trans }}">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url('federation_user_block_instance') }}">
+                            <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                            <input type="hidden" name="redirTarget" value="{{ blockRedirTarget }}">
+                            <button type="submit" class="btn btn__secondary" title="{{ 'block_instance'|trans }}">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+                </td>
+            {% endif %}
+
             {% if app.user is defined and app.user is not same as null and app.user.admin %}
                 <td>
                     {% if instance.lastSuccessfulDeliver is not same as null %}
@@ -66,6 +94,23 @@
                                         {{ 'btn_allow'|trans }}
                                     </button>
                                 </form>
+                            {% endif %}
+                            {% if showAdminBlockButton %}
+                                {% if globallyBlockedInstances|find(i => i === instance) %}
+                                    <form action="{{ url('admin_federation_unblock_instance') }}">
+                                        <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                        <button type="submit" class="btn btn__primary" title="{{ 'unblock_instance_globally_long'|trans }}">
+                                            {{ 'unblock_instance_globally_short'|trans }}
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url('admin_federation_block_instance') }}">
+                                        <input type="hidden" name="instanceDomain" value="{{ instance.domain }}">
+                                        <button type="submit" class="btn btn__primary" title="{{ 'block_instance_globally_long'|trans }}">
+                                            {{ 'block_instance_globally_short'|trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </td>

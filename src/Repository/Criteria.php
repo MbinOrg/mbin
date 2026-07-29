@@ -124,6 +124,9 @@ abstract class Criteria
     /** @var int[]|null */
     public ?array $cachedUserBlockedDomains = null;
 
+    /** @var string[]|null */
+    public ?array $cachedUserBlockedInstances = null;
+
     /** @var int[]|null */
     public ?array $cachedUserBlockedHashtags = null;
 
@@ -368,5 +371,6 @@ abstract class Criteria
         $this->cachedUserBlockedDomains = $sqlHelpers->getCachedUserDomainBlocks($loggedInUser);
         $this->cachedUserBlockedHashtags = $sqlHelpers->getCachedUserHashtagBlocks($loggedInUser);
         $this->cachedUserBlockedMagazines = $sqlHelpers->getCachedUserMagazineBlocks($loggedInUser);
+        $this->cachedUserBlockedInstances = $sqlHelpers->getCachedUserInstanceBlocks($loggedInUser);
     }
 }
