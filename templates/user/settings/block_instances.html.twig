@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'blocked'|trans }} - {{ app.user.username|username(false) }} - {{ parent() -}}
+{%- endblock -%}
+
+
+{% block mainClass %}page-settings page-settings-block-magazines{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include 'user/settings/_options.html.twig' %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include 'user/settings/block_pills.html.twig' %}
+
+    {% if instances is not empty %}
+        <div class="section">
+            {{ component('instance_list', {'instances': instances, 'blockedInstances': blocks}) }}
+        </div>
+    {% else %}
+        <aside class="section section--muted">
+            <p>{{ 'empty'|trans }}</p>
+        </aside>
+    {% endif %}
+{% endblock %}

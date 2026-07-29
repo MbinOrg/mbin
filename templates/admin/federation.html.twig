@@ -88,10 +88,12 @@
 
             {{ component('instance_list', {
                 'instances': allInstances,
+                'globallyBlockedInstances': allBlockedInstances,
                 'showDenyButton': useAllowList,
                 'showUnBanButton': not useAllowList,
                 'showAllowButton': useAllowList,
-                'showBanButton': not useAllowList
+                'showBanButton': not useAllowList,
+                'showAdminBlockButton': true,
             }) }}
         </div>
     </div>

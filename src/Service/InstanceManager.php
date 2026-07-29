@@ -6,9 +6,14 @@ namespace App\Service;
 
 use App\DTO\ModeratorDto;
 use App\Entity\Instance;
+use App\Entity\InstanceBlock;
 use App\Entity\User;
+use App\Event\InstanceBlockedEvent;
+use App\Event\InstancesGlobalBlockedEvent;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 readonly class InstanceManager
 {
@@ -16,6 +21,8 @@ readonly class InstanceManager
         private EntityManagerInterface $entityManager,
         private SettingsManager $settingsManager,
         private InstanceRepository $instanceRepository,
+        private InstanceBlockRepository $instanceBlockRepository,
+        private EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -92,5 +99,80 @@ readonly class InstanceManager
         $instance->isExplicitlyAllowed = false;
 
         $this->entityManager->flush();
+    }
+
+    public function blockInstance(Instance $instance, User $user): void
+    {
+        /** @var ?InstanceBlock $existing */
+        $existing = $this->instanceBlockRepository->findOneBy(['instance' => $instance, 'user' => $user]);
+        if (null !== $existing) {
+            $existing->blockedByAdmin = false;
+            $this->entityManager->persist($existing);
+            $this->entityManager->flush();
+
+            return;
+        }
+
+        $block = new InstanceBlock($user, $instance, false);
+        $this->entityManager->persist($block);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
+    }
+
+    public function unblockInstance(Instance $instance, User $user): void
+    {
+        $block = $this->instanceBlockRepository->findByUserAndInstance($user, $instance);
+        if (null !== $block) {
+            $this->entityManager->remove($block);
+            $this->entityManager->flush();
+        }
+
+        $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, false));
+    }
+
+    /**
+     * @param Instance[] $instances
+     */
+    public function blockInstancesGlobally(array $instances): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($instances) {
+            foreach ($instances as $instance) {
+                $this->instanceBlockRepository->insertForAllUsers($instance);
+            }
+            $this->entityManager->flush();
+        });
+
+        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
+    }
+
+    /**
+     * @param Instance[] $instances
+     */
+    public function unblockInstancesGlobally(array $instances): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($instances) {
+            foreach ($instances as $instance) {
+                $this->instanceBlockRepository->deleteForAllUsers($instance);
+            }
+            $this->entityManager->flush();
+        });
+
+        $this->dispatcher->dispatch(new InstancesGlobalBlockedEvent($instances));
+    }
+
+    public function applyGlobalInstanceBlocksToUser(User $user): void
+    {
+        $instances = $this->instanceBlockRepository->findAllGlobalBlockedInstances();
+
+        foreach ($instances as $instance) {
+            $block = new InstanceBlock($user, $instance, true);
+            $this->entityManager->persist($block);
+        }
+        $this->entityManager->flush();
+
+        foreach ($instances as $instance) {
+            $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
+        }
     }
 }
