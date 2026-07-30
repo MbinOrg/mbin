@@ -61,7 +61,7 @@ class CommunityLinkParser implements InlineParserInterface
         if ($isRemote) {
             $ctx->getContainer()->appendChild(
                 new ActorSearchLink(
-                    $this->urlGenerator->generate('search', ['search[q]' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
+                    $this->urlGenerator->generate('search_general', ['search[q]' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
                     '!'.$fullHandle,
                     '!'.$fullHandle,
                 )

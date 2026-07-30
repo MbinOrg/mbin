@@ -1,6 +1,7 @@
 {%- set V_TRUE = constant('App\\Controller\\User\\ThemeSettingsController::TRUE') -%}
 {%- set V_FALSE = constant('App\\Controller\\User\\ThemeSettingsController::FALSE') -%}
 {%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE) -%}
+<div>
 {% if magazines|length %}
     <div class="section">
         {% if view is same as 'cards'|trans|lower %}
@@ -130,3 +131,4 @@
         <p>{{ 'empty'|trans }}</p>
     </aside>
 {% endif %}
+</div>

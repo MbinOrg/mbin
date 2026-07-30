@@ -151,7 +151,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::Magazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteMagazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
-            MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
+            MentionType::Search => ['route' => 'search_general',         'param' => 'search[q]'],
             MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
         };
     }

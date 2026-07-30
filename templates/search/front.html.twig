@@ -13,29 +13,34 @@
 {% endblock %}
 
 {% block body %}
-    <h1 hidden>{{ 'search'|trans }}</h1>
-    <div class="section section--top">
-        {% include 'search/form.html.twig' %}
-    </div>
-    {% include 'layout/_flash.html.twig' %}
-    <div id="content" class="{{ html_classes('overview subjects comments-tree comments', {
-        'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
-        'show-post-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS'))
-    }) }}">
-        {% if objects|length %}
-            {% for object in objects %}
-                {% if object.type is defined and object.type is same as 'user' %}
-                    <div class="section">
-                        {{ component('user_box', {user: object.object}) }}
-                    </div>
-                {% elseif object.type is defined and object.type is same as 'magazine' %}
-                    {{ component('magazine_box', {magazine: object.object, stretchedLink: false}) }}
-                {% else %}
-                    {% include 'layout/_subject_list.html.twig' with {results: [object.object], entryCommentAttributes: {showMagazineName: true, showEntryTitle: true}, postCommentAttributes: {withPost: false}} %}
-                {% endif %}
-            {% endfor %}
-        {% elseif q is defined and q %}
-            {% include 'search/_list.html.twig' %}
-        {% endif %}
-    </div>
+    <aside class="options options--top" id="options">
+        <menu class="options__main">
+            <li>
+                <a href="{{ url('search_general') }}"
+                   class="{{ html_classes({'active': is_route_name('search_general')}) }}">
+                    {{ 'content_and_users'|trans }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('search_magazines') }}"
+                   class="{{ html_classes({'active': is_route_name('search_magazines')}) }}">
+                    {{ 'magazines'|trans }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('search_hashtags') }}"
+                   class="{{ html_classes({'active': is_route_name('search_hashtags')}) }}">
+                    {{ 'hashtags'|trans }}
+                </a>
+            </li>
+        </menu>
+    </aside>
+
+    {% if is_route_name('search_magazines') %}
+        {% include "search/magazine/fragment.html.twig" %}
+    {% elseif is_route_name('search_hashtags') %}
+        {% include "search/hashtag/fragment.html.twig" %}
+    {% else %}
+        {% include "search/general/fragment.html.twig" %}
+    {% endif %}
 {% endblock %}

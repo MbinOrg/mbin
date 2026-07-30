@@ -1,0 +1,10 @@
+<header>
+    <h1 hidden>{{ 'magazines'|trans }}</h1>
+</header>
+
+<div class="section">
+    {% include "search/magazine/form.html.twig" %}
+</div>
+<div id="content">
+    {% include 'magazine/_list.html.twig' %}
+</div>

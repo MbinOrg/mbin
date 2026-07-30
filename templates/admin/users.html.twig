@@ -51,7 +51,7 @@
         <div class="flex">
             <div class="">
                 {% if searchTerm is defined %}
-                    <form action="{{ options_url('search', '') }}">
+                    <form action="{{ options_url('search_general', '') }}">
                         <label for="adminUserSearch" class="hidden">{{ 'search'|trans }}</label>
                         <div class="search-container flex" style="align-items: center">
                             <input id="adminUserSearch" class="form-control" type="text" placeholder="{{ 'search'|trans }}" name="search" value="{{ searchTerm }}">

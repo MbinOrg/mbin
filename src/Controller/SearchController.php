@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\SearchDto;
+use App\Form\MagazinePageViewType;
 use App\Form\SearchType;
+use App\PageView\MagazinePageView;
+use App\Repository\Criteria;
+use App\Repository\MagazineRepository;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
@@ -17,12 +21,18 @@ class SearchController extends AbstractController
 {
     public function __construct(
         private readonly SearchManager $manager,
+        private readonly MagazineRepository $magazineRepository,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
     ) {
     }
 
-    public function __invoke(Request $request): Response
+    public function redirectFromOldRoute(Request $request): Response
+    {
+        return $this->redirectToRoute('search_general', status: Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    public function general(Request $request): Response
     {
         $dto = new SearchDto();
         $dto->since = new \DateTimeImmutable('@0');
@@ -72,9 +82,41 @@ class SearchController extends AbstractController
         return $this->render(
             'search/front.html.twig',
             [
+                'form' => $form->createView(),
                 'objects' => [],
                 'results' => [],
+            ]
+        );
+    }
+
+    public function magazines(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        $criteria = new MagazinePageView(
+            $this->getPageNb($request),
+            Criteria::SORT_ACTIVE,
+            Criteria::AP_ALL,
+            $user?->hideAdult ? MagazinePageView::ADULT_HIDE : MagazinePageView::ADULT_SHOW,
+        );
+
+        $form = $this->createForm(MagazinePageViewType::class, $criteria);
+
+        $form->handleRequest($request);
+
+        if (null !== $criteria->query) {
+            $magazines = $this->magazineRepository->findPaginated($criteria);
+        } else {
+            $magazines = [];
+        }
+
+        return $this->render(
+            'search/front.html.twig',
+            [
                 'form' => $form->createView(),
+                'magazines' => $magazines,
+                'criteria' => $criteria,
+                'view' => 'list',
             ]
         );
     }
