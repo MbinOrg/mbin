@@ -190,7 +190,7 @@ class TagBlockApiController extends TagBaseApi
         $headers = $this->rateLimit($apiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $blocks = $this->repository->findBlockedTags(
+        $blocks = $this->tagRepository->findBlockedTags(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
             self::constrainPerPage($request->get('perPage', TagRepository::PER_PAGE))

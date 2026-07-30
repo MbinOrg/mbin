@@ -190,7 +190,7 @@ class TagSubscriptionApiController extends TagBaseApi
         $headers = $this->rateLimit($apiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $subs = $this->repository->findSubscribedTags(
+        $subs = $this->tagRepository->findSubscribedTags(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
             self::constrainPerPage($request->get('perPage', TagRepository::PER_PAGE))

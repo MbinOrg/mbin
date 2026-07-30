@@ -8,12 +8,26 @@ use App\DTO\HashtagResponseDto;
 use App\Entity\Hashtag;
 use App\Factory\HashtagFactory;
 use App\Repository\TagRepository;
+use App\Service\TagManager;
 use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class TagBaseApi extends BaseApi
 {
     private readonly HashtagFactory $factory;
-    protected readonly TagRepository $repository;
+
+    protected readonly TagManager $tagManager;
+    protected readonly TagRepository $tagRepository;
+
+    #[Required]
+    public function setTagRepository(TagRepository $tagRepository): void
+    {
+        $this->tagRepository = $tagRepository;
+    }
+
+    #[Required]
+    public function setTagManager(TagManager $tagManager): void {
+        $this->tagManager = $tagManager;
+    }
 
     #[Required]
     public function setFactory(HashtagFactory $factory): void
@@ -21,14 +35,8 @@ abstract class TagBaseApi extends BaseApi
         $this->factory = $factory;
     }
 
-    #[Required]
-    public function setRepository(TagRepository $repository): void
-    {
-        $this->repository = $repository;
-    }
-
     /**
-     * Serialize a domain to JSON.
+     * Serialize a hashtag to JSON.
      */
     protected function serializeHashtag(Hashtag $tag): HashtagResponseDto
     {
