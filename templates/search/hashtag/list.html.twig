@@ -1,0 +1,21 @@
+<div>
+    {% if hashtags|length %}
+        <div class="section">
+            <ul class="search-hashtags-list">
+                {% for hashtag in hashtags %}
+                <li>
+                    <a href="{{ url('tag_overview', { 'name': hashtag.tag }) }}">{{ hashtag.tag }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if(hashtags.haveToPaginate is defined and hashtags.haveToPaginate) %}
+            {{ pagerfanta(hashtags, null, {'pageParameter':'[p]'}) }}
+        {% endif %}
+    {% else %}
+        <aside class="section section--muted">
+            <p>{{ 'empty'|trans }}</p>
+        </aside>
+    {% endif %}
+</div>

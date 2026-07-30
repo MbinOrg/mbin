@@ -14,10 +14,12 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Event\HashtagBlockChangedEvent;
 use App\Event\HashtagSubscriptionChangedEvent;
+use App\PageView\HashtagSearchView;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
+use Pagerfanta\PagerfantaInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class TagManager
@@ -217,5 +219,14 @@ class TagManager
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, false));
+    }
+
+    public function searchWithCriteria(HashtagSearchView $criteria): PagerfantaInterface {
+        return $this->search($criteria->query, $criteria->page, $criteria->perPage ?? TagRepository::PER_PAGE);
+    }
+
+    public function search(string $term, int $page, int $perPage): PagerfantaInterface {
+        $name = $this->tagExtractor->transliterate($term);
+        return $this->tagRepository->searchByName($name, $page, $perPage);
     }
 }

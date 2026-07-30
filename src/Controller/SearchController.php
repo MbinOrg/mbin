@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\SearchDto;
+use App\Form\HashtagSearchType;
 use App\Form\MagazinePageViewType;
 use App\Form\SearchType;
+use App\PageView\HashtagSearchView;
 use App\PageView\MagazinePageView;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
+use App\Repository\TagRepository;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
+use App\Service\TagManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +26,8 @@ class SearchController extends AbstractController
     public function __construct(
         private readonly SearchManager $manager,
         private readonly MagazineRepository $magazineRepository,
+        private readonly TagManager $tagManager,
+        private readonly TagRepository $tagRepository,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
     ) {
@@ -117,6 +123,32 @@ class SearchController extends AbstractController
                 'magazines' => $magazines,
                 'criteria' => $criteria,
                 'view' => 'list',
+            ]
+        );
+    }
+
+    public function hashtags(Request $request): Response
+    {
+        $criteria = new HashtagSearchView(
+            $this->getPageNb($request),
+        );
+
+        $form = $this->createForm(HashtagSearchType::class, $criteria);
+
+        $form->handleRequest($request);
+
+        if (null !== $criteria->query) {
+            $hashtags = $this->tagManager->searchWithCriteria($criteria);
+        } else {
+            $hashtags = $this->tagRepository->findAllPaginated($criteria->page);
+        }
+
+        return $this->render(
+            'search/front.html.twig',
+            [
+                'form' => $form->createView(),
+                'hashtags' => $hashtags,
+                'criteria' => $criteria,
             ]
         );
     }

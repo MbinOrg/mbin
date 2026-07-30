@@ -13,6 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use Pagerfanta\Doctrine\Collections\CollectionAdapter;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
@@ -34,6 +35,23 @@ class TagRepository extends ServiceEntityRepository
         private readonly ContentPopulationTransformer $populationTransformer,
     ) {
         parent::__construct($registry, Hashtag::class);
+    }
+
+    public function findAllPaginated(int $page, int $perPage = self::PER_PAGE): PagerfantaInterface {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.banned = false')
+            ->addOrderBy('t.tag', 'ASC');
+
+        $pagerfanta = new Pagerfanta(new QueryAdapter($qb));
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 
     public function findOverall(int $page, string $tag): PagerfantaInterface
@@ -144,6 +162,26 @@ class TagRepository extends ServiceEntityRepository
                 $user->blockedHashtags
             )
         );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function searchByName(string $name, int $page, int $perPage = self::PER_PAGE): PagerfantaInterface {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.tag LIKE :q')
+            ->andWhere('t.banned = false')
+            ->orderBy('LENGTH(t.tag)', 'ASC')
+            ->addOrderBy('t.tag', 'ASC')
+            ->setParameter('q', '%'.$name.'%');
+
+        $pagerfanta = new Pagerfanta(new QueryAdapter($qb));
 
         try {
             $pagerfanta->setMaxPerPage($perPage);
