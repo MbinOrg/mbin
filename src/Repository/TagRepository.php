@@ -71,7 +71,7 @@ class TagRepository extends ServiceEntityRepository
             WHERE :visibilityBypass = TRUE OR (pc.visibility = :visibility AND m.visibility = :visibility)
         ORDER BY created_at DESC";
 
-        $visibilityBypass = $user !== null && ($user->isAdmin() || $user->isModerator());
+        $visibilityBypass = null !== $user && ($user->isAdmin() || $user->isModerator());
 
         $adapter = new NativeQueryAdapter($conn, $sql, [
             'tag' => $tag,

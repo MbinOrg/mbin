@@ -40,7 +40,7 @@ class MagazineAutocompleteType extends AbstractType
                         ->setParameter('user', $currentUser);
                 }
 
-                if(!$currentUser || (!$currentUser->isAdmin() && !$currentUser->isModerator())) {
+                if (!$currentUser || (!$currentUser->isAdmin() && !$currentUser->isModerator())) {
                     $qb->andWhere('entity.visibility = :visibility')
                         ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
                 }
