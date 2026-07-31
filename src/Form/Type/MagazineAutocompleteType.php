@@ -28,7 +28,8 @@ class MagazineAutocompleteType extends AbstractType
             'choice_label' => 'name',
             'placeholder' => 'select_magazine',
             'filter_query' => function (QueryBuilder $qb, string $query) {
-                if ($currentUser = $this->security->getUser()) {
+                $currentUser = $this->security->getUser();
+                if ($currentUser) {
                     $qb
                         ->andWhere(
                             \sprintf(
@@ -39,15 +40,17 @@ class MagazineAutocompleteType extends AbstractType
                         ->setParameter('user', $currentUser);
                 }
 
+                if(!$currentUser || (!$currentUser->isAdmin() && !$currentUser->isModerator())) {
+                    $qb->andWhere('entity.visibility = :visibility')
+                        ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+                }
+
                 if (!$query) {
                     return;
                 }
 
                 $qb->andWhere('entity.name LIKE :filter OR entity.title LIKE :filter')
-                    ->andWhere('entity.visibility = :visibility')
-                    ->setParameter('filter', '%'.$query.'%')
-                    ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-                ;
+                    ->setParameter('filter', '%'.$query.'%');
             },
         ]);
     }
