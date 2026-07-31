@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
-use App\Entity\DomainSubscription;
 use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
 use App\Entity\HashtagSubscription;
@@ -164,7 +163,7 @@ class PostCommentRepository extends ServiceEntityRepository
                 ->setParameter('tag', $criteria->tag);
         }
 
-        if($user && $criteria->subscribed) {
+        if ($user && $criteria->subscribed) {
             $qb->andWhere(
                 'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
                 OR

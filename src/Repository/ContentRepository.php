@@ -229,7 +229,7 @@ class ContentRepository
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                         ' OR c.user_id IN (:cachedUserFollows)');
 
-                if($criteria->includeCommentsWithSubscribedHashtag) {
+                if ($criteria->includeCommentsWithSubscribedHashtag) {
                     // only include the subclause if there are (/ might be) subscriptions
                     if (null === $criteria->cachedUserSubscribedHashtags || !empty($criteria->cachedUserSubscribedHashtags)) {
                         if (null === $criteria->cachedUserSubscribedHashtags) {
@@ -250,7 +250,7 @@ class ContentRepository
                         ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
                         ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
 
-                if($criteria->includeCommentsWithSubscribedHashtag) {
+                if ($criteria->includeCommentsWithSubscribedHashtag) {
                     $subClauseEntryComment = str_replace('%hl_type%', 'entry_comment', $subClauseEntryComment);
                     $subClausePostComment = str_replace('%hl_type%', 'post_comment', $subClausePostComment);
                 }

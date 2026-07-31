@@ -10,7 +10,6 @@ use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PeopleManager;
 use App\Service\TagExtractor;
-use App\Service\TagManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

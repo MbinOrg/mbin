@@ -131,7 +131,8 @@ class TagSubscriptionTest extends WebTestCase
         self::assertCount(2, $result);
     }
 
-    public function testSubscribedHashtagIsIncludedInCombinedComments() {
+    public function testSubscribedHashtagIsIncludedInCombinedComments()
+    {
         $user = $this->getUserByUsername('John Doe');
         $contentCreator = $this->getUserByUsername('poster');
         $tag = $this->getHashtag('interesting');
