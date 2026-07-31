@@ -329,6 +329,7 @@ class SearchRetrieveApi extends BaseApi
 
         $request = $this->request->getCurrentRequest();
         $page = $this->getPageNb($request);
+        $perPage = self::constrainPerPage($perPage);
 
         if ('entry' !== $type && 'post' !== $type && null !== $type) {
             throw new BadRequestHttpException();

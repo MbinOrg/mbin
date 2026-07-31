@@ -1,0 +1,12 @@
+<h1 hidden>
+    {{ 'hashtags'|trans }}
+</h1>
+
+<div class="section section--top">
+    {% include 'search/hashtag/form.html.twig' %}
+</div>
+{% include 'layout/_flash.html.twig' %}
+
+<div id="content">
+    {% include 'search/hashtag/list.html.twig' %}
+</div>

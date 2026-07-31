@@ -1,0 +1,15 @@
+{{ form_start(form, {'attr': {'class': 'search-form'}}) }}
+
+<div class="flex search-container" style="align-items: center">
+    {{ form_widget(form.query, {'attr': {'class': 'form-control'}}) }}
+    <button class="btn btn__primary ignore-edges" type="submit" title="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    </button>
+</div>
+<div class="flex flex-wrap">
+    {{ form_widget(form.fields, {attr: {'aria-label': 'filter.fields.label'|trans}}) }}
+    {{ form_widget(form.federation, {attr: {'aria-label': 'filter.origin.label'|trans}}) }}
+    {{ form_widget(form.adult, {attr: {'aria-label': 'filter.adult.label'|trans}}) }}
+</div>
+
+{{ form_end(form) }}

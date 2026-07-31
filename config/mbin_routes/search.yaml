@@ -1,5 +1,23 @@
-search:
-  controller: App\Controller\SearchController
+search_old:
+  controller: App\Controller\SearchController::redirectFromOldRoute
   defaults: { val: ~, }
   path: /search
+  methods: [GET]
+
+search_general:
+  controller: App\Controller\SearchController::general
+  defaults: { val: ~, }
+  path: /search/general
+  methods: [GET]
+
+search_magazines:
+  controller: App\Controller\SearchController::magazines
+  defaults: { val: ~, }
+  path: /search/magazine
+  methods: [GET]
+
+search_hashtags:
+  controller: App\Controller\SearchController::hashtags
+  defaults: { val: ~, }
+  path: /search/hashtag
   methods: [GET]

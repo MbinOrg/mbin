@@ -11,10 +11,16 @@ use App\Entity\EntryComment;
 use App\Entity\Hashtag;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
+use App\Event\HashtagBlockChangedEvent;
+use App\Event\HashtagSubscriptionChangedEvent;
+use App\PageView\HashtagSearchView;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
+use Pagerfanta\PagerfantaInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class TagManager
 {
@@ -23,6 +29,7 @@ class TagManager
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly TagExtractor $tagExtractor,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -176,5 +183,52 @@ class TagManager
         }
 
         return false;
+    }
+
+    public function subscribe(User $user, Hashtag $tag): void
+    {
+        $user->unblockHashtag($tag);
+
+        $tag->subscribe($user);
+
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($tag, $user, true));
+    }
+
+    public function unsubscribe(User $user, Hashtag $tag): void
+    {
+        $tag->unsubscribe($user);
+
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($tag, $user, false));
+    }
+
+    public function block(User $user, Hashtag $hashtag): void
+    {
+        $user->blockHashtag($hashtag);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, true));
+    }
+
+    public function unblock(User $user, Hashtag $hashtag): void
+    {
+        $user->unblockHashtag($hashtag);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, false));
+    }
+
+    public function searchWithCriteria(HashtagSearchView $criteria): PagerfantaInterface
+    {
+        return $this->search($criteria->query, $criteria->page, $criteria->perPage ?? TagRepository::PER_PAGE);
+    }
+
+    public function search(string $term, int $page, int $perPage): PagerfantaInterface
+    {
+        $name = $this->tagExtractor->transliterate($term);
+        return $this->tagRepository->searchByName($name, $page, $perPage);
     }
 }

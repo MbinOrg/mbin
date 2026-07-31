@@ -14,6 +14,7 @@ use App\Entity\DomainSubscription;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
 use App\Entity\Image;
 use App\Entity\MagazineBlock;
@@ -55,11 +56,11 @@ class EntryCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, EntryComment::class);
     }
 
-    public function findByCriteria(Criteria $criteria): Pagerfanta
+    public function findByCriteria(Criteria $criteria, ?User $loggedInUser = null): Pagerfanta
     {
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
-                $this->getEntryQueryBuilder($criteria),
+                $this->getEntryQueryBuilder($criteria, $loggedInUser),
                 false
             )
         );
@@ -74,9 +75,9 @@ class EntryCommentRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    private function getEntryQueryBuilder(Criteria $criteria): QueryBuilder
+    private function getEntryQueryBuilder(Criteria $criteria, ?User $user): QueryBuilder
     {
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
 
         $qb = $this->createQueryBuilder('c')
             ->select('c', 'u')
@@ -103,7 +104,7 @@ class EntryCommentRepository extends ServiceEntityRepository
             ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $this->addTimeClause($qb, $criteria);
-        $this->filter($qb, $criteria);
+        $this->filter($qb, $criteria, $user);
         $this->addBannedHashtagClause($qb);
         if ($user instanceof User) {
             $this->filterWords($qb, $user);
@@ -134,10 +135,8 @@ class EntryCommentRepository extends ServiceEntityRepository
         $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
     }
 
-    private function filter(QueryBuilder $qb, Criteria $criteria): QueryBuilder
+    private function filter(QueryBuilder $qb, Criteria $criteria, ?User $user): QueryBuilder
     {
-        $user = $this->security->getUser();
-
         if (Criteria::AP_LOCAL === $criteria->federation) {
             $qb->andWhere('c.apId IS NULL');
         }
@@ -200,14 +199,14 @@ class EntryCommentRepository extends ServiceEntityRepository
             $qb->andWhere(
                 'c.magazine IN (SELECT IDENTITY(cm.magazine) FROM '.Moderator::class.' cm WHERE cm.user = :user)'
             );
-            $qb->setParameter('user', $this->security->getUser());
+            $qb->setParameter('user', $user);
         }
 
         if ($criteria->favourite) {
             $qb->andWhere(
                 'c.id IN (SELECT IDENTITY(cf.entryComment) FROM '.EntryCommentFavourite::class.' cf WHERE cf.user = :user)'
             );
-            $qb->setParameter('user', $this->security->getUser());
+            $qb->setParameter('user', $user);
         }
 
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
@@ -221,6 +220,13 @@ class EntryCommentRepository extends ServiceEntityRepository
 
             $qb->andWhere(
                 'c.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker)'
+            );
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
+                    .'WHERE hl.entryComment = c AND hb.user = :blocker'
+                .')'
             );
 
             if (!$criteria->domain) {

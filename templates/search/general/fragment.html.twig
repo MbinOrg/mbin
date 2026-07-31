@@ -1,0 +1,29 @@
+<h1 hidden>
+    {{ 'search'|trans }}
+</h1>
+
+<div class="section section--top">
+    {% include 'search/general/form.html.twig' %}
+</div>
+{% include 'layout/_flash.html.twig' %}
+
+<div id="content" class="{{ html_classes('overview subjects comments-tree comments', {
+    'show-comment-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_COMMENTS_SHOW_USER_AVATAR')),
+    'show-post-avatar': app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS')) is same as 'true' or not app.request.cookies.has(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_USERS_AVATARS'))
+}) }}">
+    {% if objects|length %}
+        {% for object in objects %}
+            {% if object.type is defined and object.type is same as 'user' %}
+                <div class="section">
+                    {{ component('user_box', {user: object.object}) }}
+                </div>
+            {% elseif object.type is defined and object.type is same as 'magazine' %}
+                {{ component('magazine_box', {magazine: object.object, stretchedLink: false}) }}
+            {% else %}
+                {% include 'layout/_subject_list.html.twig' with {results: [object.object], entryCommentAttributes: {showMagazineName: true, showEntryTitle: true}, postCommentAttributes: {withPost: false}} %}
+            {% endif %}
+        {% endfor %}
+    {% elseif q is defined and q %}
+        {% include 'search/general/list.html.twig' %}
+    {% endif %}
+</div>

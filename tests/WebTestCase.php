@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Entity\Entry;
+use App\Entity\EntryComment;
+use App\Entity\Post;
+use App\Entity\PostComment;
 use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
@@ -31,6 +35,7 @@ use App\Repository\ReportRepository;
 use App\Repository\SettingsRepository;
 use App\Repository\SiteRepository;
 use App\Repository\TagLinkRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserFollowRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ActivityJsonBuilder;
@@ -55,11 +60,13 @@ use App\Service\PostManager;
 use App\Service\ProjectInfoService;
 use App\Service\ReportManager;
 use App\Service\SettingsManager;
+use App\Service\TagManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
 use App\Twig\Runtime\FormattingExtensionRuntime;
+use App\Utils\SqlHelpers;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
@@ -102,12 +109,14 @@ abstract class WebTestCase extends BaseWebTestCase
     protected const MAGAZINE_RESPONSE_KEYS = ['magazineId', 'owner', 'icon', 'banner', 'name', 'title', 'description', 'rules', 'subscriptionsCount', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isAdult', 'isUserSubscribed', 'isBlockedByUser', 'tags', 'badges', 'moderators', 'apId', 'apProfileId', 'serverSoftware', 'serverSoftwareVersion', 'isPostingRestrictedToMods', 'localSubscribers', 'notificationStatus', 'discoverable', 'indexable'];
     protected const MAGAZINE_SMALL_RESPONSE_KEYS = ['magazineId', 'name', 'icon', 'banner', 'isUserSubscribed', 'isBlockedByUser', 'apId', 'apProfileId', 'discoverable', 'indexable'];
     protected const DOMAIN_RESPONSE_KEYS = ['domainId', 'name', 'entryCount', 'subscriptionsCount', 'isUserSubscribed', 'isBlockedByUser'];
+    protected const array HASHTAG_RESPONSE_KEYS = ['tag', 'entryCount', 'entryCommentCount', 'postCount', 'postCommentCount', 'isBlockedByUser', 'isSubscribedByUser'];
 
     protected const KIBBY_PNG_URL_RESULT = 'a8/1c/a81cc2fea35eeb232cd28fcb109b3eb5a4e52c71bce95af6650d71876c1bcbb7.png';
 
     protected ArrayCollection $users;
     protected ArrayCollection $magazines;
     protected ArrayCollection $entries;
+    protected ArrayCollection $hashtags;
 
     protected EntityManagerInterface $entityManager;
     protected KernelBrowser $client;
@@ -123,6 +132,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected VoteManager $voteManager;
     protected SettingsManager $settingsManager;
     protected DomainManager $domainManager;
+    protected TagManager $tagManager;
     protected ReportManager $reportManager;
     protected BadgeManager $badgeManager;
     protected NotificationManager $notificationManager;
@@ -145,6 +155,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected SettingsRepository $settingsRepository;
     protected UserRepository $userRepository;
     protected TagLinkRepository $tagLinkRepository;
+    protected TagRepository $tagRepository;
     protected BookmarkRepository $bookmarkRepository;
     protected BookmarkListRepository $bookmarkListRepository;
     protected UserFollowRepository $userFollowRepository;
@@ -177,6 +188,8 @@ abstract class WebTestCase extends BaseWebTestCase
     protected ActivityJsonBuilder $activityJsonBuilder;
     protected Security $security;
 
+    protected SqlHelpers $sqlHelpers;
+
     protected DeliverHandler $deliverHandler;
 
     protected string $kibbyPath;
@@ -187,6 +200,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->users = new ArrayCollection();
         $this->magazines = new ArrayCollection();
         $this->entries = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
+
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->imageUploadTmpDir = \dirname($this->kibbyPath).'/copy/';
         $this->client = static::createClient();
@@ -222,6 +237,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->voteManager = $this->getService(VoteManager::class);
         $this->settingsManager = $this->getService(SettingsManager::class);
         $this->domainManager = $this->getService(DomainManager::class);
+        $this->tagManager = $this->getService(TagManager::class);
         $this->reportManager = $this->getService(ReportManager::class);
         $this->badgeManager = $this->getService(BadgeManager::class);
         $this->notificationManager = $this->getService(NotificationManager::class);
@@ -246,6 +262,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->settingsRepository = $this->getService(SettingsRepository::class);
         $this->userRepository = $this->getService(UserRepository::class);
         $this->tagLinkRepository = $this->getService(TagLinkRepository::class);
+        $this->tagRepository = $this->getService(TagRepository::class);
         $this->bookmarkRepository = $this->getService(BookmarkRepository::class);
         $this->bookmarkListRepository = $this->getService(BookmarkListRepository::class);
         $this->userFollowRepository = $this->getService(UserFollowRepository::class);
@@ -273,6 +290,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->bus = $this->getService(MessageBusInterface::class);
         $this->projectInfoService = $this->getService(ProjectInfoService::class);
         $this->logger = $this->getService(LoggerInterface::class);
+
+        $this->sqlHelpers = $this->getService(SqlHelpers::class);
 
         // clear all cache before every test
         $app = new Application($this->client->getKernel());
@@ -324,6 +343,14 @@ abstract class WebTestCase extends BaseWebTestCase
         $pattern = '/<time[ \w="\n-:]*>[\w \n]+<\/time>/m';
 
         return preg_replace($pattern, '', $content);
+    }
+
+    public function setContentTime(Entry|EntryComment|Post|PostComment $subject, Entry|EntryComment|Post|PostComment $reference, int $seconds): void
+    {
+        $subject->createdAt = $reference->getCreatedAt()->add(\DateInterval::createFromDateString($seconds.' seconds'));
+        $subject->lastBoostedAt = $subject->createdAt;
+        $this->entityManager->persist($subject);
+        $this->entityManager->flush();
     }
 
     protected function tearDown(): void

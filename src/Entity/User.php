@@ -214,6 +214,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public Collection $subscriptions;
     #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedDomains;
+    #[OneToMany(mappedBy: 'user', targetEntity: HashtagSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    public Collection $subscribedHashtags;
     #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $follows;
@@ -232,6 +234,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedDomains;
+    #[OneToMany(mappedBy: 'user', targetEntity: HashtagBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OrderBy(['createdAt' => 'DESC'])]
+    public Collection $blockedHashtags;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $reports;
@@ -307,12 +312,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->postCommentVotes = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->subscribedDomains = new ArrayCollection();
+        $this->subscribedHashtags = new ArrayCollection();
         $this->follows = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->blocks = new ArrayCollection();
         $this->blockers = new ArrayCollection();
         $this->blockedMagazines = new ArrayCollection();
         $this->blockedDomains = new ArrayCollection();
+        $this->blockedHashtags = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
         $this->violations = new ArrayCollection();
@@ -671,7 +678,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         if ($this->blockedDomains->removeElement($domainBlock)) {
             if ($domainBlock->user === $this) {
                 $domainBlock->domain = null;
-                $this->blockedMagazines->removeElement($domainBlock);
+                $this->blockedDomains->removeElement($domainBlock);
+            }
+        }
+    }
+
+    public function blockHashtag(Hashtag $hashtag): self
+    {
+        if (!$this->isBlockedHashtag($hashtag)) {
+            $this->blockedHashtags->add(new HashtagBlock($this, $hashtag));
+        }
+
+        return $this;
+    }
+
+    public function isBlockedHashtag(Hashtag $hashtag): bool
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('hashtag', $hashtag));
+
+        return $this->blockedHashtags->matching($criteria)->count() > 0;
+    }
+
+    public function unblockHashtag(Hashtag $hashtag): void
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('hashtag', $hashtag));
+
+        /**
+         * @var HashtagBlock $hashtagBlock
+         */
+        $hashtagBlock = $this->blockedHashtags->matching($criteria)->first();
+
+        if ($this->blockedHashtags->removeElement($hashtagBlock)) {
+            if ($hashtagBlock->user === $this) {
+                $hashtagBlock->hashtag = null;
+                $this->blockedHashtags->removeElement($hashtagBlock);
             }
         }
     }

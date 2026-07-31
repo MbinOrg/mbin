@@ -37,6 +37,7 @@ class MagazinePageView extends Criteria
         public bool $abandoned = false,
     ) {
         parent::__construct($page);
+        $this->setContent('_search_magazines');
         $this->resolveSort($sortOption);
     }
 
