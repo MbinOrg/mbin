@@ -13,6 +13,7 @@ use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\Entry;
 use App\Entity\EntryFavourite;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
@@ -237,6 +238,13 @@ class EntryRepository extends ServiceEntityRepository
                     'e.domain IS null OR e.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
                 );
             }
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
+                .'WHERE hl.entry = e AND hb.user = :blocker'
+                .')'
+            );
 
             $qb->setParameter('blocker', $user);
         }

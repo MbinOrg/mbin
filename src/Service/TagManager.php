@@ -183,28 +183,30 @@ class TagManager
         return false;
     }
 
-    public function subscribe(User $user, Hashtag $tag): void
+    public function subscribe(User $user, Hashtag $hashtag): void
     {
-        $user->unblockHashtag($tag);
+        $this->unblock($user, $hashtag);
 
-        $tag->subscribe($user);
+        $hashtag->subscribe($user);
 
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($tag, $user, true));
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($hashtag, $user, true));
     }
 
-    public function unsubscribe(User $user, Hashtag $tag): void
+    public function unsubscribe(User $user, Hashtag $hashtag): void
     {
-        $tag->unsubscribe($user);
+        $hashtag->unsubscribe($user);
 
         $this->entityManager->flush();
 
-        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($tag, $user, false));
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($hashtag, $user, false));
     }
 
     public function block(User $user, Hashtag $hashtag): void
     {
+        $this->unsubscribe($user, $hashtag);
+
         $user->blockHashtag($hashtag);
         $this->entityManager->flush();
 

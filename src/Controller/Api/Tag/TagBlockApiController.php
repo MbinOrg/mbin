@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\Tag;
 
-use App\DTO\DomainDto;
 use App\DTO\HashtagResponseDto;
 use App\Entity\Hashtag;
 use App\Entity\HashtagBlock;
@@ -79,7 +78,7 @@ class TagBlockApiController extends TagBaseApi
     #[OA\Response(
         response: 200,
         description: 'Hashtag unblocked',
-        content: new Model(type: DomainDto::class),
+        content: new Model(type: HashtagResponseDto::class),
         headers: [
             new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
             new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),

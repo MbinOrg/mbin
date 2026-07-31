@@ -25,12 +25,17 @@ class TagCommentFrontController extends AbstractController
 
     public function __invoke(string $name, ?string $sortBy, ?string $time, Request $request): Response
     {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
-            ->setTag($this->tagManager->transliterate(strtolower($name)));
+            ->setTag($tag);
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
 
         $params = [
+            'hashtag' => $hashtag,
             'comments' => $this->repository->findByCriteria($criteria),
             'tag' => $name,
             'counts' => $this->tagRepository->getCounts($name),

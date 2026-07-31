@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
@@ -205,12 +206,19 @@ class PostRepository extends ServiceEntityRepository
             $qb->andWhere(
                 'NOT EXISTS (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker AND ub.blocked = p.user)'
             );
-            $qb->setParameter('blocker', $user);
 
             $qb->andWhere(
-                'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :magazineBlocker AND mb.magazine = p.magazine)'
+                'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker AND mb.magazine = p.magazine)'
             );
-            $qb->setParameter('magazineBlocker', $user);
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
+                .'WHERE hl.post = p AND hb.user = :blocker'
+                .')'
+            );
+
+            $qb->setParameter('blocker', $user);
         }
 
         if (!$user || $user->hideAdult) {

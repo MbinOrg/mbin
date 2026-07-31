@@ -9,6 +9,8 @@ use App\Repository\MagazineRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PeopleManager;
+use App\Service\TagExtractor;
+use App\Service\TagManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,6 +18,7 @@ class TagPeopleFrontController extends AbstractController
 {
     public function __construct(
         private readonly PeopleManager $manager,
+        private readonly TagExtractor $tagManager,
         private readonly TagRepository $tagRepository,
         private readonly MagazineRepository $magazineRepository,
     ) {
@@ -28,16 +31,25 @@ class TagPeopleFrontController extends AbstractController
         PostRepository $repository,
         Request $request,
     ): Response {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+
+        $magazines = array_filter(
+            $this->magazineRepository->findByActivity(),
+            fn ($val) => 'random' !== $val->name
+        );
+        $localPeople = $this->manager->general();
+        $generalPeople = $this->manager->general(true);
+        $counts = $this->tagRepository->getCounts($tag);
+
         return $this->render(
             'tag/people.html.twig', [
+                'hashtag' => $hashtag,
                 'tag' => $name,
-                'magazines' => array_filter(
-                    $this->magazineRepository->findByActivity(),
-                    fn ($val) => 'random' !== $val->name
-                ),
-                'local' => $this->manager->general(),
-                'federated' => $this->manager->general(true),
-                'counts' => $this->tagRepository->getCounts($name),
+                'magazines' => $magazines,
+                'local' => $localPeople,
+                'federated' => $generalPeople,
+                'counts' => $counts,
             ]
         );
     }

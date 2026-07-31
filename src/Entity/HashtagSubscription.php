@@ -27,7 +27,7 @@ class HashtagSubscription
     #[ManyToOne(targetEntity: User::class, inversedBy: 'subscribedHashtags')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?User $user;
-    #[ManyToOne(targetEntity: Hashtag::class)]
+    #[ManyToOne(targetEntity: Hashtag::class, inversedBy: 'subscriptions')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Hashtag $hashtag;
     #[Id]
