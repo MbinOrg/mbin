@@ -221,11 +221,13 @@ class TagManager
         $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, false));
     }
 
-    public function searchWithCriteria(HashtagSearchView $criteria): PagerfantaInterface {
+    public function searchWithCriteria(HashtagSearchView $criteria): PagerfantaInterface
+    {
         return $this->search($criteria->query, $criteria->page, $criteria->perPage ?? TagRepository::PER_PAGE);
     }
 
-    public function search(string $term, int $page, int $perPage): PagerfantaInterface {
+    public function search(string $term, int $page, int $perPage): PagerfantaInterface
+    {
         $name = $this->tagExtractor->transliterate($term);
         return $this->tagRepository->searchByName($name, $page, $perPage);
     }

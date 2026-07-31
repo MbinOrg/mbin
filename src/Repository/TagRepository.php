@@ -37,7 +37,8 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Hashtag::class);
     }
 
-    public function findAllPaginated(int $page, int $perPage = self::PER_PAGE): PagerfantaInterface {
+    public function findAllPaginated(int $page, int $perPage = self::PER_PAGE): PagerfantaInterface
+    {
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.banned = false')
             ->addOrderBy('t.tag', 'ASC');
@@ -173,7 +174,8 @@ class TagRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    public function searchByName(string $name, int $page, int $perPage = self::PER_PAGE): PagerfantaInterface {
+    public function searchByName(string $name, int $page, int $perPage = self::PER_PAGE): PagerfantaInterface
+    {
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.tag LIKE :q')
             ->andWhere('t.banned = false')

@@ -1,22 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller\Api\Tag;
 
 use App\DTO\HashtagResponseDto;
-use App\DTO\SearchResponseDto;
 use App\Entity\Hashtag;
-use App\Entity\HashtagBlock;
 use App\Repository\SearchRepository;
-use App\Repository\TagRepository;
 use App\Schema\PaginationSchema;
-use App\Service\TagManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
-use Symfony\Contracts\Service\Attribute\Required;
 
 class TagSearchApiController extends TagBaseApi
 {
@@ -71,7 +67,7 @@ class TagSearchApiController extends TagBaseApi
         schema: new OA\Schema(type: 'integer', default: SearchRepository::PER_PAGE, minimum: self::MIN_PER_PAGE, maximum: self::MAX_PER_PAGE)
     )]
     #[OA\Tag(name: 'tag')]
-    function listAll(
+    public function listAll(
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
@@ -160,7 +156,7 @@ class TagSearchApiController extends TagBaseApi
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'tag')]
-    function search(
+    public function search(
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
         #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]

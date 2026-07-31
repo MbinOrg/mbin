@@ -8,7 +8,6 @@ use App\Repository\Criteria;
 
 class HashtagSearchView extends Criteria
 {
-
     public ?string $query = null;
 
     public function __construct(

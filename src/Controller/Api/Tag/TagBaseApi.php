@@ -25,7 +25,8 @@ abstract class TagBaseApi extends BaseApi
     }
 
     #[Required]
-    public function setTagManager(TagManager $tagManager): void {
+    public function setTagManager(TagManager $tagManager): void
+    {
         $this->tagManager = $tagManager;
     }
 
