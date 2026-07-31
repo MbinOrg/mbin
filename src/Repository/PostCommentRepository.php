@@ -9,8 +9,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Image;
+use App\Entity\MagazineSubscription;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -46,7 +49,7 @@ class PostCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, PostComment::class);
     }
 
-    public function findByCriteria(PostCommentPageView $criteria)
+    public function findByCriteria(PostCommentPageView $criteria, ?User $loggedInUser = null)
     {
         //        return $this->createQueryBuilder('pc')
         //            ->orderBy('pc.createdAt', 'DESC')
@@ -55,7 +58,7 @@ class PostCommentRepository extends ServiceEntityRepository
         //            ->getResult();
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(
-                $this->getCommentQueryBuilder($criteria),
+                $this->getCommentQueryBuilder($criteria, $loggedInUser),
                 false
             )
         );
@@ -70,9 +73,9 @@ class PostCommentRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    private function getCommentQueryBuilder(Criteria $criteria): QueryBuilder
+    private function getCommentQueryBuilder(Criteria $criteria, ?User $user): QueryBuilder
     {
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
 
         $qb = $this->createQueryBuilder('c')
             ->select('c', 'u')
@@ -99,7 +102,7 @@ class PostCommentRepository extends ServiceEntityRepository
             ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE);
 
         $this->addTimeClause($qb, $criteria);
-        $this->filter($qb, $criteria);
+        $this->filter($qb, $criteria, $user);
         $this->addBannedHashtagClause($qb);
 
         if ($user instanceof User) {
@@ -131,7 +134,7 @@ class PostCommentRepository extends ServiceEntityRepository
         $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
     }
 
-    private function filter(QueryBuilder $qb, Criteria $criteria)
+    private function filter(QueryBuilder $qb, Criteria $criteria, ?User $user): void
     {
         if ($criteria->post) {
             $qb->andWhere('c.post = :post')
@@ -160,10 +163,29 @@ class PostCommentRepository extends ServiceEntityRepository
                 ->setParameter('tag', $criteria->tag);
         }
 
-        $user = $this->security->getUser();
+        if ($user && $criteria->subscribed) {
+            $qb->andWhere(
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
+                OR
+                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
+                OR
+                c.user = :follower
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.postComment = c AND hs.user = :follower)'
+            );
+            $qb->setParameter('follower', $user);
+        }
+
         if ($user && !$criteria->moderated) {
             $qb->andWhere(
                 'c.user NOT IN (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker)'
+            );
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                    .'WHERE hbl.postComment = c AND hb.user = :blocker'
+                .')'
             );
 
             $qb->setParameter('blocker', $user);

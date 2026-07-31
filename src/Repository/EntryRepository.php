@@ -13,7 +13,9 @@ use App\Entity\DomainBlock;
 use App\Entity\DomainSubscription;
 use App\Entity\Entry;
 use App\Entity\EntryFavourite;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -196,7 +198,7 @@ class EntryRepository extends ServiceEntityRepository
                 ->setParameter('languages', $criteria->languages, ArrayParameterType::STRING);
         }
 
-        if ($criteria->subscribed) {
+        if ($user && $criteria->subscribed) {
             $qb->andWhere(
                 'e.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user)
                 OR
@@ -204,7 +206,9 @@ class EntryRepository extends ServiceEntityRepository
                 OR
                 e.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :user)
                 OR
-                e.user = :user'
+                e.user = :user
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.entry = e AND hs.user = :user)'
             )
                 ->setParameter('user', $this->security->getUser());
         }
@@ -237,6 +241,13 @@ class EntryRepository extends ServiceEntityRepository
                     'e.domain IS null OR e.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
                 );
             }
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                .'WHERE hbl.entry = e AND hb.user = :blocker'
+                .')'
+            );
 
             $qb->setParameter('blocker', $user);
         }

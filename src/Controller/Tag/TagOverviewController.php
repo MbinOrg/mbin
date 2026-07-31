@@ -23,12 +23,17 @@ class TagOverviewController extends AbstractController
 
     public function __invoke(string $name, Request $request): Response
     {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+
         $activity = $this->tagRepository->findOverall(
             $this->getPageNb($request),
-            $this->tagManager->transliterate(strtolower($name))
+            $tag
         );
 
         $params = [
+            'hashtag' => $hashtag,
             'tag' => $name,
             'results' => $this->overviewManager->buildList($activity),
             'pagination' => $activity,

@@ -9,7 +9,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -171,13 +173,15 @@ class PostRepository extends ServiceEntityRepository
                 ->setParameter('tag', $criteria->tag);
         }
 
-        if ($criteria->subscribed) {
+        if ($user && $criteria->subscribed) {
             $qb->andWhere(
                 'EXISTS (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user AND ms.magazine = p.magazine)
                 OR
                 EXISTS (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :user AND uf.following = p.user)
                 OR
-                p.user = :user'
+                p.user = :user
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.post = p AND hs.user = :user)'
             );
             $qb->setParameter('user', $this->security->getUser());
         }
@@ -205,12 +209,19 @@ class PostRepository extends ServiceEntityRepository
             $qb->andWhere(
                 'NOT EXISTS (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker AND ub.blocked = p.user)'
             );
-            $qb->setParameter('blocker', $user);
 
             $qb->andWhere(
-                'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :magazineBlocker AND mb.magazine = p.magazine)'
+                'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker AND mb.magazine = p.magazine)'
             );
-            $qb->setParameter('magazineBlocker', $user);
+
+            $qb->andWhere(
+                'NOT EXISTS ('
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                .'WHERE hbl.post = p AND hb.user = :blocker'
+                .')'
+            );
+
+            $qb->setParameter('blocker', $user);
         }
 
         if (!$user || $user->hideAdult) {

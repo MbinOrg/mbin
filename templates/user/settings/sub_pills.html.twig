@@ -13,6 +13,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ path('user_settings_hashtag_subscriptions') }}"
+               class="{{ html_classes({'active': is_route_name('user_settings_hashtag_subscriptions')}) }}">
+                {{ 'hashtags'|trans }}
+            </a>
+        </li>
+        <li>
             <a href="{{ path('user_settings_domain_subscriptions') }}"
                class="{{ html_classes({'active': is_route_name('user_settings_domain_subscriptions')}) }}">
                 {{ 'domains'|trans }}

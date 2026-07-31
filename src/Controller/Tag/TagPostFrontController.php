@@ -29,16 +29,21 @@ class TagPostFrontController extends AbstractController
         PostRepository $repository,
         Request $request,
     ): Response {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
         $criteria = new PostPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
-            ->setTag($this->tagManager->transliterate(strtolower($name)));
+            ->setTag($tag);
 
         $posts = $repository->findByCriteria($criteria);
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
 
         return $this->render(
             'tag/posts.html.twig',
             [
+                'hashtag' => $hashtag,
                 'tag' => $name,
                 'posts' => $posts,
                 'counts' => $this->tagRepository->getCounts($name),

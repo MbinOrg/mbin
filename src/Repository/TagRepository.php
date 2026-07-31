@@ -6,11 +6,13 @@ namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Hashtag;
+use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
+use Pagerfanta\Doctrine\Collections\CollectionAdapter;
 use Pagerfanta\Exception\NotValidCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
@@ -115,5 +117,41 @@ class TagRepository extends ServiceEntityRepository
             'post' => 0,
             'post_comment' => 0,
         ];
+    }
+
+    public function findSubscribedTags(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
+    {
+        $pagerfanta = new Pagerfanta(
+            new CollectionAdapter(
+                $user->subscribedHashtags
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
+    }
+
+    public function findBlockedTags(int $page, User $user, int $perPage = self::PER_PAGE): Pagerfanta
+    {
+        $pagerfanta = new Pagerfanta(
+            new CollectionAdapter(
+                $user->blockedHashtags
+            )
+        );
+
+        try {
+            $pagerfanta->setMaxPerPage($perPage);
+            $pagerfanta->setCurrentPage($page);
+        } catch (NotValidCurrentPageException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $pagerfanta;
     }
 }

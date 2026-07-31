@@ -140,6 +140,8 @@ title: Title
 body: Body
 tags: Tags
 tag: Tag
+hashtag: Hashtag
+hashtags: Hashtags
 badges: Badges
 is_adult: 18+ / NSFW
 eng: ENG
@@ -564,15 +566,21 @@ oauth2.grant.delete.general: Delete any of your threads, posts, or comments.
 oauth2.grant.report.general: Report threads, posts, or comments.
 oauth2.grant.vote.general: Upvote, downvote, or boost threads, posts, or
   comments.
-oauth2.grant.subscribe.general: Subscribe or follow any magazine, domain, or
+oauth2.grant.subscribe.general: Subscribe or follow any magazine, domain, hashtag, or
   user, and view the magazines, domains, and users you subscribe to.
-oauth2.grant.block.general: Block or unblock any magazine, domain, or user, and
+oauth2.grant.block.general: Block or unblock any magazine, domain, hashtag, or user, and
   view the magazines, domains, and users you have blocked.
 oauth2.grant.domain.all: Subscribe to or block domains, and view the domains you
-  subscribe to or block.
+  subscribed to or have blocked.
 oauth2.grant.domain.subscribe: Subscribe or unsubscribe to domains and view the
-  domains you subscribe to.
+  domains you subscribed to.
 oauth2.grant.domain.block: Block or unblock domains and view the domains you
+  have blocked.
+oauth2.grant.hashtag.all: Subscribe to or block hashtags, and view the hashtags you
+  subscribed to or have blocked.
+oauth2.grant.hashtag.subscribe: Subscribe or unsubscribe to hashtags and view the
+  hashtags you subscribed to.
+oauth2.grant.hashtag.block: Block or unblock hashtags and view the hashtags you
   have blocked.
 oauth2.grant.entry.all: Create, edit, or delete your threads, and vote, boost,
   or report any thread.
@@ -590,9 +598,9 @@ oauth2.grant.entry_comment.vote: Upvote, boost, or downvote any comment in a
   thread.
 oauth2.grant.entry_comment.report: Report any comment in a thread.
 oauth2.grant.magazine.all: Subscribe to or block magazines, and view the
-  magazines you subscribe to or block.
+  magazines you subscribed to or have blocked.
 oauth2.grant.magazine.subscribe: Subscribe or unsubscribe to magazines and view
-  the magazines you subscribe to.
+  the magazines you subscribed to.
 oauth2.grant.magazine.block: Block or unblock magazines and view the magazines
   you have blocked.
 oauth2.grant.post.all: Create, edit, or delete your microblogs, and vote, boost,
@@ -1078,6 +1086,8 @@ show_boost_following_label: Show boosted content in Microblog and Combined view
 show_boost_following_help: If this is enabled, threads, posts and comments boosted by you or users you follow
   will show up in the Combined view of your subscriptions and Microblog view.
   This will only have an effect when the sorting is set to 'Newest'.
+show_hashtag_sub_comments_label: Show comments which contain a subscribed hashtag in Microblog and Combined view
+show_hashtag_sub_comments_help: Requires inclusion of boosts to be enabled to be active in some views.
 delete_magazine_icon: Delete magazine icon
 flash_magazine_theme_icon_detached_success: Magazine icon deleted successfully
 delete_magazine_banner: Delete magazine banner

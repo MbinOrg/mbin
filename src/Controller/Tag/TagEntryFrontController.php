@@ -27,17 +27,22 @@ class TagEntryFrontController extends AbstractController
 
     public function __invoke(?string $name, ?string $sortBy, ?string $time, ?string $type, Request $request): Response
     {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
         $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type))
-            ->setTag($this->tagManager->transliterate(strtolower($name)));
+            ->setTag($tag);
         $method = $criteria->resolveSort($sortBy);
         $listing = $this->$method($criteria);
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
 
         return $this->render(
             'tag/front.html.twig',
             [
+                'hashtag' => $hashtag,
                 'tag' => $name,
                 'entries' => $listing,
                 'counts' => $this->tagRepository->getCounts($name),
