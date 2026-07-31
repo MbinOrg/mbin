@@ -9,6 +9,7 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\User;
+use App\Service\VideoManager;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -143,15 +144,16 @@ class EntryDto implements ContentVisibilityInterface
     public function getType(): string
     {
         if ($this->url) {
+            if (VideoManager::isVideoUrl($this->url)) {
+                return Entry::ENTRY_TYPE_VIDEO;
+            }
             return Entry::ENTRY_TYPE_LINK;
         }
 
-        $type = Entry::ENTRY_TYPE_IMAGE;
-
         if ($this->body) {
-            $type = Entry::ENTRY_TYPE_ARTICLE;
+            return Entry::ENTRY_TYPE_ARTICLE;
         }
 
-        return $type;
+        return Entry::ENTRY_TYPE_IMAGE;
     }
 }

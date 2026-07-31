@@ -10,10 +10,26 @@ class VideoManager
 
     public static function isVideoUrl(string $url): bool
     {
-        $urlExt = pathinfo($url, PATHINFO_EXTENSION);
+        if (str_starts_with($url, 'data:')) {
+            return self::isSupportedVideoMimeType(substr($url, 5));
+        }
+
+        $path = (string) parse_url($url, PHP_URL_PATH);
+        $urlExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         $types = array_map(fn ($type) => str_replace('video/', '', $type), self::VIDEO_MIMETYPES);
 
-        return \in_array($urlExt, $types);
+        return \in_array($urlExt, $types, false);
+    }
+
+    public static function isSupportedVideoMimeType(?string $mimeType): bool
+    {
+        if (null === $mimeType || '' === trim($mimeType)) {
+            return false;
+        }
+
+        $normalizedMimeType = strtolower(explode(';', trim($mimeType))[0]);
+
+        return \in_array($normalizedMimeType, self::VIDEO_MIMETYPES, true);
     }
 }

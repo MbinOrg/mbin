@@ -9,6 +9,7 @@ use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
+use App\Service\VideoManager;
 use Embed\Embed as BaseEmbed;
 use Embed\Extractor;
 use Psr\Log\LoggerInterface;
@@ -40,7 +41,7 @@ class Embed
         unset($this->dispatcher);
     }
 
-    public function fetch($url): self
+    public function fetch(string $url): self
     {
         if ($this->settings->isLocalUrl($url)) {
             if (ImageManager::isImageUrl($url)) {
@@ -147,6 +148,44 @@ class Embed
             return null;
         }
 
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">'.$html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $videoElements = $dom->getElementsByTagName('video');
+
+        foreach ($videoElements as $videoElement) {
+            $sourceUrl = $videoElement->getAttribute('src');
+            $sourceMimeType = $videoElement->getAttribute('type');
+
+            if (
+                ($sourceUrl && VideoManager::isVideoUrl($sourceUrl))
+                || ($sourceMimeType && VideoManager::isSupportedVideoMimeType($sourceMimeType))
+            ) {
+                continue; // supported video source, no need to check this one further
+            }
+
+            $isSupported = false;
+
+            foreach ($videoElement->getElementsByTagName('source') as $sourceElement) {
+                $sourceUrl = $sourceElement->getAttribute('src');
+                $sourceMimeType = $sourceElement->getAttribute('type');
+
+                if (
+                    ($sourceUrl && VideoManager::isVideoUrl($sourceUrl))
+                    || ($sourceMimeType && VideoManager::isSupportedVideoMimeType($sourceMimeType))
+                ) {
+                    $isSupported = true;
+                    break;
+                }
+            }
+
+            if (!$isSupported) {
+                return null;
+            }
+        }
+
         return $html;
     }
 
@@ -166,7 +205,7 @@ class Embed
         }
 
         if ($this->isVideoUrl()) {
-            return Entry::ENTRY_TYPE_IMAGE;
+            return Entry::ENTRY_TYPE_VIDEO;
         }
 
         if ($this->isVideoEmbed()) {
@@ -187,7 +226,11 @@ class Embed
 
     private function isVideoUrl(): bool
     {
-        return false;
+        if (!$this->url) {
+            return false;
+        }
+
+        return VideoManager::isVideoUrl($this->url);
     }
 
     private function isVideoEmbed(): bool
