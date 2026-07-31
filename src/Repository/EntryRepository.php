@@ -208,7 +208,7 @@ class EntryRepository extends ServiceEntityRepository
                 OR
                 e.user = :user
                 OR
-                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.entry = e AND hs.user = :user)'
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.entry = e AND hs.user = :user)'
             )
                 ->setParameter('user', $this->security->getUser());
         }
@@ -244,8 +244,8 @@ class EntryRepository extends ServiceEntityRepository
 
             $qb->andWhere(
                 'NOT EXISTS ('
-                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
-                .'WHERE hl.entry = e AND hb.user = :blocker'
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                .'WHERE hbl.entry = e AND hb.user = :blocker'
                 .')'
             );
 

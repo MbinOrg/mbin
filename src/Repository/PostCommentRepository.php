@@ -171,7 +171,7 @@ class PostCommentRepository extends ServiceEntityRepository
                 OR
                 c.user = :follower
                 OR
-                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.postComment = c AND hs.user = :follower)'
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.postComment = c AND hs.user = :follower)'
             );
             $qb->setParameter('follower', $user);
         }
@@ -183,8 +183,8 @@ class PostCommentRepository extends ServiceEntityRepository
 
             $qb->andWhere(
                 'NOT EXISTS ('
-                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
-                    .'WHERE hl.postComment = c AND hb.user = :blocker'
+                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                    .'WHERE hbl.postComment = c AND hb.user = :blocker'
                 .')'
             );
 

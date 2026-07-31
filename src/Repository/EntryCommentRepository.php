@@ -193,7 +193,7 @@ class EntryCommentRepository extends ServiceEntityRepository
                 OR
                 ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)
                 OR
-                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.entryComment = c AND hs.user = :follower)'
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.entryComment = c AND hs.user = :follower)'
             );
             $qb->setParameter('follower', $user);
         }
@@ -227,8 +227,8 @@ class EntryCommentRepository extends ServiceEntityRepository
 
             $qb->andWhere(
                 'NOT EXISTS ('
-                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
-                    .'WHERE hl.entryComment = c AND hb.user = :blocker'
+                    .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                    .'WHERE hbl.entryComment = c AND hb.user = :blocker'
                 .')'
             );
 

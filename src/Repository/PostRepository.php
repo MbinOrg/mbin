@@ -181,7 +181,7 @@ class PostRepository extends ServiceEntityRepository
                 OR
                 p.user = :user
                 OR
-                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.post = p AND hs.user = :user)'
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.post = p AND hs.user = :user)'
             );
             $qb->setParameter('user', $this->security->getUser());
         }
@@ -216,8 +216,8 @@ class PostRepository extends ServiceEntityRepository
 
             $qb->andWhere(
                 'NOT EXISTS ('
-                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hl ON hb.hashtag = hl.hashtag '
-                .'WHERE hl.post = p AND hb.user = :blocker'
+                .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
+                .'WHERE hbl.post = p AND hb.user = :blocker'
                 .')'
             );
 
