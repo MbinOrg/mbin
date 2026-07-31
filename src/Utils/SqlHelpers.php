@@ -106,6 +106,8 @@ class SqlHelpers
             return Types::DATETIMETZ_MUTABLE;
         } elseif (\is_int($value)) {
             return Types::INTEGER;
+        } elseif (\is_bool($value)) {
+            return Types::BOOLEAN;
         }
 
         return Types::STRING;
