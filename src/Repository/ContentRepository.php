@@ -102,8 +102,8 @@ class ContentRepository
     private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
-        $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includeEntryComments = $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
