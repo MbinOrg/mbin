@@ -32,6 +32,7 @@ class UserSettingsManager
             $user->frontDefaultSort,
             $user->commentDefaultSort,
             $user->showBoostsOfFollowing,
+            $user->showCommentsOfSubscribedHashtags,
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
@@ -56,6 +57,7 @@ class UserSettingsManager
         $user->frontDefaultSort = $dto->frontDefaultSort;
         $user->commentDefaultSort = $dto->commentDefaultSort;
         $user->showBoostsOfFollowing = $dto->showFollowingBoosts ?? false;
+        $user->showCommentsOfSubscribedHashtags = $dto->showCommentsOfSubscribedHashtags ?? false;
         $user->hideAdult = $dto->hideAdult;
         $user->showProfileSubscriptions = $dto->showProfileSubscriptions;
         $user->showProfileFollowings = $dto->showProfileFollowings;

@@ -224,11 +224,22 @@ class ContentRepository
             $subClauseEntry = str_replace('%hl_type%', 'entry', $subClauseEntry);
 
             if ($criteria->includeBoosts) {
-                // TODO should comments with a subscribed hashtag be included too?
                 $repliesCommonWhere = 'c.user_id = :loggedInUser'
                     .(null === $criteria->cachedUserFollows ?
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                         ' OR c.user_id IN (:cachedUserFollows)');
+
+                if($criteria->includeCommentsWithSubscribedHashtag) {
+                    // only include the subclause if there are (/ might be) subscriptions
+                    if (null === $criteria->cachedUserSubscribedHashtags || !empty($criteria->cachedUserSubscribedHashtags)) {
+                        if (null === $criteria->cachedUserSubscribedHashtags) {
+                            $repliesCommonWhere .= ' OR EXISTS (SELECT 1 FROM hashtag_subscription hs INNER JOIN hashtag_link hl ON hs.hashtag_id = hl.hashtag_id WHERE hs.user_id = :loggedInUser AND hl.%hl_type%_id = c.id)';
+                        } else {
+                            $repliesCommonWhere .= ' OR EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.%hl_type%_id = c.id AND hl.hashtag_id IN (:cachedUserSubscribedHashtags))';
+                            $parameters['cachedUserSubscribedHashtags'] = $criteria->cachedUserSubscribedHashtags;
+                        }
+                    }
+                }
 
                 $subClauseEntryComment = $repliesCommonWhere.
                     (null === $criteria->cachedUserFollows ?
@@ -238,6 +249,11 @@ class ContentRepository
                     (null === $criteria->cachedUserFollows ?
                         ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
                         ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+
+                if($criteria->includeCommentsWithSubscribedHashtag) {
+                    $subClauseEntryComment = str_replace('%hl_type%', 'entry_comment', $subClauseEntryComment);
+                    $subClausePostComment = str_replace('%hl_type%', 'post_comment', $subClausePostComment);
+                }
 
                 $subClausePost = $subClausePost
                     .(null === $criteria->cachedUserFollows ?

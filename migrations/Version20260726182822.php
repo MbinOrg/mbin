@@ -23,6 +23,7 @@ final class Version20260726182822 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX hashtag_subscription_idx ON hashtag_subscription (user_id, hashtag_id)');
         $this->addSql('ALTER TABLE hashtag_subscription ADD CONSTRAINT FK_5814F278A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE');
         $this->addSql('ALTER TABLE hashtag_subscription ADD CONSTRAINT FK_5814F278FB34EF56 FOREIGN KEY (hashtag_id) REFERENCES hashtag (id) ON DELETE CASCADE NOT DEFERRABLE');
+        $this->addSql('ALTER TABLE "user" ADD show_comments_of_subscribed_hashtags BOOLEAN DEFAULT false NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -31,5 +32,6 @@ final class Version20260726182822 extends AbstractMigration
         $this->addSql('ALTER TABLE hashtag_subscription DROP CONSTRAINT FK_5814F278A76ED395');
         $this->addSql('ALTER TABLE hashtag_subscription DROP CONSTRAINT FK_5814F278FB34EF56');
         $this->addSql('DROP TABLE hashtag_subscription');
+        $this->addSql('ALTER TABLE "user" DROP show_comments_of_subscribed_hashtags');
     }
 }

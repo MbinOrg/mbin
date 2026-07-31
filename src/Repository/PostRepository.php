@@ -11,6 +11,7 @@ namespace App\Repository;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -172,13 +173,15 @@ class PostRepository extends ServiceEntityRepository
                 ->setParameter('tag', $criteria->tag);
         }
 
-        if ($criteria->subscribed) {
+        if ($user && $criteria->subscribed) {
             $qb->andWhere(
                 'EXISTS (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :user AND ms.magazine = p.magazine)
                 OR
                 EXISTS (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :user AND uf.following = p.user)
                 OR
-                p.user = :user'
+                p.user = :user
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.post = p AND hs.user = :user)'
             );
             $qb->setParameter('user', $this->security->getUser());
         }

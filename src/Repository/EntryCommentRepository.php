@@ -16,6 +16,7 @@ use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
 use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Image;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -182,7 +183,7 @@ class EntryCommentRepository extends ServiceEntityRepository
                 ->setParameter('tag', $criteria->tag);
         }
 
-        if ($criteria->subscribed) {
+        if ($user && $criteria->subscribed) {
             $qb->andWhere(
                 'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
                 OR
@@ -190,7 +191,9 @@ class EntryCommentRepository extends ServiceEntityRepository
                 OR
                 c.user = :follower
                 OR
-                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)'
+                ce.domain IN (SELECT IDENTITY(ds.domain) FROM '.DomainSubscription::class.' ds WHERE ds.user = :follower)
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.entryComment = c AND hs.user = :follower)'
             );
             $qb->setParameter('follower', $user);
         }

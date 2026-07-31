@@ -95,6 +95,7 @@ abstract class Criteria
     public bool $moderated = false;
     public bool $favourite = false;
     public bool $includeBoosts = false;
+    public bool $includeCommentsWithSubscribedHashtag = false;
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;

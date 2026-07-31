@@ -9,9 +9,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
+use App\Entity\DomainSubscription;
 use App\Entity\HashtagBlock;
 use App\Entity\HashtagLink;
+use App\Entity\HashtagSubscription;
 use App\Entity\Image;
+use App\Entity\MagazineSubscription;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -159,6 +162,19 @@ class PostCommentRepository extends ServiceEntityRepository
                 ->join('c.hashtags', 'h')
                 ->join('h.hashtag', 't')
                 ->setParameter('tag', $criteria->tag);
+        }
+
+        if($user && $criteria->subscribed) {
+            $qb->andWhere(
+                'c.magazine IN (SELECT IDENTITY(ms.magazine) FROM '.MagazineSubscription::class.' ms WHERE ms.user = :follower)
+                OR
+                c.user IN (SELECT IDENTITY(uf.following) FROM '.UserFollow::class.' uf WHERE uf.follower = :follower)
+                OR
+                c.user = :follower
+                OR
+                EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hl ON hs.hashtag = hl.hashtag WHERE hl.postComment = c AND hs.user = :follower)'
+            );
+            $qb->setParameter('follower', $user);
         }
 
         if ($user && !$criteria->moderated) {

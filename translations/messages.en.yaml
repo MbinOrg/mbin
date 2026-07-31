@@ -1086,6 +1086,8 @@ show_boost_following_label: Show boosted content in Microblog and Combined view
 show_boost_following_help: If this is enabled, threads, posts and comments boosted by you or users you follow
   will show up in the Combined view of your subscriptions and Microblog view.
   This will only have an effect when the sorting is set to 'Newest'.
+show_hashtag_sub_comments_label: Show comments which contain a subscribed hashtag in Microblog and Combined view
+show_hashtag_sub_comments_help: Requires inclusion of boosts to be enabled to be active in some views.
 delete_magazine_icon: Delete magazine icon
 flash_magazine_theme_icon_detached_success: Magazine icon deleted successfully
 delete_magazine_banner: Delete magazine banner

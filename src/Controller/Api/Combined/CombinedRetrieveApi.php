@@ -129,6 +129,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     public function collection(
         RateLimiterFactoryInterface $apiReadLimiter,
@@ -142,9 +148,10 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, null);
 
         $content = $contentRepository->findByCriteria($criteria);
 
@@ -248,6 +255,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -264,9 +277,10 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
+        $criteria = $this->getCriteria(null, $p, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, $collectionType);
 
         $content = $contentRepository->findByCriteria($criteria);
 
@@ -370,6 +384,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     public function cursorCollection(
         RateLimiterFactoryInterface $apiReadLimiter,
@@ -383,10 +403,11 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, null);
         $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
         $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
@@ -492,6 +513,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     #[\Nelmio\ApiDocBundle\Attribute\Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -508,10 +535,11 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, $collectionType);
+        $criteria = $this->getCriteria(null, 1, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, $collectionType);
         $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
         $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
@@ -617,6 +645,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     public function magazineCollection(
         RateLimiterFactoryInterface $apiReadLimiter,
@@ -632,9 +666,10 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria($magazine, $p, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria($magazine, $p, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, null);
 
         $content = $contentRepository->findByCriteria($criteria);
 
@@ -744,6 +779,12 @@ class CombinedRetrieveApi extends BaseApi
         in: 'query',
         schema: new OA\Schema(type: 'boolean', default: false)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included; requires includeBoosts to be true',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'combined')]
     public function cursorMagazineCollection(
         RateLimiterFactoryInterface $apiReadLimiter,
@@ -759,10 +800,11 @@ class CombinedRetrieveApi extends BaseApi
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
         #[MapQueryParameter] ?bool $includeBoosts,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
         SqlHelpers $sqlHelpers,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
-        $criteria = $this->getCriteria($magazine, 1, $security, $sort, $time, $federation, $includeBoosts, $perPage, $sqlHelpers, null);
+        $criteria = $this->getCriteria($magazine, 1, $security, $sort, $time, $federation, $includeBoosts, $includeCommentsWithSubscribedHashtag, $perPage, $sqlHelpers, null);
         $currentCursor = $this->getCursor($contentRepository, $criteria->sortOption, $cursor);
         $currentCursor2 = $cursor2 ? $this->getCursor($contentRepository, Criteria::SORT_NEW, $cursor2) : null;
 
@@ -771,7 +813,7 @@ class CombinedRetrieveApi extends BaseApi
         return $this->serializeContentCursored($content, $headers);
     }
 
-    private function getCriteria(?Magazine $magazine, ?int $p, Security $security, ?string $sort, ?string $time, ?string $federation, ?bool $includeBoosts, ?int $perPage, SqlHelpers $sqlHelpers, ?string $collectionType): ContentPageView
+    private function getCriteria(?Magazine $magazine, ?int $p, Security $security, ?string $sort, ?string $time, ?string $federation, ?bool $includeBoosts, ?bool $includeCommentsWithSubHashtag, ?int $perPage, SqlHelpers $sqlHelpers, ?string $collectionType): ContentPageView
     {
         $criteria = new ContentPageView($p ?? 1, $security);
         $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
@@ -784,6 +826,7 @@ class CombinedRetrieveApi extends BaseApi
         $user = $security->getUser();
         if ($user instanceof User) {
             $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption && ($includeBoosts ?? $user->showBoostsOfFollowing);
+            $criteria->includeCommentsWithSubscribedHashtag = $includeCommentsWithSubHashtag ?? $user->showCommentsOfSubscribedHashtags;
             $criteria->fetchCachedItems($sqlHelpers, $user);
         }
 
