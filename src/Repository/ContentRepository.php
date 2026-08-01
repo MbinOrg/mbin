@@ -197,8 +197,8 @@ class ContentRepository
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
-                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
-                    ' OR m.id IN (:cachedUserSubscribedMagazines)')
+                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = c.magazine_id)' :
+                    ' OR c.magazine_id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
                     ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                     ' OR c.user_id IN (:cachedUserFollows)');
@@ -243,9 +243,9 @@ class ContentRepository
         $modClause = '';
         if ($user && $criteria->moderated) {
             if (null === $criteria->cachedUserModeratedMagazines) {
-                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = m.id AND mod.user_id = :loggedInUser)';
+                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = c.magazine_id AND mod.user_id = :loggedInUser)';
             } else {
-                $modClause = 'm.id IN (:cachedUserModeratedMagazines)';
+                $modClause = 'c.magazine_id IN (:cachedUserModeratedMagazines)';
                 $parameters['cachedUserModeratedMagazines'] = $criteria->cachedUserModeratedMagazines;
             }
         }
@@ -271,6 +271,8 @@ class ContentRepository
 
         $blockingClausePost = '';
         $blockingClauseEntry = '';
+        $instanceBlockClauseUser = '';
+        $instanceBlockClauseMagazine = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
                 $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
@@ -281,9 +283,9 @@ class ContentRepository
 
             if (!$criteria->domain) {
                 if (null === $criteria->cachedUserBlockedMagazines) {
-                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :loggedInUser)';
+                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = c.magazine_id AND mb.user_id = :loggedInUser)';
                 } else {
-                    $blockingClausePost .= ' AND (m IS NULL OR m.id NOT IN (:cachedUserBlockedMagazines))';
+                    $blockingClausePost .= ' AND (m IS NULL OR c.magazine_id NOT IN (:cachedUserBlockedMagazines))';
                     $parameters['cachedUserBlockedMagazines'] = $criteria->cachedUserBlockedMagazines;
                 }
             }
@@ -295,6 +297,19 @@ class ContentRepository
                 if ($includeEntries) {
                     $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
                 }
+            }
+
+            if (null === $criteria->cachedUserBlockedInstances) {
+                $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
+                if (!$criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = m.ap_domain)';
+                }
+            } else {
+                $instanceBlockClauseUser = 'u.ap_domain IS NULL OR u.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                if (!$criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR m.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                }
+                $parameters['cachedUserBlockedInstances'] = $criteria->cachedUserBlockedInstances;
             }
         }
 
@@ -375,6 +390,7 @@ class ContentRepository
             $modClause,
             $favClauseEntry,
             $blockingClauseEntry,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -397,6 +413,7 @@ class ContentRepository
             $modClause,
             $favClausePost,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -418,6 +435,7 @@ class ContentRepository
             $modClause,
             $favClauseEntryComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -440,6 +458,7 @@ class ContentRepository
             $modClause,
             $favClausePostComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -452,6 +471,7 @@ class ContentRepository
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
+            $instanceBlockClauseUser,
             $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
@@ -461,17 +481,17 @@ class ContentRepository
         // only join domain if we are explicitly looking at one
         $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $domainJoin
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postCommentWhere";
 
@@ -523,7 +543,7 @@ class ContentRepository
             Criteria::SORT_HOT => 'ranking',
             Criteria::SORT_COMMENTED => 'commentCount',
             Criteria::SORT_ACTIVE => 'lastActive',
-            default => 'createdAt',
+            default => $criteria->includeBoosts ? 'lastBoostedAt' : 'createdAt',
         };
     }
 
@@ -534,8 +554,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking < :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
-            Criteria::SORT_OLD => 'c.created_at > :cursor',
-            default => 'c.created_at < :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at > :cursor' : 'c.created_at > :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
         };
     }
 
@@ -546,8 +566,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking > :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
-            Criteria::SORT_OLD => 'c.created_at < :cursor',
-            default => 'c.created_at >= :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at >= :cursor' : 'c.created_at >= :cursor',
         };
     }
 
@@ -608,11 +628,11 @@ class ContentRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_OLD:
-                $orderings[] = 'created_at ASC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at ASC' : 'created_at ASC';
                 break;
             case Criteria::SORT_NEW:
             default:
-                $orderings[] = 'created_at DESC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at DESC' : 'created_at DESC';
         }
 
         return $orderings;

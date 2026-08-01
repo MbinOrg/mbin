@@ -40,6 +40,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['comment_count'], name: 'post_comment_count_idx')]
 #[Index(columns: ['created_at'], name: 'post_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'post_last_active_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'post_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_body_ts_idx')]
 class Post implements VotableInterface, CommentInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -85,7 +86,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?string $ip = null;
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
@@ -127,6 +128,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
@@ -177,7 +180,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return new ArrayCollection(iterator_to_array($iterator));
     }
 
-    private function handlePrivateComments(ArrayCollection $comments, ?User $user): ArrayCollection
+    private function handlePrivateComments(Collection $comments, ?User $user): Collection
     {
         return $comments->filter(function (PostComment $val) use ($user) {
             if ($user && VisibilityInterface::VISIBILITY_PRIVATE === $val->visibility) {

@@ -2,7 +2,7 @@
 
 
 # Base FrankenPHP image
-FROM dunglas/frankenphp:1-php8.4-trixie AS base
+FROM docker.io/dunglas/frankenphp:1-php8.5-trixie AS base
 
 WORKDIR /app
 
@@ -38,6 +38,8 @@ RUN set -eux; \
 		pcntl \
 		exif \
 		zip \
+        bz2 \
+        mbstring \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -86,7 +88,7 @@ RUN set -eux; \
 
 
 # Node assets builder
-FROM node:24-trixie-slim AS prod_node
+FROM docker.io/library/node:26-trixie-slim AS prod_node
 
 RUN mkdir /app
 WORKDIR /app

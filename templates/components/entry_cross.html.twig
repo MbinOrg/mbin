@@ -41,7 +41,6 @@
                             subject: entry
                         }) }}
                     </li>
-                    {% include 'entry/_menu.html.twig' %}
                     <li data-subject-target="loader" style="display:none">
                         <div class="loader" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -50,14 +49,6 @@
                 </menu>
             {% elseif(entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
                 <menu>
-                    <li>
-                        <form method="post"
-                              action="{{ path('entry_restore', {magazine_name: entry.magazine.name, entry_id: entry.id}) }}"
-                              data-action="confirmation#ask" data-confirmation-message-param="{{ 'are_you_sure'|trans }}">
-                            <input type="hidden" name="token" value="{{ csrf_token('entry_restore') }}">
-                            <button type="submit">{{ 'restore'|trans|lower }}</button>
-                        </form>
-                    </li>
                     <li data-subject-target="loader" style="display:none">
                         <div class="loader" role="status">
                             <span class="visually-hidden">Loading...</span>
