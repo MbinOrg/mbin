@@ -7,6 +7,7 @@ namespace App\Controller\ActivityPub\User;
 use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Factory\ActivityPub\CollectionFactory;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -23,10 +24,10 @@ class UserOutboxController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if (!$request->get('page')) {
+        if (!Polyfills::requestParam($request, 'page')) {
             $data = $this->collectionFactory->getUserOutboxCollection($user);
         } else {
-            $data = $this->collectionFactory->getUserOutboxCollectionItems($user, (int) $request->get('page'));
+            $data = $this->collectionFactory->getUserOutboxCollectionItems($user, (int) Polyfills::requestParam($request, 'page'));
         }
 
         $response = new JsonResponse($data);

@@ -22,6 +22,7 @@ use App\Repository\PostRepository;
 use App\Repository\SearchRepository;
 use App\Repository\UserRepository;
 use App\Service\SubjectOverviewManager;
+use App\Utils\Polyfills;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -297,7 +298,7 @@ class UserFrontController extends AbstractController
             [
                 'view' => 'list',
                 'user' => $user,
-                'magazines' => $repository->findModeratedMagazines($user, (int) $request->get('p', 1)),
+                'magazines' => $repository->findModeratedMagazines($user, (int) Polyfills::requestParam($request, 'p', 1)),
                 'criteria' => $criteria,
             ],
             $response

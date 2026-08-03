@@ -67,7 +67,7 @@ class MessageThread
 
     public function getNewMessages(User $user): Collection
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('status', Message::STATUS_NEW))
             ->andWhere(Criteria::expr()->neq('sender', $user));
 
@@ -76,7 +76,7 @@ class MessageThread
 
     public function countNewMessages(User $user): int
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('status', Message::STATUS_NEW))
             ->andWhere(Criteria::expr()->neq('sender', $user));
 

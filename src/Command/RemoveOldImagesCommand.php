@@ -44,7 +44,7 @@ class RemoveOldImagesCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this
             ->addArgument('type', InputArgument::OPTIONAL, 'Type of images to delete either: "all" (except for users), "threads", "thread_comments", "posts", "post_comments" or "users"', 'all')

@@ -1,4 +1,4 @@
-import { fetch, ok } from '../utils/http';
+import { fetch, ok } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
 import { useIntersection } from 'stimulus-use';
 

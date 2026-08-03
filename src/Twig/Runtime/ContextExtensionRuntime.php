@@ -6,6 +6,7 @@ namespace App\Twig\Runtime;
 
 use App\Entity\User;
 use App\Repository\Criteria;
+use App\Utils\Polyfills;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -47,23 +48,23 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
 
     public function routeHasParam(string $name, string $needle): bool
     {
-        return $this->requestStack->getCurrentRequest()->get($name) === $needle;
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), $name) === $needle;
     }
 
     public function routeParamExists(string $name): bool
     {
-        return (bool) $this->requestStack->getCurrentRequest()->get($name);
+        return (bool) Polyfills::requestParam($this->requestStack->getCurrentRequest(), $name);
     }
 
     private function getCurrentRouteName(): string
     {
-        return $this->requestStack->getCurrentRequest()->get('_route') ?? 'front';
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), '_route') ?? 'front';
     }
 
     public function getActiveSortOption(): string
     {
         $defaultSort = $this->getDefaultSortOption();
-        $requestSort = $this->requestStack->getCurrentRequest()->get('sortBy');
+        $requestSort = Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'sortBy');
 
         return 'default' !== $requestSort ? ($requestSort ?? $defaultSort) : $defaultSort;
     }
@@ -82,7 +83,7 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
     public function getActiveSortOptionForComments(): string
     {
         $defaultSort = $this->getDefaultSortOptionForComments();
-        $requestSort = $this->requestStack->getCurrentRequest()->get('sortBy');
+        $requestSort = Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'sortBy');
 
         return 'default' !== $requestSort ? ($requestSort ?? $defaultSort) : $defaultSort;
     }
@@ -100,7 +101,7 @@ class ContextExtensionRuntime implements RuntimeExtensionInterface
 
     public function getRouteParam(string $name): ?string
     {
-        return $this->requestStack->getCurrentRequest()->get($name);
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), $name);
     }
 
     public function getTimeParamTranslated(): string

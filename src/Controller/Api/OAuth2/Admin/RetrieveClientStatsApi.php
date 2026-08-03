@@ -7,6 +7,7 @@ namespace App\Controller\Api\OAuth2\Admin;
 use App\Controller\Api\BaseApi;
 use App\DTO\ClientAccessStatsResponseDto;
 use App\Repository\OAuth2ClientAccessRepository;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -93,17 +94,17 @@ class RetrieveClientStatsApi extends BaseApi
         RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
-        $resolution = $request->get('resolution');
+        $resolution = Polyfills::requestParam($request, 'resolution');
 
         try {
-            $startString = $request->get('start');
+            $startString = Polyfills::requestParam($request, 'start');
             if (null === $startString) {
                 $start = null;
             } else {
                 $start = new \DateTime($startString);
             }
 
-            $endString = $request->get('end');
+            $endString = Polyfills::requestParam($request, 'end');
             if (null === $endString) {
                 $end = null;
             } else {

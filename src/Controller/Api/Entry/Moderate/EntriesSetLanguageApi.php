@@ -8,6 +8,7 @@ use App\Controller\Api\Entry\EntriesBaseApi;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Factory\EntryFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -87,7 +88,7 @@ class EntriesSetLanguageApi extends EntriesBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $newLang = $request->get('lang', '');
+        $newLang = Polyfills::requestParam($request, 'lang', '');
 
         $valid = false !== array_search($newLang, Languages::getLanguageCodes());
 

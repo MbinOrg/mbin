@@ -1,7 +1,7 @@
-import { fetch, ok } from '../utils/http';
-import { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
+import { fetch, ok } from '@app/utils/http';
+import { getDepth, getLevel, getTypeFromNotification } from '@app/utils/mbin';
 import { Controller } from '@hotwired/stimulus';
-import router from '../utils/routing';
+import router from '@app/utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {

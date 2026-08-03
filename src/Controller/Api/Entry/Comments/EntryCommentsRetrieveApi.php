@@ -13,6 +13,7 @@ use App\PageView\EntryCommentPageView;
 use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -143,11 +144,11 @@ class EntryCommentsRetrieveApi extends EntriesBaseApi
 
         $request = $this->request->getCurrentRequest();
         $criteria = new EntryCommentPageView($this->getPageNb($request), $security);
-        $sort = $criteria->resolveSort($request->get('sortBy', Criteria::SORT_HOT));
+        $sort = $criteria->resolveSort(Polyfills::requestParam($request, 'sortBy', Criteria::SORT_HOT));
         $criteria->showSortOption($sort);
         $criteria->entry = $entry;
-        $criteria->perPage = self::constrainPerPage($request->get('perPage', EntryCommentRepository::PER_PAGE));
-        $criteria->setTime($criteria->resolveTime($request->get('time', Criteria::TIME_ALL)));
+        $criteria->perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', EntryCommentRepository::PER_PAGE));
+        $criteria->setTime($criteria->resolveTime(Polyfills::requestParam($request, 'time', Criteria::TIME_ALL)));
 
         $this->handleLanguageCriteria($criteria);
 

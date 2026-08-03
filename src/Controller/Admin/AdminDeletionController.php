@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Controller\AbstractController;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -23,7 +24,7 @@ class AdminDeletionController extends AbstractController
     public function users(Request $request): Response
     {
         return $this->render('admin/deletion_users.html.twig', [
-            'users' => $this->userRepository->findForDeletionPaginated($request->get('page', 1)),
+            'users' => $this->userRepository->findForDeletionPaginated(Polyfills::requestParam($request, 'page', 1)),
         ]);
     }
 
@@ -31,7 +32,7 @@ class AdminDeletionController extends AbstractController
     public function magazines(Request $request): Response
     {
         return $this->render('admin/deletion_magazines.html.twig', [
-            'magazines' => $this->magazineRepository->findForDeletionPaginated($request->get('page', 1)),
+            'magazines' => $this->magazineRepository->findForDeletionPaginated(Polyfills::requestParam($request, 'page', 1)),
         ]);
     }
 }

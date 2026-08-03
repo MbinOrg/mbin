@@ -1,6 +1,6 @@
 import { ApplicationController, useThrottle } from 'stimulus-use';
-import { fetch, ok } from '../utils/http';
-import router from '../utils/routing';
+import { fetch, ok } from '@app/utils/http';
+import router from '@app/utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends ApplicationController {

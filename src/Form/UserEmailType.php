@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\DTO\UserDto;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -17,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserEmailType extends AbstractType
 {
-    public function __construct(private readonly Security $security)
+    public function __construct()
     {
     }
 

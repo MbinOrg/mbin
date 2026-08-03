@@ -8,7 +8,7 @@ use App\Entity\Badge;
 use App\Entity\Magazine;
 use App\Validator\Unique;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Unique(Badge::class, errorPath: 'name', fields: ['magazine', 'name'])]

@@ -1,0 +1,4 @@
+feed_rss:
+  controller: App\Controller\Feed\RssFeedController::feed
+  path: /feed
+  methods: [ GET ]

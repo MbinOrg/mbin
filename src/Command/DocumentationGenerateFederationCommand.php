@@ -107,7 +107,7 @@ class DocumentationGenerateFederationCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('target', InputArgument::REQUIRED, 'the target file the generated markdown should be saved to');
         $this->addOption('overwrite', 'o', InputOption::VALUE_NONE, 'should the target file be overwritten in case it exists');
