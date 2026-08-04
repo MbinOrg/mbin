@@ -41,11 +41,13 @@ final class Version20260526175316 extends AbstractMigration
     public function postUp(Schema $schema): void
     {
         $this->connection->transactional(function (): void {
-            $sqlTpl = 'UPDATE $e SET last_boosted_at = greatest((SELECT $e_vote.created_at FROM $e_vote WHERE $e_vote.$fk = $e.id ORDER BY $e_vote.created_at DESC LIMIT 1), created_at);';
+            $sqlTpl = 'UPDATE $e SET last_boosted_at = greatest((SELECT $e_vote.created_at FROM $e_vote WHERE $e_vote.$fk = $e.id AND choice = 1 ORDER BY $e_vote.created_at DESC LIMIT 1), created_at);';
             $this->connection->executeStatement(str_replace('$e', 'entry', str_replace('$fk', 'entry_id', $sqlTpl)));
-            $this->connection->executeStatement(str_replace('$e', 'entry_comment', str_replace('$fk', 'comment_id', $sqlTpl)));
             $this->connection->executeStatement(str_replace('$e', 'post', str_replace('$fk', 'post_id', $sqlTpl)));
             $this->connection->executeStatement(str_replace('$e', 'post_comment', str_replace('$fk', 'comment_id', $sqlTpl)));
+
+            // set last_boosted_at of entry_comment to its created_at time to speed up migrations; not may comments are boosted anyway
+            $this->connection->executeStatement('UPDATE entry_comment SET last_boosted_at = created_at;');
         });
     }
 }
