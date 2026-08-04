@@ -53,6 +53,36 @@ class EmbedTest extends TestCase
         self::assertNull($method->invoke($embed, $html));
     }
 
+    public function testUnsupportedIframeStreamUrlIsRejected(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://www.cbsnews.com/mediaplayer/video/master.m3u8" allowfullscreen></iframe>';
+
+        self::assertNull($method->invoke($embed, $html));
+    }
+
+    public function testIframeVideoUrlIsRejected(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://example.com/video.mp4" allowfullscreen></iframe>';
+
+        self::assertNull($method->invoke($embed, $html));
+    }
+
+    public function testSupportedIframeEmbedUrlIsKept(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://www.youtube.com/embed/abc123" allowfullscreen></iframe>';
+
+        self::assertSame($html, $method->invoke($embed, $html));
+    }
+
     private function createEmbed(): Embed
     {
         return new Embed(

@@ -8,6 +8,7 @@ class VideoManager
 {
     public const array VIDEO_MIMETYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/ogg'];
     public const array VIDEO_FILE_EXTENSIONS = ['mp4', 'webm', 'mov', 'ogv', 'ogg'];
+    public const array UNSUPPORTED_STREAM_EXTENSIONS = ['m3u8', 'm3u', 'mpd', 'ism', 'isml'];
 
     public static function isVideoUrl(string $url): bool
     {
@@ -19,6 +20,18 @@ class VideoManager
         $urlExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         return \in_array($urlExt, self::VIDEO_FILE_EXTENSIONS, false);
+    }
+
+    public static function isUnsupportedStreamUrl(string $url): bool
+    {
+        if (str_starts_with($url, 'data:')) {
+            return false;
+        }
+
+        $path = (string) parse_url($url, PHP_URL_PATH);
+        $urlExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return \in_array($urlExt, self::UNSUPPORTED_STREAM_EXTENSIONS, true);
     }
 
     public static function isSupportedVideoMimeType(?string $mimeType): bool
