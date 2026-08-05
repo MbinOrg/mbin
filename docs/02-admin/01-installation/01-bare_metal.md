@@ -20,7 +20,7 @@ You can start with a smaller server and add more resources later if you are usin
 ## Software Requirements
 
 - Debian 12 or Ubuntu 24.04 LTS or later
-- PHP v8.3 or higher
+- PHP v8.5 or higher
 - NodeJS v22 or higher
 - Valkey / KeyDB / Redis (pick one)
 - PostgreSQL
@@ -72,7 +72,7 @@ sudo apt-get install php8.5 php8.5-common php8.5-fpm php8.5-cli php8.5-amqp php8
 ```
 
 > [!NOTE]
-> If you are upgrading to PHP 8.3 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your Nginx site.
+> If you are upgrading to PHP 8.5 from an older version, please re-review the [PHP configuration](#php) section of this guide as existing `ini` settings are NOT automatically copied to new versions. Additionally review which php-fpm version is configured in your Nginx site.
 
 > [!IMPORTANT]
 > **Never** even install `xdebug` PHP extension in production environments. Even if you don't enabled it but only installed `xdebug` can give massive performance issues.
