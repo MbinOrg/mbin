@@ -609,26 +609,43 @@ trait FactoryTrait
         return $this->getKibbyImageVariantDto('_flipped');
     }
 
-    private function getKibbyImageVariantDto(string $suffix): ImageDto
+    public function getKibbyImageUpload(): UploadedFile
     {
-        $imageRepository = $this->imageRepository;
-        $imageFactory = $this->imageFactory;
+        return $this->getKibbyImageVariantUpload('');
+    }
 
-        if (!file_exists(\dirname($this->kibbyPath).'/copy')) {
-            if (!mkdir(\dirname($this->kibbyPath).'/copy')) {
+    public function getKibbyFlippedImageUpload(): UploadedFile
+    {
+        return $this->getKibbyImageVariantUpload('_flipped');
+    }
+
+    private function getKibbyImageVariantUpload(string $suffix): UploadedFile
+    {
+        if (!file_exists($this->imageUploadTmpDir)) {
+            if (!mkdir($this->imageUploadTmpDir)) {
                 throw new \Exception('The copy dir could not be created');
             }
         }
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = \dirname($this->kibbyPath).'/copy/'.bin2hex(random_bytes(32)).'.png';
+        $tmpPath = $this->imageUploadTmpDir.bin2hex(random_bytes(32)).'.png';
         $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
         if (!file_exists($srcPath)) {
             throw new \Exception('For some reason the kibby image got deleted');
         }
         copy($srcPath, $tmpPath);
+
+        return new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png');
+    }
+
+    private function getKibbyImageVariantDto(string $suffix): ImageDto
+    {
+        $imageRepository = $this->imageRepository;
+        $imageFactory = $this->imageFactory;
+
+        $imgUpload = $this->getKibbyImageVariantUpload($suffix);
         /** @var Image $image */
-        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png'));
+        $image = $imageRepository->findOrCreateFromUpload($imgUpload);
         self::assertNotNull($image);
         $image->altText = 'kibby';
         $this->entityManager->persist($image);

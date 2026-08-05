@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Controller\Api\OAuth2;
 
 use App\Tests\WebTestCase;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class OAuth2ClientApiTest extends WebTestCase
 {
@@ -152,9 +151,7 @@ class OAuth2ClientApiTest extends WebTestCase
             ],
         ];
 
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $image = $this->getKibbyImageUpload();
 
         $this->client->request('POST', '/api/client-with-logo', $requestData, files: ['uploadImage' => $image]);
 

@@ -23,9 +23,11 @@ class TagOverviewController extends AbstractController
 
     public function __invoke(string $name, Request $request): Response
     {
+        $user = $this->getUser();
         $activity = $this->tagRepository->findOverall(
             $this->getPageNb($request),
-            $this->tagManager->transliterate(strtolower($name))
+            $this->tagManager->transliterate(strtolower($name)),
+            $user
         );
 
         $params = [

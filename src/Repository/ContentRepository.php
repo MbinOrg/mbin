@@ -102,8 +102,8 @@ class ContentRepository
     private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
-        $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includeEntryComments = $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
@@ -523,7 +523,6 @@ class ContentRepository
             INNER JOIN \"user\" u ON c.user_id = u.id
             $outerWhere
             $orderBy";
-        $this->logger->warning('##dbg '.$sql);
 
         if (!str_contains($sql, ':loggedInUser')) {
             $parameters = array_filter($parameters, fn ($key) => 'loggedInUser' !== $key, mode: ARRAY_FILTER_USE_KEY);
