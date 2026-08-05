@@ -305,4 +305,21 @@ class ImageRepository extends ServiceEntityRepository
         }
         $this->getEntityManager()->flush();
     }
+
+    public function isImageReferenced(Image $image): bool
+    {
+        $resp = $this->getEntityManager()->getConnection()->executeQuery('
+        SELECT 1 as result WHERE
+            EXISTS (SELECT 1 FROM entry WHERE image_id = :img)
+            OR EXISTS (SELECT 1 FROM entry_comment WHERE image_id = :img)
+            OR EXISTS (SELECT 1 FROM post WHERE image_id = :img)
+            OR EXISTS (SELECT 1 FROM post_comment WHERE image_id = :img)
+            OR EXISTS (SELECT 1 FROM "user" WHERE avatar_id = :img OR cover_id = :img)
+            OR EXISTS (SELECT 1 FROM magazine WHERE icon_id = :img OR banner_id = :img)
+            OR EXISTS (SELECT 1 FROM oauth2_client WHERE image_id = :img);
+        ', ['img' => $image->getId()]);
+        $res = $resp->fetchAssociative();
+
+        return false !== $res && 1 === $res['result'];
+    }
 }
