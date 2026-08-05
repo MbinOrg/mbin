@@ -49,7 +49,7 @@ Install prequirements:
 sudo apt-get install lsb-release ca-certificates curl wget unzip gnupg apt-transport-https software-properties-common python3-launchpadlib git redis-server postgresql postgresql-contrib nginx acl -y
 ```
 
-On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.4) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
+On **Ubuntu 22.04 LTS** or older, prepare latest PHP package repositoy (8.5) by using a Ubuntu PPA (this step is optional for Ubuntu 23.10 or later) via:
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php -y
@@ -64,11 +64,11 @@ sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 ```
 
-Install _PHP 8.4_ with the required additional PHP extensions:
+Install _PHP 8.5_ with the required additional PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.4 php8.4-common php8.4-fpm php8.4-cli php8.4-amqp php8.4-bcmath php8.4-pgsql php8.4-gd php8.4-curl php8.4-xml php8.4-redis php8.4-mbstring php8.4-zip php8.4-bz2 php8.4-intl php8.4-bcmath -y
+sudo apt-get install php8.5 php8.5-common php8.5-fpm php8.5-cli php8.5-amqp php8.5-bcmath php8.5-pgsql php8.5-gd php8.5-curl php8.5-xml php8.5-redis php8.5-mbstring php8.5-zip php8.5-bz2 php8.5-intl php8.5-bcmath -y
 ```
 
 > [!NOTE]
@@ -271,7 +271,7 @@ See also: [Mbin config files](../02-configuration/01-mbin_config_files.md) for m
 Edit some PHP settings within your `php.ini` file:
 
 ```bash
-sudo nano /etc/php/8.4/fpm/php.ini
+sudo nano /etc/php/8.5/fpm/php.ini
 ```
 
 ```ini
@@ -315,7 +315,7 @@ More info: [Symfony Performance docs](https://symfony.com/doc/current/performanc
 Edit your PHP `www.conf` file as well, to increase the amount of PHP child processes (optional):
 
 ```bash
-sudo nano /etc/php/8.4/fpm/pool.d/www.conf
+sudo nano /etc/php/8.5/fpm/pool.d/www.conf
 ```
 
 With the content (these are personal preferences, adjust to your needs):
@@ -331,7 +331,7 @@ pm.max_spare_servers = 10
 Be sure to restart (or reload) the PHP-FPM service after you applied any changing to the `php.ini` file:
 
 ```bash
-sudo systemctl restart php8.4-fpm.service
+sudo systemctl restart php8.5-fpm.service
 ```
 
 ### Composer
