@@ -31,6 +31,7 @@ class PostCommentNoteFactory
         private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MarkdownConverter $markdownConverter,
+        private readonly PollFactory $pollFactory,
     ) {
     }
 
@@ -107,6 +108,10 @@ class PostCommentNoteFactory
                 )
             )
         );
+
+        if ($comment->poll) {
+            $this->pollFactory->addToNote($note, $comment->poll);
+        }
 
         return $note;
     }

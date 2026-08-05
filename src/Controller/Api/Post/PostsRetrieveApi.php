@@ -86,10 +86,8 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $dispatcher->dispatch(new PostHasBeenSeenEvent($post));
 
-        $dto = $factory->createDto($post);
-
         return new JsonResponse(
-            $this->serializePost($dto, $this->tagLinkRepository->getTagsOfContent($post)),
+            $this->serializePost($post, $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }
@@ -208,7 +206,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -345,7 +343,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializePost($this->postFactory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -481,10 +479,10 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 if ($value instanceof Post) {
                     $this->handlePrivateContent($value);
-                    $dtos[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                    $dtos[] = new ContentResponseDto(post: $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value)));
                 } elseif ($value instanceof PostComment) {
                     $this->handlePrivateContent($value);
-                    $dtos[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                    $dtos[] = new ContentResponseDto(postComment: $this->serializePostComment($value, $this->tagLinkRepository->getTagsOfContent($value)));
                 } else {
                     throw new \AssertionError('got unexpected type '.\get_class($value));
                 }
@@ -611,7 +609,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -732,7 +730,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }
@@ -882,7 +880,7 @@ class PostsRetrieveApi extends PostsBaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                array_push($dtos, $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value)));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (\Exception $e) {
                 continue;
             }

@@ -258,7 +258,8 @@ form {
   flex-direction: row-reverse;
   justify-content: flex-end;
 
-  input[type=checkbox] {
+  input[type=checkbox],
+  input[type=radio] {
     margin-right: .5rem;
   }
 }
@@ -573,4 +574,19 @@ div.input-box {
   display: block;
   width: 100%;
 
+}
+
+.poll-area {
+  .sub-form {
+    display: none;
+  }
+  &:has(input:checked) .sub-form {
+    display: block;
+  }
+}
+
+form {
+  .collection-container.hide-index .existing-collection-items > div > label {
+    display: none;
+  }
 }

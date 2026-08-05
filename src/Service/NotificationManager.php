@@ -10,6 +10,7 @@ use App\Entity\Message;
 use App\Entity\MessageNotification;
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Repository\PollRepository;
 use App\Service\Notification\MagazineBanNotificationManager;
 use App\Service\Notification\MessageNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,7 @@ class NotificationManager
         private readonly MessageNotificationManager $messageNotificationManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly MagazineBanNotificationManager $magazineBanNotificationManager,
+        private readonly PollRepository $pollRepository,
     ) {
     }
 

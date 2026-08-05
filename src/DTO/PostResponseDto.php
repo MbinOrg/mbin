@@ -45,6 +45,7 @@ class PostResponseDto implements \JsonSerializable
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
     public ?array $bookmarks = null;
     public ?bool $isAuthorModeratorInMagazine = null;
+    public ?PollResponseDto $poll = null;
 
     /**
      * @param string[] $bookmarks
@@ -74,6 +75,7 @@ class PostResponseDto implements \JsonSerializable
         ?bool $canAuthUserModerate = null,
         ?array $bookmarks = null,
         ?bool $isAuthorModeratorInMagazine = null,
+        ?PollResponseDto $poll = null,
     ): self {
         $dto = new PostResponseDto();
         $dto->postId = $id;
@@ -100,6 +102,7 @@ class PostResponseDto implements \JsonSerializable
         $dto->canAuthUserModerate = $canAuthUserModerate;
         $dto->bookmarks = $bookmarks;
         $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
+        $dto->poll = $poll;
 
         return $dto;
     }
@@ -118,6 +121,7 @@ class PostResponseDto implements \JsonSerializable
                 'userVote',
                 'slug',
                 'mentions',
+                'poll',
             ];
         }
 
@@ -149,6 +153,7 @@ class PostResponseDto implements \JsonSerializable
             'notificationStatus' => $this->notificationStatus,
             'bookmarks' => $this->bookmarks,
             'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
+            'poll' => $this->poll?->jsonSerialize(),
         ]);
     }
 }

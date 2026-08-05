@@ -28,6 +28,7 @@ class EntryPageFactory
         private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MarkdownConverter $markdownConverter,
+        private readonly PollFactory $pollFactory,
     ) {
     }
 
@@ -48,7 +49,7 @@ class EntryPageFactory
 
         $page = array_merge($page ?? [], [
             'id' => $this->getActivityPubId($entry),
-            'type' => 'Page',
+            'type' => $entry->poll ? 'Question' : 'Page',
             'attributedTo' => $this->activityPubManager->getActorProfileId($entry->user),
             'inReplyTo' => null,
             'to' => [
@@ -103,6 +104,10 @@ class EntryPageFactory
             $page['to'] = array_unique(
                 array_merge($page['to'], $this->activityPubManager->createCcFromBody($entry->body))
             );
+        }
+
+        if ($entry->poll) {
+            $this->pollFactory->addToNote($page, $entry->poll);
         }
 
         return $page;

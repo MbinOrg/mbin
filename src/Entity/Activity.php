@@ -64,6 +64,9 @@ class Activity
     #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?PostComment $objectPostComment = null;
 
+    #[ManyToOne(targetEntity: PollVote::class), JoinColumn(referencedColumnName: 'uuid', nullable: true, onDelete: 'CASCADE')]
+    public ?PollVote $objectPollVote = null;
+
     #[ManyToOne, JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?Message $objectMessage = null;
 
@@ -97,7 +100,7 @@ class Activity
         $this->createdAtTraitConstruct();
     }
 
-    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|ActivityPubActorInterface|User|Magazine|MagazineBan|Activity|array|string $object): void
+    public function setObject(ActivityPubActivityInterface|Entry|EntryComment|Post|PostComment|PollVote|ActivityPubActorInterface|User|Magazine|MagazineBan|Activity|array|string $object): void
     {
         if ($object instanceof Entry) {
             $this->objectEntry = $object;
@@ -107,6 +110,8 @@ class Activity
             $this->objectPost = $object;
         } elseif ($object instanceof PostComment) {
             $this->objectPostComment = $object;
+        } elseif ($object instanceof PollVote) {
+            $this->objectPollVote = $object;
         } elseif ($object instanceof Message) {
             $this->objectMessage = $object;
         } elseif ($object instanceof User) {
@@ -129,9 +134,9 @@ class Activity
         }
     }
 
-    public function getObject(): Post|EntryComment|PostComment|Entry|Message|User|Magazine|MagazineBan|array|string|null
+    public function getObject(): Entry|Post|EntryComment|PostComment|PollVote|Message|User|Magazine|MagazineBan|array|string|null
     {
-        $o = $this->objectEntry ?? $this->objectEntryComment ?? $this->objectPost ?? $this->objectPostComment ?? $this->objectMessage ?? $this->objectUser ?? $this->objectMagazine ?? $this->objectMagazineBan;
+        $o = $this->objectEntry ?? $this->objectEntryComment ?? $this->objectPost ?? $this->objectPostComment ?? $this->objectPollVote ?? $this->objectMessage ?? $this->objectUser ?? $this->objectMagazine ?? $this->objectMagazineBan;
         if (null !== $o) {
             return $o;
         }

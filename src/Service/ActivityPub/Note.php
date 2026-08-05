@@ -11,11 +11,16 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
+use App\Entity\Poll;
+use App\Entity\PollVote;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApPostException;
+use App\Exception\InvalidWebfingerException;
+use App\Exception\PollHasEndedException;
 use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -24,10 +29,13 @@ use App\Factory\ImageFactory;
 use App\Repository\ApActivityRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryCommentManager;
+use App\Service\PollManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -44,6 +52,7 @@ class Note extends ActivityPubContent
         private readonly SettingsManager $settingsManager,
         private readonly ImageFactory $imageFactory,
         private readonly ApObjectExtractor $objectExtractor,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -54,9 +63,10 @@ class Note extends ActivityPubContent
      * @throws InstanceBannedException
      * @throws EntryLockedException
      * @throws PostLockedException
+     * @throws PollHasEndedException
      * @throws \Exception
      */
-    public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
+    public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post|PollVote
     {
         // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
@@ -81,6 +91,14 @@ class Note extends ActivityPubContent
             // Create post or entry comment
             $parentObjectId = $this->repository->findByObjectId($replyTo);
             $parent = $this->entityManager->getRepository($parentObjectId['type'])->find((int) $parentObjectId['id']);
+
+            if (isset($object['name'])) {
+                if ($parent instanceof Entry || $parent instanceof EntryComment || $parent instanceof Post || $parent instanceof PostComment) {
+                    if ($parent->poll && $parent->poll->findChoice($object['name'])) {
+                        return $this->voteOnPoll($parent->poll, $parent, $object);
+                    }
+                }
+            }
 
             if ($parent instanceof Entry) {
                 $root = $parent;
@@ -221,7 +239,15 @@ class Note extends ActivityPubContent
                 $dto->isLocked = !$object['commentsEnabled'];
             }
 
-            return $this->postManager->create($dto, $actor, false, $stickyIt);
+            $post = $this->postManager->create($dto, $actor, false, $stickyIt);
+
+            if ($this->pollManager->hasPollProperties($object)) {
+                $poll = $this->pollManager->createFromApObject($object);
+                $post->poll = $poll;
+                $this->entityManager->flush();
+            }
+
+            return $post;
         } elseif ($actor instanceof Magazine) {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
@@ -287,6 +313,50 @@ class Note extends ActivityPubContent
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'"could not be found for post "'.$dto->apId.'".');
+        }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws ORMException
+     * @throws InvalidApPostException
+     * @throws PollHasEndedException
+     * @throws UserDeletedException
+     * @throws InvalidWebfingerException
+     * @throws UserBannedException
+     */
+    private function voteOnPoll(?Poll $poll, Entry|EntryComment|Post|PostComment $content, array $object): PollVote
+    {
+        $apId = $object['id'];
+        $actor = $this->activityPubManager->findActorOrCreate($object['attributedTo']);
+        if ($actor instanceof User) {
+            if ($actor->isBanned) {
+                throw new UserBannedException();
+            }
+            if ($actor->isDeleted || $actor->isSoftDeleted() || $actor->isTrashed()) {
+                throw new UserDeletedException();
+            }
+
+            $choice = $object['name'];
+            $existingVotes = $poll->getUserVotes($actor);
+            $existingSameVote = array_filter($existingVotes, fn (PollVote $vote) => $vote->choice->name === $choice);
+            if (\sizeof($existingSameVote) > 0) {
+                throw new \LogicException("User $actor->username has already voted on the poll {$poll->getId()} with choice '$choice'.");
+            }
+
+            $this->pollManager->vote($poll, $content, $actor, [$choice], true);
+            $this->entityManager->refresh($poll);
+            $newVotes = $poll->getUserVotes($actor);
+            $newVote = array_filter($newVotes, fn (PollVote $vote) => $vote->choice->name === $choice);
+            if (1 !== \sizeof($newVote)) {
+                throw new \LogicException('Created the vote, but it could not be found!');
+            }
+
+            return $newVote[array_key_first($newVote)];
+        } elseif ($actor instanceof Magazine) {
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for voting on poll "'.$apId.'".');
+        } else {
+            throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'"could not be found for post "'.$apId.'".');
         }
     }
 }

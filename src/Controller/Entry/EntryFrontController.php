@@ -229,6 +229,7 @@ class EntryFrontController extends AbstractController
 
         if ('microblog' === $criteria->content) {
             $dto = new PostDto();
+            $dto->addEmptyChoices();
 
             if (isset($data['magazine'])) {
                 $dto->magazine = $data['magazine'];
