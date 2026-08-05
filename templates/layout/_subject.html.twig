@@ -45,7 +45,7 @@
     {% if forCombined is same as true %}
         {{ component('post_comment_combined', {comment: subject}|merge(attributes)|merge(postCommentAttributes)) }}
     {% else %}
-        {{ component('post_comment', {comment: subject}|merge(attributes)|merge(postCommentAttributes)) }}
+        {{ component('post_comment', {comment: subject, withPost: true}|merge(attributes)|merge(postCommentAttributes)) }}
     {% endif %}
 {% elseif subject is magazine %}
     {{ component('magazine_box', {magazine: subject}|merge(attributes, magazineAttributes)) }}
