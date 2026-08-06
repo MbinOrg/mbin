@@ -25,4 +25,13 @@ class DeleteImageV2Message implements AsyncSlowMessageInterface
     {
         return new self([bin2hex($img->sha256) => $img->filePath]);
     }
+
+    public static function fromImages(array $imgs): self
+    {
+        $content = [];
+        foreach ($imgs as $img) {
+            $content[bin2hex($img->sha256)] = $img->filePath;
+        }
+        return new self($content);
+    }
 }

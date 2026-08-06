@@ -4,56 +4,92 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Message\Contracts\MessageInterface;
+use App\Entity\Image;
 use App\Message\DeleteImageV2Message;
 use App\Repository\ImageRepository;
 use App\Service\ImageManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class DeleteImageV2Handler extends MbinMessageHandler
+readonly class DeleteImageV2Handler
 {
+    private int $chunkSize;
+
     public function __construct(
         KernelInterface $kernel,
         private EntityManagerInterface $entityManager,
         private ImageRepository $imageRepository,
         private ImageManagerInterface $imageManager,
+        private LoggerInterface $logger,
     ) {
-        parent::__construct($this->entityManager, $kernel);
+        $this->chunkSize = ('test' !== $kernel->getEnvironment()) ? 256 : 2;
     }
 
     public function __invoke(DeleteImageV2Message $message): void
     {
-        $this->workWrapper($message);
+        try {
+            /*
+             * Split workload into chunks to balance overhead with probability of race-conditions. A race-condition can look like the following:
+             *   1. one image in a chunk is detected as an orphan
+             *   2. entity is deleted and transaction commited
+             *   3. new content is created with the same image (resulting in the same file path) while $filesToDelete is iterated
+             *   4. the file is deleted; the new image entity created by the new content now has an invalid path
+             */
+            $batches = array_chunk($message->images, $this->chunkSize, true);
+            foreach ($batches as $batch) {
+                $this->processBatch($batch);
+            }
+        } finally {
+            gc_collect_cycles();
+        }
     }
 
-    public function doWork(MessageInterface $message): void
+    private function processBatch(array $batch): void
     {
-        if (!$message instanceof DeleteImageV2Message) {
-            throw new \LogicException();
-        }
+        $conn = $this->entityManager->getConnection();
+        $conn->getNativeConnection(); // calls connect() internally
 
-        // querying each image individually is inefficient but lowers the probability of a race-condition
-        foreach ($message->images as $hash => $filepath) {
-            $img = $this->imageRepository->findOneBySha256(hex2bin($hash));
-            if (null !== $img) {
-                if (!$this->imageRepository->isImageReferenced($img)) {
-                    // this should lock the row and prevent concurrent re-referencing
-                    $this->entityManager->remove($img);
-                    $this->entityManager->flush();
+        /** @var string[] $filesToDelete */
+        $filesToDelete = $conn->transactional(function () use ($batch) {
+            $filesToDelete = [];
+            $hashes = array_map(fn ($str) => hex2bin($str), array_keys($batch));
+            $images = $this->imageRepository->findMultipleBySha256AndLock($hashes);
 
-                    $deleteFile = true;
-                } else {
-                    $deleteFile = false;
+            // images which not exist in DB can be deleted
+            foreach ($batch as $hash => $filepath) {
+                $hashBin = hex2bin($hash);
+                if (!array_any($images, fn ($img) => $img->sha256 === $hashBin)) {
+                    $filesToDelete[] = $filepath;
                 }
-            } else {
-                $deleteFile = true;
             }
 
-            if ($deleteFile && null !== $filepath) {
-                $this->imageManager->remove($filepath);
+            // images which are not referenced can be deleted
+            $referenced = $this->imageRepository->areImagesReferenced($images);
+            foreach ($referenced as $imgId => $isReferenced) {
+                if (!$isReferenced) {
+                    $img = array_find($images, fn ($img) => $img->getId() === $imgId);
+                    \assert($img instanceof Image);
+
+                    $filesToDelete[] = $img->filePath;
+                    $this->entityManager->remove($img);
+                }
+            }
+
+            $this->entityManager->flush();
+            return $filesToDelete;
+        });
+
+        foreach ($filesToDelete as $path) {
+            try {
+                $this->imageManager->remove($path);
+            } catch (\Exception $e) {
+                $this->logger->error('[DeleteImageV2Handler]: an error occurred when deleting an image file: {type} - {message}', [
+                    'message' => $e->getMessage(),
+                    'type' => \get_class($e),
+                ]);
             }
         }
     }
