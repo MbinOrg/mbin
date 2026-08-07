@@ -1225,7 +1225,7 @@ class ActivityPubManager
         } elseif (\is_array($attributedTo)) {
             $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
 
-            return array_map(fn ($item) => $item['id'], $actors);
+            return array_map(fn ($item) => \is_string($item) ? $item : $item['id'], $actors);
         }
 
         return [];
