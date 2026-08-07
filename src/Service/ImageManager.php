@@ -107,7 +107,7 @@ class ImageManager implements ImageManagerInterface
         $tempPath = "{$filePath}_temp_compress.$extension";
         $compressed = false;
         $quality = 0.9;
-        if (0.1 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
+        if (0.3 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
             $quality = $this->imageCompressionQuality;
         }
         while ($bytes > $maxBytes && $quality > 0.3) {
