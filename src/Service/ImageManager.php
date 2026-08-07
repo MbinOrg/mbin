@@ -95,7 +95,7 @@ class ImageManager implements ImageManagerInterface
      */
     public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
     {
-        if (-1 === (int)$this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
+        if (-1 === (int) $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
             // don't compress images if disabled or smaller than max bytes
             return false;
         }
