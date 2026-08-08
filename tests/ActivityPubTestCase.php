@@ -89,18 +89,6 @@ class ActivityPubTestCase extends WebTestCase
         $this->apMarkdownConverter = $this->getService(MarkdownConverter::class);
     }
 
-    /**
-     * @template T
-     *
-     * @param class-string<T> $className
-     *
-     * @return T
-     */
-    private function getService(string $className)
-    {
-        return $this->getContainer()->get($className);
-    }
-
     protected function getDefaultUuid(): Uuid
     {
         return new Uuid('00000000-0000-0000-0000-000000000000');
