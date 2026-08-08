@@ -196,7 +196,7 @@ class Note extends ActivityPubContent
             }
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
-            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+            if ($media = $this->objectExtractor->getExternalMediaBody($object, $dto->image)) {
                 $dto->body .= $media;
             }
 

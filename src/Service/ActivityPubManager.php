@@ -531,9 +531,9 @@ class ActivityPubManager
             try {
                 $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
-                    // determine the highest resolution image
+                    // determine the highest resolution image for the same image (equality is ducktyped by comparing the alt text)
                     foreach ($images as $i) {
-                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0) {
+                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0 && $i['name'] ?? '' === $imageObject['name'] ?? '') {
                             $imageObject = $i;
                         }
                     }
@@ -965,14 +965,13 @@ class ActivityPubManager
         return null;
     }
 
-    public function handleExternalImages(array $attachment): ?array
+    public function handleExternalImages(array $attachment, ?\App\DTO\ImageDto $consumedImage): ?array
     {
+        $imageUrlToSkip = $consumedImage?->sourceUrl;
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val)
+            fn ($val) => $this->isImageAttachment($val) && $val['url'] !== $imageUrlToSkip
         );
-
-        array_shift($images);
 
         if (\count($images)) {
             return array_map(fn ($val) => (new ImageDto())->create(
@@ -1080,7 +1079,7 @@ class ActivityPubManager
     private function isImageAttachment(array $object): bool
     {
         // attachment object has acceptable object type
-        if (!\in_array($object['type'], ['Document', 'Image'])) {
+        if (!\in_array($object['type'], ['Document', 'Image']) || !isset($object['url']) || !is_string($object['url'])) {
             return false;
         }
 
