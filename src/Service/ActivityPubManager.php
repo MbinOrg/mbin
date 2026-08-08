@@ -1079,7 +1079,7 @@ class ActivityPubManager
     private function isImageAttachment(array $object): bool
     {
         // attachment object has acceptable object type
-        if (!\in_array($object['type'], ['Document', 'Image']) || !isset($object['url']) || !is_string($object['url'])) {
+        if (!\in_array($object['type'], ['Document', 'Image']) || !isset($object['url']) || !\is_string($object['url'])) {
             return false;
         }
 
