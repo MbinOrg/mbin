@@ -13,8 +13,11 @@ use App\Pagination\QueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Service\ImageManagerInterface;
 use App\Utils\ImageOrigin;
+use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 use kornrunner\Blurhash\Blurhash;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -38,6 +41,21 @@ class ImageRepository extends ServiceEntityRepository
         private readonly ContentPopulationTransformer $contentPopulationTransformer,
     ) {
         parent::__construct($registry, Image::class);
+    }
+
+    /**
+     * @param array $hashes array of hashes (binary)
+     *
+     * @return Image[]
+     */
+    public function findMultipleBySha256AndLock(array $hashes): array
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.sha256 IN (:hashes)')
+            ->setParameter('hashes', $hashes, ArrayParameterType::BINARY)
+            ->getQuery()
+            ->setLockMode(LockMode::PESSIMISTIC_READ)
+            ->getResult();
     }
 
     /**
@@ -304,5 +322,48 @@ class ImageRepository extends ServiceEntityRepository
             }
         }
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param Image[] $images
+     *
+     * @return array<int, bool> image id => is referenced
+     */
+    public function areImagesReferenced(array $images): array
+    {
+        $sql = '
+            SELECT i.id, (CASE WHEN
+                e.image_id IS NOT NULL
+                OR ec.image_id IS NOT NULL
+                OR p.image_id IS NOT NULL
+                OR pc.image_id IS NOT NULL
+                OR u.avatar_id IS NOT NULL
+                OR u.cover_id IS NOT NULL
+                OR m.icon_id IS NOT NULL
+                OR m.banner_id IS NOT NULL
+                OR oc.image_id IS NOT NULL
+            THEN TRUE ELSE FALSE END) AS referenced FROM image i
+            LEFT OUTER JOIN entry e ON i.id = e.image_id
+            LEFT OUTER JOIN entry_comment ec ON i.id = ec.image_id
+            LEFT OUTER JOIN post p ON i.id = p.image_id
+            LEFT OUTER JOIN post_comment pc ON i.id = pc.image_id
+            LEFT OUTER JOIN "user" u ON i.id = u.avatar_id OR i.id = u.cover_id
+            LEFT OUTER JOIN magazine m ON i.id = m.icon_id OR i.id = m.banner_id
+            LEFT OUTER JOIN oauth2_client oc ON i.id = oc.image_id
+            WHERE i.id IN (:ids);
+        ';
+
+        $sql = SqlHelpers::rewriteArrayParameters(['ids' => array_map(fn ($img) => $img->getId(), $images)], $sql);
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql['sql']);
+        foreach ($sql['parameters'] as $param => $value) {
+            $stmt->bindValue($param, $value, SqlHelpers::getSqlType($value));
+        }
+
+        $rows = $stmt->executeQuery()->fetchAllAssociative();
+        $ret = [];
+        foreach ($rows as $row) {
+            $ret[$row['id']] = $row['referenced'];
+        }
+        return $ret;
     }
 }
