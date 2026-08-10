@@ -36,11 +36,11 @@
                         <small>
                             {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
 
-                            {{ 'in'|trans }} {{ component('entry_inline', {entry: comment.entry}) }}
-
                             {% if hasLang %}
                                 <small class="badge-lang kbin-bg">{{ comment.lang|language_name }}</small>
                             {% endif %}
+
+                            {% include 'entry/comment/context.html.twig' %}
                         </small>
                     {% elseif isModDeleted %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>

@@ -72,3 +72,9 @@ a.link-muted:hover {
   border-radius: 20px;
   padding: .3rem;
 }
+
+.hrule {
+  border: var(--kbin-section-border);
+  height: 0;
+  margin: 2px 5px;
+}
