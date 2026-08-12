@@ -1,3 +1,5 @@
+{% set commentAttributes = {withContext: true, showLevel: false, noIndention: true} %}
+
 <div data-controller="subject-list">
-    {% include 'layout/_subject_list.html.twig' with {entryCommentAttributes: {showMagazineName: false}} %}
+    {% include 'layout/_subject_list.html.twig' with {entryCommentAttributes: commentAttributes|merge({showMagazineName: false}), postCommentAttributes: commentAttributes} %}
 </div>

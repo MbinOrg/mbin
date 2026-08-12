@@ -11,6 +11,12 @@
 {% if showLevel is not defined %}
     {% set showLevel = true %}
 {% endif %}
+{% if noIndention is not defined %}
+    {% set noIndention = false %}
+{% endif %}
+{% if attachToTop is not defined %}
+    {% set attachToTop = false %}
+{% endif %}
 
 {% if not app.user or (app.user and not app.user.isBlocked(comment.user)) %}
     {% if comment.visibility is same as 'private' and (not app.user or not app.user.isFollower(comment.user)) %}
@@ -25,6 +31,7 @@
                 'author': showLevel and comment.isAuthor(comment.entry.user),
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
+                style="{% if noIndention %}margin-left: 0;{% endif %} {% if attachToTop %}margin-top: -0.5rem;{% endif %}"
                 id="entry-comment-{{ comment.id }}"
                 data-controller="comment subject mentions comment-collapse html-refresh"
                 data-comment-collapse-depth-value="{{ level }}"
