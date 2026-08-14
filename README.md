@@ -49,7 +49,7 @@ For developers:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=MbinOrg/mbin&type=Date)](https://star-history.com/#MbinOrg/mbin&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=MbinOrg/mbin&type=Date)](https://star-history.dera.page/#MbinOrg/mbin&Date)
 
 ## Contributing
 
