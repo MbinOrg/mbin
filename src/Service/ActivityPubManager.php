@@ -988,7 +988,7 @@ class ActivityPubManager
     {
         $videos = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
+            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && (VideoManager::isSupportedVideoMimeType($val['mediaType']) || VideoManager::isVideoUrl($val['url']))
         );
 
         if (\count($videos)) {
