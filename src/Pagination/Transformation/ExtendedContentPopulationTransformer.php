@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Pagination\Transformation;
 
@@ -10,7 +11,6 @@ use App\Entity\User;
 use App\Repository\Criteria;
 use App\Repository\UserRepository;
 use App\Utils\SqlHelpers;
-use DateTimeImmutable;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,27 +29,26 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
     {
         $items = parent::transform($input);
 
-        assert(is_array($input));
-        assert(is_array($items));
+        \assert(\is_array($input));
+        \assert(\is_array($items));
         $this->extendItems($input, $items);
 
         return $items;
     }
 
     /**
-     * @param array $rows
      * @param array<Entry|EntryComment|Post|PostComment> $items
-     * @return void
      */
-    private function extendItems(array $rows, array $items): void {
-        assert(count($rows) === count($items));
+    private function extendItems(array $rows, array $items): void
+    {
+        \assert(\count($rows) === \count($items));
 
-        $hasUser = $this->loggedInUser !== null;
+        $hasUser = null !== $this->loggedInUser;
         foreach ($items as $i => $item) {
             $row = $rows[$i];
-            assert($row['id'] === $item->getId());
+            \assert($row['id'] === $item->getId());
 
-            if($hasUser && isset($row['was_boosted']) && true === $row['was_boosted']){
+            if ($hasUser && isset($row['was_boosted']) && true === $row['was_boosted']) {
                 $this->extendItemBoostList($item);
             }
         }
@@ -57,7 +56,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
 
     private function extendItemBoostList(Entry|EntryComment|Post|PostComment $item): void
     {
-        switch (get_class($item)) {
+        switch (\get_class($item)) {
             case Entry::class:
                 $vType = 'entry';
                 $fkType = 'entry';
@@ -78,7 +77,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
                 throw new \LogicException('unreachable');
         }
 
-        if(null === $this->criteria->cachedUserFollows) {
+        if (null === $this->criteria->cachedUserFollows) {
             $sql = 'SELECT v.user_id, v.created_at FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE v.%fk_type%_id = :itemId AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1';
             $sql = str_replace('%v_type%', $vType, str_replace('%fk_type%', $fkType, $sql));
 
@@ -102,14 +101,14 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
         }
 
         $boostInfo = $boostsQuery->executeQuery()->fetchAllAssociative();
-        $boostUsers = $this->userRepository->findBy(['id' => array_map(fn($row) => $row['user_id'], $boostInfo)]);
+        $boostUsers = $this->userRepository->findBy(['id' => array_map(fn ($row) => $row['user_id'], $boostInfo)]);
 
         $boostExtension = [];
         foreach ($boostUsers as $boostUser) {
-            $boostTime = array_find($boostInfo, fn($row) => $row['user_id'] === $boostUser->getId())['created_at'];
-            $boostExtension[] = ['user' => $boostUser, 'time' => new DateTimeImmutable($boostTime)];
+            $boostTime = array_find($boostInfo, fn ($row) => $row['user_id'] === $boostUser->getId())['created_at'];
+            $boostExtension[] = ['user' => $boostUser, 'time' => new \DateTimeImmutable($boostTime)];
         }
-        usort($boostExtension, fn($a, $b) => $a['time'] <=> $b['time']);
+        usort($boostExtension, fn ($a, $b) => $a['time'] <=> $b['time']);
 
         $item->extendedContentProperties['boostUsers'] = $boostExtension;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Factory;
 
@@ -10,13 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 
 readonly class ExtendedContentPopulationTransformerFactory
 {
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
-    ){}
+    ) {
+    }
 
-    public function create(Criteria $criteria, ?User $loggedInUser): ExtendedContentPopulationTransformer {
+    public function create(Criteria $criteria, ?User $loggedInUser): ExtendedContentPopulationTransformer
+    {
         return new ExtendedContentPopulationTransformer(
             $this->entityManager,
             $this->userRepository,

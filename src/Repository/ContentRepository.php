@@ -14,8 +14,6 @@ use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Pagination\Cursor\NativeQueryCursorAdapter;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
-use App\Pagination\Transformation\ContentPopulationTransformer;
-use App\Pagination\Transformation\ExtendedContentPopulationTransformer;
 use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Exception;
