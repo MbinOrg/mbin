@@ -8,12 +8,14 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Factory\ExtendedContentPopulationTransformerFactory;
 use App\Pagination\Cursor\CursorPagination;
 use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Pagination\Cursor\NativeQueryCursorAdapter;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
+use App\Pagination\Transformation\ExtendedContentPopulationTransformer;
 use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +32,7 @@ class ContentRepository
     public function __construct(
         private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ContentPopulationTransformer $contentPopulationTransformer,
+        private readonly ExtendedContentPopulationTransformerFactory $contentPopulationTransformerFactory,
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly KernelInterface $kernel,
@@ -47,7 +49,14 @@ class ContentRepository
             // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
             $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
         }
-        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $query['sql'], $query['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
+        $fanta = new Pagerfanta(new NativeQueryAdapter(
+            $conn,
+            $query['sql'],
+            $query['parameters'],
+            numOfResults: $numResults,
+            transformer: $this->contentPopulationTransformerFactory->create($criteria, $this->security->getUser()),
+            cache: $this->cache
+        ));
         $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
         $fanta->setCurrentPage($criteria->page);
 
@@ -84,7 +93,7 @@ class ContentRepository
                 $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
                 'c.created_at DESC',
                 'c.created_at',
-                transformer: $this->contentPopulationTransformer,
+                transformer: $this->contentPopulationTransformerFactory->create($criteria, $this->security->getUser()),
             ),
             $this->getCursorFieldFromCriteria($criteria),
             $criteria->perPage ?? self::PER_PAGE,
@@ -194,6 +203,10 @@ class ContentRepository
         $subClauseEntry = '';
         $subClauseEntryComment = '';
         $subClausePostComment = '';
+        $selectPostBoosted = '';
+        $selectEntryBoosted = '';
+        $selectPostCommentBoosted = '';
+        $selectEntryCommentBoosted = '';
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
@@ -213,23 +226,20 @@ class ContentRepository
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                         ' OR c.user_id IN (:cachedUserFollows)');
 
-                $subClauseEntryComment = $repliesCommonWhere.
-                    (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
-                $subClausePostComment = $repliesCommonWhere.
-                    (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+                $boostCheckTpl = null === $criteria->cachedUserFollows ?
+                    'EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE c.id = v.%fk_type%_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                    'EXISTS (SELECT 1 FROM %v_type%_vote v WHERE c.id = v.%fk_type%_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)';
 
-                $subClausePost = $subClausePost
-                    .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
-                $subClauseEntry = $subClauseEntry
-                    .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+                $subClauseEntryComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'entry_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
+                $subClausePostComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'post_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
+
+                $subClausePost = $subClausePost.' OR '.str_replace('%v_type%', 'post', str_replace('%fk_type%', 'post', $boostCheckTpl));
+                $subClauseEntry = $subClauseEntry.' OR '.str_replace('%v_type%', 'entry', str_replace('%fk_type%', 'entry', $boostCheckTpl));
+
+                $selectPostBoosted = ', '.str_replace('%v_type%', 'post', str_replace('%fk_type%', 'post', $boostCheckTpl)).' AS was_boosted';
+                $selectEntryBoosted = ', '.str_replace('%v_type%', 'entry', str_replace('%fk_type%', 'entry', $boostCheckTpl)).' AS was_boosted';
+                $selectPostCommentBoosted = ', '.str_replace('%v_type%', 'post_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl)).' AS was_boosted';
+                $selectEntryCommentBoosted = ', '.str_replace('%v_type%', 'entry_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl)).' AS was_boosted';
             }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
@@ -481,17 +491,17 @@ class ContentRepository
         // only join domain if we are explicitly looking at one
         $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id $selectEntryBoosted FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $domainJoin
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id $selectPostBoosted FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id $selectEntryCommentBoosted FROM entry_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id $selectPostCommentBoosted FROM post_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postCommentWhere";
 
