@@ -27,6 +27,7 @@ use App\Service\EntryCommentManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\SettingsManager;
+use App\Utils\JsonldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -79,6 +80,7 @@ class Note extends ActivityPubContent
 
         if (isset($object['inReplyTo']) && $replyTo = $object['inReplyTo']) {
             // Create post or entry comment
+            $replyTo = JsonldUtils::getApId($replyTo);
             $parentObjectId = $this->repository->findByObjectId($replyTo);
             $parent = $this->entityManager->getRepository($parentObjectId['type'])->find((int) $parentObjectId['id']);
 
