@@ -87,6 +87,16 @@
                 {{ form_widget(form.MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY) }}
             </div>
             <div class="checkbox">
+                {{ form_label(form.MBIN_FEED_ALLOW_ENTRY_COMMENTS, 'feed_allow_entry_comments') }}
+                {{ form_widget(form.MBIN_FEED_ALLOW_ENTRY_COMMENTS) }}
+            </div>
+            <div style="font-size: 0.8rem; margin-top: -0.5rem; margin-left: 2rem;">{{ 'feed_allow_comments_hint'|trans }}</div>
+            <div class="checkbox">
+                {{ form_label(form.MBIN_FEED_ALLOW_POST_COMMENTS, 'feed_allow_post_comments') }}
+                {{ form_widget(form.MBIN_FEED_ALLOW_POST_COMMENTS) }}
+            </div>
+            <div style="font-size: 0.8rem; margin-top: -0.5rem; margin-left: 2rem;">{{ 'feed_allow_comments_hint'|trans }}</div>
+            <div class="checkbox">
                 {{ form_label(form.MBIN_RESTRICT_MAGAZINE_CREATION, 'restrict_magazine_creation') }}
                 {{ form_widget(form.MBIN_RESTRICT_MAGAZINE_CREATION) }}
             </div>

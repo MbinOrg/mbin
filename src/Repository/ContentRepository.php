@@ -16,6 +16,7 @@ use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use App\Pagination\Transformation\ExtendedContentPopulationTransformer;
+use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +34,7 @@ class ContentRepository
         private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly ExtendedContentPopulationTransformerFactory $contentPopulationTransformerFactory,
+        private readonly SettingsManager $settingsManager,
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly KernelInterface $kernel,
@@ -111,8 +113,8 @@ class ContentRepository
     private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
-        $includeEntryComments = $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includeEntryComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_ENTRY_COMMENTS && $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_POST_COMMENTS && $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
