@@ -154,6 +154,7 @@ class Embed
         libxml_clear_errors();
 
         $videoElements = $dom->getElementsByTagName('video');
+        $iframeElements = $dom->getElementsByTagName('iframe');
 
         foreach ($videoElements as $videoElement) {
             $sourceUrl = $videoElement->getAttribute('src');
@@ -182,6 +183,20 @@ class Embed
             }
 
             if (!$isSupported) {
+                return null;
+            }
+        }
+
+        foreach ($iframeElements as $iframeElement) {
+            $iframeSrc = $iframeElement->getAttribute('src');
+
+            if (
+                $iframeSrc
+                && (
+                    VideoManager::isVideoUrl($iframeSrc)
+                    || VideoManager::isUnsupportedStreamUrl($iframeSrc)
+                )
+            ) {
                 return null;
             }
         }
