@@ -13,6 +13,7 @@ use App\Factory\ClientFactory;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
+use App\Utils\Polyfills;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
@@ -294,25 +295,25 @@ class CreateClientApi extends BaseApi
     {
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new OAuth2ClientDto();
-        $dto->name = $request->get('name', $dto->name);
-        $dto->contactEmail = $request->get('contactEmail', $dto->contactEmail);
-        $dto->description = $request->get('description', $dto->description);
-        $dto->public = filter_var($request->get('public', $dto->public), FILTER_VALIDATE_BOOL);
-        $dto->username = $request->get('username', $dto->username);
+        $dto->name = Polyfills::requestParam($request, 'name', $dto->name);
+        $dto->contactEmail = Polyfills::requestParam($request, 'contactEmail', $dto->contactEmail);
+        $dto->description = Polyfills::requestParam($request, 'description', $dto->description);
+        $dto->public = filter_var(Polyfills::requestParam($request, 'public', $dto->public), FILTER_VALIDATE_BOOL);
+        $dto->username = Polyfills::requestParam($request, 'username', $dto->username);
 
-        $redirectUris = $request->get('redirectUris', $dto->redirectUris);
+        $redirectUris = Polyfills::requestParam($request, 'redirectUris', $dto->redirectUris);
         if (\is_string($redirectUris)) {
             $redirectUris = preg_split('/(,| )/', $redirectUris, flags: PREG_SPLIT_NO_EMPTY);
         }
         $dto->redirectUris = $redirectUris;
 
-        $grants = $request->get('grants', $dto->grants);
+        $grants = Polyfills::requestParam($request, 'grants', $dto->grants);
         if (\is_string($grants)) {
             $grants = preg_split('/(,| )/', $grants, flags: PREG_SPLIT_NO_EMPTY);
         }
         $dto->grants = $grants;
 
-        $scopes = $request->get('scopes', $dto->scopes);
+        $scopes = Polyfills::requestParam($request, 'scopes', $dto->scopes);
         if (\is_string($scopes)) {
             $scopes = preg_split('/(,| )/', $scopes, flags: PREG_SPLIT_NO_EMPTY);
         }

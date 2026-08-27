@@ -7,7 +7,7 @@ namespace App\DTO;
 use App\Service\ImageManager;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[OA\Schema()]
 class ImageUploadDto

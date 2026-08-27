@@ -6,6 +6,7 @@ namespace App\Controller\Api\OAuth2;
 
 use App\Controller\Api\BaseApi;
 use App\DTO\OAuth2ClientDto;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
@@ -65,8 +66,8 @@ class DeleteClientApi extends BaseApi
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 
         $dto = new OAuth2ClientDto(null);
-        $dto->identifier = $request->get('client_id');
-        $dto->secret = $request->get('client_secret');
+        $dto->identifier = Polyfills::requestParam($request, 'client_id');
+        $dto->secret = Polyfills::requestParam($request, 'client_secret');
 
         $validatorGroups = ['deleting'];
         $errors = $validator->validate($dto, groups: $validatorGroups);

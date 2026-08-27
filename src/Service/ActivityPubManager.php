@@ -18,6 +18,7 @@ use App\Entity\Moderator;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
@@ -396,7 +397,7 @@ class ActivityPubManager
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
-            $user->type = $actor['type'] ?? 'Person';
+            $user->type = EUserType::getFromString($actor['type']) ?? EUserType::Person;
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             if ($actor['preferredUsername']) {
@@ -821,7 +822,7 @@ class ActivityPubManager
             if (null === $modToRemove) {
                 continue;
             }
-            $criteria = Criteria::create()->where(Criteria::expr()->eq('magazine', $magazine));
+            $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)->where(Criteria::expr()->eq('magazine', $magazine));
             $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
             $this->logger->info('[ActivityPubManager::handleModeratorArray] Removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
             $this->magazineManager->removeModerator($modObject, null);

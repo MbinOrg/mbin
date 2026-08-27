@@ -41,8 +41,9 @@ final class VotersInlineComponent
                 $votes = $this->subject->votes;
                 $votes = $votes->matching(
                     new Criteria(
-                        Criteria::expr()->eq('choice', VotableInterface::VOTE_UP),
-                        ['createdAt' => Order::Descending]
+                        expression: Criteria::expr()->eq('choice', VotableInterface::VOTE_UP),
+                        orderings: ['createdAt' => Order::Descending],
+                        accessRawFieldValues: true,
                     )
                 )->slice(0, 4);
 

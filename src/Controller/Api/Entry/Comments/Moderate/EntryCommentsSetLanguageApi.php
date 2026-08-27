@@ -8,6 +8,7 @@ use App\Controller\Api\Entry\EntriesBaseApi;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -87,7 +88,7 @@ class EntryCommentsSetLanguageApi extends EntriesBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $newLang = $request->get('lang', '');
+        $newLang = Polyfills::requestParam($request, 'lang', '');
 
         $valid = false !== array_search($newLang, Languages::getLanguageCodes());
 

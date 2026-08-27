@@ -40,7 +40,7 @@ class InstanceBlock
     public Instance $instance;
 
     // denormalized schema to avoid many JOINs
-    #[Column]
+    #[Column(type: 'text')]
     public string $instanceDomain;
 
     #[Column]

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[OA\Schema()]
 class MagazineThemeRequestDto extends ImageUploadDto

@@ -1,8 +1,8 @@
 @use 'breakpoints' as b;
 @use '../mixins/mbin';
-@use '@fortawesome/fontawesome-free/scss/fontawesome' as fa;
+@use '@fortawesome/fontawesome-free/scss/fa' as fa;
+@use '@fortawesome/fontawesome-free/scss/solid' as faSolid;
 // needed for the checkmark do render correctly even though it is not directly used
-@use '@fortawesome/fontawesome-free/scss/solid' as faS;
 
 .btn {
   font-size: .85rem;
@@ -135,6 +135,8 @@ input[type=radio] {
 
 input[type=checkbox],
 input[type=radio] {
+  @include faSolid.icon(fa.$var-check);
+
   -webkit-appearance: none;
   appearance: none;
   font-size: 0.9rem;
@@ -146,8 +148,6 @@ input[type=radio] {
   align-items: center;
   align-content: center;
   cursor: pointer;
-
-  @include fa.fa-icon-solid(fa.$fa-var-check);
 
   &::before {
     transform: scale(0);

@@ -8,6 +8,7 @@ use App\Controller\Api\Entry\EntriesBaseApi;
 use App\DTO\EntryResponseDto;
 use App\Entity\Entry;
 use App\Factory\EntryFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -81,7 +82,7 @@ class EntriesSetAdultApi extends EntriesBaseApi
 
         $request = $this->request->getCurrentRequest();
         // Returns true for "1", "true", "on" and "yes". Returns false otherwise.
-        $entry->isAdult = filter_var($request->get('adult', 'true'), FILTER_VALIDATE_BOOL);
+        $entry->isAdult = filter_var(Polyfills::requestParam($request, 'adult', 'true'), FILTER_VALIDATE_BOOL);
 
         $manager->flush();
 

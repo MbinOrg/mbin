@@ -13,6 +13,7 @@ use App\PageView\PostPageView;
 use App\Repository\Criteria;
 use App\Repository\PostRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -128,12 +129,12 @@ class UserPostsRetrieveApi extends PostsBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new PostPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
+        $criteria = new PostPageView((int) Polyfills::requestParam($request->getCurrentRequest(), 'p', 1), $security);
+        $criteria->sortOption = Polyfills::requestParam($request->getCurrentRequest(), 'sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
+            Polyfills::requestParam($request->getCurrentRequest(), 'time', Criteria::TIME_ALL)
         );
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', PostRepository::PER_PAGE));
+        $criteria->perPage = self::constrainPerPage(Polyfills::requestParam($request->getCurrentRequest(), 'perPage', PostRepository::PER_PAGE));
 
         $this->handleLanguageCriteria($criteria);
 

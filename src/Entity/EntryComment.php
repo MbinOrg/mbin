@@ -22,6 +22,7 @@ use App\Utils\DownvotesMode;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -79,7 +80,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public ?\DateTime $lastActive = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true)]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'ASC'])]
@@ -235,7 +236,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;
@@ -302,7 +303,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
      */
     public function getChildrenByCriteria(MbinCriteria $entryCommentCriteria, DownvotesMode $downvoteMode, ?User $loggedInUser, string $filterRealm): array
     {
-        $criteria = Criteria::create();
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/);
 
         if ($entryCommentCriteria->languages) {
             $criteria->andwhere(Criteria::expr()->in('lang', $entryCommentCriteria->languages));

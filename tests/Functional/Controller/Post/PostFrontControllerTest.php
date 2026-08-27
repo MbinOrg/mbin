@@ -167,7 +167,7 @@ class PostFrontControllerTest extends WebTestCase
         self::assertGreaterThan($older->getRanking(), $newer->getRanking());
 
         $user = $this->getUserByUsername('user');
-        $user->frontDefaultSort = ESortOptions::Newest->value;
+        $user->frontDefaultSort = ESortOptions::Newest;
         $this->entityManager->flush();
 
         $this->client->loginUser($user);
@@ -186,7 +186,7 @@ class PostFrontControllerTest extends WebTestCase
         $secondId = $secondNode->attributes->getNamedItem('id')->nodeValue;
         self::assertEquals("post-{$older->getId()}", $secondId);
 
-        $user->frontDefaultSort = ESortOptions::Commented->value;
+        $user->frontDefaultSort = ESortOptions::Commented;
         $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/microblog');

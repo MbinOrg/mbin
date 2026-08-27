@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Service\SettingsManager;
 use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class PrivateInstanceVoter extends Voter
@@ -21,7 +22,7 @@ class PrivateInstanceVoter extends Voter
         return 'PUBLIC_ACCESS_UNLESS_PRIVATE_INSTANCE' === $attribute;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if ($token instanceof TwoFactorTokenInterface) {
             return false;

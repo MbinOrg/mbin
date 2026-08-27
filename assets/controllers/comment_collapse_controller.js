@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { getLevel } from '../utils/mbin';
+import { getLevel } from '@app/utils/mbin';
 
 const COMMENT_ELEMENT_TAG = 'BLOCKQUOTE';
 const COLLAPSIBLE_CLASS = 'collapsible';

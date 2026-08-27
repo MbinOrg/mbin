@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,7 @@ class PostCommentChangeAdultController extends AbstractController
     ): Response {
         $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 
-        $comment->isAdult = 'on' === $request->get('adult');
+        $comment->isAdult = 'on' === Polyfills::requestParam($request, 'adult');
 
         $this->entityManager->flush();
 
