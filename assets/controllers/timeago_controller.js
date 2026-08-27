@@ -49,7 +49,12 @@ export default class extends Controller {
             uk: uk.default,
             zh_TW: zh_TW.default,
         };
-        timeago.register(lang, languages[lang]);
-        timeago.render(elems, lang);
+
+        if (languages[lang]) {
+            timeago.register(lang, languages[lang]);
+            timeago.render(elems, lang);
+        } else {
+            timeago.render(elems);
+        }
     }
 }

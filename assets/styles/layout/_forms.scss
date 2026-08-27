@@ -148,7 +148,7 @@ input[type=radio] {
   align-items: center;
   align-content: center;
   cursor: pointer;
-  
+
   &::before {
     transform: scale(0);
     transition: 100ms transform ease-in;
