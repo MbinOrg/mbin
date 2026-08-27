@@ -8,6 +8,7 @@ use App\Controller\Api\BaseApi;
 use App\DTO\ClientResponseDto;
 use App\Entity\Client;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -159,7 +160,7 @@ class RetrieveClientApi extends BaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $page = $this->getPageNb($request);
-        $perPage = self::constrainPerPage($request->get('perPage', self::PER_PAGE));
+        $perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', self::PER_PAGE));
 
         /** @var EntityRepository $repository */
         $repository = $manager->getRepository(Client::class);

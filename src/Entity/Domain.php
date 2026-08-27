@@ -99,7 +99,7 @@ class Domain
 
     public function isSubscribed(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->subscriptions->matching($criteria)->count() > 0;
@@ -112,7 +112,7 @@ class Domain
 
     public function unsubscribe(User $user): void
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         $subscription = $this->subscriptions->matching($criteria)->first();

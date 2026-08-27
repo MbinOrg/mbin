@@ -11,6 +11,7 @@ use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Repository\MagazineRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -170,7 +171,7 @@ class MagazineReportsRetrieveApi extends MagazineBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $status = $request->get('status', Report::STATUS_PENDING);
+        $status = Polyfills::requestParam($request, 'status', Report::STATUS_PENDING);
         if (false === array_search($status, Report::STATUS_OPTIONS)) {
             throw new BadRequestHttpException('Invalid status');
         }
@@ -178,7 +179,7 @@ class MagazineReportsRetrieveApi extends MagazineBaseApi
         $reports = $repository->findReports(
             $magazine,
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE)),
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE)),
             $status
         );
 

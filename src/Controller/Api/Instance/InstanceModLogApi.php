@@ -8,6 +8,7 @@ use App\DTO\MagazineLogResponseDto;
 use App\Entity\MagazineLog;
 use App\Repository\MagazineLogRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -87,7 +88,7 @@ class InstanceModLogApi extends InstanceBaseApi
         $request = $this->request->getCurrentRequest();
         $logs = $repository->findByCustom(
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineLogRepository::PER_PAGE)),
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineLogRepository::PER_PAGE)),
             types: $types,
         );
 

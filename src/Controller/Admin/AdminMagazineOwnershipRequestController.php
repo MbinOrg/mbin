@@ -9,6 +9,7 @@ use App\Entity\Magazine;
 use App\Entity\User;
 use App\Repository\MagazineOwnershipRequestRepository;
 use App\Service\MagazineManager;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -25,7 +26,7 @@ class AdminMagazineOwnershipRequestController extends AbstractController
     public function requests(Request $request): Response
     {
         return $this->render('admin/magazine_ownership.html.twig', [
-            'requests' => $this->repository->findAllPaginated($request->get('page', 1)),
+            'requests' => $this->repository->findAllPaginated(Polyfills::requestParam($request, 'page', 1)),
         ]);
     }
 

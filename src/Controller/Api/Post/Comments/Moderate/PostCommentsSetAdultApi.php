@@ -8,6 +8,7 @@ use App\Controller\Api\Post\PostsBaseApi;
 use App\DTO\PostCommentResponseDto;
 use App\Entity\PostComment;
 use App\Factory\PostCommentFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -81,7 +82,7 @@ class PostCommentsSetAdultApi extends PostsBaseApi
 
         $request = $this->request->getCurrentRequest();
         // Returns true for "1", "true", "on" and "yes". Returns false otherwise.
-        $comment->isAdult = filter_var($request->get('adult', 'true'), FILTER_VALIDATE_BOOL);
+        $comment->isAdult = filter_var(Polyfills::requestParam($request, 'adult', 'true'), FILTER_VALIDATE_BOOL);
 
         $manager->flush();
 

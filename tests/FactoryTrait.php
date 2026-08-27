@@ -27,6 +27,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\Site;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Service\UserManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -84,7 +85,7 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null, $addImage = true): User
+    private function createUser(string $username, ?string $email = null, ?string $password = null, EUserType $type = EUserType::Person, $active = true, $hideAdult = true, $about = null, $addImage = true): User
     {
         $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type);
 

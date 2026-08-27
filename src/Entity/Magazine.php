@@ -191,7 +191,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     {
         $user->moderatorTokens->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('magazine', $this))
             ->andWhere(Criteria::expr()->eq('isConfirmed', true));
 
@@ -202,7 +202,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     {
         $user->moderatorTokens->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('magazine', $this))
             ->andWhere(Criteria::expr()->eq('isConfirmed', true));
 
@@ -218,7 +218,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     {
         $user->moderatorTokens->get(-1);
 
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('magazine', $this))
             ->andWhere(Criteria::expr()->eq('isOwner', true));
 
@@ -232,7 +232,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function getOwnerModerator(): ?Moderator
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('isOwner', true));
 
         $res = $this->moderators->matching($criteria)->first();
@@ -245,7 +245,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function getOwner(): ?User
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('isOwner', true));
 
         $res = $this->moderators->matching($criteria)->first();
@@ -275,7 +275,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function updateEntryCounts(): self
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', Entry::VISIBILITY_VISIBLE));
 
         $this->entryCount = $this->entries->matching($criteria)->count();
@@ -315,7 +315,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function updatePostCounts(): self
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->eq('visibility', Entry::VISIBILITY_VISIBLE));
 
         $this->postCount = $this->posts->matching($criteria)->count();
@@ -349,7 +349,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function isSubscribed(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->subscriptions->matching($criteria)->count() > 0;
@@ -358,7 +358,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
     public function updateSubscriptionsCount(): void
     {
         if (null !== $this->apFollowersCount) {
-            $criteria = Criteria::create()
+            $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
                 ->where(Criteria::expr()->gt('createdAt', \DateTimeImmutable::createFromMutable($this->apFetchedAt)));
 
             $newSubscribers = $this->subscriptions->matching($criteria)->count();
@@ -370,7 +370,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function unsubscribe(User $user): void
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->where(Criteria::expr()->eq('user', $user));
 
         $subscription = $this->subscriptions->matching($criteria)->first();
@@ -417,7 +417,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function isBanned(User $user): bool
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));
@@ -438,7 +438,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
 
     public function unban(User $user): MagazineBan
     {
-        $criteria = Criteria::create()
+        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
             ->andWhere(Criteria::expr()->eq('user', $user));

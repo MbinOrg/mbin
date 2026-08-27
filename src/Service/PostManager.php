@@ -219,7 +219,7 @@ class PostManager implements ContentManagerInterface
 
         $image = $post->image?->getId();
 
-        $sort = new Criteria(null, ['createdAt' => Order::Descending]);
+        $sort = new Criteria(expression: null, orderings: ['createdAt' => Order::Descending], accessRawFieldValues: true);
         foreach ($post->comments->matching($sort) as $comment) {
             $this->postCommentManager->purge($user, $comment);
         }
