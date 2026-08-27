@@ -64,8 +64,13 @@ export default class extends Controller {
                 this.markSelectedSuggestion();
                 event.preventDefault();
             } else if ('Enter' === key) {
-                this.replaceAutocompleteSearchString(this.getSelectedSuggestionReplacement());
-                event.preventDefault();
+                const replacement = this.getSelectedSuggestionReplacement();
+                if (null !== replacement) {
+                    this.replaceAutocompleteSearchString(replacement);
+                    event.preventDefault();
+                } else {
+                    this.clearAutocomplete();
+                }
             } else {
                 this.fetchAutocompleteResults(this.getAutocompleteSearchString(key));
             }
@@ -189,6 +194,9 @@ export default class extends Controller {
     }
 
     replaceAutocompleteSearchString(replaceText) {
+        if (null === replaceText) {
+            return;
+        }
         const [wordStart, wordEnd] = this.getAutocompleteSearchStringStartAndEnd();
         this.element.selectionStart = wordStart;
         this.element.selectionEnd = wordEnd+1;

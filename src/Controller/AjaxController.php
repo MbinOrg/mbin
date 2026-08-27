@@ -92,10 +92,14 @@ class AjaxController extends AbstractController
         $data = $embed->fetch(Polyfills::requestParam($request, 'url'));
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
         if ($data->isImageUrl()) {
+            $text = $data->html;
+            if (null === $text || '' === $text) {
+                $text = $this->translator->trans('original_image');
+            }
             $html = \sprintf(
                 '<a href="%s" class="embed-link">%s</a>',
                 $data->url,
-                $data->html
+                $text
             );
         } else {
             $html = $data->html;
