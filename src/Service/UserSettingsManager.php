@@ -41,7 +41,7 @@ class UserSettingsManager
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
             $user->directMessageSetting->value,
-            $user->frontDefaultContent->value,
+            $user->frontDefaultContent?->value,
             $user->apDiscoverable,
             $user->apIndexable,
         );
