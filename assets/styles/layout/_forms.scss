@@ -3,7 +3,6 @@
 @use '@fortawesome/fontawesome-free/scss/fa' as fa;
 @use '@fortawesome/fontawesome-free/scss/solid' as faSolid;
 // needed for the checkmark do render correctly even though it is not directly used
-@use '@fortawesome/fontawesome-free/scss/solid' as faS;
 
 .btn {
   font-size: .85rem;
@@ -136,20 +135,20 @@ input[type=radio] {
 
 input[type=checkbox],
 input[type=radio] {
+  @include faSolid.icon(fa.$var-check);
+
   -webkit-appearance: none;
   appearance: none;
   font-size: 0.9rem;
-  display: grid !important;
+  display: grid;
   margin: 0px;
-  width: 1.5rem !important;
+  width: 1.5rem;
   height: 1.5rem;
   justify-content: center;
   align-items: center;
   align-content: center;
   cursor: pointer;
-
-  @include faSolid.icon(fa.$var-check);
-
+  
   &::before {
     transform: scale(0);
     transition: 100ms transform ease-in;
