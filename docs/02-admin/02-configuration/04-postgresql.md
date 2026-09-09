@@ -31,7 +31,7 @@ work_mem = 15MB
 maintenance_work_mem = 2GB
 # Limit memory used by each autovacuum worker separately. This avoids up to
 # autovacuum_max_workers workers inheriting the larger maintenance_work_mem value.
-autovacuum_work_mem = 512MB
+autovacuum_work_mem = 1GB
 
 # Should be posix under Linux anyway, just to be sure...
 dynamic_shared_memory_type = posix
