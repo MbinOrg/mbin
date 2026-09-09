@@ -12,7 +12,7 @@ sudo nano /etc/postgresql/16/main/postgresql.conf
 
 These settings below are more **an indication and heavily depends on your server specifications**. As well as if you are running other services on the same server.
 
-However, the following settings are a good starting point when your serve is around 12 vCPUs and 32GB of RAM. Be sure to fune-tune these settings to your needs.
+However, the following settings are a good starting point when your server is around 12 vCPUs and 32GB of RAM. Be sure to fine-tune these settings to your needs.
 
 ```ini
 # Increase max connections
@@ -29,6 +29,9 @@ huge_pages = on
 work_mem = 15MB
 # Increase maintenance work memory
 maintenance_work_mem = 2GB
+# Limit memory used by each autovacuum worker separately. This avoids up to
+# autovacuum_max_workers workers inheriting the larger maintenance_work_mem value.
+autovacuum_work_mem = 512MB
 
 # Should be posix under Linux anyway, just to be sure...
 dynamic_shared_memory_type = posix
@@ -48,12 +51,13 @@ max_parallel_maintenance_workers = 4
 # You should *not* increase this value more than max_worker_processes
 max_parallel_workers = 16
 
-# Boost transaction speeds and reduce I/O wait for writes (with the risk of losing un-flushed data in case of a crash)
-# If you do not want to take that risk, keep it to: "on".
-synchronous_commit = off
+# Preserve acknowledged transactions during a crash. Set this to "off" only
+# after deciding that losing recent acknowledged writes is acceptable.
+synchronous_commit = on
 
-# Group write commits to combine multiple transactions by a single flush (this is a time delay in μs)
-commit_delay = 300
+# Keep the default unless a production benchmark demonstrates that a delay
+# improves throughput for your concurrent write workload.
+commit_delay = 0
 
 # Increase the checkpoint timeout (time between two checkpoints) to reduce the disk I/O
 # This will significantly reduce the disk I/O and speed-up the write times to disk. The only downside is time needed for crash recovery.
@@ -71,6 +75,35 @@ random_page_cost = 1.1
 # Increase the cache size, increasing the likelihood of index scans (if we have enough RAM memory)
 # Try to aim for: RAM size * 0.8 (on a dedicated DB server)
 effective_cache_size = 24GB
+```
+
+## Routine maintenance and autovacuum
+
+PostgreSQL reuses space from updated and deleted rows through regular vacuuming.
+Keep `autovacuum` enabled and use `VACUUM (ANALYZE)` for exceptional maintenance,
+such as after a large retention cleanup. Do not use `VACUUM FULL` as routine
+maintenance: it rewrites a table and blocks normal access while it runs.
+
+The global autovacuum scale factors are suitable for many tables, but large
+high-churn tables can otherwise accumulate millions of changed or dead rows
+before they are maintained. Mbin configures conservative per-table thresholds
+for `favourite` and `entry_comment` through its database migrations. These
+overrides leave the instance-wide autovacuum worker and I/O policy under the
+administrator's control.
+
+Use the following query to inspect the maintenance history and estimated dead
+rows for the largest tables:
+
+```sql
+SELECT relname,
+       n_live_tup,
+       n_dead_tup,
+       last_vacuum,
+       last_autovacuum,
+       last_analyze,
+       last_autoanalyze
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC;
 ```
 
 For reference check out [PGTune](https://pgtune.leopard.in.ua/) (this tool will **not** cover all the settings mentioned above, so be aware of that).
