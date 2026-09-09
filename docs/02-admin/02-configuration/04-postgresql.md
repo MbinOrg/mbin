@@ -77,35 +77,6 @@ random_page_cost = 1.1
 effective_cache_size = 24GB
 ```
 
-## Routine maintenance and autovacuum
-
-PostgreSQL reuses space from updated and deleted rows through regular vacuuming.
-Keep `autovacuum` enabled and use `VACUUM (ANALYZE)` for exceptional maintenance,
-such as after a large retention cleanup. Do not use `VACUUM FULL` as routine
-maintenance: it rewrites a table and blocks normal access while it runs.
-
-The global autovacuum scale factors are suitable for many tables, but large
-high-churn tables can otherwise accumulate millions of changed or dead rows
-before they are maintained. Mbin configures conservative per-table thresholds
-for `favourite` and `entry_comment` through its database migrations. These
-overrides leave the instance-wide autovacuum worker and I/O policy under the
-administrator's control.
-
-Use the following query to inspect the maintenance history and estimated dead
-rows for the largest tables:
-
-```sql
-SELECT relname,
-       n_live_tup,
-       n_dead_tup,
-       last_vacuum,
-       last_autovacuum,
-       last_analyze,
-       last_autoanalyze
-FROM pg_stat_user_tables
-ORDER BY n_dead_tup DESC;
-```
-
 For reference check out [PGTune](https://pgtune.leopard.in.ua/) (this tool will **not** cover all the settings mentioned above, so be aware of that).
 
 > [!NOTE]
