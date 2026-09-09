@@ -533,7 +533,7 @@ class ActivityPubManager
                 if (isset($imageObject['height'])) {
                     // determine the highest resolution image for the same image (equality is ducktyped by comparing the alt text)
                     foreach ($images as $i) {
-                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0 && $i['name'] ?? '' === $imageObject['name'] ?? '') {
+                        if (isset($i['height']) && $i['height'] > ($imageObject['height'] ?? 0) && ($i['name'] ?? '') === ($imageObject['name'] ?? '')) {
                             $imageObject = $i;
                         }
                     }
