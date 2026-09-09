@@ -95,7 +95,7 @@ class ImageManager implements ImageManagerInterface
      */
     public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
     {
-        if (-1 === $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
+        if (-1 === (int) $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
             // don't compress images if disabled or smaller than max bytes
             return false;
         }
@@ -103,13 +103,14 @@ class ImageManager implements ImageManagerInterface
         $image = $imagine->open($filePath);
         $bytes = filesize($filePath);
         $initialBytes = $bytes;
+        $lastBytes = $bytes;
         $tempPath = "{$filePath}_temp_compress.$extension";
         $compressed = false;
         $quality = 0.9;
-        if (0.1 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
+        if (0.3 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
             $quality = $this->imageCompressionQuality;
         }
-        while ($bytes > $maxBytes && $quality > 0.1) {
+        while ($bytes > $maxBytes && $quality > 0.3) {
             $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100]);
             $image->save($tempPath, [
                 'jpeg_quality' => $quality * 100, // jpeg max value is 100
@@ -117,11 +118,12 @@ class ImageManager implements ImageManagerInterface
                 'webp_quality' => $quality * 100, // webp quality max is 100
             ]);
             $bytes = filesize($tempPath);
-            if ($initialBytes === $bytes) {
+            if ($lastBytes === $bytes) {
                 // there were no changes, so maybe it is in a format that cannot be compressed...
                 break;
             }
             $compressed = true;
+            $lastBytes = $bytes;
             $quality -= 0.05;
         }
         $copied = false;
