@@ -560,6 +560,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         $magazine1 = $this->getMagazineByName('test1', $abandoningUser);
         $magazine2 = $this->getMagazineByName('test2', $abandoningUser);
         $magazine3 = $this->getMagazineByName('test3', $activeUser);
+        $this->magazineManager->subscribe($magazine1, $activeUser);
 
         $abandoningUser->lastActive = new \DateTime('-6 months');
         $activeUser->lastActive = new \DateTime('-2 days');
@@ -579,11 +580,8 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData['items']);
         self::assertCount(2, $jsonData['items']);
         self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][0]);
-        self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][1]);
-        self::assertEqualsCanonicalizing(
-            [$magazine1->getId(), $magazine2->getId()],
-            array_column($jsonData['items'], 'magazineId'),
-        );
+        self::assertSame($magazine1->getId(), $jsonData['items'][0]['magazineId']);
+        self::assertSame($magazine2->getId(), $jsonData['items'][1]['magazineId']);
     }
 
     public function testApiCanRetrieveAbandonedMagazineSortedByOwner(): void
