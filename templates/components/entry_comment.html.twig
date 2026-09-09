@@ -86,7 +86,7 @@
                 asLink: true
             }) }}
 
-            <div data-controller="collapsable">
+            <div data-controller="collapsable" class="content-container">
                 <div data-collapsable-target="content" class="content">
                     {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
                         {{ comment.body|markdown("entry")|raw }}
