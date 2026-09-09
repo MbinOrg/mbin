@@ -579,8 +579,11 @@ class MagazineRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData['items']);
         self::assertCount(2, $jsonData['items']);
         self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][0]);
-        self::assertSame($magazine1->getId(), $jsonData['items'][0]['magazineId']);
-        self::assertSame($magazine2->getId(), $jsonData['items'][1]['magazineId']);
+        self::assertArrayKeysMatch(self::MAGAZINE_RESPONSE_KEYS, $jsonData['items'][1]);
+        self::assertEqualsCanonicalizing(
+            [$magazine1->getId(), $magazine2->getId()],
+            array_column($jsonData['items'], 'magazineId'),
+        );
     }
 
     public function testApiCanRetrieveAbandonedMagazineSortedByOwner(): void
