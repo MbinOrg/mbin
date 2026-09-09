@@ -507,21 +507,31 @@ class ActivityPubManager
 
     public function handleImages(array|string $attachment): ?Image
     {
-        if (\is_string($attachment) && filter_var($attachment, FILTER_VALIDATE_URL)) {
+        if (\is_string($attachment)) {
+            if (!filter_var($attachment, FILTER_VALIDATE_URL)) {
+                return null;
+            }
+
             $path = parse_url($attachment, PHP_URL_PATH);
-            $query = parse_url($attachment, PHP_URL_QUERY);
+            $query = parse_url($attachment, PHP_URL_QUERY) ?? '';
             $attachment = [
                 [
                     'url' => $attachment,
                     'type' => 'Image',
                 ],
             ];
+
+            if (null === $path) {
+                return null;
+            }
+
             if (str_contains($path, 'jpg') || str_contains($path, 'jpeg') || str_contains($query, 'jpg') || str_contains($query, 'jpeg')) {
                 $attachment[0]['mediaType'] = 'image/jpeg';
             } elseif (str_contains($path, 'png') || str_contains($query, 'png')) {
                 $attachment[0]['mediaType'] = 'image/png';
             }
         }
+
         $images = array_filter(
             $attachment,
             fn ($val) => $this->isImageAttachment($val)
