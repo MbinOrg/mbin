@@ -51,13 +51,12 @@ max_parallel_maintenance_workers = 4
 # You should *not* increase this value more than max_worker_processes
 max_parallel_workers = 16
 
-# Preserve acknowledged transactions during a crash. Set this to "off" only
-# after deciding that losing recent acknowledged writes is acceptable.
-synchronous_commit = on
+# Boost transaction speeds and reduce I/O wait for writes (with the risk of losing un-flushed data in case of a crash)
+# If you do not want to take that risk, keep it to: "on".
+synchronous_commit = off
 
-# Keep the default unless a production benchmark demonstrates that a delay
-# improves throughput for your concurrent write workload.
-commit_delay = 0
+# Group write commits to combine multiple transactions by a single flush (this is a time delay in μs)
+commit_delay = 300
 
 # Increase the checkpoint timeout (time between two checkpoints) to reduce the disk I/O
 # This will significantly reduce the disk I/O and speed-up the write times to disk. The only downside is time needed for crash recovery.
