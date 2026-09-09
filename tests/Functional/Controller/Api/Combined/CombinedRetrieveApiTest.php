@@ -54,6 +54,27 @@ class CombinedRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::PAGINATION_KEYS, $jsonData['pagination']);
         self::assertSame(8, $jsonData['pagination']['count']);
 
+        $boostedContentIds = [
+            'post' => $postBoosted->getId(),
+            'postComment' => $postCommentBoosted->getId(),
+            'entry' => $entryBoosted->getId(),
+            'entryComment' => $entryCommentBoosted->getId(),
+        ];
+        $boostedContentSeen = [];
+        foreach ($jsonData['items'] as $item) {
+            foreach ($boostedContentIds as $type => $boostedContentId) {
+                $idKey = str_ends_with($type, 'Comment') ? 'commentId' : $type.'Id';
+                if (($item[$type][$idKey] ?? null) === $boostedContentId) {
+                    self::assertCount(1, $item['boostedBy']);
+                    self::assertSame($userFollowing->getId(), $item['boostedBy'][0]['user']['userId']);
+                    self::assertSame($userFollowing->username, $item['boostedBy'][0]['user']['username']);
+                    self::assertNotFalse(\DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $item['boostedBy'][0]['boostedAt']));
+                    $boostedContentSeen[] = $type;
+                }
+            }
+        }
+        self::assertEqualsCanonicalizing(array_keys($boostedContentIds), $boostedContentSeen);
+
         $retrievedPostIds = array_map(function ($item) {
             if (null !== $item['post']) {
                 self::assertArrayKeysMatch(self::POST_RESPONSE_KEYS, $item['post']);

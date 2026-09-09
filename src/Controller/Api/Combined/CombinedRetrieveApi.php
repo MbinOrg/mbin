@@ -6,6 +6,7 @@ namespace App\Controller\Api\Combined;
 
 use App\Controller\Api\BaseApi;
 use App\Controller\Traits\PrivateContentTrait;
+use App\DTO\ContentBoostResponseDto;
 use App\DTO\ContentResponseDto;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
@@ -811,19 +812,7 @@ class CombinedRetrieveApi extends BaseApi
     {
         $result = [];
         foreach ($content as $item) {
-            if ($item instanceof Entry) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } elseif ($item instanceof Post) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } elseif ($item instanceof EntryComment) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } elseif ($item instanceof PostComment) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            }
+            $result[] = $this->createContentResponse($item);
         }
 
         return new JsonResponse($this->serializePaginated($result, $content), headers: $headers);
@@ -833,16 +822,44 @@ class CombinedRetrieveApi extends BaseApi
     {
         $result = [];
         foreach ($content as $item) {
-            if ($item instanceof Entry) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            } elseif ($item instanceof Post) {
-                $this->handlePrivateContent($item);
-                $result[] = new ContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
-            }
+            $result[] = $this->createContentResponse($item);
         }
 
         return new JsonResponse($this->serializeCursorPaginated($result, $content), headers: $headers);
+    }
+
+    private function createContentResponse(Entry|EntryComment|Post|PostComment $item): ContentResponseDto
+    {
+        $this->handlePrivateContent($item);
+        $boostedBy = null;
+        if (isset($item->extendedContentProperties['boostUsers'])) {
+            $boostedBy = array_map(
+                fn (array $boost): ContentBoostResponseDto => new ContentBoostResponseDto(
+                    $this->userFactory->createSmallDto($boost['user']),
+                    $boost['time'],
+                ),
+                $item->extendedContentProperties['boostUsers'],
+            );
+        }
+
+        return match (true) {
+            $item instanceof Entry => new ContentResponseDto(
+                entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                boostedBy: $boostedBy,
+            ),
+            $item instanceof Post => new ContentResponseDto(
+                post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                boostedBy: $boostedBy,
+            ),
+            $item instanceof EntryComment => new ContentResponseDto(
+                entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                boostedBy: $boostedBy,
+            ),
+            $item instanceof PostComment => new ContentResponseDto(
+                postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                boostedBy: $boostedBy,
+            ),
+        };
     }
 
     private function getCursor(ContentRepository $contentRepository, string $sortOption, ?string $cursor): int|\DateTime|\DateTimeImmutable

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 
 /**
@@ -17,6 +18,9 @@ class ContentResponseDto
         public ?PostResponseDto $post = null,
         public ?EntryCommentResponseDto $entryComment = null,
         public ?PostCommentResponseDto $postComment = null,
+        /** @var ContentBoostResponseDto[]|null */
+        #[OA\Property(type: 'array', nullable: true, items: new OA\Items(ref: new Model(type: ContentBoostResponseDto::class)))]
+        public ?array $boostedBy = null,
     ) {
     }
 }
