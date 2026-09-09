@@ -74,6 +74,15 @@ blockquote.post {
     }
   }
 
+  .content-container {
+    grid-area: body;
+    display: grid;
+
+    p {
+      margin-top: 0
+    }
+  }
+
   .content {
     p:last-child {
       margin-bottom: 0;
@@ -82,14 +91,6 @@ blockquote.post {
 
   aside:not(.notification-switch) {
     grid-area: vote;
-  }
-
-  div {
-    grid-area: body;
-
-    p {
-      margin-top: 0
-    }
   }
 
   > figure {

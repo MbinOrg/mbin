@@ -71,6 +71,16 @@ $comment-margin-sm: .3rem;
     }
   }
 
+  .content-container {
+    grid-area: body;
+    display: grid;
+
+    p {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+  }
+
   .content {
     p:last-child {
       margin-bottom: 0;
@@ -95,15 +105,6 @@ $comment-margin-sm: .3rem;
 
   .expand-label {
     display: none;
-  }
-
-  div {
-    grid-area: body;
-
-    p {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-    }
   }
 
   > figure {

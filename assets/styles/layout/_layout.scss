@@ -82,6 +82,7 @@ body {
     grid-area: main;
     padding: 0 .5rem;
     position: relative;
+    min-width: 0;
 
     @include b.media-breakpoint-down(md) {
       overflow-x: clip;
