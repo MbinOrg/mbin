@@ -977,10 +977,9 @@ class ActivityPubManager
 
     public function handleExternalImages(array $attachment, ?\App\DTO\ImageDto $consumedImage): ?array
     {
-        $imageUrlToSkip = $consumedImage?->sourceUrl;
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val) && $val['url'] !== $imageUrlToSkip
+            fn ($val) => $this->isImageAttachment($val) && !$this->describeSameImage($val, $consumedImage)
         );
 
         if (\count($images)) {
@@ -1098,6 +1097,21 @@ class ActivityPubManager
         // - image url looks like a link to image
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
             || ImageManager::isImageUrl($object['url']);
+    }
+
+    private function describeSameImage(array $imgA, ?\App\DTO\ImageDto $imgB): bool
+    {
+        if (null === $imgB) {
+            return false;
+        }
+
+        if ($imgA['url'] === $imgB->sourceUrl) {
+            return true;
+        }
+
+        $altTextA = $imgA['name'] ?? null;
+        $altTextB = $imgB->altText ?? null;
+        return null !== $altTextA && '' !== $altTextA && $altTextA === $altTextB;
     }
 
     /**
