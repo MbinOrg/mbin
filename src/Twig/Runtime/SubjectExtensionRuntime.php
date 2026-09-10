@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Runtime;
 
+use App\Entity\Domain;
 use App\Entity\Entry;
 use App\Entity\Post;
 use App\Entity\User;
@@ -21,43 +22,36 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
     {
         /* @var ?User $user */
         $user = $this->security->getUser();
-
-        if (null !== $user) {
-            if ($user->isBlocked($entry->user)
-                || $user->isBlockedMagazine($entry->getMagazine())
-                || (null !== $entry->domain && $user->isBlockedDomain($entry->domain))) {
-                return false;
-            }
-        }
-
-        if ($entry->isVisible() && $entry->user->isVisible()) {
-            return true;
-        }
-
-        if (null !== $user) {
-            if ($user->isAdmin() || $user->isModerator()) {
-                return true;
-            }
-            if ($entry->getMagazine()->userIsModerator($user)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->userCanSeeEntryPost($entry, $user, $entry->domain);
     }
 
     public function userCanSeePost(Post $post): bool
     {
         /* @var ?User $user */
         $user = $this->security->getUser();
+        return $this->userCanSeeEntryPost($post, $user);
+    }
+
+    private function userCanSeeEntryPost(Entry|Post $content, ?User $user, ?Domain $domain = null): bool
+    {
+        $author = $content->user;
 
         if (null !== $user) {
-            if ($user->isBlocked($post->user) || $user->isBlockedMagazine($post->getMagazine())) {
+            if ($user->isBlocked($author)
+                || $user->isBlockedMagazine($content->getMagazine())
+                || (null !== $domain && $user->isBlockedDomain($domain))) {
+                return false;
+            }
+
+            if ($user->hideAdult && $content->isAdult()) {
                 return false;
             }
         }
 
-        if ($post->isVisible() && $post->user->isVisible()) {
+        if ($content->isVisible() && $author->isVisible()) {
+            return true;
+        }
+        if (($content->isPrivate() || $author->isPrivate()) && $user->isFollowing($author)) {
             return true;
         }
 
@@ -65,7 +59,7 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
             if ($user->isAdmin() || $user->isModerator()) {
                 return true;
             }
-            if ($post->getMagazine()->userIsModerator($user)) {
+            if ($content->getMagazine()->userIsModerator($user)) {
                 return true;
             }
         }
