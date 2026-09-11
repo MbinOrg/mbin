@@ -23,6 +23,23 @@ framework:
                     max_delay: 76800000
                     jitter: 0
                 serializer: messenger.transport.symfony_serializer
+            async_slow:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        async_slow:
+                            arguments:
+                                x-queue-version: 2
+                                x-queue-type: 'classic'
+                    exchange:
+                        name: async_slow
+                retry_strategy:
+                    max_retries: 5
+                    delay: 300000
+                    multiplier: 4
+                    max_delay: 76800000
+                    jitter: 0
+                serializer: messenger.transport.symfony_serializer
             inbox:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 options:
@@ -137,6 +154,7 @@ framework:
         routing:
             # Route your messages to the transports
             App\Message\Contracts\AsyncMessageInterface: async
+            App\Message\Contracts\AsyncSlowMessageInterface: async_slow
             App\Message\Contracts\ActivityPubInboxInterface: inbox
             App\Message\Contracts\ActivityPubInboxReceiveInterface: receive
             App\Message\Contracts\ActivityPubOutboxDeliverInterface: deliver

@@ -288,7 +288,7 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @return T
      */
-    private function getService(string $className)
+    protected function getService(string $className)
     {
         return $this->getContainer()->get($className);
     }

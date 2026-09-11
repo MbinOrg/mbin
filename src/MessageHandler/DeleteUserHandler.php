@@ -8,6 +8,7 @@ use App\DTO\UserDto;
 use App\Entity\User;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
 use App\Message\Contracts\MessageInterface;
+use App\Message\DeleteImageV2Message;
 use App\Message\DeleteUserMessage;
 use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
@@ -83,13 +84,11 @@ class DeleteUserHandler extends MbinMessageHandler
         } catch (\Exception|\Error $e) {
             $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete the cover of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $user->cover?->filePath, 'message' => \get_class($e).': '.$e->getMessage()]);
         }
-        $filePathsOfUser = $this->userManager->getAllImageFilePathsOfUser($user);
-        foreach ($filePathsOfUser as $path) {
-            try {
-                $this->imageManager->remove($path);
-            } catch (\Exception|\Error $e) {
-                $this->logger->error("[ClearDeletedUserHandler::__invoke] Couldn't delete image of {user} at '{path}': {message}", ['user' => $user->username, 'path' => $path, 'message' => \get_class($e).': '.$e->getMessage()]);
-            }
+
+        $imagesOfUser = $this->userManager->getAllImagesShaAndFilepathOfUser($user);
+        $deleteImagesPayload = [];
+        foreach ($imagesOfUser as $row) {
+            $deleteImagesPayload[$row[0]] = $row[1];
         }
 
         $this->entityManager->beginTransaction();
@@ -122,6 +121,10 @@ class DeleteUserHandler extends MbinMessageHandler
 
             throw $e;
         }
+
+        // dispatch at end or else reference-check would keep images
+        // because of the reference check this call can be safely placed outside the try{}
+        $this->bus->dispatch(new DeleteImageV2Message($deleteImagesPayload));
     }
 
     private function sendDeleteMessages(array $targetInboxes, User $deletedUser): void
