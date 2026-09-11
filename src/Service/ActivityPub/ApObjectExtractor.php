@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\ActivityPub;
 
+use App\DTO\ImageDto;
 use App\Service\ActivityPubManager;
 
 class ApObjectExtractor
@@ -42,14 +43,14 @@ class ApObjectExtractor
         return '';
     }
 
-    public function getExternalMediaBody(array $object): ?string
+    public function getExternalMediaBody(array $object, ?ImageDto $consumedImage): ?string
     {
         $body = null;
 
         if (isset($object['attachment'])) {
             $attachments = $object['attachment'];
 
-            if ($images = $this->activityPubManager->handleExternalImages($attachments)) {
+            if ($images = $this->activityPubManager->handleExternalImages($attachments, $consumedImage)) {
                 $body .= "\n\n".implode(
                     "  \n",
                     array_map(
