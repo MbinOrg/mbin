@@ -23,6 +23,8 @@ jobs:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - name: Get NPM cache directory path
         id: npm-cache-dir-path
@@ -75,6 +77,8 @@ jobs:
       image: ghcr.io/mbinorg/mbin-pipeline-image:latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - name: Add GITHUB_WORKSPACE as a safe directory
         run: git config --global --add safe.directory $GITHUB_WORKSPACE

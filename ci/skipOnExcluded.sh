@@ -7,8 +7,10 @@ git config --global --add safe.directory "$(realpath "$GITHUB_WORKSPACE")"
 
 ignoredPatterns="$(cat "$GITHUB_WORKSPACE"/ci/ignoredPaths.txt)"
 if [[ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" == 'main' ]]; then
-    git fetch origin main --depth 2
-    changedFiles="$(git diff --name-only main^ HEAD)"
+    # Compare the commit checked out for this run with its parent. Fetching the
+    # moving origin/main ref here can make the checked-out commit the shallow
+    # boundary when main advances during the workflow, leaving main^ unknown.
+    changedFiles="$(git diff --name-only HEAD^ HEAD)"
 else
     git fetch origin main:main --depth 1
     changedFiles="$(git diff --name-only main)"
