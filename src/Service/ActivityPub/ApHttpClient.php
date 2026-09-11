@@ -46,8 +46,13 @@ enum ApRequestType
 
 class ApHttpClient implements ApHttpClientInterface
 {
-    public const TIMEOUT = 8;
-    public const MAX_DURATION = 15;
+    public const int TIMEOUT = 8;
+    public const int MAX_DURATION = 15;
+
+    /**
+     * useful when running a local dev instance as it can be treated as invalid.
+     */
+    private const bool SKIP_HTTP_SIGNATURE = false;
 
     public function __construct(
         private readonly string $kbinDomain,
@@ -698,6 +703,11 @@ class ApHttpClient implements ApHttpClientInterface
         }
         $headers['User-Agent'] = $this->projectInfo->getUserAgent();
         $headers = array_merge($headers, $this->getFetchAcceptHeaders($requestType));
+
+        if (self::SKIP_HTTP_SIGNATURE) {
+            unset($headers['Signature']);
+            unset($headers['Date']);
+        }
 
         return $headers;
     }

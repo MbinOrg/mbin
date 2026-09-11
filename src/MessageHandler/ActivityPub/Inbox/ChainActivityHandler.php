@@ -26,6 +26,7 @@ use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\SettingsManager;
+use App\Utils\JsonldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -119,7 +120,7 @@ class ChainActivityHandler extends MbinMessageHandler
             }
 
             if (\array_key_exists('inReplyTo', $object) && null !== $object['inReplyTo']) {
-                $parentUrl = \is_string($object['inReplyTo']) ? $object['inReplyTo'] : $object['inReplyTo']['id'];
+                $parentUrl = JsonldUtils::getApId($object['inReplyTo']);
                 $meta = $this->repository->findByObjectId($parentUrl);
                 if (!$meta) {
                     $this->retrieveObject($parentUrl);
