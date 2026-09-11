@@ -36,6 +36,12 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
     {
         $author = $content->user;
 
+        // don't show deleted content
+        if($content->isSoftDeleted() || $author->isSoftDeleted() || $author->isDeleted) {
+            return false;
+        }
+
+        // handle user blocks
         if (null !== $user) {
             if ($user->isBlocked($author)
                 || $user->isBlockedMagazine($content->getMagazine())
@@ -48,6 +54,7 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
             }
         }
 
+        // show visible or allowed private content
         if ($content->isVisible() && $author->isVisible()) {
             return true;
         }
@@ -55,6 +62,7 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
             return true;
         }
 
+        // admins and moderators may see everything (except deleted)
         if (null !== $user) {
             if ($user->isAdmin() || $user->isModerator()) {
                 return true;
