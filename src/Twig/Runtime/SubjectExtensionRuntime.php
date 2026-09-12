@@ -37,7 +37,7 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
         $author = $content->user;
 
         // don't show deleted content
-        if($content->isSoftDeleted() || $author->isSoftDeleted() || $author->isDeleted) {
+        if ($content->isSoftDeleted() || $author->isSoftDeleted() || $author->isDeleted) {
             return false;
         }
 
