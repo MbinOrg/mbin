@@ -35,7 +35,7 @@ For developers:
 
 - Improved [bare metal/VM guide](https://docs.joinmbin.org/admin/installation/bare_metal) and [Docker guide](https://docs.joinmbin.org/admin/installation/docker/)
 - [Improved Docker setup](https://github.com/MbinOrg/mbin/pulls?q=is%3Apr+is%3Amerged+label%3Adocker)
-- _Developer_ server explained (see [Development Server documentation here](https://docs.joinmbin.org/contributing/development_server) )
+- _Developer_ server explained (see [Development Server documentation here](https://docs.joinmbin.org/contributing/getting_started) )
 - GitHub Security advisories, vulnerability reporting, [Dependabot](https://github.com/features/security) and [Advanced code scanning](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning) enabled. And we run `composer audit`.
 - Improved **code documentation**
 - **Tight integration** with [Mbin Weblate project](https://hosted.weblate.org/engage/mbin/) for translations (Two way sync)
@@ -358,7 +358,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 
 [See also Symfony requirements](https://symfony.com/doc/current/setup.html#technical-requirements)
 
-- PHP version: 8.2 or higher
+- PHP version: 8.5 or higher
 - GD or Imagemagick PHP extension
 - NGINX / Apache / Caddy
 - PostgreSQL
@@ -394,7 +394,7 @@ Following languages are currently supported/translated:
 
 ## Credits
 
-- [grumpyDev](https://karab.in/u/grumpyDev): icons, kbin-theme
+- grumpyDev: icons, kbin-theme
 - [Emma](https://codeberg.org/LItiGiousemMA/Postmill): Postmill
 - [Ernest](https://github.com/ernestwisniewski): Kbin
 
