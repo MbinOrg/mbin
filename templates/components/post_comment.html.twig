@@ -5,6 +5,17 @@
 {%- set SHOW_PREVIEW = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::KBIN_POSTS_SHOW_PREVIEW'), V_FALSE) -%}
 {%- set VIEW_STYLE = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::POST_COMMENTS_VIEW'), V_TREE) -%}
 {%- set SHOW_USER_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_USER_DOMAIN'), V_FALSE) -%}
+{%- set SHOW_MAGAZINE_FULLNAME = app.request.cookies.get(constant('App\\Controller\\User\\ThemeSettingsController::MBIN_SHOW_MAGAZINE_DOMAIN'), V_FALSE)  -%}
+
+{% if showLevel is not defined %}
+    {% set showLevel = true %}
+{% endif %}
+{% if noIndention is not defined %}
+    {% set noIndention = false %}
+{% endif %}
+{% if attachToTop is not defined %}
+    {% set attachToTop = false %}
+{% endif %}
 
 {% if withPost %}
     {{ component('post', {post: comment.post}) }}
@@ -16,17 +27,26 @@
         </div>
     {% else %}
         <blockquote{{ attributes.defaults({
-            class: html_classes('section comment post-comment subject', 'comment-level--' ~ this.getLevel(), {
-                'own': app.user and comment.isAuthor(app.user),
-                'author': comment.isAuthor(comment.post.user),
+            class: html_classes('section comment post-comment subject', {
+                ('comment-level--' ~ this.getLevel()): showLevel,
+                'own': showLevel and app.user and comment.isAuthor(app.user),
+                'author': showLevel and comment.isAuthor(comment.post.user),
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
             })}).without('id') }}
+                style="{% if noIndention %}margin-left: 0;{% endif %} {% if attachToTop %}margin-top: -1rem;{% endif %}"
                 id="post-comment-{{ comment.id }}"
                 data-controller="comment subject mentions comment-collapse html-refresh"
                 data-comment-collapse-depth-value="{{ level }}"
                 data-subject-parent-value="{{ comment.parent ? comment.parent.id : '' }}"
                 data-action="notifications:Notification@window->subject#notification">
             <header>
+                {% if withContext is defined and withContext %}
+                    <div class="mb-1">
+                        {% include "post/comment/context.html.twig" %}
+                        <div class="hrule"></div>
+                    </div>
+                {% endif %}
+
                 {% if comment.isAdult %}<span class="badge danger">18+</span>{% endif %}
                 {{ component('user_inline', {user: comment.user, showAvatar: false, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) }}
 
