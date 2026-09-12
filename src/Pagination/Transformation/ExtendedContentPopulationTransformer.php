@@ -11,7 +11,6 @@ use App\Entity\User;
 use App\Repository\Criteria;
 use App\Repository\UserRepository;
 use App\Utils\SqlHelpers;
-use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class ExtendedContentPopulationTransformer extends ContentPopulationTransformer
@@ -44,32 +43,85 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
         \assert(\count($rows) === \count($items));
 
         $hasUser = null !== $this->loggedInUser;
+
+        if ($hasUser) {
+            $this->extendItemsBoostList($rows, $items);
+        }
+    }
+
+    /**
+     * @param array<Entry|EntryComment|Post|PostComment> $items
+     */
+    private function extendItemsBoostList(array $rows, array $items): void
+    {
+        $boostedEntries = [];
+        $boostedPosts = [];
+        $boostedEntryComments = [];
+        $boostedPostComments = [];
+
         foreach ($items as $i => $item) {
             $row = $rows[$i];
             \assert($row['id'] === $item->getId());
 
-            if ($hasUser && isset($row['was_boosted']) && true === $row['was_boosted']) {
-                $this->extendItemBoostList($item);
+            if (isset($row['was_boosted']) && true === $row['was_boosted']) {
+                match (true) {
+                    $item instanceof Entry => $boostedEntries[$item->getId()] = $item,
+                    $item instanceof Post => $boostedPosts[$item->getId()] = $item,
+                    $item instanceof EntryComment => $boostedEntryComments[$item->getId()] = $item,
+                    $item instanceof PostComment => $boostedPostComments[$item->getId()] = $item,
+                    default => throw new \LogicException('unreachable'),
+                };
+            }
+        }
+
+        $userCache = [];
+        if (\count($boostedEntries) > 0) {
+            $boostInfos = $this->queryBoostInfo(array_keys($boostedEntries), 'Entry', $userCache);
+            foreach ($boostInfos as $id => $boosts) {
+                $boostedEntries[$id]->extendedContentProperties['boostUsers'] = $boosts;
+            }
+        }
+        if (\count($boostedPosts) > 0) {
+            $boostInfos = $this->queryBoostInfo(array_keys($boostedPosts), 'Post', $userCache);
+            foreach ($boostInfos as $id => $boosts) {
+                $boostedPosts[$id]->extendedContentProperties['boostUsers'] = $boosts;
+            }
+        }
+        if (\count($boostedEntryComments) > 0) {
+            $boostInfos = $this->queryBoostInfo(array_keys($boostedEntryComments), 'EntryComment', $userCache);
+            foreach ($boostInfos as $id => $boosts) {
+                $boostedEntryComments[$id]->extendedContentProperties['boostUsers'] = $boosts;
+            }
+        }
+        if (\count($boostedPostComments) > 0) {
+            $boostInfos = $this->queryBoostInfo(array_keys($boostedPostComments), 'PostComment', $userCache);
+            foreach ($boostInfos as $id => $boosts) {
+                $boostedPostComments[$id]->extendedContentProperties['boostUsers'] = $boosts;
             }
         }
     }
 
-    private function extendItemBoostList(Entry|EntryComment|Post|PostComment $item): void
+    /**
+     * @param array<int, User> $userCache
+     *
+     * @return array [contentId => [user => User, time => DateTimeImmutable][]]
+     */
+    private function queryBoostInfo(array $contentIds, string $contentType, array $userCache): array
     {
-        switch (\get_class($item)) {
-            case Entry::class:
+        switch ($contentType) {
+            case 'Entry':
                 $vType = 'entry';
                 $fkType = 'entry';
                 break;
-            case Post::class:
+            case 'Post':
                 $vType = 'post';
                 $fkType = 'post';
                 break;
-            case EntryComment::class:
+            case 'EntryComment':
                 $vType = 'entry_comment';
                 $fkType = 'comment';
                 break;
-            case PostComment::class:
+            case 'PostComment':
                 $vType = 'post_comment';
                 $fkType = 'comment';
                 break;
@@ -78,17 +130,25 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
         }
 
         if (null === $this->criteria->cachedUserFollows) {
-            $sql = 'SELECT v.user_id, v.created_at FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE v.%fk_type%_id = :itemId AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1';
+            $sql = 'SELECT v.%fk_type%_id AS item_id, v.user_id, v.created_at FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE v.%fk_type%_id IN (:itemIds) AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1';
             $sql = str_replace('%v_type%', $vType, str_replace('%fk_type%', $fkType, $sql));
 
-            $boostsQuery = $this->entityManager->getConnection()->prepare($sql);
-            $boostsQuery->bindValue('itemId', $item->getId(), ParameterType::INTEGER);
-            $boostsQuery->bindValue('loggedInUser', $this->loggedInUser->getId(), ParameterType::INTEGER);
-        } else {
-            $sql = 'SELECT v.user_id, v.created_at FROM %v_type%_vote v WHERE :itemId = v.%fk_type%_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1';
-            $sql = str_replace('%v_type%', $vType, str_replace('%fk_type%', $fkType, $sql));
             $parameters = [
-                'itemId' => $item->getId(),
+                'itemIds' => $contentIds,
+                'loggedInUser' => $this->loggedInUser->getId(),
+            ];
+            $rewritten = SqlHelpers::rewriteArrayParameters($parameters, $sql);
+
+            $boostsQuery = $this->entityManager->getConnection()->prepare($rewritten['sql']);
+            foreach ($rewritten['parameters'] as $key => $value) {
+                $boostsQuery->bindValue($key, $value, SqlHelpers::getSqlType($value));
+            }
+        } else {
+            $sql = 'SELECT v.%fk_type%_id AS item_id, v.user_id, v.created_at FROM %v_type%_vote v WHERE v.%fk_type%_id IN (:itemIds) AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1';
+            $sql = str_replace('%v_type%', $vType, str_replace('%fk_type%', $fkType, $sql));
+
+            $parameters = [
+                'itemIds' => $contentIds,
                 'loggedInUser' => $this->loggedInUser->getId(),
                 'cachedUserFollows' => $this->criteria->cachedUserFollows,
             ];
@@ -100,16 +160,45 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
             }
         }
 
-        $boostInfo = $boostsQuery->executeQuery()->fetchAllAssociative();
-        $boostUsers = $this->userRepository->findBy(['id' => array_map(fn ($row) => $row['user_id'], $boostInfo)]);
+        $boostsInfo = $boostsQuery->executeQuery()->fetchAllAssociative();
+        $boostExtensions = [];
+        $usersToFetch = [];
+        $itemsToFix = [];
+        foreach ($boostsInfo as $row) {
+            $user = $row['user_id'];
+            if (isset($userCache[$user])) {
+                $user = $userCache[$user];
+                $fetchUser = false;
+            } else {
+                $usersToFetch[] = $user;
+                $fetchUser = true;
+            }
 
-        $boostExtension = [];
-        foreach ($boostUsers as $boostUser) {
-            $boostTime = array_find($boostInfo, fn ($row) => $row['user_id'] === $boostUser->getId())['created_at'];
-            $boostExtension[] = ['user' => $boostUser, 'time' => new \DateTimeImmutable($boostTime)];
+            $item = ['user' => $user, 'time' => new \DateTimeImmutable($row['created_at'])];
+            $boostExtensions[$row['item_id']][] = &$item;
+
+            if ($fetchUser) {
+                $itemsToFix[] = &$item;
+            }
         }
-        usort($boostExtension, fn ($a, $b) => $a['time'] <=> $b['time']);
 
-        $item->extendedContentProperties['boostUsers'] = $boostExtension;
+        if (\count($usersToFetch) > 0) {
+            $users = $this->userRepository->findBy(['id' => $usersToFetch]);
+            foreach ($users as $user) {
+                $userCache[$user->getId()] = $user;
+
+                foreach ($itemsToFix as $item) {
+                    if ($item['user'] === $user->getId()) {
+                        $item['user'] = $user;
+                    }
+                }
+            }
+        }
+
+        foreach ($boostExtensions as $boosts) {
+            usort($boosts, fn ($a, $b) => $a['time'] <=> $b['time']);
+        }
+
+        return $boostExtensions;
     }
 }

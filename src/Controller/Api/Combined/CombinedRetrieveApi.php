@@ -831,6 +831,7 @@ class CombinedRetrieveApi extends BaseApi
     private function createContentResponse(Entry|EntryComment|Post|PostComment $item): ContentResponseDto
     {
         $this->handlePrivateContent($item);
+
         $boostedBy = null;
         if (isset($item->extendedContentProperties['boostUsers'])) {
             $boostedBy = array_map(
