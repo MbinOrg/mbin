@@ -50,6 +50,8 @@ class SettingsType extends AbstractType
             ->add('KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', CheckboxType::class, ['required' => false])
             ->add('MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY', CheckboxType::class, ['required' => false])
             ->add('MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY', CheckboxType::class, ['required' => false])
+            ->add('MBIN_FEED_ALLOW_ENTRY_COMMENTS', CheckboxType::class, ['required' => false])
+            ->add('MBIN_FEED_ALLOW_POST_COMMENTS', CheckboxType::class, ['required' => false])
             ->add('MBIN_RESTRICT_MAGAZINE_CREATION', CheckboxType::class, ['required' => false])
             ->add('MBIN_SSO_SHOW_FIRST', CheckboxType::class, ['required' => false])
             ->add('MBIN_DOWNVOTES_MODE', ChoiceType::class, [

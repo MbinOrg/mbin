@@ -14,10 +14,10 @@ use App\Entity\User;
 use App\Utils\SqlHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ContentPopulationTransformer implements ResultTransformer
+readonly class ContentPopulationTransformer implements ResultTransformer
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        protected EntityManagerInterface $entityManager,
     ) {
     }
 

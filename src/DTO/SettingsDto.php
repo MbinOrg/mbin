@@ -38,6 +38,8 @@ class SettingsDto implements \JsonSerializable
         public string $MBIN_DOWNVOTES_MODE,
         public bool $MBIN_NEW_USERS_NEED_APPROVAL,
         public bool $MBIN_USE_FEDERATION_ALLOW_LIST,
+        public bool $MBIN_FEED_ALLOW_ENTRY_COMMENTS,
+        public bool $MBIN_FEED_ALLOW_POST_COMMENTS,
     ) {
     }
 
@@ -71,6 +73,8 @@ class SettingsDto implements \JsonSerializable
         $dto->MBIN_DOWNVOTES_MODE = $this->MBIN_DOWNVOTES_MODE ?? $dto->MBIN_DOWNVOTES_MODE;
         $dto->MBIN_NEW_USERS_NEED_APPROVAL = $this->MBIN_NEW_USERS_NEED_APPROVAL ?? $dto->MBIN_NEW_USERS_NEED_APPROVAL;
         $dto->MBIN_USE_FEDERATION_ALLOW_LIST = $this->MBIN_USE_FEDERATION_ALLOW_LIST ?? $dto->MBIN_USE_FEDERATION_ALLOW_LIST;
+        $dto->MBIN_FEED_ALLOW_ENTRY_COMMENTS = $this->MBIN_FEED_ALLOW_ENTRY_COMMENTS ?? $dto->MBIN_FEED_ALLOW_ENTRY_COMMENTS;
+        $dto->MBIN_FEED_ALLOW_POST_COMMENTS = $this->MBIN_FEED_ALLOW_POST_COMMENTS ?? $dto->MBIN_FEED_ALLOW_POST_COMMENTS;
 
         return $dto;
     }
@@ -106,6 +110,8 @@ class SettingsDto implements \JsonSerializable
             'MBIN_DOWNVOTES_MODE' => $this->MBIN_DOWNVOTES_MODE,
             'MBIN_NEW_USERS_NEED_APPROVAL' => $this->MBIN_NEW_USERS_NEED_APPROVAL,
             'MBIN_USE_FEDERATION_ALLOW_LIST' => $this->MBIN_USE_FEDERATION_ALLOW_LIST,
+            'MBIN_FEED_ALLOW_ENTRY_COMMENTS' => $this->MBIN_FEED_ALLOW_ENTRY_COMMENTS,
+            'MBIN_FEED_ALLOW_POST_COMMENTS' => $this->MBIN_FEED_ALLOW_POST_COMMENTS,
         ];
     }
 }

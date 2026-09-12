@@ -156,6 +156,9 @@
                         </li>
                     </menu>
                 {% endif %}
+
+                {{ include('widget/boosted_by.html.twig', {subject: comment}) }}
+
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
