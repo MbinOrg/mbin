@@ -137,7 +137,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     {
         $this->comments->get(-1);
 
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
 
@@ -162,7 +162,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function getBestComments(?User $user = null): Collection
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->orderBy(['upVotes' => Order::Descending, 'createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
@@ -194,7 +194,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function getLastComments(?User $user = null): Collection
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->orderBy(['createdAt' => Order::Ascending]);
 
         $comments = $this->comments->matching($criteria);
@@ -220,7 +220,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function updateCounts(): self
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE));
 
         $this->commentCount = $this->comments->matching($criteria)->count();
@@ -346,7 +346,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;

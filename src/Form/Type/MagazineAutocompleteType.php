@@ -54,7 +54,7 @@ class MagazineAutocompleteType extends AbstractType
             },
             'attr' => [
                 'data-controller' => 'tomselect-clear-on-load',
-            ]
+            ],
         ]);
     }
 
