@@ -149,9 +149,10 @@ class Embed
         }
 
         $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
+        $usesInternalErrors = libxml_use_internal_errors(true);
         $dom->loadHTML('<?xml encoding="UTF-8">'.$html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
+        libxml_use_internal_errors($usesInternalErrors);
 
         $videoElements = $dom->getElementsByTagName('video');
         $iframeElements = $dom->getElementsByTagName('iframe');
@@ -194,7 +195,7 @@ class Embed
                 $iframeSrc
                 && (
                     VideoManager::isVideoUrl($iframeSrc)
-                    || VideoManager::isUnsupportedStreamUrl($iframeSrc)
+                    || VideoManager::isStreamManifestUrl($iframeSrc)
                 )
             ) {
                 return null;
