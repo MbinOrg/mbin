@@ -70,9 +70,9 @@ class CombinedRetrieveApiTest extends WebTestCase
         foreach ($jsonData['items'] as $item) {
             foreach ($boostedContentIds as $type => $ids) {
                 foreach ($ids as $id) {
-                    $idKey = str_ends_with($type, 'Comment') ? 'commentId' : $type . 'Id';
+                    $idKey = str_ends_with($type, 'Comment') ? 'commentId' : $type.'Id';
                     if (($item[$type][$idKey] ?? null) === $id) {
-                        if($type === 'post' && $item['post']['postId'] === $postBoosted2->getId()) {
+                        if ('post' === $type && $item['post']['postId'] === $postBoosted2->getId()) {
                             self::assertCount(2, $item['boostedBy']);
                             self::assertSame($userFollowing1->getId(), $item['boostedBy'][0]['user']['userId']);
                             self::assertSame($userFollowing1->username, $item['boostedBy'][0]['user']['username']);

@@ -106,7 +106,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
      *
      * @return array [contentId => [user => User, time => DateTimeImmutable][]]
      */
-    private function queryBoostInfo(array $contentIds, string $contentType, array& $userCache): array
+    private function queryBoostInfo(array $contentIds, string $contentType, array &$userCache): array
     {
         switch ($contentType) {
             case 'Entry':
@@ -178,7 +178,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
             $boostExtensions[$row['item_id']][] = $item;
 
             if ($fetchUser) {
-                $idx = count($boostExtensions[$row['item_id']]) - 1;
+                $idx = \count($boostExtensions[$row['item_id']]) - 1;
                 $itemsToFix[] = &$boostExtensions[$row['item_id']][$idx];
             }
         }
