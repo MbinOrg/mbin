@@ -12,7 +12,6 @@ use App\Message\DeleteImageV2Message;
 use App\Message\DeleteUserMessage;
 use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\DeleteWrapper;
-use App\Service\ImageManagerInterface;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,7 +25,6 @@ class DeleteUserHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly ImageManagerInterface $imageManager,
         private readonly KernelInterface $kernel,
         private readonly UserManager $userManager,
         private readonly DeleteWrapper $deleteWrapper,

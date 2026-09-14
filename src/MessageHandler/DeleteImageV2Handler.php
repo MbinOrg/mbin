@@ -83,6 +83,10 @@ readonly class DeleteImageV2Handler
         });
 
         foreach ($filesToDelete as $path) {
+            if (null === $path) {
+                continue;
+            }
+
             try {
                 $this->imageManager->remove($path);
             } catch (\Exception $e) {
