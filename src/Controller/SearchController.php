@@ -91,6 +91,7 @@ class SearchController extends AbstractController
 
         foreach ($result['errors'] as $error) {
             /** @var \Throwable $error */
+            $this->logger->warning('SearchController: exception occurred while searching with ActivityPub: {e}', ['e' => $error]);
             $this->addFlash('error', $error->getMessage());
         }
 

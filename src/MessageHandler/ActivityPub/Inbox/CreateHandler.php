@@ -29,6 +29,7 @@ use App\Repository\ApActivityRepository;
 use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\MessageManager;
+use App\Utils\JsonldUtils;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -134,7 +135,7 @@ class CreateHandler extends MbinMessageHandler
     private function handleChain(array $object, bool $stickyIt, ?array $fullCreatePayload): void
     {
         if (isset($object['inReplyTo']) && $object['inReplyTo']) {
-            $existed = $this->repository->findByObjectId($object['inReplyTo']);
+            $existed = $this->repository->findByObjectId(JsonldUtils::getApId($object['inReplyTo']));
             if (!$existed) {
                 $this->bus->dispatch(new ChainActivityMessage([$object]));
 

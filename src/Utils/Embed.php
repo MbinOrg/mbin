@@ -149,11 +149,13 @@ class Embed
         }
 
         $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
+        $usesInternalErrors = libxml_use_internal_errors(true);
         $dom->loadHTML('<?xml encoding="UTF-8">'.$html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
+        libxml_use_internal_errors($usesInternalErrors);
 
         $videoElements = $dom->getElementsByTagName('video');
+        $iframeElements = $dom->getElementsByTagName('iframe');
 
         foreach ($videoElements as $videoElement) {
             $sourceUrl = $videoElement->getAttribute('src');
@@ -182,6 +184,20 @@ class Embed
             }
 
             if (!$isSupported) {
+                return null;
+            }
+        }
+
+        foreach ($iframeElements as $iframeElement) {
+            $iframeSrc = $iframeElement->getAttribute('src');
+
+            if (
+                $iframeSrc
+                && (
+                    VideoManager::isVideoUrl($iframeSrc)
+                    || VideoManager::isStreamManifestUrl($iframeSrc)
+                )
+            ) {
                 return null;
             }
         }
