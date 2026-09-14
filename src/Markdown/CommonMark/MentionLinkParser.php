@@ -56,7 +56,7 @@ class MentionLinkParser implements InlineParserInterface
                     $data->apPublicUrl,
                     '@'.$username,
                     '@'.$data->apId,
-                    '@'.$data->apId,
+                    $data->username,
                     MentionType::RemoteUser,
                 )
             );
