@@ -106,7 +106,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
      *
      * @return array [contentId => [user => User, time => DateTimeImmutable][]]
      */
-    private function queryBoostInfo(array $contentIds, string $contentType, array $userCache): array
+    private function queryBoostInfo(array $contentIds, string $contentType, array& $userCache): array
     {
         switch ($contentType) {
             case 'Entry':
@@ -175,10 +175,11 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
             }
 
             $item = ['user' => $user, 'time' => new \DateTimeImmutable($row['created_at'])];
-            $boostExtensions[$row['item_id']][] = &$item;
+            $boostExtensions[$row['item_id']][] = $item;
 
             if ($fetchUser) {
-                $itemsToFix[] = &$item;
+                $idx = count($boostExtensions[$row['item_id']]) - 1;
+                $itemsToFix[] = &$boostExtensions[$row['item_id']][$idx];
             }
         }
 
@@ -187,7 +188,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
             foreach ($users as $user) {
                 $userCache[$user->getId()] = $user;
 
-                foreach ($itemsToFix as $item) {
+                foreach ($itemsToFix as &$item) {
                     if ($item['user'] === $user->getId()) {
                         $item['user'] = $user;
                     }
@@ -195,7 +196,7 @@ readonly class ExtendedContentPopulationTransformer extends ContentPopulationTra
             }
         }
 
-        foreach ($boostExtensions as $boosts) {
+        foreach ($boostExtensions as &$boosts) {
             usort($boosts, fn ($a, $b) => $a['time'] <=> $b['time']);
         }
 
