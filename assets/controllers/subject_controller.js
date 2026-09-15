@@ -1,7 +1,8 @@
-import { fetch, ok } from '../utils/http';
-import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '../utils/mbin';
+import { fetch, ok } from '@app/utils/http';
+import getIntIdFromElement, { getDepth, getLevel, getTypeFromNotification } from '@app/utils/mbin';
 import { Controller } from '@hotwired/stimulus';
-import router from '../utils/routing';
+import { defaultPopover } from '@app/utils/popover.js';
+import router from '@app/utils/routing';
 import { useIntersection } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
@@ -66,7 +67,7 @@ export default class extends Controller {
             window.location.href = event.target.href;
         } finally {
             this.loadingValue = false;
-            popover.togglePopover(false);
+            defaultPopover().togglePopover(false);
         }
     }
 

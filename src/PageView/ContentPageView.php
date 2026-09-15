@@ -23,7 +23,7 @@ class ContentPageView extends Criteria
         $defaultRoute = $routes['hot'];
         $user = $this->security->getUser();
         if ($user instanceof User) {
-            $defaultRoute = $user->frontDefaultSort;
+            $defaultRoute = $user->frontDefaultSort->value;
         }
 
         return 'default' !== $value ? $routes[$value] : $defaultRoute;

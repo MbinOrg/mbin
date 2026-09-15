@@ -40,8 +40,8 @@ class NotificationSettings
     #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
     public ?User $targetUser = null;
 
-    #[Column(type: 'enumNotificationStatus', nullable: false, options: ['default' => ENotificationStatus::Default->value])]
-    private string $notificationStatus = ENotificationStatus::Default->value;
+    #[Column(type: 'enum', enumType: ENotificationStatus::class, nullable: false, options: ['default' => ENotificationStatus::Default])]
+    private ENotificationStatus $notificationStatus = ENotificationStatus::Default;
 
     public function __construct(User $user, Entry|Post|User|Magazine $target, ENotificationStatus $status)
     {
@@ -60,11 +60,11 @@ class NotificationSettings
 
     public function setStatus(ENotificationStatus $status): void
     {
-        $this->notificationStatus = $status->value;
+        $this->notificationStatus = $status;
     }
 
     public function getStatus(): ENotificationStatus
     {
-        return ENotificationStatus::getFromString($this->notificationStatus);
+        return $this->notificationStatus;
     }
 }

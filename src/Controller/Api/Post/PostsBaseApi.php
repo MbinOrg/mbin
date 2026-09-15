@@ -11,6 +11,7 @@ use App\DTO\PostDto;
 use App\DTO\PostRequestDto;
 use App\Entity\PostComment;
 use App\PageView\PostCommentPageView;
+use App\Utils\Polyfills;
 
 class PostsBaseApi extends BaseApi
 {
@@ -43,9 +44,9 @@ class PostsBaseApi extends BaseApi
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostDto();
         $deserialized = new PostRequestDto();
-        $deserialized->body = $request->get('body');
-        $deserialized->lang = $request->get('lang');
-        $deserialized->isAdult = filter_var($request->get('isAdult'), FILTER_VALIDATE_BOOL);
+        $deserialized->body = Polyfills::requestParam($request, 'body');
+        $deserialized->lang = Polyfills::requestParam($request, 'lang');
+        $deserialized->isAdult = filter_var(Polyfills::requestParam($request, 'isAdult'), FILTER_VALIDATE_BOOL);
 
         $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
@@ -88,8 +89,8 @@ class PostsBaseApi extends BaseApi
         $request = $this->request->getCurrentRequest();
         $dto = $dto ? $dto : new PostCommentDto();
         $deserialized = new PostCommentRequestDto();
-        $deserialized->body = $request->get('body');
-        $deserialized->lang = $request->get('lang');
+        $deserialized->body = Polyfills::requestParam($request, 'body');
+        $deserialized->lang = Polyfills::requestParam($request, 'lang');
 
         $dto = $deserialized->mergeIntoDto($dto, $this->settingsManager);
 
@@ -111,7 +112,7 @@ class PostsBaseApi extends BaseApi
         }
 
         if (null === $depth) {
-            $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
+            $depth = self::constrainDepth(Polyfills::requestParam($this->request->getCurrentRequest(), 'd', self::DEPTH));
         }
 
         $canModerate = null;

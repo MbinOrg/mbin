@@ -227,7 +227,7 @@ abstract class Criteria
         return $routes[$value] ?? $routes['hot'];
     }
 
-    // resolveTime() converts our internal values into ones for human presenation
+    // resolveTime() converts our internal values into ones for human presentation
     // $reverse = true indicates converting back, from human values to internal ones
 
     // This whole approach is a mess; this translation layer is temporary until
@@ -258,7 +258,7 @@ abstract class Criteria
 
             return $reversedRoutes[$value] ?? '∞';
         } else {
-            return $routes[$value] ?? null;
+            return $routes[$value ?? ''] ?? null;
         }
     }
 

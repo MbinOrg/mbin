@@ -1,6 +1,6 @@
-import { fetch, ok } from '../utils/http';
+import { fetch, ok } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
-import router from '../utils/routing';
+import router from '@app/utils/routing';
 import { useThrottle } from 'stimulus-use';
 
 /* stimulusFetch: 'lazy' */
