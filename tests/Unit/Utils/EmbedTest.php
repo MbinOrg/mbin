@@ -53,13 +53,59 @@ class EmbedTest extends TestCase
         self::assertNull($method->invoke($embed, $html));
     }
 
+    public function testUnsupportedIframeStreamUrlIsRejected(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://prod.vodvideo.cbsnews.com/cbsnews/vr/hls/2024/01/31/2305225795952/2643805_hls/master.m3u8" allowfullscreen></iframe>';
+
+        self::assertNull($method->invoke($embed, $html));
+    }
+
+    public function testIframeVideoUrlIsRejected(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://example.com/video.mp4" allowfullscreen></iframe>';
+
+        self::assertNull($method->invoke($embed, $html));
+    }
+
+    public function testSupportedIframeEmbedUrlIsKept(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+
+        $html = '<iframe src="https://www.youtube.com/embed/abc123" allowfullscreen></iframe>';
+
+        self::assertSame($html, $method->invoke($embed, $html));
+    }
+
+    public function testCleaningEmbedRestoresLibxmlErrorHandling(): void
+    {
+        $embed = $this->createEmbed();
+        $method = new \ReflectionMethod(Embed::class, 'cleanIframe');
+        $previousSetting = libxml_use_internal_errors(false);
+
+        try {
+            $method->invoke($embed, '<iframe src="https://www.youtube.com/embed/abc123"></iframe>');
+
+            self::assertFalse(libxml_use_internal_errors());
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousSetting);
+        }
+    }
+
     private function createEmbed(): Embed
     {
         return new Embed(
-            $this->createMock(CacheInterface::class),
-            $this->createMock(SettingsManager::class),
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(EventDispatcherInterface::class),
+            $this->createStub(CacheInterface::class),
+            $this->createStub(SettingsManager::class),
+            $this->createStub(LoggerInterface::class),
+            $this->createStub(EventDispatcherInterface::class),
         );
     }
 }
