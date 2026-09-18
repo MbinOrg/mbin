@@ -122,7 +122,11 @@ class DeleteUserHandler extends MbinMessageHandler
 
         // dispatch at end or else reference-check would keep images
         // because of the reference check this call can be safely placed outside the try{}
-        $this->bus->dispatch(new DeleteImageV2Message($deleteImagesPayload));
+        try {
+            $this->bus->dispatch(new DeleteImageV2Message($deleteImagesPayload));
+        } catch (\Exception $e) {
+            $this->logger->error('DeleteUserHandler: error while dispatching DeleteImageV2Message: {t} {m}', ['t' => get_class($e), 'm' => $e->getMessage()]);
+        }
     }
 
     private function sendDeleteMessages(array $targetInboxes, User $deletedUser): void
