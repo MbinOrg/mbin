@@ -13,6 +13,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
 use App\Repository\Criteria as MbinCriteria;
@@ -48,6 +49,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'postComments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]

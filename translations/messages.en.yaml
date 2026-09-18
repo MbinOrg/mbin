@@ -249,6 +249,7 @@ solarized_auto: Solarized (Auto Detect)
 font_size: Font size
 size: Size
 boosts: Boosts
+boosted_by: Boosted by
 show_users_avatars: 'Show users’ avatars'
 yes: Yes
 no: No
@@ -1115,6 +1116,9 @@ combined: Combined
 sidebar_sections_random_local_only: Restrict "Random Threads/Posts" sidebar sections to local only
 sidebar_sections_users_local_only: Restrict "Active people" sidebar section to local only
 random_local_only_performance_warning: Enabling "Random local only" may cause SQL performance impact.
+feed_allow_entry_comments: Include comments of threads in Combined feed
+feed_allow_post_comments: Include comments of posts in Combined feed
+feed_allow_comments_hint: (might result in slow loading)
 discoverable: Discoverable
 user_discoverable_help: If this is enabled, your profile, threads, microblogs and comments can be found
   through search and the random panels. Your profile might also appear in the active user panel and on the people page.
