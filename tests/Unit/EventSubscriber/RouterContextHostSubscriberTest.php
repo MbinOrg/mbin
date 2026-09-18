@@ -9,7 +9,10 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
 class RouterContextHostSubscriberTest extends TestCase
@@ -17,34 +20,40 @@ class RouterContextHostSubscriberTest extends TestCase
     private function makeEvent(string $requestHost): RequestEvent
     {
         $request = Request::create('http://'.$requestHost.'/reset-password');
-        $kernel = $this->createMock(HttpKernelInterface::class);
+        $kernel = $this->createStub(HttpKernelInterface::class);
 
         return new RequestEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
     }
 
     private function makeSubscriber(RequestContext $context, string $kbinDomain): RouterContextHostSubscriber
     {
-        $router = $this->createMock(RouterInterface::class);
+        $router = $this->createStub(RouterInterface::class);
         $router->method('getContext')->willReturn($context);
 
         return new RouterContextHostSubscriber($router, $kbinDomain);
     }
 
-    public function testPoisonedHostIsOverriddenByConfiguredDomain(): void
+    private function generateAbsoluteUrl(RequestContext $context): string
     {
-        // Simulate the state after RouterListener has copied the attacker Host
-        // into the router context.
-        $context = new RequestContext();
-        $context->setHost('attacker.evil.example');
+        $routes = new RouteCollection();
+        $routes->add('reset', new Route('/reset/{token}'));
 
-        $subscriber = $this->makeSubscriber($context, 'mbin.victim.example');
+        return (new UrlGenerator($routes, $context))->generate(
+            'reset',
+            ['token' => 'token'],
+            UrlGenerator::ABSOLUTE_URL,
+        );
+    }
+
+    public function testRequestUrlIsReplacedByConfiguredDomain(): void
+    {
+        $context = new RequestContext();
+        $context->fromRequest(Request::create('http://attacker.evil.example:8443/reset-password'));
+
+        $subscriber = $this->makeSubscriber($context, 'mbin.example');
         $subscriber->onKernelRequest($this->makeEvent('attacker.evil.example'));
 
-        self::assertSame(
-            'mbin.victim.example',
-            $context->getHost(),
-            'Router context host must be pinned to KBIN_DOMAIN, not the request Host.'
-        );
+        self::assertSame('https://mbin.example/reset/token', $this->generateAbsoluteUrl($context));
     }
 
     public function testLegitimateHostRemainsConfiguredDomain(): void
@@ -58,17 +67,26 @@ class RouterContextHostSubscriberTest extends TestCase
         self::assertSame('mbin.victim.example', $context->getHost());
     }
 
-    public function testDomainWithSchemePinsHostAndScheme(): void
+    public function testConfiguredDomainWithPortIsPreserved(): void
     {
         $context = new RequestContext();
-        $context->setHost('attacker.evil.example');
-        $context->setScheme('http');
+        $context->fromRequest(Request::create('https://attacker.evil.example:9443/reset-password'));
 
-        $subscriber = $this->makeSubscriber($context, 'https://mbin.victim.example');
+        $subscriber = $this->makeSubscriber($context, 'localhost:8000');
         $subscriber->onKernelRequest($this->makeEvent('attacker.evil.example'));
 
-        self::assertSame('mbin.victim.example', $context->getHost());
-        self::assertSame('https', $context->getScheme());
+        self::assertSame('https://localhost:8000/reset/token', $this->generateAbsoluteUrl($context));
+    }
+
+    public function testDomainWithSchemeAndPortIsPreserved(): void
+    {
+        $context = new RequestContext();
+        $context->fromRequest(Request::create('https://attacker.evil.example:9443/reset-password'));
+
+        $subscriber = $this->makeSubscriber($context, 'http://mbin.example:8080');
+        $subscriber->onKernelRequest($this->makeEvent('attacker.evil.example'));
+
+        self::assertSame('http://mbin.example:8080/reset/token', $this->generateAbsoluteUrl($context));
     }
 
     public function testEmptyDomainLeavesContextUntouched(): void
@@ -88,11 +106,11 @@ class RouterContextHostSubscriberTest extends TestCase
         $context = new RequestContext();
         $context->setHost('attacker.evil.example');
 
-        $router = $this->createMock(RouterInterface::class);
+        $router = $this->createStub(RouterInterface::class);
         $router->method('getContext')->willReturn($context);
         $subscriber = new RouterContextHostSubscriber($router, 'mbin.victim.example');
 
-        $kernel = $this->createMock(HttpKernelInterface::class);
+        $kernel = $this->createStub(HttpKernelInterface::class);
         $request = Request::create('http://attacker.evil.example/reset-password');
         $subRequest = new RequestEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST);
 

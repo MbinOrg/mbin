@@ -10,18 +10,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Pins the router request context host to the instance's configured domain.
- *
- * Symfony's RouterListener overwrites the RequestContext host with the value
- * of the incoming request Host header on every request. Absolute URLs built
- * with the Twig url() function or the UrlGenerator (for example the emailed
- * password-reset link) therefore inherit whatever Host the client sent. With
- * an empty framework.trusted_hosts (the default), that host is attacker
- * controllable, allowing password-reset link poisoning.
- *
- * Running after RouterListener and re-setting the context host to KBIN_DOMAIN
- * makes every generated absolute URL use the configured canonical host,
- * independent of the request Host header and of any reverse-proxy setup.
+ * Restores the configured canonical URL after the router processes a request.
  */
 class RouterContextHostSubscriber implements EventSubscriberInterface
 {
@@ -41,21 +30,23 @@ class RouterContextHostSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $canonicalUrl = str_contains($this->kbinDomain, '://')
+            ? $this->kbinDomain
+            : 'https://'.$this->kbinDomain;
+        $parts = parse_url($canonicalUrl);
+
+        if (false === $parts || !isset($parts['host'])) {
+            return;
+        }
+
+        $scheme = $parts['scheme'] ?? 'https';
+        $port = $parts['port'] ?? null;
         $context = $this->router->getContext();
-        $host = $this->kbinDomain;
-        $scheme = null;
 
-        if (str_contains($this->kbinDomain, '://')) {
-            $parts = parse_url($this->kbinDomain);
-            $host = $parts['host'] ?? $this->kbinDomain;
-            $scheme = $parts['scheme'] ?? null;
-        }
-
-        $context->setHost($host);
-
-        if (null !== $scheme) {
-            $context->setScheme($scheme);
-        }
+        $context->setHost($parts['host']);
+        $context->setScheme($scheme);
+        $context->setHttpPort('http' === $scheme && null !== $port ? $port : 80);
+        $context->setHttpsPort('https' === $scheme && null !== $port ? $port : 443);
     }
 
     public static function getSubscribedEvents(): array
