@@ -5,7 +5,6 @@ namespace App\Controller\Feed;
 
 use App\Controller\AbstractController;
 use App\Service\FeedManager;
-use DateTimeZone;
 use FeedIo\Formatter\XmlFormatter;
 use FeedIo\FormatterInterface;
 use FeedIo\Rule\DateTimeBuilder;
