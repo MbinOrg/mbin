@@ -125,7 +125,7 @@ class DeleteUserHandler extends MbinMessageHandler
         try {
             $this->bus->dispatch(new DeleteImageV2Message($deleteImagesPayload));
         } catch (\Exception $e) {
-            $this->logger->error('DeleteUserHandler: error while dispatching DeleteImageV2Message: {t} {m}', ['t' => get_class($e), 'm' => $e->getMessage()]);
+            $this->logger->error('DeleteUserHandler: error while dispatching DeleteImageV2Message: {t} {m}', ['t' => \get_class($e), 'm' => $e->getMessage()]);
         }
     }
 
