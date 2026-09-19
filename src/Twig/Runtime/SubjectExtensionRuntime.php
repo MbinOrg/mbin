@@ -41,7 +41,7 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
             return false;
         }
 
-        // handle user blocks
+        // handle user blocks and private content of followees
         if (null !== $user) {
             if ($user->isBlocked($author)
                 || $user->isBlockedMagazine($content->getMagazine())
@@ -52,13 +52,14 @@ readonly class SubjectExtensionRuntime implements RuntimeExtensionInterface
             if ($user->hideAdult && $content->isAdult()) {
                 return false;
             }
+
+            if (($content->isPrivate() || $author->isPrivate()) && $user->isFollowing($author)) {
+                return true;
+            }
         }
 
         // show visible or allowed private content
         if ($content->isVisible() && $author->isVisible()) {
-            return true;
-        }
-        if (($content->isPrivate() || $author->isPrivate()) && $user->isFollowing($author)) {
             return true;
         }
 
