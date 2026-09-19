@@ -576,7 +576,7 @@ With the following content:
 
 ```ini
 [program:messenger]
-command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async outbox deliver inbox resolve receive failed --time-limit=3600
+command=php /var/www/mbin/bin/console messenger:consume scheduler_default old async async_slow outbox deliver inbox resolve receive failed --time-limit=3600
 #stdout_logfile=NONE
 #redirect_stderr=true
 user=www-data
