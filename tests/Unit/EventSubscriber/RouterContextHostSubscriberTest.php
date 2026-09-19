@@ -6,6 +6,7 @@ namespace App\Tests\Unit\EventSubscriber;
 
 use App\EventSubscriber\RouterContextHostSubscriber;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -25,12 +26,15 @@ class RouterContextHostSubscriberTest extends TestCase
         return new RequestEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
     }
 
-    private function makeSubscriber(RequestContext $context, string $kbinDomain): RouterContextHostSubscriber
-    {
+    private function makeSubscriber(
+        RequestContext $context,
+        string $kbinDomain,
+        ?LoggerInterface $logger = null,
+    ): RouterContextHostSubscriber {
         $router = $this->createStub(RouterInterface::class);
         $router->method('getContext')->willReturn($context);
 
-        return new RouterContextHostSubscriber($router, $kbinDomain);
+        return new RouterContextHostSubscriber($router, $logger ?? $this->createStub(LoggerInterface::class), $kbinDomain);
     }
 
     private function generateAbsoluteUrl(RequestContext $context): string
@@ -60,11 +64,33 @@ class RouterContextHostSubscriberTest extends TestCase
     {
         $context = new RequestContext();
         $context->setHost('mbin.victim.example');
+        $context->setScheme('https');
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('warning');
 
-        $subscriber = $this->makeSubscriber($context, 'mbin.victim.example');
+        $subscriber = $this->makeSubscriber($context, 'mbin.victim.example', $logger);
         $subscriber->onKernelRequest($this->makeEvent('mbin.victim.example'));
 
         self::assertSame('mbin.victim.example', $context->getHost());
+    }
+
+    public function testDivergingContextIsLoggedBeforeItIsReplaced(): void
+    {
+        $context = new RequestContext();
+        $context->fromRequest(Request::create('http://attacker.evil.example:8443/reset-password'));
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())
+            ->method('warning')
+            ->with(
+                'Router request context diverged from the configured domain',
+                self::callback(static fn (array $details): bool => 'attacker.evil.example' === $details['context_host']
+                    && 'mbin.example' === $details['configured_host']),
+            );
+
+        $subscriber = $this->makeSubscriber($context, 'mbin.example', $logger);
+        $subscriber->onKernelRequest($this->makeEvent('attacker.evil.example'));
+
+        self::assertSame('mbin.example', $context->getHost());
     }
 
     public function testConfiguredDomainWithPortIsPreserved(): void
@@ -108,7 +134,11 @@ class RouterContextHostSubscriberTest extends TestCase
 
         $router = $this->createStub(RouterInterface::class);
         $router->method('getContext')->willReturn($context);
-        $subscriber = new RouterContextHostSubscriber($router, 'mbin.victim.example');
+        $subscriber = new RouterContextHostSubscriber(
+            $router,
+            $this->createStub(LoggerInterface::class),
+            'mbin.victim.example',
+        );
 
         $kernel = $this->createStub(HttpKernelInterface::class);
         $request = Request::create('http://attacker.evil.example/reset-password');
