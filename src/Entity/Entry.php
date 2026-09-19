@@ -16,6 +16,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\RankingTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
@@ -56,6 +57,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     public const ENTRY_TYPE_ARTICLE = 'article';
     public const ENTRY_TYPE_LINK = 'link';

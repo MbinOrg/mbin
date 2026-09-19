@@ -141,11 +141,17 @@
                             </div>
                         </li>
                     </menu>
+
+                {% if post.extendedContentProperties.boostUsers is defined %}
+                    {{ include('widget/boosted_by.html.twig', {subject: post}) }}
+                {% else %}
                     {{ component('voters_inline', {
                         subject: post,
                         url: post_voters_url(post, 'up'),
                         'data-post-target': 'voters'
                     }) }}
+                {% endif %}
+
                 {% elseif(post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                     <menu>
                         <li>
