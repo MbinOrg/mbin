@@ -155,10 +155,16 @@
                         </li>
                     </menu>
                 {% endif %}
-                {{ component('voters_inline', {
-                    subject: comment,
-                    url: post_comment_voters_url(comment, 'up')
-                }) }}
+
+                {% if comment.extendedContentProperties.boostUsers is defined %}
+                    {{ include('widget/boosted_by.html.twig', {subject: comment}) }}
+                {% else %}
+                    {{ component('voters_inline', {
+                        subject: comment,
+                        url: post_comment_voters_url(comment, 'up')
+                    }) }}
+                {% endif %}
+
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>
