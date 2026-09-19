@@ -31,7 +31,7 @@ class MonitoringExecutionContextFilterDto
 
     public function toCriteria(): Criteria
     {
-        $criteria = new Criteria(accessRawFieldValues: true);
+        $criteria = new Criteria();
         if (null !== $this->executionType) {
             $criteria->andWhere(Criteria::expr()->eq('executionType', $this->executionType));
         }

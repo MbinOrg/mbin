@@ -43,7 +43,6 @@ final class VotersInlineComponent
                     new Criteria(
                         expression: Criteria::expr()->eq('choice', VotableInterface::VOTE_UP),
                         orderings: ['createdAt' => Order::Descending],
-                        accessRawFieldValues: true,
                     )
                 )->slice(0, 4);
 
