@@ -6,6 +6,7 @@ namespace App\EventSubscriber;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
@@ -40,15 +41,23 @@ readonly class RouterContextHostSubscriber implements EventSubscriberInterface
         // runs after the context host has been (re)built from the request.
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 16],
+            // RouterListener restores the parent request context at priority 0.
+            KernelEvents::FINISH_REQUEST => ['onKernelFinishRequest', -16],
         ];
     }
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$event->isMainRequest()) {
-            return;
-        }
+        $this->restoreCanonicalContext();
+    }
 
+    public function onKernelFinishRequest(FinishRequestEvent $event): void
+    {
+        $this->restoreCanonicalContext();
+    }
+
+    private function restoreCanonicalContext(): void
+    {
         if (null === $this->host) {
             return;
         }

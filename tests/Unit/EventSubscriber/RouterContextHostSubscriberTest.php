@@ -8,8 +8,10 @@ use App\EventSubscriber\RouterContextHostSubscriber;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -127,26 +129,34 @@ class RouterContextHostSubscriberTest extends TestCase
         self::assertSame('attacker.evil.example', $context->getHost());
     }
 
-    public function testSubProblemRequestIsIgnored(): void
+    public function testContextIsRestoredDuringAndAfterSubRequest(): void
     {
-        $context = new RequestContext();
-        $context->setHost('attacker.evil.example');
-
-        $router = $this->createStub(RouterInterface::class);
-        $router->method('getContext')->willReturn($context);
-        $subscriber = new RouterContextHostSubscriber(
-            $router,
-            $this->createStub(LoggerInterface::class),
-            'mbin.victim.example',
+        self::assertSame(
+            [
+                KernelEvents::REQUEST => ['onKernelRequest', 16],
+                KernelEvents::FINISH_REQUEST => ['onKernelFinishRequest', -16],
+            ],
+            RouterContextHostSubscriber::getSubscribedEvents(),
         );
 
+        $context = new RequestContext();
         $kernel = $this->createStub(HttpKernelInterface::class);
-        $request = Request::create('http://attacker.evil.example/reset-password');
-        $subRequest = new RequestEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST);
+        $mainRequest = Request::create('http://attacker.evil.example/reset-password');
+        $subRequest = Request::create('http://fragment.evil.example/_fragment');
+        $subscriber = $this->makeSubscriber($context, 'mbin.victim.example');
 
-        $subscriber->onKernelRequest($subRequest);
+        // Simulate RouterListener replacing the context for the sub-request.
+        $context->fromRequest($subRequest);
+        $subscriber->onKernelRequest(new RequestEvent($kernel, $subRequest, HttpKernelInterface::SUB_REQUEST));
 
-        // Sub-requests are ignored; only the main request pins the host.
-        self::assertSame('attacker.evil.example', $context->getHost());
+        self::assertSame('mbin.victim.example', $context->getHost());
+
+        // RouterListener restores the parent request context on kernel.finish_request.
+        $context->fromRequest($mainRequest);
+        $subscriber->onKernelFinishRequest(
+            new FinishRequestEvent($kernel, $subRequest, HttpKernelInterface::SUB_REQUEST),
+        );
+
+        self::assertSame('mbin.victim.example', $context->getHost());
     }
 }
