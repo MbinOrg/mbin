@@ -16,6 +16,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\RankingTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
@@ -57,6 +58,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     public const ENTRY_TYPE_ARTICLE = 'article';
     public const ENTRY_TYPE_LINK = 'link';
@@ -185,7 +187,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     {
         $this->comments->get(-1);
 
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
             ->orderBy(['createdAt' => Order::Descending])
             ->setMaxResults(1);
@@ -249,7 +251,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function updateCounts(): self
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE));
 
         $this->commentCount = $this->comments->matching($criteria)->count();
@@ -385,7 +387,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)
+        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;

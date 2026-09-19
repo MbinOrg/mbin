@@ -28,20 +28,19 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 readonly class FeedManager
 {
-
     public function __construct(
-        private SettingsManager       $settings,
-        private ContentRepository     $contentRepository,
-        private MagazineRepository    $magazineRepository,
-        private UserRepository        $userRepository,
-        private TagLinkRepository     $tagLinkRepository,
+        private SettingsManager $settings,
+        private ContentRepository $contentRepository,
+        private MagazineRepository $magazineRepository,
+        private UserRepository $userRepository,
+        private TagLinkRepository $tagLinkRepository,
         private UrlGeneratorInterface $urlGenerator,
-        private Security              $security,
+        private Security $security,
         private MediaExtensionRuntime $mediaExtensionRuntime,
-        private MentionManager        $mentionManager,
-        private ImageManager          $imageManager,
-        private MarkdownConverter     $markdownConverter,
-        private Packages              $packages
+        private MentionManager $mentionManager,
+        private ImageManager $imageManager,
+        private MarkdownConverter $markdownConverter,
+        private Packages $packages,
     ) {
     }
 

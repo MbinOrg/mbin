@@ -1,0 +1,14 @@
+{% with {boosts: subject.extendedContentProperties.boostUsers|default([])} %}
+    {% if boosts|length > 0 %}
+        <div class="boosted-by">
+            <span aria-label="{{ 'boosts'|trans }}">{{ 'boosted_by'|trans }}</span>
+            {% for boost in boosts %}
+                <a href="{{ path('user_overview', {username: boost.user.username}) }}">
+                    {{ boost.user.username|username }}
+                    ({{ component('date', {date: boost.time}) }})
+                </a>
+                {%- if not loop.last %},{% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller\Feed;
 
@@ -15,16 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RssFeedController extends AbstractController
 {
-
     private FormatterInterface $formatter;
 
     public function __construct(
         private readonly FeedManager $feedManager,
         private readonly LoggerInterface $logger,
-    )
-    {
+    ) {
         $dateTimeBuilder = new DateTimeBuilder($this->logger);
-        $dateTimeBuilder->setFeedTimezone(new DateTimeZone('UTC'));
+        $dateTimeBuilder->setFeedTimezone(new \DateTimeZone('UTC'));
         $this->formatter = new XmlFormatter(new Rss($dateTimeBuilder));
     }
 

@@ -64,7 +64,7 @@
                 height: 40,
                 asLink: true
             }) }}
-            <div data-controller="collapsable">
+            <div data-controller="collapsable" class="content-container">
                 <div data-collapsable-target="content" class="content">
                     {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
                         {{ comment.body|markdown("post")|raw }}
@@ -155,10 +155,16 @@
                         </li>
                     </menu>
                 {% endif %}
-                {{ component('voters_inline', {
-                    subject: comment,
-                    url: post_comment_voters_url(comment, 'up')
-                }) }}
+
+                {% if comment.extendedContentProperties.boostUsers is defined %}
+                    {{ include('widget/boosted_by.html.twig', {subject: comment}) }}
+                {% else %}
+                    {{ component('voters_inline', {
+                        subject: comment,
+                        url: post_comment_voters_url(comment, 'up')
+                    }) }}
+                {% endif %}
+
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>

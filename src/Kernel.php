@@ -41,7 +41,7 @@ class Kernel extends BaseKernel
         }
     }
 
-    #[Override]
+    #[\Override]
     protected function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new class implements CompilerPassInterface {

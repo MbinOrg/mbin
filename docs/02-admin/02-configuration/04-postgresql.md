@@ -12,7 +12,7 @@ sudo nano /etc/postgresql/16/main/postgresql.conf
 
 These settings below are more **an indication and heavily depends on your server specifications**. As well as if you are running other services on the same server.
 
-However, the following settings are a good starting point when your serve is around 12 vCPUs and 32GB of RAM. Be sure to fune-tune these settings to your needs.
+However, the following settings are a good starting point when your server is around 12 vCPUs and 32GB of RAM. Be sure to fine-tune these settings to your needs.
 
 ```ini
 # Increase max connections
@@ -29,6 +29,9 @@ huge_pages = on
 work_mem = 15MB
 # Increase maintenance work memory
 maintenance_work_mem = 2GB
+# Limit memory used by each autovacuum worker separately. This avoids up to
+# autovacuum_max_workers workers inheriting the larger maintenance_work_mem value.
+autovacuum_work_mem = 1GB
 
 # Should be posix under Linux anyway, just to be sure...
 dynamic_shared_memory_type = posix

@@ -102,6 +102,8 @@ class SettingsManager
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
                 $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
+                $this->find($results, 'MBIN_FEED_ALLOW_ENTRY_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
+                $this->find($results, 'MBIN_FEED_ALLOW_POST_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
             );
             $this->instanceDto = $dto;
         } else {

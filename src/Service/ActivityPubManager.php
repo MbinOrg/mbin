@@ -508,21 +508,31 @@ class ActivityPubManager
 
     public function handleImages(array|string $attachment): ?Image
     {
-        if (\is_string($attachment) && filter_var($attachment, FILTER_VALIDATE_URL)) {
+        if (\is_string($attachment)) {
+            if (!filter_var($attachment, FILTER_VALIDATE_URL)) {
+                return null;
+            }
+
             $path = parse_url($attachment, PHP_URL_PATH);
-            $query = parse_url($attachment, PHP_URL_QUERY);
+            $query = parse_url($attachment, PHP_URL_QUERY) ?? '';
             $attachment = [
                 [
                     'url' => $attachment,
                     'type' => 'Image',
                 ],
             ];
+
+            if (null === $path) {
+                return null;
+            }
+
             if (str_contains($path, 'jpg') || str_contains($path, 'jpeg') || str_contains($query, 'jpg') || str_contains($query, 'jpeg')) {
                 $attachment[0]['mediaType'] = 'image/jpeg';
             } elseif (str_contains($path, 'png') || str_contains($query, 'png')) {
                 $attachment[0]['mediaType'] = 'image/png';
             }
         }
+
         $images = array_filter(
             $attachment,
             fn ($val) => $this->isImageAttachment($val)
@@ -532,9 +542,9 @@ class ActivityPubManager
             try {
                 $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
-                    // determine the highest resolution image
+                    // determine the highest resolution image for the same image (equality is ducktyped by comparing the alt text)
                     foreach ($images as $i) {
-                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0) {
+                        if (isset($i['height']) && $i['height'] > ($imageObject['height'] ?? 0) && ($i['name'] ?? '') === ($imageObject['name'] ?? '')) {
                             $imageObject = $i;
                         }
                     }
@@ -822,7 +832,7 @@ class ActivityPubManager
             if (null === $modToRemove) {
                 continue;
             }
-            $criteria = Criteria::create(true /*TODO remove parameter once it is obligatory*/)->where(Criteria::expr()->eq('magazine', $magazine));
+            $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)->where(Criteria::expr()->eq('magazine', $magazine));
             $modObject = $modToRemove->moderatorTokens->matching($criteria)->first();
             $this->logger->info('[ActivityPubManager::handleModeratorArray] Removing "{exMod}" from "{magName}" as mod locally because they are no longer mod upstream', ['exMod' => $modToRemove->username, 'magName' => $magazine->name]);
             $this->magazineManager->removeModerator($modObject, null);
@@ -966,14 +976,12 @@ class ActivityPubManager
         return null;
     }
 
-    public function handleExternalImages(array $attachment): ?array
+    public function handleExternalImages(array $attachment, ?\App\DTO\ImageDto $consumedImage): ?array
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val)
+            fn ($val) => $this->isImageAttachment($val) && !$this->describeSameImage($val, $consumedImage)
         );
-
-        array_shift($images);
 
         if (\count($images)) {
             return array_map(fn ($val) => (new ImageDto())->create(
@@ -990,7 +998,7 @@ class ActivityPubManager
     {
         $videos = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
+            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && (VideoManager::isSupportedVideoMimeType($val['mediaType']) || VideoManager::isVideoUrl($val['url']))
         );
 
         if (\count($videos)) {
@@ -1081,7 +1089,7 @@ class ActivityPubManager
     private function isImageAttachment(array $object): bool
     {
         // attachment object has acceptable object type
-        if (!\in_array($object['type'], ['Document', 'Image'])) {
+        if (!\in_array($object['type'], ['Document', 'Image']) || !isset($object['url']) || !\is_string($object['url'])) {
             return false;
         }
 
@@ -1090,6 +1098,21 @@ class ActivityPubManager
         // - image url looks like a link to image
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
             || ImageManager::isImageUrl($object['url']);
+    }
+
+    private function describeSameImage(array $imgA, ?\App\DTO\ImageDto $imgB): bool
+    {
+        if (null === $imgB) {
+            return false;
+        }
+
+        if ($imgA['url'] === $imgB->sourceUrl) {
+            return true;
+        }
+
+        $altTextA = $imgA['name'] ?? null;
+        $altTextB = $imgB->altText ?? null;
+        return null !== $altTextA && '' !== $altTextA && $altTextA === $altTextB;
     }
 
     /**
@@ -1226,7 +1249,7 @@ class ActivityPubManager
         } elseif (\is_array($attributedTo)) {
             $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
 
-            return array_map(fn ($item) => $item['id'], $actors);
+            return array_map(fn ($item) => \is_string($item) ? $item : $item['id'], $actors);
         }
 
         return [];

@@ -22,5 +22,4 @@ final class ReportListComponent
     ) {
         $this->requestedStatus = Polyfills::requestParam($requestStack->getCurrentRequest(), 'status', null);
     }
-
 }
