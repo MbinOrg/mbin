@@ -1,0 +1,5 @@
+doctrine_postgres_enum:
+    type_name: enum
+    migrations:
+        enabled: true
+        comment_tag: DC2Enum

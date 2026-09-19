@@ -23,4 +23,9 @@ final class Citext extends TextType
     {
         return $platform->getDoctrineTypeMapping(self::CITEXT);
     }
+
+    public function getMappedDatabaseTypes(AbstractPlatform $platform): array
+    {
+        return ['citext'];
+    }
 }

@@ -16,6 +16,7 @@ use App\Repository\Criteria;
 use App\Repository\MessageRepository;
 use App\Repository\MessageThreadRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -76,7 +77,7 @@ class MessageRetrieveApi extends MessageBaseApi
         RateLimiterFactoryInterface $apiReadLimiter,
         RateLimiterFactoryInterface $anonymousApiReadLimiter,
     ): JsonResponse {
-        $message = $repository->find((int) $this->request->getCurrentRequest()->get('message_id'));
+        $message = $repository->find((int) Polyfills::requestParam($this->request->getCurrentRequest(), 'message_id'));
         if (null === $message) {
             throw new NotFoundHttpException();
         }
@@ -161,7 +162,7 @@ class MessageRetrieveApi extends MessageBaseApi
         $messages = $repository->findUserMessages(
             $this->getUserOrThrow(),
             $this->getPageNb($request),
-            $this->constrainPerPage($request->get('perPage', MessageThreadRepository::PER_PAGE))
+            $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', MessageThreadRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -252,7 +253,7 @@ class MessageRetrieveApi extends MessageBaseApi
         $messages = $repository->findUserMessages(
             $this->getUserOrThrow(),
             $this->getPageNb($request),
-            $this->constrainPerPage($request->get('perPage', MessageThreadRepository::PER_PAGE)),
+            $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', MessageThreadRepository::PER_PAGE)),
             $interlocutor,
         );
 
@@ -364,9 +365,9 @@ class MessageRetrieveApi extends MessageBaseApi
 
         $request = $this->request->getCurrentRequest();
         $criteria = new MessageThreadPageView($this->getPageNb($request));
-        $criteria->perPage = $this->constrainPerPage($request->get('perPage', self::MESSAGES_PER_PAGE));
+        $criteria->perPage = $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', self::MESSAGES_PER_PAGE));
         $criteria->thread = $thread;
-        $criteria->sortOption = $request->get('sort', Criteria::SORT_NEW);
+        $criteria->sortOption = Polyfills::requestParam($request, 'sort', Criteria::SORT_NEW);
 
         $messages = $repository->findByCriteria($criteria);
 

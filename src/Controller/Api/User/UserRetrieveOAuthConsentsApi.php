@@ -8,6 +8,7 @@ use App\DTO\ClientConsentsResponseDto;
 use App\Entity\OAuth2UserConsent;
 use App\Factory\ClientConsentsFactory;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -160,7 +161,7 @@ class UserRetrieveOAuthConsentsApi extends UserBaseApi
 
         $request = $this->request->getCurrentRequest();
         $page = $this->getPageNb($request);
-        $perPage = self::constrainPerPage($request->get('perPage', self::PER_PAGE));
+        $perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', self::PER_PAGE));
 
         try {
             $pagerfanta->setMaxPerPage($perPage);

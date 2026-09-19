@@ -15,6 +15,7 @@ use App\PageView\MagazinePageView;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -228,14 +229,14 @@ class MagazineRetrieveApi extends MagazineBaseApi
         $request = $this->request->getCurrentRequest();
         $criteria = new MagazinePageView(
             $this->getPageNb($request),
-            $request->get('sort', MagazinePageView::SORT_HOT),
-            $request->get('federation', Criteria::AP_ALL),
-            $request->get('hide_adult', MagazinePageView::ADULT_HIDE),
-            filter_var($request->get('abandoned', 'false'), FILTER_VALIDATE_BOOL),
+            Polyfills::requestParam($request, 'sort', MagazinePageView::SORT_HOT),
+            Polyfills::requestParam($request, 'federation', Criteria::AP_ALL),
+            Polyfills::requestParam($request, 'hide_adult', MagazinePageView::ADULT_HIDE),
+            filter_var(Polyfills::requestParam($request, 'abandoned', 'false'), FILTER_VALIDATE_BOOL),
         );
-        $criteria->perPage = self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE));
+        $criteria->perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE));
 
-        if ($q = $request->get('q')) {
+        if ($q = Polyfills::requestParam($request, 'q')) {
             $criteria->query = $q;
         }
 
@@ -316,7 +317,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         $magazines = $repository->findSubscribedMagazines(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -417,7 +418,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         $magazines = $repository->findSubscribedMagazines(
             $this->getPageNb($request),
             $user,
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -496,7 +497,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         $magazines = $repository->findModeratedMagazines(
             $this->getUserOrThrow(),
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];
@@ -575,7 +576,7 @@ class MagazineRetrieveApi extends MagazineBaseApi
         $magazines = $repository->findBlockedMagazines(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];

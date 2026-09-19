@@ -21,9 +21,9 @@ class ActivityPubManagerTest extends TestCase
         ];
 
         $imageManager = $this->createStub(ImageManager::class);
-        $imageRepository = $this->createStub(ImageRepository::class);
+        $imageRepository = $this->createMock(ImageRepository::class);
         $imageManager->method('download')->willReturnArgument(0);
-        $imageRepository->method('findOrCreateFromPath')->with('https://example.com/image1.jpg')->willReturn(
+        $imageRepository->expects(self::once())->method('findOrCreateFromPath')->with('https://example.com/image1.jpg')->willReturn(
             new Image('success.jpg', '', '0000000000000000000000000000000000000000000000000000000000000000', 1, 1, '')
         );
 
@@ -61,9 +61,9 @@ class ActivityPubManagerTest extends TestCase
         ];
 
         $imageManager = $this->createStub(ImageManager::class);
-        $imageRepository = $this->createStub(ImageRepository::class);
+        $imageRepository = $this->createMock(ImageRepository::class);
         $imageManager->method('download')->willReturnArgument(0);
-        $imageRepository->method('findOrCreateFromPath')->with('https://example.com/image-a-2.jpg')->willReturn(
+        $imageRepository->expects(self::once())->method('findOrCreateFromPath')->with('https://example.com/image-a-2.jpg')->willReturn(
             new Image('success.jpg', '', '0000000000000000000000000000000000000000000000000000000000000000', 1, 1, '')
         );
 
@@ -101,9 +101,9 @@ class ActivityPubManagerTest extends TestCase
         ];
 
         $imageManager = $this->createStub(ImageManager::class);
-        $imageRepository = $this->createStub(ImageRepository::class);
+        $imageRepository = $this->createMock(ImageRepository::class);
         $imageManager->method('download')->willReturnArgument(0);
-        $imageRepository->method('findOrCreateFromPath')->with('https://example.com/image-a-1.jpg')->willReturn(
+        $imageRepository->expects(self::once())->method('findOrCreateFromPath')->with('https://example.com/image-a-1.jpg')->willReturn(
             new Image('success.jpg', '', '0000000000000000000000000000000000000000000000000000000000000000', 1, 1, '')
         );
 
@@ -141,9 +141,9 @@ class ActivityPubManagerTest extends TestCase
         $attachment = 'https://example.com/image.png';
 
         $imageManager = $this->createStub(ImageManager::class);
-        $imageRepository = $this->createStub(ImageRepository::class);
+        $imageRepository = $this->createMock(ImageRepository::class);
         $imageManager->method('download')->willReturnArgument(0);
-        $imageRepository->method('findOrCreateFromPath')->with('https://example.com/image.png')->willReturn(
+        $imageRepository->expects(self::once())->method('findOrCreateFromPath')->with('https://example.com/image.png')->willReturn(
             new Image('success.jpg', '', '0000000000000000000000000000000000000000000000000000000000000000', 1, 1, '')
         );
 
@@ -159,11 +159,9 @@ class ActivityPubManagerTest extends TestCase
         $attachment = 'image.png';
 
         $imageManager = $this->createStub(ImageManager::class);
-        $imageRepository = $this->createStub(ImageRepository::class);
+        $imageRepository = $this->createMock(ImageRepository::class);
         $imageManager->method('download')->willReturnArgument(0);
-        $imageRepository->method('findOrCreateFromPath')->with('image.png')->willReturn(
-            new Image('dummy.jpg', '', '0000000000000000000000000000000000000000000000000000000000000000', 1, 1, '')
-        );
+        $imageRepository->expects(self::never())->method('findOrCreateFromPath');
 
         $mng = $this->initiateMocked(ActivityPubManager::class, ['imageManager' => $imageManager, 'imageRepository' => $imageRepository]);
         $img = $mng->handleImages($attachment);
