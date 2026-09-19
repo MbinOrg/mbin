@@ -14,6 +14,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\RankingTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
@@ -52,6 +53,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
