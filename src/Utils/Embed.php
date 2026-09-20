@@ -7,19 +7,16 @@ namespace App\Utils;
 use App\Entity\Entry;
 use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
+use App\Factory\WwwHttpClientFactory;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use App\Service\VideoManager;
 use Embed\Embed as BaseEmbed;
 use Embed\Extractor;
-use Embed\Http\Crawler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
-use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class Embed
 {
@@ -34,7 +31,7 @@ class Embed
         private SettingsManager $settings,
         private LoggerInterface $logger,
         private EventDispatcherInterface $dispatcher,
-        private HttpClientInterface $httpClient,
+        private WwwHttpClientFactory $httpClientFactory,
     ) {
     }
 
@@ -44,7 +41,7 @@ class Embed
         unset($this->settings);
         unset($this->logger);
         unset($this->dispatcher);
-        unset($this->httpClient);
+        unset($this->httpClientFactory);
     }
 
     public function fetch(string $url): self
@@ -114,15 +111,7 @@ class Embed
 
     private function fetchEmbed(string $url): Extractor
     {
-        $httpClient = new NoPrivateNetworkHttpClient(
-            $this->httpClient->withOptions([
-                'max_redirects' => 10,
-                'max_duration' => 10,
-                'timeout' => 10,
-            ])
-        );
-        $psr18Client = new Psr18Client($httpClient);
-        $fetcher = new BaseEmbed(new Crawler($psr18Client, $psr18Client, $psr18Client));
+        $fetcher = new BaseEmbed($this->httpClientFactory->getEmbedCrawler());
         $embed = $fetcher->get($url);
 
         if ($this->detectFaultyRedirectEmbed($embed)) {

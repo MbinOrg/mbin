@@ -11,6 +11,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserPushSubscription;
+use App\Factory\WwwHttpClientFactory;
 use App\Form\UserNoteType;
 use App\PageView\PostCommentPageView;
 use App\Payloads\NotificationsCountResponsePayload;
@@ -49,6 +50,7 @@ class AjaxController extends AbstractController
         private readonly UserPushSubscriptionRepository $repository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
+        private readonly WwwHttpClientFactory $httpClientFactory,
         private readonly UserPushSubscriptionManager $pushSubscriptionManager,
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
@@ -207,7 +209,7 @@ class AjaxController extends AbstractController
         HttpClientInterface $httpClient,
         CacheInterface $cache,
     ): JsonResponse {
-        $resp = $httpClient->request('GET', $mercurePublicUrl.'/subscriptions/'.$topic, [
+        $resp = $this->httpClientFactory->getClient($httpClient)->request('GET', $mercurePublicUrl.'/subscriptions/'.$topic, [
             'auth_bearer' => $mercureSubscriptionsToken,
         ]);
 

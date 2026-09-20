@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Image as MbinImage;
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
@@ -33,10 +34,11 @@ class ImageManager implements ImageManagerInterface
     ];
     public const string IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
 
+    private readonly HttpClientInterface $httpClient;
+
     public function __construct(
         private readonly string $storageUrl,
         private readonly FilesystemOperator $publicUploadsFilesystem,
-        private readonly HttpClientInterface $httpClient,
         private readonly MimeTypesInterface $mimeTypeGuesser,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -45,7 +47,9 @@ class ImageManager implements ImageManagerInterface
         private readonly float $imageCompressionQuality,
         private readonly CacheManager $imagineCacheManager,
         private readonly EntityManagerInterface $entityManager,
+        WwwHttpClientFactory $httpClientFactory,
     ) {
+        $this->httpClient = $httpClientFactory->getClient();
     }
 
     public static function isImageUrl(string $url): bool
