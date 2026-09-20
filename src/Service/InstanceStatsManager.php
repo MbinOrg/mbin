@@ -30,7 +30,7 @@ class InstanceStatsManager
         return $this->cache->get('instance_stats', function (ItemInterface $item) use ($periodDate, $withFederated) {
             $item->expiresAfter(0);
 
-            $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */);
+            $criteria = Criteria::create();
 
             if ($periodDate) {
                 $criteria->where(

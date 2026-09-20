@@ -228,7 +228,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
     public function isFavored(User $user): bool
     {
-        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */)
+        $criteria = Criteria::create()
             ->where(Criteria::expr()->eq('user', $user));
 
         return $this->favourites->matching($criteria)->count() > 0;
@@ -300,7 +300,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
      */
     public function getChildrenByCriteria(MbinCriteria $postCommentCriteria, ?User $loggedInUser, string $filterRealm): array
     {
-        $criteria = Criteria::create(true /* TODO remove parameter once it is obligatory */);
+        $criteria = Criteria::create();
 
         if ($postCommentCriteria->languages) {
             $criteria->andwhere(Criteria::expr()->in('lang', $postCommentCriteria->languages));
