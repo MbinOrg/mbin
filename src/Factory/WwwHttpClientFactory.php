@@ -7,17 +7,20 @@ use Embed\Http\Crawler;
 use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Creates HttpClients which block requests to non-WWW (e.g. localhost and LAN) destinations.
  */
-readonly class WwwHttpClientFactory
+class WwwHttpClientFactory implements ResetInterface
 {
-    private HttpClientInterface $defaultClient;
+    private readonly HttpClientInterface $defaultClient;
+    private array $existingClients;
 
     public function __construct(
-        private HttpClientInterface $httpClientBase,
+        private readonly HttpClientInterface $httpClientBase,
     ) {
+        $this->existingClients = [];
         $this->defaultClient = $this->buildFilteredClient($this->buildConfiguredClient($this->httpClientBase));
     }
 
@@ -53,8 +56,25 @@ readonly class WwwHttpClientFactory
         ]);
     }
 
+    public function reset(): void
+    {
+        $stillExistingClients = [];
+        foreach ($this->existingClients as $clientRef) {
+            /** @var \WeakReference<NoPrivateNetworkHttpClient> $clientRef */
+            $client = $clientRef->get();
+            if (null !== $client) {
+                $client->reset();
+                $stillExistingClients[] = $clientRef;
+            }
+        }
+
+        $this->existingClients = $stillExistingClients;
+    }
+
     private function buildFilteredClient(HttpClientInterface $client): HttpClientInterface
     {
-        return new NoPrivateNetworkHttpClient($client);
+        $ret = new NoPrivateNetworkHttpClient($client);
+        $this->existingClients[] = \WeakReference::create($ret);
+        return $ret;
     }
 }
