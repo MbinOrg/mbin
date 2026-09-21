@@ -54,6 +54,7 @@ class EntryFactory
             $user = $this->security->getUser();
             $pollDto = new PollResponseDto();
             $pollDto->voterCount = $entry->poll->voterCount;
+            $pollDto->endDate = $entry->poll->endDate;
             $pollDto->currentUserHasVoted = $user instanceof User ? $entry->poll->hasUserVoted($user) : null;
             $pollDto->choices = $entry->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $entry->poll->choices->toArray()) : null;
         }
