@@ -73,6 +73,7 @@ class UserFrontController extends AbstractController
                 'html' => $this->renderView(
                     'layout/_generic_subject_list.html.twig',
                     [
+                        'standaloneComments' => false,
                         'results' => $results,
                         'pagination' => $activity,
                     ]
@@ -83,6 +84,7 @@ class UserFrontController extends AbstractController
         return $this->render(
             'user/overview.html.twig',
             [
+                'standaloneComments' => false,
                 'user' => $user,
                 'results' => $results,
                 'pagination' => $activity,
@@ -425,6 +427,7 @@ class UserFrontController extends AbstractController
         return $this->render(
             'user/overview.html.twig',
             [
+                'standaloneComments' => true,
                 'user' => $user,
                 'results' => $activity->getCurrentPageResults(),
                 'pagination' => $activity,
