@@ -52,7 +52,7 @@ class EntryCommentNoteFactory
 
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($comment),
-            'type' => 'Note',
+            'type' => $comment->poll ? 'Question' : 'Note',
             'attributedTo' => $this->activityPubManager->getActorProfileId($comment->user),
             'inReplyTo' => $this->getReplyTo($comment),
             'to' => [
