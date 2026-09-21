@@ -58,7 +58,7 @@ class PostNoteFactory
 
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($post),
-            'type' => 'Note',
+            'type' => $post->poll ? 'Question' : 'Note',
             'attributedTo' => $this->activityPubManager->getActorProfileId($post->user),
             'inReplyTo' => null,
             'to' => [

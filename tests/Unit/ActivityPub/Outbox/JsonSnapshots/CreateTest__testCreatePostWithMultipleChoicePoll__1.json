@@ -17,7 +17,7 @@
     ],
     "object": {
         "id": "SCRUBBED_ID",
-        "type": "Note",
+        "type": "Question",
         "attributedTo": "https://kbin.test/u/user",
         "inReplyTo": null,
         "to": [
