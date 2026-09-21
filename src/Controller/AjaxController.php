@@ -11,7 +11,6 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserPushSubscription;
-use App\Factory\WwwHttpClientFactory;
 use App\Form\UserNoteType;
 use App\PageView\PostCommentPageView;
 use App\Payloads\NotificationsCountResponsePayload;
@@ -28,12 +27,14 @@ use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
+use App\Utils\UrlUtils;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Emoji\EmojiTransliterator;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -50,7 +51,6 @@ class AjaxController extends AbstractController
         private readonly UserPushSubscriptionRepository $repository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
-        private readonly WwwHttpClientFactory $httpClientFactory,
         private readonly UserPushSubscriptionManager $pushSubscriptionManager,
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
@@ -209,7 +209,13 @@ class AjaxController extends AbstractController
         HttpClientInterface $httpClient,
         CacheInterface $cache,
     ): JsonResponse {
-        $resp = $this->httpClientFactory->getClient($httpClient)->request('GET', $mercurePublicUrl.'/subscriptions/'.$topic, [
+        $mercureSubsUrl = $mercurePublicUrl.'/subscriptions/';
+        $mercureUrl = $mercureSubsUrl.$topic;
+        if (!UrlUtils::checkUrlSubpathNotAscending($mercureSubsUrl, $topic)) {
+            throw new BadRequestException('Mercure topic is malformed');
+        }
+
+        $resp = $httpClient->request('GET', $mercureUrl, [
             'auth_bearer' => $mercureSubscriptionsToken,
         ]);
 
