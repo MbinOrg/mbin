@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
-use App\Tests\WebTestCase;
 use App\Utils\UrlUtils;
+use PHPUnit\Framework\TestCase;
 
-class UrlUtilsTest extends WebTestCase
+class UrlUtilsTest extends TestCase
 {
     public function testCheckUrlSubpathNotAscending(): void
     {

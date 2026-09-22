@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
-use GuzzleHttp\Psr7\Uri;
-use GuzzleHttp\Psr7\UriResolver;
+use League\Uri\UriString;
 use Symfony\Component\HttpFoundation\Request;
 
 class UrlUtils
@@ -64,11 +63,9 @@ class UrlUtils
      */
     public static function checkUrlSubpathNotAscending(string $baseUrl, string $subPath): bool
     {
-        $baseUri = new Uri($baseUrl);
-        $subUri = new Uri($subPath);
-        $absoluteUrl = UriResolver::resolve($baseUri, $subUri);
+        $baseUri = UriString::normalize($baseUrl);
+        $absoluteUri = UriString::normalize(UriString::resolve($subPath, $baseUri));
 
-        return $absoluteUrl->getHost() === $baseUri->getHost()
-            && str_starts_with($absoluteUrl->getPath(), $baseUri->getPath());
+        return str_starts_with($absoluteUri, $baseUri);
     }
 }
