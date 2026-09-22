@@ -1,3 +1,17 @@
+{% if entryCommentAttributes is not defined %}
+    {% set entryCommentAttributes = {} %}
+{% endif %}
+{% if postCommentAttributes is not defined %}
+    {% set postCommentAttributes = {} %}
+{% endif %}
+{% if standaloneComments is defined and standaloneComments is same as true %}
+    {% set entryCommentAttributes = entryCommentAttributes|merge({withContext: true, showLevel: false, noIndention: true}) %}
+    {% set postCommentAttributes = postCommentAttributes|merge({withContext: true, showLevel: false, noIndention: true}) %}
+{% else %}
+    {% set entryCommentAttributes = entryCommentAttributes|merge({attachToTop: true}) %}
+    {% set postCommentAttributes = postCommentAttributes|merge({attachToTop: true}) %}
+{% endif %}
+
 <div data-controller="subject-list">
     {{ include('layout/_subject_list.html.twig') }}
 </div>
