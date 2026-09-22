@@ -18,7 +18,7 @@ class TagContentRetrieveApiTest extends WebTestCase
         $entry2->createdAt = new \DateTimeImmutable('now - 1min');
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/tag/test/entries?sort=newest');
+        $this->client->request('GET', '/api/tag/test/entries?sortBy=newest');
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -52,7 +52,7 @@ class TagContentRetrieveApiTest extends WebTestCase
         $comment2->createdAt = new \DateTimeImmutable('now - 1min');
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/tag/test/entryComments?sort=newest');
+        $this->client->request('GET', '/api/tag/test/entryComments?sortBy=newest');
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -83,7 +83,7 @@ class TagContentRetrieveApiTest extends WebTestCase
         $post2->createdAt = new \DateTimeImmutable('now - 1min');
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/tag/test/posts?sort=newest');
+        $this->client->request('GET', '/api/tag/test/posts?sortBy=newest');
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 
@@ -117,7 +117,7 @@ class TagContentRetrieveApiTest extends WebTestCase
         $comment2->createdAt = new \DateTimeImmutable('now - 1min');
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/tag/test/postComments?sort=newest');
+        $this->client->request('GET', '/api/tag/test/postComments?sortBy=newest');
         self::assertResponseIsSuccessful();
         $jsonData = self::getJsonResponse($this->client);
 

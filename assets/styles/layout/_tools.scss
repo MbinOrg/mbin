@@ -61,6 +61,7 @@ a.link-muted:hover {
   display: block;
   overflow-x: auto;
   white-space: pre-wrap;
+  word-break: normal;
 }
 
 .badge {
@@ -71,4 +72,10 @@ a.link-muted:hover {
 .badge-lang {
   border-radius: 20px;
   padding: .3rem;
+}
+
+.hrule {
+  border: var(--kbin-section-border);
+  height: 0;
+  margin: 2px 5px;
 }

@@ -60,7 +60,7 @@
             </header>
 
             <!-- body -->
-            <div data-controller="collapsable">
+            <div data-controller="collapsable" class="content-container">
                 <div data-collapsable-target="content" class="content">
                     {% if post.visibility in ['visible', 'private'] or (post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                         {{ post.body|markdown("post")|raw }}
@@ -141,11 +141,17 @@
                             </div>
                         </li>
                     </menu>
+
+                {% if post.extendedContentProperties.boostUsers is defined %}
+                    {{ include('widget/boosted_by.html.twig', {subject: post}) }}
+                {% else %}
                     {{ component('voters_inline', {
                         subject: post,
                         url: post_voters_url(post, 'up'),
                         'data-post-target': 'voters'
                     }) }}
+                {% endif %}
+
                 {% elseif(post.visibility is same as 'trashed' and this.canSeeTrashed) %}
                     <menu>
                         <li>

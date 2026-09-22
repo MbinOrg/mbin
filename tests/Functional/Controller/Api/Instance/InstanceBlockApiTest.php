@@ -270,7 +270,9 @@ class InstanceBlockApiTest extends WebTestCase
         $userDto->username = 'FreshlyManufactured';
         $userDto->plainPassword = '123';
         $userDto->email = 'newuser@example.com';
-        $user = $this->userManager->create($userDto);
+        $user = $this->userManager->create($userDto, verifyUserEmail: false);
+        $user->isVerified = true;
+        $this->entityManager->flush();
         $this->client->loginUser($user);
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'user:profile:edit');
 

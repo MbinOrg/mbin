@@ -560,6 +560,7 @@ class MagazineRetrieveApiTest extends WebTestCase
         $magazine1 = $this->getMagazineByName('test1', $abandoningUser);
         $magazine2 = $this->getMagazineByName('test2', $abandoningUser);
         $magazine3 = $this->getMagazineByName('test3', $activeUser);
+        $this->magazineManager->subscribe($magazine1, $activeUser);
 
         $abandoningUser->lastActive = new \DateTime('-6 months');
         $activeUser->lastActive = new \DateTime('-2 days');
