@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Functional\Misc;
 
 use App\Tests\WebTestCase;
 

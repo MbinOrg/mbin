@@ -190,11 +190,10 @@ readonly class PollManager
             $choiceNames[] = $pollChoice->name;
             $pollChoice->voteCount = $choice['replies']['totalItems'];
             $this->entityManager->persist($pollChoice);
+            $poll->choices[] = $pollChoice;
         }
         $this->entityManager->persist($poll);
         $this->entityManager->flush();
-
-        $this->entityManager->refresh($poll);
 
         return $poll;
     }
