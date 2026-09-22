@@ -119,7 +119,7 @@ export default class extends Controller {
         this.selectedSuggestionIndex = 0;
         this.emojiAutocompleteActive = false;
         this.mentionAutocompleteActive = false;
-        this.abortController.abort();
+        this.abortController?.abort();
         this.requestActive = false;
         document.getElementById('user-suggestions')?.remove();
         document.getElementById('emoji-suggestions')?.remove();
@@ -165,7 +165,7 @@ export default class extends Controller {
 
     fetchAutocompleteResults(searchText) {
         if (this.requestActive) {
-            this.abortController.abort();
+            this.abortController?.abort();
         }
 
         if (this.mentionAutocompleteActive) {
