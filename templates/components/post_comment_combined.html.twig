@@ -31,17 +31,18 @@
                 {% set hasLang = comment.lang is not same as app.request.locale and comment.lang is not same as kbin_default_lang() %}
                 {% set isModDeleted = comment.visibility is same as 'trashed' %}
                 {% set isUserDeleted = comment.visibility is same as 'soft_deleted' %}
-                {% set needsHeader = (hasTitle and (isAdult or hasLang)) or isModDeleted or isUserDeleted %}
 
-                <header {% if not needsHeader %} style="margin: 0 0 var(--kbin-entry-element-spacing) 0;" {% endif %}>
+                <header>
                     {% if hasTitle %}
-                        <h2>
+                        <small>
                             {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
 
                             {% if hasLang %}
                                 <small class="badge-lang kbin-bg">{{ comment.lang|language_name }}</small>
                             {% endif %}
-                        </h2>
+
+                            {% include 'post/comment/context.html.twig' %}
+                        </small>
                     {% elseif isModDeleted %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                     {% elseif isUserDeleted %}

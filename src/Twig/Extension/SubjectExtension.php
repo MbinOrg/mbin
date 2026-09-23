@@ -10,7 +10,9 @@ use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Twig\Runtime\SubjectExtensionRuntime;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 use Twig\TwigTest;
 
 class SubjectExtension extends AbstractExtension
@@ -48,6 +50,14 @@ class SubjectExtension extends AbstractExtension
                     return $subject instanceof User;
                 }
             ),
+        ];
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('user_can_see_entry', [SubjectExtensionRuntime::class, 'userCanSeeEntry']),
+            new TwigFunction('user_can_see_post', [SubjectExtensionRuntime::class, 'userCanSeePost']),
         ];
     }
 }
