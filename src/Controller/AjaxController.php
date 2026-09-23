@@ -12,7 +12,9 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\UserPushSubscription;
 use App\Form\UserNoteType;
+use App\Markdown\MarkdownConverter;
 use App\PageView\PostCommentPageView;
+use App\Payloads\MarkdownPreviewPayload;
 use App\Payloads\NotificationsCountResponsePayload;
 use App\Payloads\PushNotification;
 use App\Payloads\RegisterPushRequestPayload;
@@ -35,8 +37,10 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -360,5 +364,14 @@ class AjaxController extends AbstractController
 
             return new JsonResponse(status: 500);
         }
+    }
+
+    #[Route('/ajax/preview_markdown', name: 'app_markdown_preview', methods: 'post')]
+    #[IsGranted('ROLE_USER')]
+    public function previewMarkdown(MarkdownConverter $markdownConverter, #[MapRequestPayload] MarkdownPreviewPayload $payload): Response
+    {
+        $compiled = $markdownConverter->convertToHtml($payload->markdown);
+
+        return new JsonResponse(['html' => $compiled]);
     }
 }
