@@ -24,8 +24,8 @@
      }) }}"
      data-action="{{- data_action -}}">
     {% if magazine is defined and magazine %}
-        {% include 'layout/_subject_list.html.twig' with {postAttributes: {showMagazineName: false}, entryAttributes: {showMagazineName: false}} %}
+        {% include 'layout/_subject_list.html.twig' with {postAttributes: {showMagazineName: false}, entryAttributes: {showMagazineName: false}, postCommentAttributes: {withContext: true, showLevel: false, noIndention: true}, entryCommentAttributes: {withContext: true, showLevel: false, noIndention: true}} %}
     {% else %}
-        {% include 'layout/_subject_list.html.twig' %}
+        {% include 'layout/_subject_list.html.twig' with {postCommentAttributes: {withContext: true, showLevel: false, noIndention: true}, entryCommentAttributes: {withContext: true, showLevel: false, noIndention: true}} %}
     {% endif %}
 </div>
