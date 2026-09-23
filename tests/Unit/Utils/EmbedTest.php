@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
+use App\Factory\WwwHttpClientFactory;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -58,6 +59,7 @@ class EmbedTest extends TestCase
         yield 'IPv4 link-local network' => ['http://169.254.169.254/latest/meta-data'];
         yield 'IPv6 loopback' => ['http://[::1]/admin'];
         yield 'DNS-resolved loopback' => ['http://localhost/admin'];
+        yield 'DNS-resolved loopback subdomain' => ['http://sub.localhost/admin'];
     }
 
     public function testRedirectToPrivateNetworkIsNotRequested(): void
@@ -172,7 +174,7 @@ class EmbedTest extends TestCase
             $this->createStub(SettingsManager::class),
             $this->createStub(LoggerInterface::class),
             $this->createStub(EventDispatcherInterface::class),
-            $httpClient ?? $this->createStub(HttpClientInterface::class),
+            new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
         );
     }
 }
