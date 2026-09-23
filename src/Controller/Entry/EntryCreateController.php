@@ -21,7 +21,9 @@ use App\Repository\TagRepository;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\IpResolver;
+use App\Service\PollManager;
 use App\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
@@ -50,6 +52,8 @@ class EntryCreateController extends AbstractController
         private readonly ValidatorInterface $validator,
         private readonly IpResolver $ipResolver,
         private readonly Security $security,
+        private readonly PollManager $pollManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -89,6 +93,7 @@ class EntryCreateController extends AbstractController
         $dto->isAdult = '1' === $isNsfw;
         $dto->isOc = '1' === $isOc;
         $dto->tags = $tags;
+        $dto->addEmptyChoices();
 
         if (null !== $imageHash) {
             $img = $this->imageRepository->findOneBySha256(hex2bin($imageHash));

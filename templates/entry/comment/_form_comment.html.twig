@@ -22,7 +22,11 @@
     'data-controller': 'input-length rich-textarea autogrow',
     'data-action' : 'input-length#updateDisplay',
     'data-input-length-max-value': constant('App\\DTO\\EntryCommentDto::MAX_BODY_LENGTH')
-}}) }}<div class="row actions">
+}}) }}
+
+{{ include('form/_poll_form.html.twig') }}
+
+<div class="row actions">
     <ul>
         {% if hasImage %}
             <img width="40"

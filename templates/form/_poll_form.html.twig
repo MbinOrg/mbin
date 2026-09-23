@@ -1,0 +1,22 @@
+<div class="poll-area">
+    {{ form_row(form.addPoll, {row_attr: {class: 'checkbox', style: 'float: left; margin-right: 1rem'}}) }}
+    <div class="sub-form">
+        {{ form_row(form.isMultipleChoicePoll, {row_attr: {class: 'checkbox'}}) }}
+        {{ form_row(form.pollEndsAt, {attr: {style: 'padding: 1rem .5rem;'}}) }}
+
+        {{ form_label(form.choices) }}
+        <div {{ stimulus_controller('form_collection') }} class="collection-container hide-index"
+                                                          data-form-collection-index-value="{{ form.choices|length > 0 ? form.choices|last.vars.name + 1 : 0 }}"
+                                                          data-form-collection-prototype-value="{{ form_widget(form.choices.vars.prototype)|e('html_attr') }}"
+        >
+            {{ form_widget(form.choices) }}
+            <div class="choices-container" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+            </div>
+            <div style="text-align: center;">
+                <button class="btn btn__primary" type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}>
+                    {{ '+' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

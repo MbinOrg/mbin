@@ -60,6 +60,7 @@ class PostManager implements ContentManagerInterface
         private readonly ApHttpClientInterface $apHttpClient,
         private readonly SettingsManager $settingsManager,
         private readonly CacheInterface $cache,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -121,6 +122,10 @@ class PostManager implements ContentManagerInterface
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
+        if ($dto->addPoll) {
+            $this->pollManager->createPoll($dto, $post);
+        }
+
         $this->tagManager->updatePostTags($post, $this->tagExtractor->extract($post->body) ?? []);
 
         $this->dispatcher->dispatch(new PostCreatedEvent($post));
@@ -141,7 +146,7 @@ class PostManager implements ContentManagerInterface
         return $postHost === $userHost || $userHost === $magazineHost || $post->magazine->userIsModerator($user);
     }
 
-    public function edit(Post $post, PostDto $dto, ?User $editedBy = null): Post
+    public function edit(Post $post, PostDto $dto, ?User $editedBy = null, bool $contentChanged = true): Post
     {
         Assert::same($post->magazine->getId(), $dto->magazine->getId());
 
@@ -160,6 +165,10 @@ class PostManager implements ContentManagerInterface
         $post->editedAt = new \DateTimeImmutable('@'.time());
         if (empty($post->body) && null === $post->image) {
             throw new \Exception('Post body and image cannot be empty');
+        }
+
+        if ($post->poll && $contentChanged) {
+            $this->pollManager->edit($post->poll, $dto, $editedBy);
         }
 
         $post->apLikeCount = $dto->apLikeCount;

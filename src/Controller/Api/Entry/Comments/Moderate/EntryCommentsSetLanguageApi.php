@@ -100,7 +100,7 @@ class EntryCommentsSetLanguageApi extends EntriesBaseApi
         $manager->flush();
 
         return new JsonResponse(
-            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
+            $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }
