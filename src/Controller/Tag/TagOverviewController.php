@@ -11,6 +11,7 @@ use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagOverviewController extends AbstractController
 {
@@ -24,13 +25,21 @@ class TagOverviewController extends AbstractController
     public function __invoke(string $name, Request $request): Response
     {
         $user = $this->getUser();
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+        if (null === $hashtag) {
+            throw new NotFoundHttpException();
+        }
+
         $activity = $this->tagRepository->findOverall(
             $this->getPageNb($request),
-            $this->tagManager->transliterate(strtolower($name)),
-            $user
+            $tag,
+            $user,
         );
 
         $params = [
+            'hashtag' => $hashtag,
             'tag' => $name,
             'results' => $this->overviewManager->buildList($activity),
             'pagination' => $activity,

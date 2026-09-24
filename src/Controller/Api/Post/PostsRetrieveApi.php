@@ -442,6 +442,12 @@ class PostsRetrieveApi extends PostsBaseApi
         in: 'query',
         schema: new OA\Schema(type: 'string', default: Criteria::AP_ALL, enum: Criteria::AP_OPTIONS)
     )]
+    #[OA\Parameter(
+        name: 'includeCommentsWithSubscribedHashtag',
+        description: 'if true then comments containing a subscribed hashtag will be included',
+        in: 'query',
+        schema: new OA\Schema(type: 'boolean', default: false)
+    )]
     #[OA\Tag(name: 'post')]
     #[Security(name: 'oauth2', scopes: ['read'])]
     #[IsGranted('ROLE_OAUTH2_READ')]
@@ -456,8 +462,11 @@ class PostsRetrieveApi extends PostsBaseApi
         #[MapQueryParameter] ?string $sort,
         #[MapQueryParameter] ?string $time,
         #[MapQueryParameter] ?string $federation,
+        #[MapQueryParameter] ?bool $includeCommentsWithSubscribedHashtag,
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+
+        $user = $this->getUserOrThrow();
 
         $criteria = new PostPageView($p ?? 1, $security);
         $criteria->sortOption = $sort ?? Criteria::SORT_HOT;
@@ -467,11 +476,11 @@ class PostsRetrieveApi extends PostsBaseApi
 
         $criteria->subscribed = true;
         $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption;
+        $criteria->includeCommentsWithSubscribedHashtag = $includeCommentsWithSubscribedHashtag ?? $user->showCommentsOfSubscribedHashtags;
         $criteria->setContent(Criteria::CONTENT_MICROBLOG);
 
         $this->handleLanguageCriteria($criteria);
 
-        $user = $this->getUserOrThrow();
         $criteria->fetchCachedItems($sqlHelpers, $user);
 
         $posts = $repository->findByCriteria($criteria);

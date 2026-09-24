@@ -24,9 +24,11 @@ class SqlHelpers
     public const string USER_MAGAZINE_SUBSCRIPTION_KEY = 'cached_user_magazine_subscription_';
     public const string USER_MAGAZINE_MODERATION_KEY = 'cached_user_magazine_moderation_';
     public const string USER_DOMAIN_SUBSCRIPTION_KEY = 'cached_user_domain_subscription_';
+    public const string USER_HASHTAG_SUBSCRIPTION_KEY = 'cached_user_hashtag_subscription_';
     public const string USER_BLOCKS_KEY = 'cached_user_blocks_';
     public const string USER_MAGAZINE_BLOCKS_KEY = 'cached_user_magazine_block_';
     public const string USER_DOMAIN_BLOCKS_KEY = 'cached_user_domain_block_';
+    public const string USER_HASHTAG_BLOCKS_KEY = 'cached_user_hashtag_block_';
     public const string USER_INSTANCE_BLOCKS_KEY = 'cached_user_instance_block_';
 
     public function __construct(
@@ -167,7 +169,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached user follows of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -198,7 +200,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached subscribed magazines of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -210,7 +212,7 @@ class SqlHelpers
         try {
             $this->cache->delete(self::USER_MAGAZINE_SUBSCRIPTION_KEY.$user->getId());
         } catch (InvalidArgumentException $exception) {
-            $this->logger->warning('There was an error clearing the cached subscribed Magazines of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
+            $this->logger->warning('There was an error clearing the cached subscribed magazines of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
         }
     }
 
@@ -229,7 +231,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached moderated magazines of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -260,7 +262,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached subscribed domains of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -277,7 +279,38 @@ class SqlHelpers
     }
 
     /**
-     * @return int[] the ids of the domains $user is subscribed to
+     * @return int[] the ids of the hashtags $user is subscribed to
+     */
+    public function getCachedUserSubscribedHashtags(User $user): array
+    {
+        try {
+            $sql = 'SELECT hashtag_id FROM hashtag_subscription WHERE user_id = :uId';
+            if ('test' === $this->kernel->getEnvironment()) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            }
+
+            return $this->cache->get(self::USER_HASHTAG_SUBSCRIPTION_KEY.$user->getId(), function (ItemInterface $item) use ($user, $sql) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            });
+        } catch (InvalidArgumentException|Exception $exception) {
+            $this->logger->error('There was an error getting the cached subscribed hashtags of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+
+            return [];
+        }
+    }
+
+    public function clearCachedUserSubscribedHashtags(User $user): void
+    {
+        $this->logger->debug('Clearing cached hashtag subscriptions for user {u}', ['u' => $user->username]);
+        try {
+            $this->cache->delete(self::USER_HASHTAG_SUBSCRIPTION_KEY.$user->getId());
+        } catch (InvalidArgumentException $exception) {
+            $this->logger->warning('There was an error clearing the cached subscribed hashtags of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * @return int[] the ids of the users $user has blocked
      */
     public function getCachedUserBlocks(User $user): array
     {
@@ -291,7 +324,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached blocked users of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -303,12 +336,12 @@ class SqlHelpers
         try {
             $this->cache->delete(self::USER_BLOCKS_KEY.$user->getId());
         } catch (InvalidArgumentException $exception) {
-            $this->logger->warning('There was an error clearing the cached blocked user of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
+            $this->logger->warning('There was an error clearing the cached blocked users of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
         }
     }
 
     /**
-     * @return int[] the ids of the domains $user is subscribed to
+     * @return int[] the ids of the magazines $user has blocked
      */
     public function getCachedUserMagazineBlocks(User $user): array
     {
@@ -322,7 +355,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached blocked magazines of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -339,7 +372,7 @@ class SqlHelpers
     }
 
     /**
-     * @return int[] the ids of the domains $user is subscribed to
+     * @return int[] the ids of the domains $user has blocked
      */
     public function getCachedUserDomainBlocks(User $user): array
     {
@@ -353,7 +386,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('There was an error getting the cached blocked domains of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
 
             return [];
         }
@@ -366,6 +399,37 @@ class SqlHelpers
             $this->cache->delete(self::USER_DOMAIN_BLOCKS_KEY.$user->getId());
         } catch (InvalidArgumentException $exception) {
             $this->logger->warning('There was an error clearing the cached blocked domains of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * @return int[] the ids of the hashtags $user has blocked
+     */
+    public function getCachedUserHashtagBlocks(User $user): array
+    {
+        try {
+            $sql = 'SELECT hashtag_id FROM hashtag_block WHERE user_id = :uId';
+            if ('test' === $this->kernel->getEnvironment()) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            }
+
+            return $this->cache->get(self::USER_HASHTAG_BLOCKS_KEY.$user->getId(), function (ItemInterface $item) use ($user, $sql) {
+                return $this->fetchSingleColumnAsArray($sql, $user);
+            });
+        } catch (InvalidArgumentException|Exception $exception) {
+            $this->logger->error('There was an error getting the cached blocked hashtags of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+
+            return [];
+        }
+    }
+
+    public function clearCachedUserHashtagBlocks(User $user): void
+    {
+        $this->logger->debug('Clearing cached hashtag blocks for user {u}', ['u' => $user->username]);
+        try {
+            $this->cache->delete(self::USER_HASHTAG_BLOCKS_KEY.$user->getId());
+        } catch (InvalidArgumentException $exception) {
+            $this->logger->warning('There was an error clearing the cached blocked hashtags of user "{u}": {m}', ['u' => $user->username, 'm' => $exception->getMessage()]);
         }
     }
 
