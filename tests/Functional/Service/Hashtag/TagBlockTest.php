@@ -10,6 +10,7 @@ use App\Entity\PostComment;
 use App\PageView\EntryCommentPageView;
 use App\PageView\EntryPageView;
 use App\PageView\PostCommentPageView;
+use App\PageView\PostPageView;
 use App\Repository\Criteria;
 use App\Tests\WebTestCase;
 
@@ -72,12 +73,13 @@ class TagBlockTest extends WebTestCase
         $this->setContentTime($postCommentHidden, $entryShowing, 14);
 
         $user->follow($contentCreator);
+        $this->magazineManager->subscribe($magazine, $user);
         $this->tagManager->block($user, $tag);
 
         $criteria = new EntryPageView(1, $this->security)
             ->setContent(Criteria::CONTENT_COMBINED)
             ->showSortOption(Criteria::SORT_OLD);
-        $criteria->magazine = $magazine;
+        $criteria->subscribed = true;
         $criteria->includeBoosts = true;
         $criteria->perPage = 5;
         $criteria->fetchCachedItems($this->sqlHelpers, $user);
@@ -120,12 +122,13 @@ class TagBlockTest extends WebTestCase
         $this->setContentTime($postCommentHidden, $entryShowing, 14);
 
         $user->follow($contentCreator);
+        $this->magazineManager->subscribe($magazine, $user);
         $this->tagManager->block($user, $tag);
 
         $criteria = new EntryPageView(1, $this->security)
             ->setContent(Criteria::CONTENT_COMBINED)
             ->showSortOption(Criteria::SORT_OLD);
-        $criteria->magazine = $magazine;
+        $criteria->subscribed = true;
         $criteria->includeBoosts = true;
         $criteria->perPage = 5;
 
@@ -189,5 +192,202 @@ class TagBlockTest extends WebTestCase
 
         self::assertSame($commentShowing->getId(), $result[0]->getId());
         self::assertCount(1, $result);
+    }
+
+    public function testBlockedHashtagStillShowsOwnContentWithCache()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $tag = $this->getHashtag('notWanted');
+
+        $magazine = $this->getMagazineByName('testBlockedHashtagStillShowsOwnContentWithCache');
+        $entry = $this->createEntry('something', $magazine, $someoneElse, body: 'something #notWanted');
+        $post = $this->createPost('something #notWanted', $magazine, $someoneElse);
+
+        $entryShowing = $this->createEntry('something', $magazine, $user, body: 'something #notWanted');
+        $entryCommentShowing = $this->createEntryComment('some text #notWanted', $entry, $user);
+        $postShowing = $this->createPost('something #notWanted', $magazine, $user);
+        $postCommentShowing = $this->createPostComment('some text #notWanted', $post, $user);
+
+        $this->magazineManager->subscribe($magazine, $user);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new EntryPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_COMBINED)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->subscribed = true;
+        $criteria->includeBoosts = true;
+        $criteria->perPage = 5;
+        $criteria->fetchCachedItems($this->sqlHelpers, $user);
+
+        $fanta = $this->contentRepository->findByCriteria($criteria, $user);
+        $result = $fanta->getCurrentPageResults();
+
+        $gotEntry = false;
+        $gotEntryComment = false;
+        $gotPost = false;
+        $gotPostComment = false;
+        foreach ($result as $item) {
+            match (true) {
+                $item instanceof Entry => $gotEntry = $item->getId() === $entryShowing->getId(),
+                $item instanceof EntryComment => $gotEntryComment = $item->getId() === $entryCommentShowing->getId(),
+                $item instanceof Post => $gotPost = $item->getId() === $postShowing->getId(),
+                $item instanceof PostComment => $gotPostComment = $item->getId() === $postCommentShowing->getId(),
+            };
+        }
+        self::assertTrue($gotEntry);
+        self::assertTrue($gotEntryComment);
+        self::assertTrue($gotPost);
+        self::assertTrue($gotPostComment);
+    }
+
+    public function testBlockedHashtagStillShowsOwnContentWithoutCache()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $tag = $this->getHashtag('notWanted');
+
+        $magazine = $this->getMagazineByName('testBlockedHashtagStillShowsOwnContentWithoutCache');
+        $entry = $this->createEntry('something', $magazine, $someoneElse, body: 'something #notWanted');
+        $post = $this->createPost('something #notWanted', $magazine, $someoneElse);
+
+        $entryShowing = $this->createEntry('something', $magazine, $user, body: 'something #notWanted');
+        $entryCommentShowing = $this->createEntryComment('some text #notWanted', $entry, $user);
+        $postShowing = $this->createPost('something #notWanted', $magazine, $user);
+        $postCommentShowing = $this->createPostComment('some text #notWanted', $post, $user);
+
+        $this->magazineManager->subscribe($magazine, $user);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new EntryPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_COMBINED)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->subscribed = true;
+        $criteria->includeBoosts = true;
+        $criteria->perPage = 5;
+
+        $fanta = $this->contentRepository->findByCriteria($criteria, $user);
+        $result = $fanta->getCurrentPageResults();
+
+        $gotEntry = false;
+        $gotEntryComment = false;
+        $gotPost = false;
+        $gotPostComment = false;
+        foreach ($result as $item) {
+            match (true) {
+                $item instanceof Entry => $gotEntry = $item->getId() === $entryShowing->getId(),
+                $item instanceof EntryComment => $gotEntryComment = $item->getId() === $entryCommentShowing->getId(),
+                $item instanceof Post => $gotPost = $item->getId() === $postShowing->getId(),
+                $item instanceof PostComment => $gotPostComment = $item->getId() === $postCommentShowing->getId(),
+            };
+        }
+        self::assertTrue($gotEntry);
+        self::assertTrue($gotEntryComment);
+        self::assertTrue($gotPost);
+        self::assertTrue($gotPostComment);
+    }
+
+    public function testAuthorCanSeeEntryWithBockedHashtag()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $magazine = $this->getMagazineByName('testAuthorCanSeeEntryWithBockedHashtag');
+        $tag = $this->getHashtag('notWanted');
+
+        $entryShowing = $this->createEntry('something', $magazine, $user, body: 'something #notWanted');
+        $entryHidden = $this->createEntry('something', $magazine, $someoneElse, body: 'something #notWanted');
+
+        $this->magazineManager->subscribe($magazine, $user);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new EntryPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_THREADS)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->subscribed = true;
+        $criteria->perPage = 3;
+
+        $fanta = $this->entryRepository->findByCriteria($criteria, $user);
+        $results = $fanta->getCurrentPageResults();
+
+        self::assertCount(1, $results);
+        self::assertSame($entryShowing->getId(), $results[0]->getId());
+    }
+
+    public function testAuthorCanSeeEntryCommentWithBockedHashtag()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $magazine = $this->getMagazineByName('testAuthorCanSeeEntryCommentWithBockedHashtag');
+        $entry = $this->createEntry('parent', $magazine, $user, body: 'parent');
+        $tag = $this->getHashtag('notWanted');
+
+        $commentShowing = $this->createEntryComment('some text #notWanted', $entry, $user);
+        $commentHidden = $this->createEntryComment('some text #notWanted', $entry, $someoneElse);
+
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new EntryCommentPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_THREADS)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->perPage = 3;
+
+        $fanta = $this->entryCommentRepository->findByCriteria($criteria, $user);
+        $results = $fanta->getCurrentPageResults();
+
+        self::assertCount(1, $results);
+        self::assertSame($commentShowing->getId(), $results[0]->getId());
+    }
+
+    public function testAuthorCanSeePostWithBockedHashtag()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $magazine = $this->getMagazineByName('testAuthorCanSeePostWithBockedHashtag');
+        $tag = $this->getHashtag('notWanted');
+
+        $postShowing = $this->createPost('something #notWanted', $magazine, $user);
+        $postHidden = $this->createEntry('something #notWanted', $magazine, $someoneElse);
+
+        $this->magazineManager->subscribe($magazine, $user);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new PostPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_MICROBLOG)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->subscribed = true;
+        $criteria->perPage = 3;
+
+        $fanta = $this->postRepository->findByCriteria($criteria, $user);
+        $results = $fanta->getCurrentPageResults();
+
+        self::assertCount(1, $results);
+        self::assertSame($postShowing->getId(), $results[0]->getId());
+    }
+
+    public function testAuthorCanSeePostCommentWithBockedHashtag()
+    {
+        $user = $this->getUserByUsername('John Doe');
+        $someoneElse = $this->getUserByUsername('poster');
+        $magazine = $this->getMagazineByName('testAuthorCanSeePostCommentWithBockedHashtag');
+        $post = $this->createPost('parent', $magazine, $user);
+        $tag = $this->getHashtag('notWanted');
+
+        $commentShowing = $this->createPostComment('something #notWanted', $post, $user);
+        $commentHidden = $this->createPostComment('something #notWanted', $post, $someoneElse);
+
+        $this->magazineManager->subscribe($magazine, $user);
+        $this->tagManager->block($user, $tag);
+
+        $criteria = new PostCommentPageView(1, $this->security)
+            ->setContent(Criteria::CONTENT_MICROBLOG)
+            ->showSortOption(Criteria::SORT_OLD);
+        $criteria->subscribed = true;
+        $criteria->perPage = 3;
+
+        $fanta = $this->postCommentRepository->findByCriteria($criteria, $user);
+        $results = $fanta->getCurrentPageResults();
+
+        self::assertCount(1, $results);
+        self::assertSame($commentShowing->getId(), $results[0]->getId());
     }
 }

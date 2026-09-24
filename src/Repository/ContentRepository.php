@@ -347,7 +347,7 @@ class ContentRepository
             $blockingClauseEntryComment = $blockingClausePost;
             $blockingClausePostComment = $blockingClausePost;
 
-            // only include the subcluase if there are (/ might be) blocks
+            // only include the subclause if there are (/ might be) blocks
             if (null === $criteria->cachedUserBlockedHashtags || !empty($criteria->cachedUserBlockedHashtags)) {
                 if (null === $criteria->cachedUserBlockedHashtags) {
                     $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_id = c.id AND hb.user_id = :loggedInUser)';
@@ -363,6 +363,11 @@ class ContentRepository
                     $parameters['cachedUserBlockedHashtags'] = $criteria->cachedUserBlockedHashtags;
                 }
             }
+
+            $blockingClauseEntry = "(c.user_id = :loggedInUser OR ($blockingClauseEntry))";
+            $blockingClausePost = "(c.user_id = :loggedInUser OR ($blockingClausePost))";
+            $blockingClauseEntryComment = "(c.user_id = :loggedInUser OR ($blockingClauseEntryComment))";
+            $blockingClausePostComment = "(c.user_id = :loggedInUser OR ($blockingClausePostComment))";
 
             if (null === $criteria->cachedUserBlockedInstances) {
                 $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';

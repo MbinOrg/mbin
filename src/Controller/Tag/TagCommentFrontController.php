@@ -12,6 +12,7 @@ use App\Service\TagExtractor;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagCommentFrontController extends AbstractController
 {
@@ -27,12 +28,15 @@ class TagCommentFrontController extends AbstractController
     {
         $tag = $this->tagManager->transliterate(strtolower($name));
 
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+        if (null === $hashtag) {
+            throw new NotFoundHttpException();
+        }
+
         $criteria = new EntryCommentPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setTag($tag);
-
-        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
 
         $params = [
             'hashtag' => $hashtag,

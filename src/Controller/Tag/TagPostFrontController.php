@@ -12,6 +12,7 @@ use App\Service\TagExtractor;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagPostFrontController extends AbstractController
 {
@@ -31,14 +32,17 @@ class TagPostFrontController extends AbstractController
     ): Response {
         $tag = $this->tagManager->transliterate(strtolower($name));
 
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+        if (null === $hashtag) {
+            throw new NotFoundHttpException();
+        }
+
         $criteria = new PostPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setTag($tag);
 
         $posts = $repository->findByCriteria($criteria);
-
-        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
 
         return $this->render(
             'tag/posts.html.twig',

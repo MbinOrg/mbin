@@ -12,6 +12,7 @@ use App\Service\PeopleManager;
 use App\Service\TagExtractor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagPeopleFrontController extends AbstractController
 {
@@ -31,7 +32,11 @@ class TagPeopleFrontController extends AbstractController
         Request $request,
     ): Response {
         $tag = $this->tagManager->transliterate(strtolower($name));
+
         $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+        if (null === $hashtag) {
+            throw new NotFoundHttpException();
+        }
 
         $magazines = array_filter(
             $this->magazineRepository->findByActivity(),

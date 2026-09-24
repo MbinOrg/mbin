@@ -11,11 +11,9 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity]
-#[Table]
 #[UniqueConstraint(name: 'hashtag_subscription_idx', columns: ['user_id', 'hashtag_id'])]
 #[Cache(usage: 'NONSTRICT_READ_WRITE')]
 class HashtagSubscription
@@ -26,7 +24,7 @@ class HashtagSubscription
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'subscribedHashtags')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    public ?User $user;
+    public User $user;
     #[ManyToOne(targetEntity: Hashtag::class, inversedBy: 'subscriptions')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Hashtag $hashtag;

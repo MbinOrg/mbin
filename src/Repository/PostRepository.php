@@ -62,9 +62,10 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    public function findByCriteria(PostPageView $criteria): PagerfantaInterface
+    public function findByCriteria(PostPageView $criteria, ?User $loggedInUser = null): PagerfantaInterface
     {
-        $pagerfanta = new Pagerfanta($this->adapterFactory->create($this->getEntryQueryBuilder($criteria)));
+        $user = $loggedInUser ?? $this->security->getUser();
+        $pagerfanta = new Pagerfanta($this->adapterFactory->create($this->getEntryQueryBuilder($criteria, $user)));
 
         try {
             $pagerfanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
@@ -79,10 +80,8 @@ class PostRepository extends ServiceEntityRepository
         return $pagerfanta;
     }
 
-    private function getEntryQueryBuilder(PostPageView $criteria): QueryBuilder
+    private function getEntryQueryBuilder(PostPageView $criteria, ?User $user): QueryBuilder
     {
-        $user = $this->security->getUser();
-
         $qb = $this->createQueryBuilder('p')
             ->select('p', 'm', 'u')
             ->where('p.visibility = :visibility')
@@ -106,7 +105,7 @@ class PostRepository extends ServiceEntityRepository
 
         $this->addTimeClause($qb, $criteria);
         $this->addStickyClause($qb, $criteria);
-        $this->filter($qb, $criteria);
+        $this->filter($qb, $criteria, $user);
         $this->addBannedHashtagClause($qb);
 
         return $qb;
@@ -145,11 +144,8 @@ class PostRepository extends ServiceEntityRepository
         $qb->andWhere($qb->expr()->not($qb->expr()->exists($dql)));
     }
 
-    private function filter(QueryBuilder $qb, Criteria $criteria): QueryBuilder
+    private function filter(QueryBuilder $qb, Criteria $criteria, ?User $user): QueryBuilder
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-
         if (Criteria::AP_LOCAL === $criteria->federation) {
             $qb->andWhere('p.apId IS NULL');
         } elseif (Criteria::AP_FEDERATED === $criteria->federation) {
@@ -183,21 +179,21 @@ class PostRepository extends ServiceEntityRepository
                 OR
                 EXISTS (SELECT 1 FROM '.HashtagSubscription::class.' hs INNER JOIN '.HashtagLink::class.' hsl ON hs.hashtag = hsl.hashtag WHERE hsl.post = p AND hs.user = :user)'
             );
-            $qb->setParameter('user', $this->security->getUser());
+            $qb->setParameter('user', $user);
         }
 
         if ($criteria->moderated) {
             $qb->andWhere(
                 'EXISTS (SELECT IDENTITY(mm.magazine) FROM '.Moderator::class.' mm WHERE mm.user = :user AND mm.magazine = p.magazine)'
             );
-            $qb->setParameter('user', $this->security->getUser());
+            $qb->setParameter('user', $user);
         }
 
         if ($criteria->favourite) {
             $qb->andWhere(
                 'EXISTS (SELECT IDENTITY(pf.post) FROM '.PostFavourite::class.' pf WHERE pf.user = :user AND pf.post = p)'
             );
-            $qb->setParameter('user', $this->security->getUser());
+            $qb->setParameter('user', $user);
         }
 
         if ($criteria->languages) {
@@ -218,7 +214,7 @@ class PostRepository extends ServiceEntityRepository
                 'NOT EXISTS ('
                 .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
                 .'WHERE hbl.post = p AND hb.user = :blocker'
-                .')'
+                .') OR p.user = :blocker'
             );
 
             $qb->setParameter('blocker', $user);

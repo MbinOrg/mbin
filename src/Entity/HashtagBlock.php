@@ -11,11 +11,9 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity]
-#[Table]
 #[UniqueConstraint(name: 'hashtag_block_idx', columns: ['user_id', 'hashtag_id'])]
 #[Cache(usage: 'NONSTRICT_READ_WRITE')]
 class HashtagBlock
@@ -26,7 +24,7 @@ class HashtagBlock
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'blockedHashtags')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    public ?User $user;
+    public User $user;
     #[ManyToOne(targetEntity: Hashtag::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Hashtag $hashtag;

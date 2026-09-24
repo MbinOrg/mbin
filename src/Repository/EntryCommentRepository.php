@@ -229,7 +229,7 @@ class EntryCommentRepository extends ServiceEntityRepository
                 'NOT EXISTS ('
                     .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
                     .'WHERE hbl.entryComment = c AND hb.user = :blocker'
-                .')'
+                .') OR c.user = :blocker'
             );
 
             if (!$criteria->domain) {
