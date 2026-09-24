@@ -6,7 +6,7 @@ namespace App\Enums;
 
 use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 
-#[EnumType('enum_direct_message_settings')]
+#[EnumType('enumdirectmessagesettings')]
 enum EDirectMessageSettings: string
 {
     case Everyone = 'everyone';

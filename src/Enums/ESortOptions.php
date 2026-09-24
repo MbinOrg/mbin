@@ -6,7 +6,7 @@ namespace App\Enums;
 
 use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 
-#[EnumType('enum_sort_options')]
+#[EnumType('enumsortoptions')]
 enum ESortOptions: string
 {
     case Hot = 'hot';
@@ -24,7 +24,7 @@ enum ESortOptions: string
             self::Newest->value => self::Newest,
             self::Active->value => self::Active,
             self::Oldest->value => self::Oldest,
-            self::Commented->value => self::Commented,
+            //self::Commented->value => self::Commented,
             default => null,
         };
     }
@@ -40,7 +40,7 @@ enum ESortOptions: string
             ESortOptions::Newest->value,
             ESortOptions::Active->value,
             ESortOptions::Oldest->value,
-            ESortOptions::Commented->value,
+            //ESortOptions::Commented->value,
         ];
     }
 }

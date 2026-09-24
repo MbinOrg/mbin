@@ -6,7 +6,7 @@ namespace App\Enums;
 
 use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 
-#[EnumType('enum_application_status')]
+#[EnumType('enumapplicationstatus')]
 enum EApplicationStatus: string
 {
     case Approved = 'Approved';

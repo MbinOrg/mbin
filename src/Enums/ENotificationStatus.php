@@ -6,7 +6,7 @@ namespace App\Enums;
 
 use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 
-#[EnumType('enum_notification_status')]
+#[EnumType('enumnotificationstatus')]
 enum ENotificationStatus: string
 {
     case Default = 'Default';

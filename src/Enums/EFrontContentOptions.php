@@ -6,7 +6,7 @@ namespace App\Enums;
 
 use HeyMoon\DoctrinePostgresEnum\Attribute\EnumType;
 
-#[EnumType('enum_front_content_options')]
+#[EnumType('enumfrontcontentoptions')]
 enum EFrontContentOptions: string
 {
     case Combined = 'combined';
