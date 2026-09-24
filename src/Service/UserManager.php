@@ -19,7 +19,7 @@ use App\Event\User\UserFollowEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\UserFactory;
 use App\Message\ClearDeletedUserMessage;
-use App\Message\DeleteImageMessage;
+use App\Message\DeleteImageV2Message;
 use App\Message\DeleteUserMessage;
 use App\Message\Notification\SentNewSignupNotificationMessage;
 use App\Message\UserCreatedMessage;
@@ -269,11 +269,11 @@ readonly class UserManager
         }
 
         if ($oldAvatar && $user->avatar !== $oldAvatar) {
-            $this->bus->dispatch(new DeleteImageMessage($oldAvatar->getId()));
+            $this->bus->dispatch(DeleteImageV2Message::fromImage($oldAvatar));
         }
 
         if ($oldCover && $user->cover !== $oldCover) {
-            $this->bus->dispatch(new DeleteImageMessage($oldCover->getId()));
+            $this->bus->dispatch(DeleteImageV2Message::fromImage($oldCover));
         }
 
         if ($mailUpdated) {
@@ -352,14 +352,14 @@ readonly class UserManager
             return;
         }
 
-        $image = $user->avatar->getId();
+        $imageRmMessage = DeleteImageV2Message::fromImage($user->avatar);
 
         $user->avatar = null;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->bus->dispatch(new DeleteImageMessage($image));
+        $this->bus->dispatch($imageRmMessage);
     }
 
     public function detachCover(User $user): void
@@ -368,14 +368,14 @@ readonly class UserManager
             return;
         }
 
-        $image = $user->cover->getId();
+        $imageRmMessage = DeleteImageV2Message::fromImage($user->cover);
 
         $user->cover = null;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->bus->dispatch(new DeleteImageMessage($image));
+        $this->bus->dispatch($imageRmMessage);
     }
 
     /**
@@ -791,49 +791,54 @@ readonly class UserManager
     }
 
     /**
-     * This method will return all image paths that the user **owns**,
+     * This method will return the sha256 (hex) and filepath of all images that the user **owns**,
      * meaning that that image belongs only to posts from the user and not to anybody else's.
      *
-     * @return string[]
+     * @return array [0 => string sha256, 1 => ?string filePath]
      */
-    public function getAllImageFilePathsOfUser(User $user): array
+    public function getAllImagesShaAndFilepathOfUser(User $user): array
     {
         $sql = '
-            SELECT i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id
+            SELECT i1.sha256, i1.file_path FROM entry e INNER JOIN image i1 ON e.image_id = i1.id
                 WHERE e.user_id = :userId AND i1.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i1.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i1.id)
             UNION DISTINCT
-            SELECT i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id
+            SELECT i2.sha256, i2.file_path FROM post p INNER JOIN image i2 ON p.image_id = i2.id
                 WHERE p.user_id = :userId AND i2.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i2.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i2.id)
             UNION DISTINCT
-            SELECT i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id
+            SELECT i3.sha256, i3.file_path FROM entry_comment ec INNER JOIN image i3 ON ec.image_id = i3.id
                 WHERE ec.user_id = :userId AND i3.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i3.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i3.id)
             UNION DISTINCT
-            SELECT i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id
+            SELECT i4.sha256, i4.file_path FROM post_comment pc INNER JOIN image i4 ON pc.image_id = i4.id
                 WHERE pc.user_id = :userId AND i4.file_path IS NOT NULL
                     AND NOT EXISTS (SELECT id FROM entry e2 WHERE e2.user_id <> :userId AND e2.image_id = i4.id)
                     AND NOT EXISTS (SELECT id FROM post p2 WHERE p2.user_id <> :userId AND p2.image_id = i4.id)
                     AND NOT EXISTS (SELECT id FROM entry_comment ec2 WHERE ec2.user_id <> :userId AND ec2.image_id = i4.id)
                     AND NOT EXISTS (SELECT id FROM post_comment pc2 WHERE pc2.user_id <> :userId AND pc2.image_id = i4.id)
         ';
+
         $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('file_path', 0);
+        $rsm->addScalarResult('sha256', 0);
+        $rsm->addScalarResult('file_path', 1);
 
         $result = $this->entityManager->createNativeQuery($sql, $rsm)
             ->setParameter(':userId', $user->getId())
             ->getScalarResult();
 
-        return array_filter(array_map(fn ($row) => $row[0], $result));
+        return array_map(fn ($row) => [
+            bin2hex(stream_get_contents($row[0])),
+            $row[1],
+        ], array_filter($result));
     }
 }
