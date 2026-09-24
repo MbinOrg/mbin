@@ -217,34 +217,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: DomainSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedDomains;
     #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $follows;
     #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $followers;
     #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blocks;
     #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public ?Collection $blockers;
     #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blockedMagazines;
     #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blockedDomains;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $reports;
     #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $favourites;
     #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $violations;
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $notifications;
     #[OneToMany(mappedBy: 'user', targetEntity: UserPushSubscription::class, fetch: 'EXTRA_LAZY')]
     public Collection $pushSubscriptions;
@@ -410,7 +410,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         // Magazines
         $magazines = $tokens->map(fn ($token) => $token->magazine);
         $criteria = Criteria::create()
-            ->orderBy(['lastActive' => Order::Descending]);
+            ->orderBy(['lastActive' => \SortDirection::Descending]);
 
         return $magazines->matching($criteria);
     }

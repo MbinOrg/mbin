@@ -35,7 +35,6 @@ use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -283,7 +282,7 @@ class EntryManager implements ContentManagerInterface
 
         $image = $entry->image?->getId();
 
-        $sort = new Criteria(expression: null, orderings: ['createdAt' => Order::Descending]);
+        $sort = new Criteria(expression: null, orderings: ['createdAt' => \SortDirection::Descending]);
         foreach ($entry->comments->matching($sort) as $comment) {
             $this->entryCommentManager->purge($user, $comment);
         }

@@ -85,10 +85,10 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $children;
     #[OneToMany(mappedBy: 'root', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $nested;
     #[OneToMany(mappedBy: 'comment', targetEntity: EntryCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
