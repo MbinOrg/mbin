@@ -13,6 +13,7 @@ use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\TombstoneFactory;
+use App\Factory\WwwHttpClientFactory;
 use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
@@ -59,6 +60,7 @@ class ApHttpClient implements ApHttpClientInterface
         private readonly TombstoneFactory $tombstoneFactory,
         private readonly PersonFactory $personFactory,
         private readonly GroupFactory $groupFactory,
+        private readonly WwwHttpClientFactory $httpClientFactory,
         private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
         private readonly UserRepository $userRepository,
@@ -119,7 +121,7 @@ class ApHttpClient implements ApHttpClientInterface
         }
 
         try {
-            $client = new CurlHttpClient();
+            $client = $this->httpClientFactory->getClient(new CurlHttpClient());
             $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -209,7 +211,7 @@ class ApHttpClient implements ApHttpClientInterface
         } catch (\Throwable) {
         }
         try {
-            $client = new CurlHttpClient();
+            $client = $this->httpClientFactory->getClient(new CurlHttpClient());
             $response = $client->request('GET', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -275,7 +277,7 @@ class ApHttpClient implements ApHttpClientInterface
 
         try {
             // Set-up request
-            $client = new CurlHttpClient();
+            $client = $this->httpClientFactory->getClient(new CurlHttpClient());
             $response = $client->request('GET', $apProfileId, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -382,7 +384,7 @@ class ApHttpClient implements ApHttpClientInterface
 
         try {
             // Set-up request
-            $client = new CurlHttpClient();
+            $client = $this->httpClientFactory->getClient(new CurlHttpClient());
             $response = $client->request('GET', $apAddress, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -489,7 +491,7 @@ class ApHttpClient implements ApHttpClientInterface
 
         // Set-up request
         try {
-            $client = new CurlHttpClient();
+            $client = $this->httpClientFactory->getClient(new CurlHttpClient());
             $response = $client->request('POST', $url, [
                 'max_duration' => self::MAX_DURATION,
                 'timeout' => self::TIMEOUT,
@@ -549,7 +551,7 @@ class ApHttpClient implements ApHttpClientInterface
      */
     private function generalFetch(string $url, ApRequestType $requestType = ApRequestType::ActivityPub): string
     {
-        $client = new CurlHttpClient();
+        $client = $this->httpClientFactory->getClient(new CurlHttpClient());
         $this->logger->debug("[ApHttpClient::generalFetch] URL: $url");
         $r = $client->request('GET', $url, [
             'max_duration' => self::MAX_DURATION,

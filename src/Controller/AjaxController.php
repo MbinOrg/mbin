@@ -27,6 +27,7 @@ use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
 use App\Utils\Embed;
+use App\Utils\UrlUtils;
 use App\Utils\Polyfills;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,6 +35,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Emoji\EmojiTransliterator;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -208,7 +210,13 @@ class AjaxController extends AbstractController
         HttpClientInterface $httpClient,
         CacheInterface $cache,
     ): JsonResponse {
-        $resp = $httpClient->request('GET', $mercurePublicUrl.'/subscriptions/'.$topic, [
+        $mercureSubsUrl = $mercurePublicUrl.'/subscriptions/';
+        $mercureUrl = $mercureSubsUrl.$topic;
+        if (!UrlUtils::checkUrlSubpathNotAscending($mercureSubsUrl, $topic)) {
+            throw new BadRequestException('Mercure topic is malformed');
+        }
+
+        $resp = $httpClient->request('GET', $mercureUrl, [
             'auth_bearer' => $mercureSubscriptionsToken,
         ]);
 
