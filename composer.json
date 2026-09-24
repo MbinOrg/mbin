@@ -40,6 +40,7 @@
         "league/oauth2-github": "^3.1.1",
         "league/oauth2-google": "^5.0.0",
         "league/oauth2-server-bundle": "^1.1.1",
+        "league/uri-interfaces": "^7.8",
         "liip/imagine-bundle": "^2.17.1",
         "meteo-concept/hcaptcha-bundle": "^4.5.0",
         "minishlink/web-push": "^10.1.0",
