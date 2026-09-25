@@ -29,7 +29,7 @@ final class FeaturedMagazinesComponent
     {
         $magazines = $this->repository->findBy(
             ['apId' => null, 'visibility' => VisibilityInterface::VISIBILITY_VISIBLE],
-            ['lastActive' => 'DESC'],
+            ['lastActive' => \SortDirection::Descending],
             28
         );
 

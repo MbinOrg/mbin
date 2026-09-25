@@ -10,6 +10,7 @@ use App\Entity\Magazine;
 use App\Repository\MagazineRepository;
 use App\Schema\ContentSchema;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -106,7 +107,7 @@ class MagazineTrashedRetrieveApi extends MagazineBaseApi
         $trash = $repository->findTrashed(
             $magazine,
             $this->getPageNb($request),
-            self::constrainPerPage($request->get('perPage', MagazineRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', MagazineRepository::PER_PAGE))
         );
 
         $dtos = [];

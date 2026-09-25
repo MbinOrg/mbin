@@ -14,6 +14,7 @@ use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Factory\ReportFactory;
 use App\Service\MagazineManager;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -60,8 +61,8 @@ class MagazineBaseApi extends BaseApi
     protected function deserializeThemeFromForm(MagazineThemeDto $dto): MagazineThemeDto
     {
         $deserialized = new MagazineThemeRequestDto();
-        $deserialized->customCss = $this->request->getCurrentRequest()->get('customCss');
-        $deserialized->backgroundImage = $this->request->getCurrentRequest()->get('backgroundImage');
+        $deserialized->customCss = Polyfills::requestParam($this->request->getCurrentRequest(), 'customCss');
+        $deserialized->backgroundImage = Polyfills::requestParam($this->request->getCurrentRequest(), 'backgroundImage');
 
         $dto = $deserialized->mergeIntoDto($dto);
 

@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Controller\AbstractController;
 use App\Repository\NotificationRepository;
 use App\Repository\ReportRepository;
+use App\Utils\Polyfills;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class AdminReportController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_MODERATOR")'))]
     public function __invoke(Request $request, string $status): Response
     {
-        $page = (int) $request->get('p', 1);
+        $page = (int) Polyfills::requestParam($request, 'p', 1);
 
         $reports = $this->repository->findAllPaginated($page, $status);
         $this->notificationRepository->markReportNotificationsAsRead($this->getUserOrThrow());

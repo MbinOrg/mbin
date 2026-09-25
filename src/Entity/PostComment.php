@@ -86,10 +86,10 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public ?bool $updateMark = false;
     #[OneToMany(mappedBy: 'parent', targetEntity: PostComment::class, orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $children;
     #[OneToMany(mappedBy: 'root', targetEntity: PostComment::class, orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $nested;
     #[OneToMany(mappedBy: 'comment', targetEntity: PostCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;

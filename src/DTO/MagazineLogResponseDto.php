@@ -15,7 +15,7 @@ use App\Factory\PostCommentFactory;
 use App\Factory\PostFactory;
 use App\Repository\TagLinkRepository;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[OA\Schema()]
 class MagazineLogResponseDto implements \JsonSerializable

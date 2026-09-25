@@ -8,6 +8,7 @@ use App\DTO\MagazineBanDto;
 use App\Entity\Magazine;
 use App\Entity\MagazineBan;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Exception\UserCannotBeBanned;
 use App\Message\ActivityPub\Inbox\BlockMessage;
 use App\Message\ActivityPub\Outbox\GenericAnnounceMessage;
@@ -102,7 +103,7 @@ class BlockHandler extends MbinMessageHandler
             $expireDate = new \DateTimeImmutable($payload['expires']);
         }
 
-        if (null === $target || ($target instanceof User && 'Application' === $target->type)) {
+        if (null === $target || ($target instanceof User && EUserType::Application === $target->type)) {
             $this->handleInstanceBan($bannedUser, $actor, $reason, $isUndo);
         } else {
             $this->handleMagazineBan($message->payload, $bannedUser, $actor, $target, $reason, $expireDate, $isUndo);
