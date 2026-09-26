@@ -18,23 +18,10 @@ services:
             XDEBUG_MODE: '${XDEBUG_MODE:-off}'
             FRANKENPHP_WORKER_CONFIG: watch
             MERCURE_EXTRA_DIRECTIVES: demo
-        ports:
-            - 8081:8081
         extra_hosts:
             # Ensure that host.docker.internal is correctly defined on Linux
             - host.docker.internal:host-gateway
         tty: true
-
-    m3u8-fixture:
-        image: docker.io/library/busybox:1.37.0
-        profiles:
-            - m3u8-fixture
-        network_mode: service:php
-        command: ['httpd', '-f', '-p', '8081', '-h', '/fixtures']
-        volumes:
-            - ./tests/assets/m3u8-embed:/fixtures:ro
-        depends_on:
-            - php
 
     node:
         image: docker.io/library/node:26-trixie-slim

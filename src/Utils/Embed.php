@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use App\Controller\Dev\M3u8EmbedFixtureController;
 use App\Entity\Entry;
 use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
@@ -32,6 +33,7 @@ class Embed
         private LoggerInterface $logger,
         private EventDispatcherInterface $dispatcher,
         private WwwHttpClientFactory $httpClientFactory,
+        private string $kernelEnvironment,
     ) {
     }
 
@@ -46,6 +48,15 @@ class Embed
 
     public function fetch(string $url): self
     {
+        if ('dev' === $this->kernelEnvironment && M3u8EmbedFixtureController::MASTER_URL === $url) {
+            $fixture = clone $this;
+            $fixture->url = $url;
+            $fixture->title = 'Mbin master.m3u8 iframe regression fixture';
+            $fixture->html = $this->cleanIframe(M3u8EmbedFixtureController::IFRAME_HTML);
+
+            return $fixture;
+        }
+
         if ($this->settings->isLocalUrl($url)) {
             if (ImageManager::isImageUrl($url)) {
                 return $this->createLocalImage($url);
