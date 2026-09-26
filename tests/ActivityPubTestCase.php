@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Factory\ActivityPub\AddRemoveFactory;
 use App\Factory\ActivityPub\BlockFactory;
 use App\Factory\ActivityPub\EntryCommentNoteFactory;
+use App\Factory\ActivityPub\EntryPageFactory;
 use App\Factory\ActivityPub\FlagFactory;
 use App\Factory\ActivityPub\GroupFactory;
 use App\Factory\ActivityPub\InstanceFactory;
@@ -40,6 +41,7 @@ class ActivityPubTestCase extends WebTestCase
     protected PersonFactory $personFactory;
     protected GroupFactory $groupFactory;
     protected InstanceFactory $instanceFactory;
+    protected EntryPageFactory $entryPageFactory;
     protected EntryCommentNoteFactory $entryCommentNoteFactory;
     protected PostNoteFactory $postNoteFactory;
     protected PostCommentNoteFactory $postCommentNoteFactory;
@@ -69,6 +71,7 @@ class ActivityPubTestCase extends WebTestCase
         $this->personFactory = $this->getService(PersonFactory::class);
         $this->groupFactory = $this->getService(GroupFactory::class);
         $this->instanceFactory = $this->getService(InstanceFactory::class);
+        $this->entryPageFactory = $this->getService(EntryPageFactory::class);
         $this->entryCommentNoteFactory = $this->getService(EntryCommentNoteFactory::class);
         $this->postNoteFactory = $this->getService(PostNoteFactory::class);
         $this->postCommentNoteFactory = $this->getService(PostCommentNoteFactory::class);
