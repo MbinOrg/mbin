@@ -43,10 +43,14 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     protected string $remoteSubDomain = 'remote.sub.mbin';
 
     protected array $entitiesToRemoveAfterSetup = [];
+    protected bool $skipSettingUpEntities = false;
 
     public function setUp(): void
     {
         parent::setUp();
+        if ($this->skipSettingUpEntities) {
+            return;
+        }
         $this->localDomain = $this->settingsManager->get('KBIN_DOMAIN');
         $this->setupLocalActors();
 
@@ -147,7 +151,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->registerActor($this->remoteSubscriber, $domain, true);
     }
 
-    protected function registerActor(ActivityPubActorInterface $actor, string $domain, bool $removeAfterSetup = false): void
+    protected function registerActor(ActivityPubActorInterface $actor, string $domain, bool $removeAfterSetup = false, ?string $overridePointToUrl = null): void
     {
         if ($actor instanceof User) {
             $json = $this->personFactory->create($actor);
@@ -162,6 +166,13 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
 
         $userEvent = new WebfingerResponseEvent(new JsonRd(), "acct:$username@$domain", ['account' => $username]);
         $this->eventDispatcher->dispatch($userEvent);
+        if ($overridePointToUrl) {
+            foreach ($userEvent->jsonRd->getLinks() as $link) {
+                if ($link->getHref() === $json['id']) {
+                    $link->setHref($overridePointToUrl);
+                }
+            }
+        }
         $realDomain = \sprintf(WebFingerFactory::WEBFINGER_URL, 'https', $domain, '', "$username@$domain");
         $this->testingApHttpClient->webfingerObjects[$realDomain] = $userEvent->jsonRd->toArray();
 
