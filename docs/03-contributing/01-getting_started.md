@@ -276,26 +276,6 @@ Please note, that the command may take some time and data will not be visible du
 - Omit `--append` flag to override data currently stored in the database
 - Customize inserted data by editing files inside `src/DataFixtures` directory
 
-#### Unsupported M3U8 iframe fixture
-
-An opt-in fixture is available for testing an oEmbed response whose iframe points directly to an HLS `master.m3u8` playlist. Start the development environment and fixture server:
-
-```sh
-docker compose --profile m3u8-fixture up -d
-```
-
-Then load only the opt-in M3U8 fixture group:
-
-```sh
-docker compose exec php bin/console doctrine:fixtures:load --group=m3u8-embed --append --no-debug
-```
-
-Doctrine automatically loads the user and magazine dependencies required by this fixture. It does not load the unrelated entry, post, comment, vote, or report fixtures. The `--append` option preserves data already present in the local database.
-
-Sign in as the `demo` user with password `demo`, then find the pinned entry named **Regression test: iframe pointing to master.m3u8**. Opening its media preview must produce an empty preview: the browser must not insert an iframe or request `http://127.0.0.1:8081/master.m3u8`.
-
-The fixture group is idempotent for its fixed entry URL, so running the command again does not duplicate the regression entry. The seeded example may remain in the development database for later regression testing. The fixture HTTP service is development-only and starts only when the `m3u8-fixture` profile is selected.
-
 ### Starting the development server
 
 Prepare the server:
