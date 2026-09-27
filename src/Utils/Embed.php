@@ -228,6 +228,13 @@ class Embed
             if ($node->hasAttribute('data-embed-url')) {
                 return $node->getAttribute('data-embed-url');
             }
+
+            if ('iframe' === $node->tagName) {
+                $url = $node->getAttribute('src');
+                if (str_contains($url, '/embed')) {
+                    return $url;
+                }
+            }
         }
 
         return null;
