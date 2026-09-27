@@ -109,6 +109,7 @@ class AjaxController extends AbstractController
                     allow="fullscreen *" sandbox="allow-scripts allow-same-origin" credentialless="true" csp="" referrerpolicy="same-origin"
                     width="100" height="100" style="border-width: 1px; width: 100%%; height: 30rem;"
                     %s title="%s"
+                    data-controller="iframe-size-adjust"
                 ></iframe>
             ';
             $frame = str_replace('\n', '', $frame);
