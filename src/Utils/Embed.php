@@ -21,6 +21,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 class Embed
 {
     public ?string $url = null;
+    public ?string $embedUrl = null;
     public ?string $title = null;
     public ?string $description = null;
     public ?string $image = null;
@@ -87,6 +88,7 @@ class Embed
                 $c->description = $embed->description;
                 $c->image = (string) $embed->image;
                 $c->html = $this->cleanIframe($oembed->html('html'));
+                $c->embedUrl = $this->extractEmbedUrl($embed);
 
                 try {
                     if (!$c->html && $embed->code) {
@@ -206,6 +208,29 @@ class Embed
         }
 
         return $html;
+    }
+
+    private function extractEmbedUrl(Extractor $embed): ?string
+    {
+        $embedHtml = $embed->getOEmbed()->html('html') ?: $embed->code?->html;
+        if (null === $embedHtml) {
+            return null;
+        }
+
+        $dom = new \DOMDocument();
+        $usesInternalErrors = libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">'.$embedHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+        libxml_use_internal_errors($usesInternalErrors);
+
+        foreach ($dom->getElementsByTagName('*') as $node) {
+            /** @var \DOMElement $node */
+            if ($node->hasAttribute('data-embed-url')) {
+                return $node->getAttribute('data-embed-url');
+            }
+        }
+
+        return null;
     }
 
     private function createLocalImage(string $url): self
