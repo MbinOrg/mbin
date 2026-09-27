@@ -106,8 +106,8 @@ class AjaxController extends AbstractController
         } else {
             $frame = '
                 <iframe
-                    allow="fullscreen *" sandbox="allow-scripts" credentialless="true" csp="" referrerpolicy="same-origin"
-                    width="100" height="100" style="border-width: 1px; width: max-content; height: fit-content;"
+                    allow="fullscreen *" sandbox="allow-scripts allow-same-origin" credentialless="true" csp="" referrerpolicy="same-origin"
+                    width="100" height="100" style="border-width: 1px; width: 100%%; height: 30rem;"
                     %s title="%s"
                 ></iframe>
             ';
