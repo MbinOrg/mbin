@@ -44,6 +44,17 @@ class M3u8EmbedFixtures extends BaseFixture implements DependentFixtureInterface
             return;
         }
 
+        $previousEntry = $this->entryRepository->findOneBy([
+            'title' => self::ENTRY_TITLE,
+            'url' => 'http://127.0.0.1:8000/_dev/m3u8-embed/master.m3u8',
+        ]);
+        if ($previousEntry) {
+            $previousEntry->url = self::ENTRY_URL;
+            $manager->flush();
+
+            return;
+        }
+
         $user = $this->getReference('user_1', User::class);
 
         $entry = new Entry(
@@ -59,7 +70,7 @@ MARKDOWN,
             false,
             false,
             'en',
-            '127.0.0.1',
+            'mbin.localhost',
         );
         $entry->slug = $this->slugger->slug(self::ENTRY_TITLE);
         $entry->type = Entry::ENTRY_TYPE_LINK;

@@ -20,6 +20,7 @@ class M3u8EmbedFixturesTest extends TestCase
 
     public function testFixtureEntryAndPlaylistUseSameEndpoint(): void
     {
+        self::assertSame('http://mbin.localhost:8080/_dev/m3u8-embed/master.m3u8', M3u8EmbedFixtures::ENTRY_URL);
         self::assertSame(
             M3u8EmbedFixtureController::MASTER_URL,
             M3u8EmbedFixtures::ENTRY_URL,
