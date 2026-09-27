@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
+use App\Controller\Dev\M3u8EmbedFixtureController;
 use App\Factory\WwwHttpClientFactory;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
@@ -47,6 +48,22 @@ class EmbedTest extends TestCase
 
         self::assertSame(0, $requestCount);
         self::assertNull($result->title);
+    }
+
+    public function testDevelopmentFixtureExercisesSanitizerWithoutNetworkRequest(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse();
+        });
+
+        $result = $this->createEmbed($httpClient, 'dev')->fetch(M3u8EmbedFixtureController::MASTER_URL);
+
+        self::assertSame(M3u8EmbedFixtureController::MASTER_URL, $result->url);
+        self::assertNull($result->html);
+        self::assertSame(0, $requestCount);
     }
 
     /**
@@ -167,7 +184,7 @@ class EmbedTest extends TestCase
         }
     }
 
-    private function createEmbed(?HttpClientInterface $httpClient = null): Embed
+    private function createEmbed(?HttpClientInterface $httpClient = null, string $kernelEnvironment = 'test'): Embed
     {
         return new Embed(
             new ArrayAdapter(),
@@ -175,6 +192,7 @@ class EmbedTest extends TestCase
             $this->createStub(LoggerInterface::class),
             $this->createStub(EventDispatcherInterface::class),
             new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
+            $kernelEnvironment,
         );
     }
 }
