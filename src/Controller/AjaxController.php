@@ -90,7 +90,8 @@ class AjaxController extends AbstractController
      */
     public function fetchEmbed(Embed $embed, Request $request): JsonResponse
     {
-        $data = $embed->fetch($request->get('url'));
+        $srcUrl = $request->get('url');
+        $data = $embed->fetch($srcUrl);
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
         if ($data->isImageUrl()) {
             $text = $data->html;
@@ -103,7 +104,32 @@ class AjaxController extends AbstractController
                 $text
             );
         } else {
-            $html = $data->html;
+            $frame = '
+                <iframe
+                    allow="fullscreen *" sandbox="allow-scripts allow-same-origin" credentialless="true" csp="" referrerpolicy="same-origin"
+                    width="100" height="100" style="border-width: 1px; width: 100%%; height: 30rem;"
+                    %s title="%s"
+                    data-controller="iframe-size-adjust"
+                ></iframe>
+            ';
+            $frame = str_replace('\n', '', $frame);
+
+            $useEmbedUrl = true; // many servers might have not configured their CORS correct, so it might be better to not use the URL
+            if ($useEmbedUrl && null !== $data->embedUrl) {
+                $src = \sprintf('src="%s"', htmlspecialchars($data->embedUrl));
+            } elseif (null !== $data->html) {
+                $src = \sprintf('srcdoc="%s" src="%s"', htmlspecialchars($data->html), htmlspecialchars($data->url));
+            } else {
+                $src = \sprintf('src="%s"', htmlspecialchars($srcUrl));
+            }
+
+            if ($host = parse_url($data->url, PHP_URL_HOST)) {
+                $title = 'embedded link preview of '.$host;
+            } else {
+                $title = 'embedded link preview';
+            }
+
+            $html = \sprintf($frame, $src, $title);
         }
 
         return new JsonResponse(
