@@ -7,6 +7,7 @@ namespace App\Controller\Entry;
 use App\Controller\AbstractController;
 use App\Entity\Entry;
 use App\Entity\Magazine;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ class EntryChangeAdultController extends AbstractController
     ): Response {
         $this->validateCsrf('change_adult', $request->getPayload()->get('token'));
 
-        $entry->isAdult = 'on' === $request->get('adult');
+        $entry->isAdult = 'on' === Polyfills::requestParam($request, 'adult');
 
         $this->entityManager->flush();
 

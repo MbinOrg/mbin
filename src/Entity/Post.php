@@ -139,7 +139,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         $this->comments->get(-1);
 
         $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => \SortDirection::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -164,7 +164,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getBestComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
-            ->orderBy(['upVotes' => 'DESC', 'createdAt' => 'ASC']);
+            ->orderBy(['upVotes' => \SortDirection::Descending, 'createdAt' => \SortDirection::Ascending]);
 
         $comments = $this->comments->matching($criteria);
         $comments = $this->handlePrivateComments($comments, $user);
@@ -196,7 +196,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getLastComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['createdAt' => \SortDirection::Ascending]);
 
         $comments = $this->comments->matching($criteria);
 

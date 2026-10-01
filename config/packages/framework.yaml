@@ -2,7 +2,6 @@
 framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    annotations: false #no longer supported
     http_method_override: false
     handle_all_throwables: true
     trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
@@ -27,9 +26,9 @@ framework:
         # previous
         #handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         # transition
-        handler_id: App\MigratePdoToRedisSessionHandler
+        #handler_id: App\MigratePdoToRedisSessionHandler
         # new
-        #handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
         cookie_secure: auto
         cookie_samesite: lax
         cookie_lifetime: 10512000 # 4 months long lifetime

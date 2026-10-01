@@ -92,7 +92,7 @@ class MessageThreadRepository extends ServiceEntityRepository
                 $ids[] = $result['id'];
             }
 
-            return $this->findBy(['id' => $ids], ['updatedAt' => 'DESC']);
+            return $this->findBy(['id' => $ids], ['updatedAt' => \SortDirection::Descending]);
         }
 
         return [];

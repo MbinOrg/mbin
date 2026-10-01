@@ -221,8 +221,8 @@ class MagazineRepository extends ServiceEntityRepository
         int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $criteria = Criteria::create()
-            ->orderBy(['isOwner' => 'DESC'])
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['isOwner' => \SortDirection::Descending])
+            ->orderBy(['createdAt' => \SortDirection::Ascending]);
 
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
         try {
@@ -240,7 +240,7 @@ class MagazineRepository extends ServiceEntityRepository
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
-            ->orderBy(['createdAt' => 'DESC']);
+            ->orderBy(['createdAt' => \SortDirection::Descending]);
 
         $bans = new Pagerfanta(new SelectableAdapter($magazine->bans, $criteria));
         try {

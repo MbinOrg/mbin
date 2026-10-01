@@ -163,7 +163,7 @@ class MonitoringExecutionContext
      */
     public function getRootTwigRenders(): Collection
     {
-        $criteria = new Criteria(Criteria::expr()->isNull('parent'));
+        $criteria = new Criteria(expression: Criteria::expr()->isNull('parent'));
 
         return $this->twigRenders->matching($criteria);
     }

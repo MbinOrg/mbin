@@ -8,6 +8,7 @@ use App\Controller\Api\Entry\EntriesBaseApi;
 use App\DTO\EntryCommentResponseDto;
 use App\Entity\EntryComment;
 use App\Factory\EntryCommentFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -81,7 +82,7 @@ class EntryCommentsSetAdultApi extends EntriesBaseApi
 
         $request = $this->request->getCurrentRequest();
         // Returns true for "1", "true", "on" and "yes". Returns false otherwise.
-        $comment->isAdult = filter_var($request->get('adult', 'true'), FILTER_VALIDATE_BOOL);
+        $comment->isAdult = filter_var(Polyfills::requestParam($request, 'adult', 'true'), FILTER_VALIDATE_BOOL);
 
         $manager->flush();
 
