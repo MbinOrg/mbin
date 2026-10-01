@@ -86,6 +86,10 @@ class UserSettingsType extends AbstractType
                 'required' => false,
                 'help' => 'show_boost_following_help',
             ])
+            ->add('showCommentsOfSubscribedHashtags', CheckboxType::class, [
+                'required' => false,
+                'help' => 'show_hashtag_sub_comments_help',
+            ])
             ->add('discoverable', CheckboxType::class, [
                 'required' => false,
                 'help' => 'user_discoverable_help',

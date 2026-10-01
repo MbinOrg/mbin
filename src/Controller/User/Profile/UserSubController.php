@@ -7,6 +7,7 @@ namespace App\Controller\User\Profile;
 use App\Controller\AbstractController;
 use App\Repository\DomainRepository;
 use App\Repository\MagazineRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,6 +56,20 @@ class UserSubController extends AbstractController
             [
                 'user' => $user,
                 'domains' => $repository->findSubscribedDomains($this->getPageNb($request), $user),
+            ]
+        );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    public function hashtags(TagRepository $repository, Request $request): Response
+    {
+        $user = $this->getUserOrThrow();
+
+        return $this->render(
+            'user/settings/sub_hashtags.html.twig',
+            [
+                'user' => $user,
+                'hashtags' => $repository->findSubscribedTags($this->getPageNb($request), $user),
             ]
         );
     }

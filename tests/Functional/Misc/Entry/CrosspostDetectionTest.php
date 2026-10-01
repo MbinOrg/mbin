@@ -59,16 +59,17 @@ class CrosspostDetectionTest extends WebTestCase
     {
         $user = $this->getUserByUsername('JohnDoe');
         $magazine1 = $this->getMagazineByName('acme1');
-        $entry1 = $this->createEntry('article 001', $magazine1, $user, url: 'https://duckduckgo.com');
+        // make the URL invalid as else it would sometimes pull an image and sometimes it would not
+        $entry1 = $this->createEntry(' article 001', $magazine1, $user, url: 'https://duckduckgo-fake.com');
         sleep(1);
         $magazine2 = $this->getMagazineByName('acme2');
-        $entry2 = $this->createEntry('article 001', $magazine2, $user, url: 'https://duckduckgo.com');
+        $entry2 = $this->createEntry('article 001', $magazine2, $user, url: 'https://duckduckgo-fake.com');
         sleep(1);
         $magazine3 = $this->getMagazineByName('acme3');
-        $entry3 = $this->createEntry('article with url', $magazine3, $user, url: 'https://duckduckgo.com');
+        $entry3 = $this->createEntry('article with url', $magazine3, $user, url: 'https://duckduckgo-fake.com');
         sleep(1);
         $magazine4 = $this->getMagazineByName('acme4');
-        $entry4 = $this->createEntry('article 001', $magazine4, $user, url: 'https://google.com');
+        $entry4 = $this->createEntry('article 001', $magazine4, $user, url: 'https://google-fake.com');
         $this->entityManager->persist($entry1);
         $this->entityManager->persist($entry2);
         $this->entityManager->persist($entry3);

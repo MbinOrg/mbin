@@ -11,10 +11,14 @@ use App\Entity\EntryComment;
 use App\Entity\Hashtag;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Entity\User;
+use App\Event\HashtagBlockChangedEvent;
+use App\Event\HashtagSubscriptionChangedEvent;
 use App\Repository\TagLinkRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class TagManager
 {
@@ -23,6 +27,7 @@ class TagManager
         private readonly TagLinkRepository $tagLinkRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly TagExtractor $tagExtractor,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -176,5 +181,43 @@ class TagManager
         }
 
         return false;
+    }
+
+    public function subscribe(User $user, Hashtag $hashtag): void
+    {
+        $this->unblock($user, $hashtag);
+
+        $hashtag->subscribe($user);
+
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($hashtag, $user, true));
+    }
+
+    public function unsubscribe(User $user, Hashtag $hashtag): void
+    {
+        $hashtag->unsubscribe($user);
+
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagSubscriptionChangedEvent($hashtag, $user, false));
+    }
+
+    public function block(User $user, Hashtag $hashtag): void
+    {
+        $this->unsubscribe($user, $hashtag);
+
+        $user->blockHashtag($hashtag);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, true));
+    }
+
+    public function unblock(User $user, Hashtag $hashtag): void
+    {
+        $user->unblockHashtag($hashtag);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(new HashtagBlockChangedEvent($hashtag, $user, false));
     }
 }

@@ -39,9 +39,9 @@ class ContentRepository
     ) {
     }
 
-    public function findByCriteria(Criteria $criteria): PagerfantaInterface
+    public function findByCriteria(Criteria $criteria, ?User $loggedInUser = null): PagerfantaInterface
     {
-        $query = $this->getQueryAndParameters($criteria, false);
+        $query = $this->getQueryAndParameters($criteria, false, $loggedInUser);
         $conn = $this->entityManager->getConnection();
 
         $numResults = null;
@@ -72,9 +72,9 @@ class ContentRepository
      *
      * @throws Exception
      */
-    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null): CursorPaginationInterface
+    public function findByCriteriaCursored(Criteria $criteria, mixed $currentCursor, mixed $currentCursor2 = null, ?User $loggedInUser = null): CursorPaginationInterface
     {
-        $query = $this->getQueryAndParameters($criteria, true);
+        $query = $this->getQueryAndParameters($criteria, true, $loggedInUser);
         $conn = $this->entityManager->getConnection();
         $orderings = $this->getOrderings($criteria);
         $start = new \DateTimeImmutable();
@@ -108,11 +108,12 @@ class ContentRepository
     /**
      * @return array{sql: string, parameters: array}>
      */
-    private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
+    private function getQueryAndParameters(Criteria $criteria, bool $addCursor, ?User $user): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
+        $includePosts = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content;
         $includeEntryComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_ENTRY_COMMENTS && $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_POST_COMMENTS && $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includePostComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_POST_COMMENTS && $criteria->subscribed && $includePosts && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
@@ -120,7 +121,7 @@ class ContentRepository
         ];
 
         /** @var ?User $user */
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
         $currenFilterLists = $user?->getCurrentFilterLists() ?? [];
         $parameters['loggedInUser'] = $user?->getId();
 
@@ -208,7 +209,19 @@ class ContentRepository
         $selectPostCommentBoosted = '';
         $selectEntryCommentBoosted = '';
         if ($user && $criteria->subscribed) {
+            $clauseFragmentHashtag = '';
+            // only include the subclause if there are (/ might be) subscriptions
+            if (null === $criteria->cachedUserSubscribedHashtags || !empty($criteria->cachedUserSubscribedHashtags)) {
+                if (null === $criteria->cachedUserSubscribedHashtags) {
+                    $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_subscription hs INNER JOIN hashtag_link hl ON hs.hashtag_id = hl.hashtag_id WHERE hs.user_id = :loggedInUser AND hl.%hl_type%_id = c.id)';
+                } else {
+                    $clauseFragmentHashtag = ' OR EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.%hl_type%_id = c.id AND hl.hashtag_id IN (:cachedUserSubscribedHashtags))';
+                    $parameters['cachedUserSubscribedHashtags'] = $criteria->cachedUserSubscribedHashtags;
+                }
+            }
+
             $subClausePost = 'c.user_id = :loggedInUser'
+                .$clauseFragmentHashtag
                 .(null === $criteria->cachedUserSubscribedMagazines ?
                     ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = c.magazine_id)' :
                     ' OR c.magazine_id IN (:cachedUserSubscribedMagazines)')
@@ -220,11 +233,26 @@ class ContentRepository
                     ' OR EXISTS (SELECT 1 FROM domain_subscription ds WHERE ds.domain_id = c.domain_id AND ds.user_id = :loggedInUser)' :
                     ' OR c.domain_id IN (:cachedUserSubscribedDomains)');
 
+            $subClausePost = str_replace('%hl_type%', 'post', $subClausePost);
+            $subClauseEntry = str_replace('%hl_type%', 'entry', $subClauseEntry);
+
             if ($criteria->includeBoosts) {
                 $repliesCommonWhere = 'c.user_id = :loggedInUser'
                     .(null === $criteria->cachedUserFollows ?
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                         ' OR c.user_id IN (:cachedUserFollows)');
+
+                if ($criteria->includeCommentsWithSubscribedHashtag) {
+                    // only include the subclause if there are (/ might be) subscriptions
+                    if (null === $criteria->cachedUserSubscribedHashtags || !empty($criteria->cachedUserSubscribedHashtags)) {
+                        if (null === $criteria->cachedUserSubscribedHashtags) {
+                            $repliesCommonWhere .= ' OR EXISTS (SELECT 1 FROM hashtag_subscription hs INNER JOIN hashtag_link hl ON hs.hashtag_id = hl.hashtag_id WHERE hs.user_id = :loggedInUser AND hl.%hl_type%_id = c.id)';
+                        } else {
+                            $repliesCommonWhere .= ' OR EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.%hl_type%_id = c.id AND hl.hashtag_id IN (:cachedUserSubscribedHashtags))';
+                            $parameters['cachedUserSubscribedHashtags'] = $criteria->cachedUserSubscribedHashtags;
+                        }
+                    }
+                }
 
                 $boostCheckTpl = null === $criteria->cachedUserFollows ?
                     'EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE c.id = v.%fk_type%_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
@@ -232,6 +260,11 @@ class ContentRepository
 
                 $subClauseEntryComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'entry_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
                 $subClausePostComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'post_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
+
+                if ($criteria->includeCommentsWithSubscribedHashtag) {
+                    $subClauseEntryComment = str_replace('%hl_type%', 'entry_comment', $subClauseEntryComment);
+                    $subClausePostComment = str_replace('%hl_type%', 'post_comment', $subClausePostComment);
+                }
 
                 $subClausePost = $subClausePost.' OR '.str_replace('%v_type%', 'post', str_replace('%fk_type%', 'post', $boostCheckTpl));
                 $subClauseEntry = $subClauseEntry.' OR '.str_replace('%v_type%', 'entry', str_replace('%fk_type%', 'entry', $boostCheckTpl));
@@ -283,6 +316,8 @@ class ContentRepository
         $blockingClauseEntry = '';
         $instanceBlockClauseUser = '';
         $instanceBlockClauseMagazine = '';
+        $blockingClausePostComment = '';
+        $blockingClauseEntryComment = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
                 $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
@@ -308,6 +343,31 @@ class ContentRepository
                     $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
                 }
             }
+
+            $blockingClauseEntryComment = $blockingClausePost;
+            $blockingClausePostComment = $blockingClausePost;
+
+            // only include the subclause if there are (/ might be) blocks
+            if (null === $criteria->cachedUserBlockedHashtags || !empty($criteria->cachedUserBlockedHashtags)) {
+                if (null === $criteria->cachedUserBlockedHashtags) {
+                    $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.entry_comment_id = c.id AND hb.user_id = :loggedInUser)';
+                    $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl INNER JOIN hashtag_block hb ON hl.hashtag_id = hb.hashtag_id WHERE hl.post_comment_id = c.id AND hb.user_id = :loggedInUser)';
+                } else {
+                    $blockingClauseEntry = $blockingClauseEntry.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClausePost = $blockingClausePost.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClauseEntryComment = $blockingClauseEntryComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.entry_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+                    $blockingClausePostComment = $blockingClausePostComment.' AND NOT EXISTS (SELECT 1 FROM hashtag_link hl WHERE hl.post_comment_id = c.id AND hl.hashtag_id IN (:cachedUserBlockedHashtags))';
+
+                    $parameters['cachedUserBlockedHashtags'] = $criteria->cachedUserBlockedHashtags;
+                }
+            }
+
+            $blockingClauseEntry = "(c.user_id = :loggedInUser OR ($blockingClauseEntry))";
+            $blockingClausePost = "(c.user_id = :loggedInUser OR ($blockingClausePost))";
+            $blockingClauseEntryComment = "(c.user_id = :loggedInUser OR ($blockingClauseEntryComment))";
+            $blockingClausePostComment = "(c.user_id = :loggedInUser OR ($blockingClausePostComment))";
 
             if (null === $criteria->cachedUserBlockedInstances) {
                 $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
@@ -444,7 +504,7 @@ class ContentRepository
             $subClauseEntryComment,
             $modClause,
             $favClauseEntryComment,
-            $blockingClausePost,
+            $blockingClauseEntryComment,
             $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
@@ -467,7 +527,7 @@ class ContentRepository
             $subClausePostComment,
             $modClause,
             $favClausePostComment,
-            $blockingClausePost,
+            $blockingClausePostComment,
             $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
@@ -519,7 +579,7 @@ class ContentRepository
             } else {
                 $innerSql = "$postSql $orderBy $innerLimit";
             }
-        } else {
+        } else { // Criteria::CONTENT_COMBINED
             $innerSql = "($entrySql $orderBy $innerLimit) UNION ALL ($postSql $orderBy $innerLimit)";
             if ($includeEntryComments) {
                 $innerSql .= " UNION ALL ($entryCommentSql $orderBy $innerLimit)";
