@@ -36,10 +36,6 @@ These examples use a fictional account and reserved example IP. The approval res
 
 ![StopForumSpam settings on desktop](../../images/stopforumspam-settings-desktop.png)
 
-### Mobile settings
-
-![StopForumSpam settings on mobile](../../images/stopforumspam-settings-mobile.png)
-
 ### Signup approval
 
 ![Signup request with a StopForumSpam screening result](../../images/stopforumspam-approval.png)
