@@ -1,5 +1,9 @@
 framework:
   rate_limiter:
+    stop_forum_spam_lookup:
+      policy: 'sliding_window'
+      limit: 90000
+      interval: '24 hours'
     # 1 anonymous read per second
     anonymous_api_read:
       policy: 'sliding_window'

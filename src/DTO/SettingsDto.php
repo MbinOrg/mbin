@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[OA\Schema()]
 class SettingsDto implements \JsonSerializable
@@ -40,6 +41,12 @@ class SettingsDto implements \JsonSerializable
         public bool $MBIN_USE_FEDERATION_ALLOW_LIST,
         public bool $MBIN_FEED_ALLOW_ENTRY_COMMENTS,
         public bool $MBIN_FEED_ALLOW_POST_COMMENTS,
+        public ?bool $MBIN_STOPFORUMSPAM_ENABLED = null,
+        public ?bool $MBIN_STOPFORUMSPAM_AUTO_REJECT = null,
+        #[Assert\Range(min: 0, max: 100)]
+        public ?float $MBIN_STOPFORUMSPAM_MIN_CONFIDENCE = null,
+        #[Assert\Positive]
+        public ?int $MBIN_STOPFORUMSPAM_MIN_FREQUENCY = null,
     ) {
     }
 
@@ -75,6 +82,11 @@ class SettingsDto implements \JsonSerializable
         $dto->MBIN_USE_FEDERATION_ALLOW_LIST = $this->MBIN_USE_FEDERATION_ALLOW_LIST ?? $dto->MBIN_USE_FEDERATION_ALLOW_LIST;
         $dto->MBIN_FEED_ALLOW_ENTRY_COMMENTS = $this->MBIN_FEED_ALLOW_ENTRY_COMMENTS ?? $dto->MBIN_FEED_ALLOW_ENTRY_COMMENTS;
         $dto->MBIN_FEED_ALLOW_POST_COMMENTS = $this->MBIN_FEED_ALLOW_POST_COMMENTS ?? $dto->MBIN_FEED_ALLOW_POST_COMMENTS;
+
+        $dto->MBIN_STOPFORUMSPAM_ENABLED = $this->MBIN_STOPFORUMSPAM_ENABLED ?? $dto->MBIN_STOPFORUMSPAM_ENABLED;
+        $dto->MBIN_STOPFORUMSPAM_AUTO_REJECT = $this->MBIN_STOPFORUMSPAM_AUTO_REJECT ?? $dto->MBIN_STOPFORUMSPAM_AUTO_REJECT;
+        $dto->MBIN_STOPFORUMSPAM_MIN_CONFIDENCE = $this->MBIN_STOPFORUMSPAM_MIN_CONFIDENCE ?? $dto->MBIN_STOPFORUMSPAM_MIN_CONFIDENCE;
+        $dto->MBIN_STOPFORUMSPAM_MIN_FREQUENCY = $this->MBIN_STOPFORUMSPAM_MIN_FREQUENCY ?? $dto->MBIN_STOPFORUMSPAM_MIN_FREQUENCY;
 
         return $dto;
     }
@@ -112,6 +124,10 @@ class SettingsDto implements \JsonSerializable
             'MBIN_USE_FEDERATION_ALLOW_LIST' => $this->MBIN_USE_FEDERATION_ALLOW_LIST,
             'MBIN_FEED_ALLOW_ENTRY_COMMENTS' => $this->MBIN_FEED_ALLOW_ENTRY_COMMENTS,
             'MBIN_FEED_ALLOW_POST_COMMENTS' => $this->MBIN_FEED_ALLOW_POST_COMMENTS,
+            'MBIN_STOPFORUMSPAM_ENABLED' => $this->MBIN_STOPFORUMSPAM_ENABLED,
+            'MBIN_STOPFORUMSPAM_AUTO_REJECT' => $this->MBIN_STOPFORUMSPAM_AUTO_REJECT,
+            'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE' => $this->MBIN_STOPFORUMSPAM_MIN_CONFIDENCE,
+            'MBIN_STOPFORUMSPAM_MIN_FREQUENCY' => $this->MBIN_STOPFORUMSPAM_MIN_FREQUENCY,
         ];
     }
 }

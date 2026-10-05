@@ -12,7 +12,6 @@ use App\Provider\ZitadelResourceOwner;
 use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManagerInterface;
-use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
@@ -36,7 +35,6 @@ class ZitadelAuthenticator extends MbinOAuthAuthenticatorBase
         private readonly ImageManagerInterface $imageManager,
         private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
-        private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly UserRepository $userRepository,
         private readonly SettingsManager $settingsManager,
@@ -111,9 +109,8 @@ class ZitadelAuthenticator extends MbinOAuthAuthenticatorBase
                 }
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
-                $dto->ip = $this->ipResolver->resolve();
 
-                $user = $this->userManager->create($dto, false);
+                $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthZitadelId = $zitadelUser->getId();
                 $user->avatar = $this->getAvatar($zitadelUser->getPictureUrl());
                 $user->isVerified = true;

@@ -1,0 +1,12 @@
+{% if screening is not null %}
+    <dl>
+        <dt>{{ 'stopforumspam_ip'|trans }}</dt><dd>{{ screening.ip ?? 'stopforumspam_unknown'|trans }}</dd>
+        <dt>{{ 'stopforumspam_result'|trans }}</dt><dd>{{ ('stopforumspam_status_' ~ screening.status)|trans }}</dd>
+        <dt>{{ 'stopforumspam_frequency'|trans }}</dt><dd>{{ screening.frequency ?? 'stopforumspam_unknown'|trans }}</dd>
+        <dt>{{ 'stopforumspam_confidence'|trans }}</dt><dd>{% if screening.confidence is not null %}{{ screening.confidence }}%{% else %}{{ 'stopforumspam_unknown'|trans }}{% endif %}</dd>
+        <dt>{{ 'stopforumspam_last_seen'|trans }}</dt><dd>{{ screening.lastseen ?? 'stopforumspam_unknown'|trans }}</dd>
+        <dt>{{ 'stopforumspam_checked_at'|trans }}</dt><dd>{{ screening.checked_at }}{% if screening.cached %} ({{ 'stopforumspam_cached'|trans }}){% endif %}</dd>
+    </dl>
+{% else %}
+    <p>{{ 'stopforumspam_not_checked'|trans }}</p>
+{% endif %}
