@@ -38,6 +38,12 @@ abstract class MbinOAuthAuthenticatorBase extends OAuth2Authenticator
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
+        if ($exception instanceof \App\Exception\RegistrationRejectedException) {
+            $request->getSession()->getFlashBag()->add('error', 'stopforumspam_registration_rejected');
+
+            return new RedirectResponse($this->router->generate('app_login'));
+        }
+
         if ('MBIN_SSO_REGISTRATIONS_ENABLED' === $message) {
             $session = $request->getSession();
             $session->getFlashBag()->add('error', 'sso_registrations_enabled.error');

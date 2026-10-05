@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Factory\ImageFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManagerInterface;
-use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
@@ -35,7 +34,6 @@ class FacebookAuthenticator extends MbinOAuthAuthenticatorBase
         private readonly ImageManagerInterface $imageManager,
         private readonly ImageFactory $imageFactory,
         private readonly ImageRepository $imageRepository,
-        private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
         private readonly SettingsManager $settingsManager,
     ) {
@@ -105,9 +103,8 @@ class FacebookAuthenticator extends MbinOAuthAuthenticatorBase
                 }
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
-                $dto->ip = $this->ipResolver->resolve();
 
-                $user = $this->userManager->create($dto, false);
+                $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthFacebookId = $facebookUser->getId();
                 $user->avatar = $this->getAvatar($facebookUser->getPictureUrl());
                 $user->isVerified = true;

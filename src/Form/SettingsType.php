@@ -13,6 +13,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -61,6 +63,10 @@ class SettingsType extends AbstractType
                 ],
             ])
             ->add('MBIN_NEW_USERS_NEED_APPROVAL', CheckboxType::class, ['required' => false])
+            ->add('MBIN_STOPFORUMSPAM_ENABLED', CheckboxType::class, ['required' => false])
+            ->add('MBIN_STOPFORUMSPAM_AUTO_REJECT', CheckboxType::class, ['required' => false])
+            ->add('MBIN_STOPFORUMSPAM_MIN_CONFIDENCE', NumberType::class, ['attr' => ['min' => 0, 'max' => 100], 'constraints' => [new \Symfony\Component\Validator\Constraints\NotBlank()]])
+            ->add('MBIN_STOPFORUMSPAM_MIN_FREQUENCY', IntegerType::class, ['attr' => ['min' => 1], 'constraints' => [new \Symfony\Component\Validator\Constraints\NotBlank()]])
             ->add('submit', SubmitType::class);
     }
 
