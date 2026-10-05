@@ -39,6 +39,10 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'MBIN_USE_FEDERATION_ALLOW_LIST',
         'MBIN_FEED_ALLOW_ENTRY_COMMENTS',
         'MBIN_FEED_ALLOW_POST_COMMENTS',
+        'MBIN_STOPFORUMSPAM_ENABLED',
+        'MBIN_STOPFORUMSPAM_AUTO_REJECT',
+        'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE',
+        'MBIN_STOPFORUMSPAM_MIN_FREQUENCY',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void

@@ -270,6 +270,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'text', nullable: true)]
     public ?string $applicationText;
 
+    /** @var array<string, mixed>|null */
+    #[Column(type: Types::JSONB, nullable: true)]
+    private ?array $registrationScreening = null;
+
+    /** @return array<string, mixed>|null */
+    #[\Symfony\Component\Serializer\Attribute\Ignore]
+    public function getRegistrationScreening(): ?array
+    {
+        return $this->registrationScreening;
+    }
+
+    /** @param array<string, mixed>|null $screening */
+    public function setRegistrationScreening(?array $screening): void
+    {
+        $this->registrationScreening = $screening;
+    }
+
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $usernameTs;
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]

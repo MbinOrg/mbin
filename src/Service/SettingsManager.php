@@ -104,6 +104,10 @@ class SettingsManager
                 $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
                 $this->find($results, 'MBIN_FEED_ALLOW_ENTRY_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
                 $this->find($results, 'MBIN_FEED_ALLOW_POST_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
+                $this->find($results, 'MBIN_STOPFORUMSPAM_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
+                $this->find($results, 'MBIN_STOPFORUMSPAM_AUTO_REJECT', FILTER_VALIDATE_BOOLEAN) ?? false,
+                (float) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE') ?? 95),
+                (int) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_FREQUENCY') ?? 5),
             );
             $this->instanceDto = $dto;
         } else {
