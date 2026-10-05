@@ -27,3 +27,19 @@ Provider errors, missing IPs, and exhausted lookup quota allow registration to c
 Start with lookup enabled and automatic rejection disabled. Review results before enabling rejection. Disabling lookup also disables automatic rejection. Logs report unavailable checks and rejections without including raw registration IPs or provider response bodies.
 
 Apply the database migration before running the new application and restart Messenger workers as part of deployment. Existing accounts remain unchanged.
+
+## Screenshots
+
+These examples use a fictional account and reserved example IP. The approval result is illustrative test data.
+
+### Desktop settings
+
+![StopForumSpam settings on desktop](../../images/stopforumspam-settings-desktop.png)
+
+### Mobile settings
+
+![StopForumSpam settings on mobile](../../images/stopforumspam-settings-mobile.png)
+
+### Signup approval
+
+![Signup request with a StopForumSpam screening result](../../images/stopforumspam-approval.png)
