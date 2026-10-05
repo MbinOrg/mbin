@@ -33,6 +33,7 @@ class UserSettingsDto implements \JsonSerializable
         #[OA\Property(type: 'string', enum: EntryCommentPageView::SORT_OPTIONS)]
         public ?string $commentDefaultSort = null,
         public ?bool $showFollowingBoosts = null,
+        public ?bool $showCommentsOfSubscribedHashtags = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $featuredMagazines = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
@@ -67,6 +68,8 @@ class UserSettingsDto implements \JsonSerializable
             'frontDefaultSort' => $this->frontDefaultSort,
             'frontDefaultContent' => $this->frontDefaultContent,
             'commentDefaultSort' => $this->commentDefaultSort,
+            'showFollowingBoosts' => $this->showFollowingBoosts,
+            'showCommentsOfSubscribedHashtags' => $this->showCommentsOfSubscribedHashtags,
             'featuredMagazines' => $this->featuredMagazines,
             'preferredLanguages' => $this->preferredLanguages,
             'customCss' => $this->customCss,
@@ -94,6 +97,8 @@ class UserSettingsDto implements \JsonSerializable
         $dto->homepage = $this->homepage ?? $dto->homepage;
         $dto->frontDefaultSort = $this->frontDefaultSort ?? $dto->frontDefaultSort;
         $dto->commentDefaultSort = $this->commentDefaultSort ?? $dto->commentDefaultSort;
+        $dto->showFollowingBoosts = $this->showFollowingBoosts ?? $dto->showFollowingBoosts;
+        $dto->showCommentsOfSubscribedHashtags = $this->showCommentsOfSubscribedHashtags ?? $dto->showCommentsOfSubscribedHashtags;
         $dto->featuredMagazines = $this->featuredMagazines ?? $dto->featuredMagazines;
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
         $dto->customCss = $this->customCss ?? $dto->customCss;

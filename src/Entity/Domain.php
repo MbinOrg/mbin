@@ -16,10 +16,8 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\Table;
 
 #[Entity(repositoryClass: DomainRepository::class)]
-#[Table]
 #[ORM\UniqueConstraint(name: 'domain_name_idx', columns: ['name'])]
 class Domain
 {

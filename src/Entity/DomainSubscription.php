@@ -12,11 +12,9 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity(repositoryClass: DomainSubscriptionRepository::class)]
-#[Table]
 #[UniqueConstraint(name: 'domain_subscription_idx', columns: ['user_id', 'domain_id'])]
 class DomainSubscription
 {
@@ -26,7 +24,7 @@ class DomainSubscription
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'subscribedDomains')]
     #[JoinColumn(nullable: false)]
-    public ?User $user;
+    public User $user;
     #[ManyToOne(targetEntity: Domain::class, inversedBy: 'subscriptions')]
     #[JoinColumn(nullable: false)]
     public ?Domain $domain;

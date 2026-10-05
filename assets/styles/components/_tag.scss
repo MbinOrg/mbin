@@ -18,4 +18,49 @@
     margin-bottom: 2.5rem;
     gap: .25rem;
   }
+
+  .hashtag__subscribe {
+    display: flex;
+    flex-direction: row;
+    font-size: .9rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+
+    div {
+      align-items: center;
+      background: var(--kbin-button-secondary-bg);
+      border: var(--kbin-button-secondary-border);
+      color: var(--kbin-button-secondary-text-color);
+      display: flex;
+      flex-direction: row;
+      left: 1px;
+      padding: .3rem .5rem;
+      position: relative;
+
+      .rounded-edges & {
+        border-radius: .5rem;
+      }
+
+      i {
+        padding-right: .5rem;
+      }
+    }
+
+    button {
+      height: 100%;
+      padding-bottom: .5rem;
+      padding-top: .5rem;
+    }
+
+    form:last-of-type {
+      position: relative;
+      right: 1px;
+    }
+  }
+}
+
+td {
+  .hashtag__subscribe {
+    margin: 0;
+  }
 }
