@@ -37,7 +37,7 @@ class MessageThread
     #[ManyToMany(targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
     public Collection $participants;
     #[OneToMany(mappedBy: 'thread', targetEntity: Message::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $messages;
     #[Id]
     #[GeneratedValue]

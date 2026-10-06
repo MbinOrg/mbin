@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import debounce from '../utils/debounce';
+import debounce from '@app/utils/debounce';
 
 // use some buffer-space so that the expand-button won't be included if just a couple of lines would be hidden
 const MAX_COLLAPSED_HEIGHT_REM = 25;

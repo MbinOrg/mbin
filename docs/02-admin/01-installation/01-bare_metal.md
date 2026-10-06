@@ -68,7 +68,7 @@ Install _PHP 8.5_ with the required additional PHP extensions:
 
 ```bash
 sudo apt-get update
-sudo apt-get install php8.5 php8.5-common php8.5-fpm php8.5-cli php8.5-amqp php8.5-bcmath php8.5-pgsql php8.5-gd php8.5-curl php8.5-xml php8.5-redis php8.5-mbstring php8.5-zip php8.5-bz2 php8.5-intl php8.5-bcmath -y
+sudo apt-get install php8.5 php8.5-common php8.5-fpm php8.5-cli php8.5-amqp php8.5-bcmath php8.5-pgsql php8.5-gd php8.5-curl php8.5-xml php8.5-redis php8.5-mbstring php8.5-zip php8.5-bz2 php8.5-intl php8.5-exif -y
 ```
 
 > [!NOTE]

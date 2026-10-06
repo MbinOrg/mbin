@@ -33,7 +33,7 @@ class PostCommentPageView extends Criteria
         $defaultRoute = $routes['hot'];
         $user = $this->security->getUser();
         if ($user instanceof User) {
-            $defaultRoute = $user->commentDefaultSort;
+            $defaultRoute = $user->commentDefaultSort->value;
         }
 
         return 'default' !== $value ? $routes[$value] : $defaultRoute;

@@ -6,7 +6,7 @@
 
 		worker {
 			file ./public/index.php
-			env APP_RUNTIME Runtime\FrankenPhpSymfony\Runtime
+			env APP_RUNTIME Symfony\Component\Runtime\SymfonyRuntime
 			{$FRANKENPHP_WORKER_CONFIG}
 		}
 	}
