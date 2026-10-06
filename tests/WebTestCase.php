@@ -190,6 +190,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->imageUploadTmpDir = \dirname($this->kibbyPath).'/copy/';
         $this->client = static::createClient();
+        $this->client->setServerParameter('HTTP_HOST', self::getContainer()->getParameter('kbin_domain'));
 
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
