@@ -9,7 +9,7 @@ While that is more error-prone it is also a lot more flexible.
 - `.devcontainer` - Docker containers that are configured to provide a fully featured development environment.
 - `.github` - our GitHub specific CI workflows are stored here.
 - `assets` - the place for all our frontend code, that includes JavaScript and SCSS.
-- `bin` - only the Symfony console, PHPUnit and our `post-upgrade` script are stores here.
+- `bin` - only the Symfony console, PHPUnit and our `post-upgrade` script are stored here.
 - `ci` - Storing our CI/CD helper code / Dockerfiles.
 - `config` - the config files for Symfony are stored here.
    - `config/mbin_routes` the HTTP routes to our controllers are defined here.
@@ -22,7 +22,7 @@ While that is more error-prone it is also a lot more flexible.
 - `src` - that is where our PHP files are stored and the directory you will modify the most files.
     - `src/ActivityPub` - some things that are ActivityPub related and do not fit in another directory.
     - `src/ArgumentValueResolver`
-    - `src/Command` - Every command that is executable via the symfone cli (`php bin/console`).
+    - `src/Command` - Every command that is executable via the Symfony console (`php bin/console`).
     - `src/Controller` - Every Controller, meaning every HTTP endpoint, belongs in the directory. The RSS feed endpoint is implemented by `src/Controller/Feed/RssFeedController.php`, with feed content built by `src/Service/FeedManager.php`.
     - `src/DataFixtures` - The classes responsible for generating test data.
     - `src/DoctrineExtensions` - Custom Doctrine extensions, including the PostgreSQL `citext` type.
@@ -100,8 +100,8 @@ After that your changes should have been applied to the database.
 Adding a controller is very simple. You just need to add a class to the `src/Controller/` directory 
 (and the subdirectory that can be applied) and then extend `AbstractController`. 
 
-If your controller is a only-one-endpoint-controller then you can override the `__invoke` methode, 
-but you can also just create a normal methode, that is up to you.
+If your controller has only one endpoint, you can implement the `__invoke` method,
+but you can also create a named method; that is up to you.
 
 After you've created the controller you have to configure a route from which this controller can be accessed.
 For that you have to go into the `config/mbin_routes` directory and pick a `yaml` file which fits your controller
