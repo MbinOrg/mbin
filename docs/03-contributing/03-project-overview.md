@@ -23,19 +23,18 @@ While that is more error-prone it is also a lot more flexible.
     - `src/ActivityPub` - some things that are ActivityPub related and do not fit in another directory.
     - `src/ArgumentValueResolver`
     - `src/Command` - Every command that is executable via the symfone cli (`php bin/console`).
-    - `src/Controller` - Every Controller, meaning every HTTP endpoint, belongs in the directory.
+    - `src/Controller` - Every Controller, meaning every HTTP endpoint, belongs in the directory. The RSS feed endpoint is implemented by `src/Controller/Feed/RssFeedController.php`, with feed content built by `src/Service/FeedManager.php`.
     - `src/DataFixtures` - The classes responsible for generating test data.
-    - `src/DoctrineExtensions` - Some doctrine extensions, mainly to handle enums.
+    - `src/DoctrineExtensions` - Custom Doctrine extensions, including the PostgreSQL `citext` type.
     - `src/Document`
     - `src/DTO` - **D**ata **T**ransport **O**bjects are exactly that, a form for the data that is transferable (e.g.: via API) .
     - `src/Entity` - The classes to represent the data stored in the database, a.k.a. database entities.
-    - `src/Enums` - self-explanatory.
+    - `src/Enums` - Native PHP enums, including those mapped to PostgreSQL enum types through `heymoon/doctrine-psql-enum`.
     - `src/Event` - self-explanatory.
     - `src/EventListener` - classes that listens on framework events.
     - `src/EventSubscriber` - classes subscribing to our own events.
     - `src/Exception` - self-explanatory.
     - `src/Factory` - classes that transform objects. Mostly entities to DTOs and ActivityPub objects to JSON.
-    - `src/Feed` - The home for our RSS feed provider
     - `src/Form` - All form types belong to here, also other things related to forms.
     - `src/Markdown` - Everything markdown related: converter, extensions, events, etc.
     - `src/Message` - All classes sent to RabbitMQ (messaging queue system), they should always only contain primitives and never objects. 
@@ -71,7 +70,7 @@ For some info on doctrine, check out [their documentation](https://www.doctrine-
 After you have changed the entity, open a terminal and go to the mbin repo and run:
 
 ```bash
-php bin:console doctrine:migrations:diff
+php bin/console doctrine:migrations:diff
 ```
 
 This will create a class in the `migrations` directory. It might contain things really not relevant to you, 
@@ -80,7 +79,7 @@ so you have to manually check the changes created.
 > [!NOTE]
 > The `up` and `down` methods both have to be implemented.
 
-After modifying the migration to your needs, you can either have them be executed by running the `bin/post_upgrade` script
+After modifying the migration to your needs, you can either have them be executed by running the `bin/post-upgrade` script
 or restarting the docker containers or manually execute them by running:
 
 ```bash
@@ -90,7 +89,11 @@ php bin/console doctrine:migrations:execute [YOUR MIGRATION HERE]
 After that your changes should have been applied to the database.
 
 > [!NOTE]
-> If your handling enums it is a bit more complicated as doctrine needs to know how to decode it. 
+> PostgreSQL enum columns use native PHP backed enums and [`heymoon/doctrine-psql-enum`](https://github.com/heymoon-cc/doctrine-psql-enum).
+> The enum class declares its PostgreSQL type name with `#[EnumType('type_name')]` from `HeyMoon\DoctrinePostgresEnum\Attribute\EnumType`.
+> Entity properties use `#[Column(type: 'enum', enumType: YourEnum::class)]`.
+> See `src/Enums/ENotificationStatus.php` and `src/Entity/NotificationSettings.php` for an example.
+> When adding or changing enum cases, generate and review the database migration as well.
 
 ### Adding a controller
 
