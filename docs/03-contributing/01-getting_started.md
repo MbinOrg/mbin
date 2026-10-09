@@ -278,43 +278,17 @@ Please note, that the command may take some time and data will not be visible du
 
 ### Testing the M3U8 embed regression
 
-After installing dependencies, building frontend assets, and applying migrations to
-your development database, choose the HTTP port once in the shell below:
+Set `KBIN_DOMAIN` and `SERVER_NAME` to `mbin.localhost:8080`, then run:
 
 ```sh
-MBIN_M3U8_PORT=8080
-export KBIN_DOMAIN="mbin.localhost:${MBIN_M3U8_PORT}"
-export SERVER_NAME="$KBIN_DOMAIN"
-
 APP_ENV=dev php bin/console doctrine:fixtures:load --group=m3u8-embed --append --no-debug
-APP_ENV=dev symfony server:start --port="$MBIN_M3U8_PORT" --no-tls
+APP_ENV=dev symfony server:start --port=8080 --no-tls
 ```
 
-The fixture reads its host and port from the existing `KBIN_DOMAIN` environment
-variable. `MBIN_M3U8_PORT` is a shell convenience: change it to your preferred port,
-then run the remaining commands in the same shell. Use a localhost subdomain and
-HTTP. No running server or automatic port detection is needed to load the fixture.
-Alternatively, set `KBIN_DOMAIN` and `SERVER_NAME` in `.env`; regenerate
-`.env.local.php` if you use a dumped environment. Exported variables above override
-those file values for this shell session.
-
-The fixture creates one pinned entry in `/m/m3u8_regression` and a dedicated author without a
-usable login password. It does not load the random development fixtures, download
-images, or require a worker or second server. Keep `--append` to preserve existing
-data. Repeating the command with the same URL reuses the entry, author, and magazine.
-Changing the configured host or port creates an entry for the new URL; older entries
-are left untouched.
-
-Open `http://mbin.localhost:8080/m/m3u8_regression`, find **Regression test: iframe
-pointing to master.m3u8**, and click **Preview** with the browser network panel open.
-Expect a successful `/ajax/fetch_embed` response containing an empty `.preview`,
-zero iframes, and no request to `/_dev/m3u8-embed/master.m3u8`.
-
-The exact configured fixture URL supplies an iframe candidate directly to the real
-sanitizer in `dev`; it does not fetch an external oEmbed provider or call back into
-the local server. This checks rejection of a direct HLS playlist iframe through
-the normal entry preview UI. It does not test provider discovery or video playback.
-The playlist routes and fixture shortcut are unavailable in `prod`.
+Open `http://mbin.localhost:8080/m/m3u8_regression` and click **Preview** on the
+regression entry. Expect an empty preview, no iframe, and no playlist request.
+For another port, update both environment values and `--port`.
+See [PR #2233](https://github.com/MbinOrg/mbin/pull/2233#how-to-test) for detailed setup and checks.
 
 ### Starting the development server
 
