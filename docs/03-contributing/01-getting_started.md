@@ -279,20 +279,26 @@ Please note, that the command may take some time and data will not be visible du
 ### Testing the M3U8 embed regression
 
 After installing dependencies, building frontend assets, and applying migrations to
-your development database, configure `KBIN_DOMAIN` and `SERVER_NAME` for the host
-and port you will open in the browser, for example `mbin.localhost:8080`.
-Use a localhost subdomain and HTTP for this fixture. The fixture reads its host
-and port from `KBIN_DOMAIN`; use the same configuration when loading it and running
-the server. If you dumped your environment, regenerate `.env.local.php` after
-changing `.env`.
+your development database, choose the HTTP port once in the shell below:
 
 ```sh
+MBIN_M3U8_PORT=8080
+export KBIN_DOMAIN="mbin.localhost:${MBIN_M3U8_PORT}"
+export SERVER_NAME="$KBIN_DOMAIN"
+
 APP_ENV=dev php bin/console doctrine:fixtures:load --group=m3u8-embed --append --no-debug
-symfony server:start --port=8080 --no-tls
+APP_ENV=dev symfony server:start --port="$MBIN_M3U8_PORT" --no-tls
 ```
 
-Use your chosen port in both the configuration and the server command. The fixture
-creates one pinned entry in `/m/m3u8_regression` and a dedicated author without a
+The fixture reads its host and port from the existing `KBIN_DOMAIN` environment
+variable. `MBIN_M3U8_PORT` is a shell convenience: change it to your preferred port,
+then run the remaining commands in the same shell. Use a localhost subdomain and
+HTTP. No running server or automatic port detection is needed to load the fixture.
+Alternatively, set `KBIN_DOMAIN` and `SERVER_NAME` in `.env`; regenerate
+`.env.local.php` if you use a dumped environment. Exported variables above override
+those file values for this shell session.
+
+The fixture creates one pinned entry in `/m/m3u8_regression` and a dedicated author without a
 usable login password. It does not load the random development fixtures, download
 images, or require a worker or second server. Keep `--append` to preserve existing
 data. Repeating the command with the same URL reuses the entry, author, and magazine.
