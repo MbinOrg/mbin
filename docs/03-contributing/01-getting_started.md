@@ -276,6 +276,20 @@ Please note, that the command may take some time and data will not be visible du
 - Omit `--append` flag to override data currently stored in the database
 - Customize inserted data by editing files inside `src/DataFixtures` directory
 
+### Testing the M3U8 embed regression
+
+Set `KBIN_DOMAIN` and `SERVER_NAME` to `mbin.localhost:8080`, then run:
+
+```sh
+APP_ENV=dev php bin/console doctrine:fixtures:load --group=m3u8-embed --append --no-debug
+APP_ENV=dev symfony server:start --port=8080 --no-tls
+```
+
+Open `http://mbin.localhost:8080/m/m3u8_regression` and click **Preview** on the
+regression entry. Expect an empty preview, no iframe, and no playlist request.
+For another port, update both environment values and `--port`.
+See [PR #2233](https://github.com/MbinOrg/mbin/pull/2233#how-to-test) for detailed setup and checks.
+
 ### Starting the development server
 
 Prepare the server:
