@@ -37,6 +37,7 @@ class RegistrationScreeningControllerTest extends WebTestCase
     private function setupScreening(bool $enabled = true, bool $reject = false, string $body = '{"success":1,"ip":{"value":"91.186.18.61","appears":1,"frequency":5,"confidence":95}}'): void
     {
         $client = self::createClient();
+        $client->setServerParameter('HTTP_HOST', self::getContainer()->getParameter('kbin_domain'));
         $client->disableReboot();
         $this->http = new MockHttpClient(new MockResponse($body));
         self::getContainer()->set(RegistrationScreening::class, new RegistrationScreening(
