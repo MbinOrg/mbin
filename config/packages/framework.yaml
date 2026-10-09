@@ -39,6 +39,10 @@ framework:
         gc_divisor: 1000
 
     http_client:
+        scoped_clients:
+            stopforumspam.client:
+                base_uri: 'https://api.stopforumspam.org'
+                retry_failed: false
         default_options:
             headers:
                 'User-Agent': 'Mbin/1.11.0 (+https://%kbin_domain%/agent)'

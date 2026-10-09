@@ -1241,3 +1241,25 @@ unblock_instance_globally_long: Unblock Instance for all Users
 in_reply_to: in reply to
 original_image: Original image
 invisible_or_deleted: invisible or deleted
+
+stopforumspam_title: StopForumSpam
+stopforumspam_help: 'Check registration IPs with StopForumSpam. IPs are sent to an external service. Shared IPs may cause false positives. Automatic rejection requires both thresholds and a database match; unavailable checks do not reject registrations. Frequency may include special blacklist values.'
+stopforumspam_enabled: Enable registration IP checks
+stopforumspam_auto_reject: Automatically reject matching registrations
+stopforumspam_min_confidence: Minimum confidence (%)
+stopforumspam_min_frequency: Minimum report frequency
+stopforumspam_registration_rejected: 'Registration could not be accepted. Please contact the instance administrator if you believe this is an error.'
+stopforumspam_approval_email_title: Registration awaiting approval
+stopforumspam_review_application: Review registration application
+stopforumspam_ip: Registration IP
+stopforumspam_result: Lookup result
+stopforumspam_status_matched: Database match
+stopforumspam_status_no_match: No database match
+stopforumspam_status_unavailable: Lookup unavailable
+stopforumspam_unknown: Unavailable
+stopforumspam_last_seen: Last seen
+stopforumspam_checked_at: Lookup time (UTC)
+stopforumspam_cached: Cached result
+stopforumspam_not_checked: Not checked
+stopforumspam_frequency: Report frequency
+stopforumspam_confidence: Confidence

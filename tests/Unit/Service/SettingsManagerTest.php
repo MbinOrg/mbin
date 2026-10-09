@@ -73,6 +73,10 @@ class SettingsManagerTest extends WebTestCase
 
         // Assert
         $this->assertSame('1.5 MB', $manager->getMaxImageByteString());
+        self::assertFalse($manager->getDto()->MBIN_STOPFORUMSPAM_ENABLED);
+        self::assertFalse($manager->getDto()->MBIN_STOPFORUMSPAM_AUTO_REJECT);
+        self::assertSame(95.0, $manager->getDto()->MBIN_STOPFORUMSPAM_MIN_CONFIDENCE);
+        self::assertSame(5, $manager->getDto()->MBIN_STOPFORUMSPAM_MIN_FREQUENCY);
     }
 
     public function testGetMaxImageByteStringOverridden(): void
