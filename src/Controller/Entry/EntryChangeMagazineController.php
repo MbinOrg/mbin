@@ -9,6 +9,7 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Repository\MagazineRepository;
 use App\Service\EntryManager;
+use App\Utils\Polyfills;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class EntryChangeMagazineController extends AbstractController
     ): Response {
         $this->validateCsrf('change_magazine', $request->getPayload()->get('token'));
 
-        $newMagazine = $this->repository->findOneByName($request->get('change_magazine')['new_magazine']);
+        $newMagazine = $this->repository->findOneByName(Polyfills::requestParam($request, 'change_magazine')['new_magazine']);
 
         $this->manager->changeMagazine($entry, $newMagazine);
 

@@ -55,7 +55,7 @@ class EntryCommentCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name=entry_comment]')->selectButton('entry_comment[submit]')->form();
         $form->get('entry_comment[body]')->setValue('test comment 1');
-        $form->get('entry_comment[image]')->upload($this->kibbyPath);
+        $form->get('entry_comment[image]')->upload($this->getKibbyImageUpload()->getPathname());
         // Needed since we require this global to be set when validating entries but the client doesn't actually set it
         $_FILES = $form->getPhpFiles();
         $this->client->submit($form);

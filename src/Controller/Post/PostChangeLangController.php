@@ -7,6 +7,7 @@ namespace App\Controller\Post;
 use App\Controller\AbstractController;
 use App\Entity\Magazine;
 use App\Entity\Post;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class PostChangeLangController extends AbstractController
         Post $post,
         Request $request,
     ): Response {
-        $post->lang = $request->get('lang')['lang'];
+        $post->lang = Polyfills::requestParam($request, 'lang')['lang'];
 
         $this->entityManager->flush();
 

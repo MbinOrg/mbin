@@ -121,12 +121,12 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $votes;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryReport::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $reports;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryFavourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $favourites;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
@@ -188,7 +188,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => \SortDirection::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
