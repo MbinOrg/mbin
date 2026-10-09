@@ -17,7 +17,7 @@
     {% for thread in threads %}
         {% set lastMessage = thread.getLastMessage() %}
         {% if lastMessage is not same as null %}
-            <div class="{{ html_classes('section section--small thread', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
+            <div class="{{ html_classes('section section--small thread flex gap-2 justify-between', {'opacity-50': not thread.countNewMessages(app.user) }) }}">
                 <div>
                     <div>
                         <small>
