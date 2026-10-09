@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
-use App\Controller\Dev\M3u8EmbedFixtureController;
 use App\Entity\Entry;
 use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
@@ -34,6 +33,7 @@ class Embed
         private EventDispatcherInterface $dispatcher,
         private WwwHttpClientFactory $httpClientFactory,
         private string $kernelEnvironment,
+        private M3u8EmbedFixture $m3u8EmbedFixture,
     ) {
     }
 
@@ -48,11 +48,11 @@ class Embed
 
     public function fetch(string $url): self
     {
-        if ('dev' === $this->kernelEnvironment && M3u8EmbedFixtureController::MASTER_URL === $url) {
+        if ('dev' === $this->kernelEnvironment && $this->m3u8EmbedFixture->getMasterUrl() === $url) {
             $fixture = clone $this;
             $fixture->url = $url;
             $fixture->title = 'Mbin master.m3u8 iframe regression fixture';
-            $fixture->html = $this->cleanIframe(M3u8EmbedFixtureController::IFRAME_HTML);
+            $fixture->html = $this->cleanIframe($this->m3u8EmbedFixture->getIframeHtml());
 
             return $fixture;
         }

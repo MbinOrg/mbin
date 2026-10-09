@@ -8,11 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class M3u8EmbedFixtureController
 {
-    public const string BASE_URL = 'http://mbin.localhost:8080/_dev/m3u8-embed';
-    public const string MASTER_URL = self::BASE_URL.'/master.m3u8';
-
-    public const string IFRAME_HTML = '<iframe src="'.self::MASTER_URL.'" width="640" height="360" allowfullscreen></iframe>';
-
     public function masterPlaylist(): Response
     {
         return new Response(

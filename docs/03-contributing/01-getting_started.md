@@ -276,6 +276,40 @@ Please note, that the command may take some time and data will not be visible du
 - Omit `--append` flag to override data currently stored in the database
 - Customize inserted data by editing files inside `src/DataFixtures` directory
 
+### Testing the M3U8 embed regression
+
+After installing dependencies, building frontend assets, and applying migrations to
+your development database, configure `KBIN_DOMAIN` and `SERVER_NAME` for the host
+and port you will open in the browser, for example `mbin.localhost:8080`.
+Use a localhost subdomain and HTTP for this fixture. The fixture reads its host
+and port from `KBIN_DOMAIN`; use the same configuration when loading it and running
+the server. If you dumped your environment, regenerate `.env.local.php` after
+changing `.env`.
+
+```sh
+APP_ENV=dev php bin/console doctrine:fixtures:load --group=m3u8-embed --append --no-debug
+symfony server:start --port=8080 --no-tls
+```
+
+Use your chosen port in both the configuration and the server command. The fixture
+creates one pinned entry in `/m/m3u8_regression` and a dedicated author without a
+usable login password. It does not load the random development fixtures, download
+images, or require a worker or second server. Keep `--append` to preserve existing
+data. Repeating the command with the same URL reuses the entry, author, and magazine.
+Changing the configured host or port creates an entry for the new URL; older entries
+are left untouched.
+
+Open `http://mbin.localhost:8080/m/m3u8_regression`, find **Regression test: iframe
+pointing to master.m3u8**, and click **Preview** with the browser network panel open.
+Expect a successful `/ajax/fetch_embed` response containing an empty `.preview`,
+zero iframes, and no request to `/_dev/m3u8-embed/master.m3u8`.
+
+The exact configured fixture URL supplies an iframe candidate directly to the real
+sanitizer in `dev`; it does not fetch an external oEmbed provider or call back into
+the local server. This checks rejection of a direct HLS playlist iframe through
+the normal entry preview UI. It does not test provider discovery or video playback.
+The playlist routes and fixture shortcut are unavailable in `prod`.
+
 ### Starting the development server
 
 Prepare the server:

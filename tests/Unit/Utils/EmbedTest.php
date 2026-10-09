@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
-use App\Controller\Dev\M3u8EmbedFixtureController;
 use App\Factory\WwwHttpClientFactory;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
+use App\Utils\M3u8EmbedFixture;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -59,11 +59,40 @@ class EmbedTest extends TestCase
             return new MockResponse();
         });
 
-        $result = $this->createEmbed($httpClient, 'dev')->fetch(M3u8EmbedFixtureController::MASTER_URL);
+        $url = (new M3u8EmbedFixture('mbin.localhost:8080'))->getMasterUrl();
+        $result = $this->createEmbed($httpClient, 'dev')->fetch($url);
 
-        self::assertSame(M3u8EmbedFixtureController::MASTER_URL, $result->url);
+        self::assertSame($url, $result->url);
         self::assertNull($result->html);
         self::assertSame(0, $requestCount);
+    }
+
+    #[DataProvider('fixtureIsolationProvider')]
+    public function testFixtureShortcutIsRestricted(string $environment, string $url): void
+    {
+        $requests = 0;
+        $httpClient = new MockHttpClient(function () use (&$requests): MockResponse {
+            ++$requests;
+
+            return new MockResponse();
+        });
+
+        $result = $this->createEmbed($httpClient, $environment)->fetch($url);
+
+        self::assertNull($result->title);
+        self::assertSame(0, $requests);
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function fixtureIsolationProvider(): iterable
+    {
+        $url = (new M3u8EmbedFixture('mbin.localhost:8080'))->getMasterUrl();
+        yield 'production' => ['prod', $url];
+        yield 'test' => ['test', $url];
+        yield 'different port' => ['dev', str_replace(':8080', ':8123', $url)];
+        yield 'different path' => ['dev', $url.'?other=1'];
     }
 
     /**
@@ -193,6 +222,7 @@ class EmbedTest extends TestCase
             $this->createStub(EventDispatcherInterface::class),
             new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
             $kernelEnvironment,
+            new M3u8EmbedFixture('mbin.localhost:8080'),
         );
     }
 }
