@@ -54,6 +54,13 @@ interface ApHttpClientInterface
     public function getActorObject(string $apProfileId): ?array;
 
     /**
+     * Remove activity object from cache.
+     *
+     * @param string $url URL to remove from the activity cache
+     */
+    public function invalidateActivityObjectCache(string $url): void;
+
+    /**
      * Remove actor object from cache.
      *
      * @param string $apProfileId AP profile ID to remove from cache

@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Notification;
+use App\Entity\Poll;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -80,6 +81,7 @@ class NotificationRepository extends ServiceEntityRepository
             $result,
             fn ($notification) => (isset($notification->entry) && $notification->entry === $entry)
                 || (isset($notification->entryComment) && $notification->entryComment->entry === $entry)
+                || (isset($notification->poll) && $notification->poll instanceof Poll && ($notification->poll->entry === $entry || $notification->poll->entryComment?->entry === $entry))
         );
     }
 
@@ -111,6 +113,7 @@ class NotificationRepository extends ServiceEntityRepository
             $result,
             fn ($notification) => (isset($notification->post) && $notification->post === $post)
                 || (isset($notification->postComment) && $notification->postComment->post === $post)
+                || (isset($notification->poll) && $notification->poll instanceof Poll && ($notification->poll->post === $post || $notification->poll->postComment?->post === $post))
         );
     }
 

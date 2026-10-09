@@ -25,6 +25,7 @@ use App\Factory\ActivityPub\InstanceFactory;
 use App\Factory\ActivityPub\LockFactory;
 use App\Factory\ActivityPub\MessageFactory;
 use App\Factory\ActivityPub\PersonFactory;
+use App\Factory\ActivityPub\PollVoteFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
 use App\Factory\ImageFactory;
@@ -44,6 +45,7 @@ use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
 use App\Service\MagazineManager;
 use App\Service\MessageManager;
+use App\Service\PollManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\ReportManager;
@@ -103,6 +105,8 @@ class DocumentationGenerateFederationCommand extends Command
         private readonly CollectionInfoWrapper $collectionInfoWrapper,
         private readonly BlockFactory $blockFactory,
         private readonly LockFactory $lockFactory,
+        private readonly PollVoteFactory $pollVoteFactory,
+        private readonly PollManager $pollManager,
     ) {
         parent::__construct();
     }
@@ -224,6 +228,18 @@ class DocumentationGenerateFederationCommand extends Command
         $thread = $this->messageManager->toThread($dto, $user, $user2);
         $message = $thread->getLastMessage();
 
+        $dto = new EntryDto();
+        $dto->user = $user;
+        $dto->magazine = $magazine;
+        $dto->title = 'Do you like FOSS?';
+        $dto->lang = 'en';
+        $dto->addPoll = true;
+        $dto->choices = ['Yes', 'No'];
+        $dto->isMultipleChoicePoll = false;
+        $entryWithPoll = $this->entryManager->create($dto, $user, rateLimit: false);
+        $this->pollManager->vote($entryWithPoll->poll, $entryWithPoll, $user2, ['Yes']);
+        $pollVote = $entryWithPoll->poll->getUserVotes($user2)[0];
+
         $userOutboxCollectionInfo = $this->collectionFactory->getUserOutboxCollection($user, false);
         $userOutboxCollectionItems = $this->collectionFactory->getUserOutboxCollectionItems($user, 1, false);
         $userFollowerCollection = $this->collectionInfoWrapper->build('ap_user_followers', ['username' => $user->username], $this->userRepository->findFollowers(1, $user)->getNbResults());
@@ -279,6 +295,8 @@ class DocumentationGenerateFederationCommand extends Command
             '%object_post%' => json_encode($this->postNoteFactory->create($post, []), $jsonFlags),
             '%object_post_comment%' => json_encode($this->postCommentNoteFactory->create($postComment, []), $jsonFlags),
             '%object_message%' => json_encode($this->messageFactory->build($message, false), $jsonFlags),
+            '%object_poll%' => json_encode($this->entryPageFactory->create($entryWithPoll, []), $jsonFlags),
+            '%object_poll_vote%' => json_encode($this->pollVoteFactory->build($pollVote), $jsonFlags),
             '%collection_user_outbox%' => json_encode($userOutboxCollectionInfo, $jsonFlags),
             '%collection_items_user_outbox%' => json_encode($userOutboxCollectionItems, $jsonFlags),
             '%collection_user_followers%' => json_encode($userFollowerCollection, $jsonFlags),

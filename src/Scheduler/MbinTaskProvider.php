@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Scheduler;
 
+use App\Message\CheckPollEndedMessage;
 use App\Message\ClearDeadMessagesMessage;
 use App\Message\ClearDeletedUserMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -29,6 +30,7 @@ class MbinTaskProvider implements ScheduleProviderInterface
                 ->add(
                     RecurringMessage::every('1 day', new ClearDeletedUserMessage()),
                     RecurringMessage::every('1 day', new ClearDeadMessagesMessage()),
+                    RecurringMessage::every('5 minutes', new CheckPollEndedMessage())
                 )
                 ->stateful($this->cache);
         }

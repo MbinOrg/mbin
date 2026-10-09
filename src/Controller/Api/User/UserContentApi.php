@@ -194,16 +194,16 @@ class UserContentApi extends UserBaseApi
             try {
                 if ($item instanceof Entry) {
                     $this->handlePrivateContent($item);
-                    $result[] = new ExtendedContentResponseDto(entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                    $result[] = new ExtendedContentResponseDto(entry: $this->serializeEntry($item, $this->tagLinkRepository->getTagsOfContent($item)));
                 } elseif ($item instanceof Post) {
                     $this->handlePrivateContent($item);
-                    $result[] = new ExtendedContentResponseDto(post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                    $result[] = new ExtendedContentResponseDto(post: $this->serializePost($item, $this->tagLinkRepository->getTagsOfContent($item)));
                 } elseif ($item instanceof EntryComment) {
                     $this->handlePrivateContent($item);
-                    $result[] = new ExtendedContentResponseDto(entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                    $result[] = new ExtendedContentResponseDto(entryComment: $this->serializeEntryComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
                 } elseif ($item instanceof PostComment) {
                     $this->handlePrivateContent($item);
-                    $result[] = new ExtendedContentResponseDto(postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)));
+                    $result[] = new ExtendedContentResponseDto(postComment: $this->serializePostComment($item, $this->tagLinkRepository->getTagsOfContent($item)));
                 }
             } catch (\Exception) {
             }

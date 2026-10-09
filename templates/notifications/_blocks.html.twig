@@ -187,3 +187,13 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block poll_ended %}
+    {{ 'notification_title_poll_ended'|trans }}:
+    <a href="{{ content_url(notification.poll.getSubject()) }}">{{ notification.poll.getSubject().shortTitle }}</a>
+{% endblock %}
+
+{% block poll_edited %}
+    {{ 'notification_title_poll_edited'|trans }}:
+    <a href="{{ content_url(notification.poll.getSubject()) }}">{{ notification.poll.getSubject().shortTitle }}</a>
+{% endblock %}

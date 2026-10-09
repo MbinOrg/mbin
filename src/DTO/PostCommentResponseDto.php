@@ -87,6 +87,8 @@ class PostCommentResponseDto implements \JsonSerializable
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
     public ?array $bookmarks = null;
 
+    public ?PollResponseDto $poll = null;
+
     /**
      * @param string[] $bookmarks
      */
@@ -114,6 +116,7 @@ class PostCommentResponseDto implements \JsonSerializable
         ?bool $canAuthUserModerate = null,
         ?array $bookmarks = null,
         ?bool $isAuthorModeratorInMagazine = null,
+        ?PollResponseDto $poll = null,
     ): self {
         $dto = new PostCommentResponseDto();
         $dto->commentId = $id;
@@ -140,6 +143,7 @@ class PostCommentResponseDto implements \JsonSerializable
         $dto->canAuthUserModerate = $canAuthUserModerate;
         $dto->bookmarks = $bookmarks;
         $dto->isAuthorModeratorInMagazine = $isAuthorModeratorInMagazine;
+        $dto->poll = $poll;
 
         return $dto;
     }
@@ -158,6 +162,7 @@ class PostCommentResponseDto implements \JsonSerializable
                 'userVote',
                 'slug',
                 'mentions',
+                'poll',
             ];
         }
 
@@ -189,6 +194,7 @@ class PostCommentResponseDto implements \JsonSerializable
             'canAuthUserModerate' => $this->canAuthUserModerate,
             'bookmarks' => $this->bookmarks,
             'isAuthorModeratorInMagazine' => $this->isAuthorModeratorInMagazine,
+            'poll' => $this->poll?->jsonSerialize(),
         ]);
     }
 
