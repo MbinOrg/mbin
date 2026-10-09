@@ -1,10 +1,4 @@
 .page-messages {
-  #main .thread {
-    display: flex;
-    gap: .5rem;
-    justify-content: space-between;
-  }
-
   .message-view {
     max-height: calc(100vh - 11em);
     overflow: auto;
