@@ -21,7 +21,7 @@ readonly class VoteRepository
 
             $stmt = $conn->prepare($sql);
             if (null !== $date) {
-                $stmt->bindValue(':date', $date, 'datetime');
+                $stmt->bindValue(':date', $date, 'datetime_immutable');
             }
             $stmt = $stmt->executeQuery();
             $count += $stmt->fetchAllAssociative()[0]['cnt'];

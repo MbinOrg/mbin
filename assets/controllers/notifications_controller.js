@@ -1,6 +1,6 @@
-import { ThrowResponseIfNotOk, fetch } from '../utils/http';
+import { ThrowResponseIfNotOk, fetch } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
-import Subscribe from '../utils/event-source';
+import Subscribe from '@app/utils/event-source';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {

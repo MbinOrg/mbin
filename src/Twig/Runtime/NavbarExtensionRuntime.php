@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Twig\Runtime;
 
 use App\Entity\Magazine;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -35,7 +36,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             ]);
         }
 
-        if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
+        if ($domain = Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'domain')) {
             return $this->urlGenerator->generate('domain_entries', [
                 'name' => $domain->name,
                 ...$this->getActiveOptions(),
@@ -45,7 +46,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_entries',
-                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+                ['name' => Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'name')]
             );
         }
 
@@ -73,7 +74,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
             ]);
         }
 
-        if ($domain = $this->requestStack->getCurrentRequest()->get('domain')) {
+        if ($domain = Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'domain')) {
             return $this->urlGenerator->generate('domain_entries', [
                 'name' => $domain->name,
                 ...$this->getActiveOptions(),
@@ -83,7 +84,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_entries',
-                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+                ['name' => Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'name')]
             );
         }
 
@@ -113,7 +114,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_posts',
-                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+                ['name' => Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'name')]
             );
         }
 
@@ -137,7 +138,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
         if ($this->isRouteNameStartsWith('tag')) {
             return $this->urlGenerator->generate(
                 'tag_people',
-                ['name' => $this->requestStack->getCurrentRequest()->get('name')]
+                ['name' => Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'name')]
             );
         }
 
@@ -150,7 +151,7 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
     private function getCurrentRouteName(): string
     {
-        return $this->requestStack->getCurrentRequest()->get('_route') ?? 'front';
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), '_route') ?? 'front';
     }
 
     private function getActiveOptions(): array
@@ -195,22 +196,22 @@ class NavbarExtensionRuntime implements RuntimeExtensionInterface
 
     private function getActiveSubscriptionOption(): ?string
     {
-        return $this->requestStack->getCurrentRequest()->get('subscription');
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'subscription');
     }
 
     private function getActiveSortOption(): string
     {
-        return $this->requestStack->getCurrentRequest()->get('sortBy') ?? 'hot';
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'sortBy') ?? 'hot';
     }
 
     private function getActiveTimeOption(): string
     {
-        return $this->requestStack->getCurrentRequest()->get('time') ?? '∞';
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'time') ?? '∞';
     }
 
     private function getActiveContentOption(): string
     {
-        return $this->requestStack->getCurrentRequest()->get('content') ?? 'default';
+        return Polyfills::requestParam($this->requestStack->getCurrentRequest(), 'content') ?? 'default';
     }
 
     private function isRouteNameStartsWith(string $needle): bool

@@ -94,7 +94,7 @@ class MonitoringRepository extends ServiceEntityRepository
     public function getFilteredContextsPaginated(MonitoringExecutionContextFilterDto $dto): Pagerfanta
     {
         $criteria = $dto->toCriteria();
-        $criteria->orderBy(orderings: ['createdAt' => 'DESC']);
+        $criteria->orderBy(orderings: ['createdAt' => \SortDirection::Descending]);
 
         return $this->findByPaginated($criteria);
     }

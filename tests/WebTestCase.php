@@ -10,6 +10,7 @@ use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\TombstoneFactory;
 use App\Factory\ImageFactory;
 use App\Factory\MagazineFactory;
+use App\Factory\WwwHttpClientFactory;
 use App\Markdown\MarkdownConverter;
 use App\MessageHandler\ActivityPub\Outbox\DeliverHandler;
 use App\Repository\ActivityRepository;
@@ -78,7 +79,6 @@ use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -194,6 +194,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->kibbyPath = \dirname(__FILE__).'/assets/kibby_emoji.png';
         $this->imageUploadTmpDir = \dirname($this->kibbyPath).'/copy/';
         $this->client = static::createClient();
+        $this->client->setServerParameter('HTTP_HOST', self::getContainer()->getParameter('kbin_domain'));
 
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
@@ -201,7 +202,6 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->imageManager = new TestingImageManager(
             $this->getContainer()->getParameter('kbin_storage_url'),
             $this->getService(Filesystem::class),
-            $this->getService(HttpClientInterface::class),
             $this->getService(MimeTypesInterface::class),
             $this->getService(ValidatorInterface::class),
             $this->getService(LoggerInterface::class),
@@ -210,6 +210,7 @@ abstract class WebTestCase extends BaseWebTestCase
             self::getContainer()->getParameter('mbin_image_compression_quality'),
             $this->getService(CacheManager::class),
             $this->getService(EntityManagerInterface::class),
+            $this->getService(WwwHttpClientFactory::class),
         );
         $this->imageManager->setKibbyPath($this->kibbyPath);
         self::getContainer()->set(ImageManagerInterface::class, $this->imageManager);
@@ -293,7 +294,7 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @return T
      */
-    private function getService(string $className)
+    protected function getService(string $className)
     {
         return $this->getContainer()->get($className);
     }

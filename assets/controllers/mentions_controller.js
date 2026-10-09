@@ -1,6 +1,7 @@
-import { fetch, ok } from '../utils/http';
+import { fetch, ok } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
-import router from '../utils/routing';
+import { defaultPopover } from '@app/utils/popover.js';
+import router from '@app/utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -61,6 +62,7 @@ export default class extends Controller {
 
             document.querySelector('.popover').innerHTML = response.html;
 
+            const popover = defaultPopover();
             popover.trigger = event.target;
             popover.selectedTrigger = event.target;
             popover.element.dispatchEvent(new Event('openPopover'));

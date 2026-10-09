@@ -8,7 +8,7 @@ use App\DTO\Contracts\PollDtoTrait;
 use App\Entity\Entry;
 use App\Service\SettingsManager;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[OA\Schema(required: ['title'])]
 class EntryRequestDto extends ContentRequestDto

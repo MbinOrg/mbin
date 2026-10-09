@@ -12,7 +12,6 @@ use App\Enums\EApplicationStatus;
 use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
@@ -735,7 +734,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $qb = $this->createQueryBuilder('u')
             ->where('u.apId IS NULL')
-            ->orderBy('u.createdAt', Order::Ascending->value);
+            ->orderBy('u.createdAt', \SortDirection::Ascending);
 
         $result = $qb->setMaxResults(1)
             ->getQuery()

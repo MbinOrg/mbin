@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use League\Uri\UriString;
 use Symfony\Component\HttpFoundation\Request;
 
 class UrlUtils
@@ -51,5 +52,20 @@ class UrlUtils
         }
 
         return $urls;
+    }
+
+    /**
+     * Checks that a given sub-path will not change the absolute URL path of the url to a different parent when appended to the base URL.
+     * An example for an ascending sub-path would be: baseUrl = https://example.com/parent/ subPath = ../otherParent/child.
+     *
+     * @param string $baseUrl The URL where the sub-path will be appended to. Must end with a '/'.
+     * @param string $subPath the relative URL to be appended to $baseUrl
+     */
+    public static function checkUrlSubpathNotAscending(string $baseUrl, string $subPath): bool
+    {
+        $baseUri = UriString::normalize($baseUrl);
+        $absoluteUri = UriString::normalize(UriString::resolve($subPath, $baseUri));
+
+        return str_starts_with($absoluteUri, $baseUri);
     }
 }

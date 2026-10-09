@@ -360,6 +360,7 @@ See [docs.joinmbin.org](https://docs.joinmbin.org)
 
 - PHP version: 8.5 or higher
 - GD or Imagemagick PHP extension
+- Node 24 or higher
 - NGINX / Apache / Caddy
 - PostgreSQL
 - RabbitMQ

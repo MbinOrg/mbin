@@ -8,6 +8,7 @@ use App\Controller\Api\Post\PostsBaseApi;
 use App\DTO\PostResponseDto;
 use App\Entity\Post;
 use App\Factory\PostFactory;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -87,7 +88,7 @@ class PostsSetLanguageApi extends PostsBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $newLang = $request->get('lang', '');
+        $newLang = Polyfills::requestParam($request, 'lang', '');
 
         $valid = false !== array_search($newLang, Languages::getLanguageCodes());
 

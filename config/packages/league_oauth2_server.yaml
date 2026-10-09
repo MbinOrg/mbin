@@ -10,6 +10,7 @@ league_oauth2_server:
         enable_password_grant: false
         enable_refresh_token_grant: true
         enable_auth_code_grant: true
+        enable_device_code_grant: false
         require_code_challenge_for_public_clients: true
     client:
         classname: App\Entity\Client

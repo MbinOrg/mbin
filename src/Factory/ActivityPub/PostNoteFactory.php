@@ -99,7 +99,7 @@ class PostNoteFactory
             $this->pollFactory->addToNote($note, $post->poll);
         }
 
-        $note['to'] = array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body)));
+        $note['to'] = array_values(array_unique(array_merge($note['to'], $this->activityPubManager->createCcFromBody($post->body))));
 
         return $note;
     }

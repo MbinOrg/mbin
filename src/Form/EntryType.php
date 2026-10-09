@@ -40,7 +40,7 @@ class EntryType extends AbstractType
                 'required' => false,
                 'default_protocol' => 'https',
             ])
-            ->add('title', TextareaType::class, [
+            ->add('title', TextType::class, [
                 'required' => true,
             ])
             ->add('body', TextareaType::class, [
