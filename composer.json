@@ -43,7 +43,7 @@
         "league/uri-interfaces": "^7.8",
         "liip/imagine-bundle": "^2.17.1",
         "meteo-concept/hcaptcha-bundle": "^4.5.0",
-        "minishlink/web-push": "^10.1.0",
+        "minishlink/web-push": "^11.0.0",
         "neitanod/forceutf8": "^2.0.4",
         "nelmio/api-doc-bundle": "^5.10.3",
         "nelmio/cors-bundle": "^2.5.0",
