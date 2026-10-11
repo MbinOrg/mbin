@@ -23,6 +23,7 @@ use App\Repository\EntryRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\UserPushSubscriptionRepository;
 use App\Repository\UserRepository;
+use App\Service\EmbedService;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
@@ -89,7 +90,7 @@ class AjaxController extends AbstractController
     /**
      * Returns an embeded objects html value, to be used for front-end insertion.
      */
-    public function fetchEmbed(Embed $embed, Request $request): JsonResponse
+    public function fetchEmbed(EmbedService $embed, Request $request): JsonResponse
     {
         $srcUrl = Polyfills::requestParam($request, 'url');
         $data = $embed->fetch($srcUrl);

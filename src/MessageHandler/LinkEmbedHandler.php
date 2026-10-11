@@ -7,6 +7,7 @@ namespace App\MessageHandler;
 use App\Message\Contracts\MessageInterface;
 use App\Message\LinkEmbedMessage;
 use App\Repository\EmbedRepository;
+use App\Service\EmbedService;
 use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -20,7 +21,7 @@ class LinkEmbedHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly EmbedRepository $embedRepository,
-        private readonly Embed $embed,
+        private readonly EmbedService $embed,
         private readonly CacheItemPoolInterface $markdownCache,
     ) {
         parent::__construct($this->entityManager, $this->kernel);

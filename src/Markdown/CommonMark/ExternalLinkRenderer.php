@@ -25,6 +25,7 @@ use App\Repository\ApActivityRepository;
 use App\Repository\EmbedRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
+use App\Service\EmbedService;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
 use App\Utils\Embed;
@@ -49,7 +50,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
     private ConfigurationInterface $config;
 
     public function __construct(
-        private readonly Embed $embed,
         private readonly EmbedRepository $embedRepository,
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,

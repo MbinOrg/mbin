@@ -10,6 +10,7 @@ use App\Message\Contracts\MessageInterface;
 use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Service\EmbedService;
 use App\Service\ImageManagerInterface;
 use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +25,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly KernelInterface $kernel,
-        private readonly Embed $embed,
+        private readonly EmbedService $embed,
         private readonly ImageManagerInterface $manager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
