@@ -107,13 +107,12 @@ class AjaxController extends AbstractController
         } else {
             $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
-            if ($host = parse_url($data->url, PHP_URL_HOST)) {
+            if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
                 $title = 'embedded link preview of '.$host;
             } else {
                 $title = 'embedded link preview';
             }
 
-            //TODO check if it escapes
             $frame = $this->renderView('ajax/embed_iframe.html.twig', [
                 'embedUrl' => $useEmbedUrl ? $data->embedUrl : null,
                 'embedHtml' => $data->html,
