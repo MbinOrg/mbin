@@ -16,7 +16,7 @@ class MagazineAppearanceControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/m/acme/panel/appearance');
         $this->assertSelectorTextContains('#main .options__main a.active', 'Appearance');
         $form = $crawler->filter('#main form[name=magazine_theme]')->selectButton('Done')->form();
-        $form['magazine_theme[icon]']->upload($this->kibbyPath);
+        $form['magazine_theme[icon]']->upload($this->getKibbyImageUpload()->getPathname());
         $crawler = $this->client->submit($form);
 
         $this->assertResponseIsSuccessful();

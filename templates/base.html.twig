@@ -62,6 +62,13 @@
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
+
+    {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+    {% if frankenphp_hot_reload %}
+        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
+        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+    {% endif %}
 </head>
 <body class="{{ html_classes('theme--'~THEME, {
         'rounded-edges': ROUNDED_EDGES is same as V_TRUE,
@@ -81,7 +88,7 @@
 {% include 'layout/_header.html.twig' with {header_nav: block('header_nav')} %}
 {{ component('announcement') }}
 <div id="middle" class="{%- block mainClass -%}page{%- endblock %}">
-    <div class="mbin-container {{ html_classes('width--'~PAGE_WIDTH) }}">
+    <div class="mbin-container grid-min-w-0 {{ html_classes('width--'~PAGE_WIDTH) }}">
         <main id="main"
               data-controller="lightbox timeago confirmation"
               class="{{ html_classes({'view-compact': COMPACT is same as V_TRUE}) }}">

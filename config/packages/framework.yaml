@@ -2,7 +2,6 @@
 framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    annotations: false #no longer supported
     http_method_override: false
     handle_all_throwables: true
     trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
@@ -42,7 +41,7 @@ framework:
     http_client:
         default_options:
             headers:
-                'User-Agent': 'Mbin/1.10.1 (+https://%kbin_domain%/agent)'
+                'User-Agent': 'Mbin/1.11.0 (+https://%kbin_domain%/agent)'
 
     #esi: true
     #fragments: true

@@ -8,6 +8,7 @@ use App\DTO\UserDto;
 use App\DTO\UserSignupResponseDto;
 use App\DTO\UserSmallResponseDto;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Repository\InstanceRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -36,7 +37,7 @@ class UserFactory
             $user->apProfileId,
             $user->getId(),
             $user->followersCount,
-            'Service' === $user->type, // setting isBot
+            EUserType::Service === $user->type, // setting isBot
             $user->isAdmin(),
             $user->isModerator(),
             $currentUser && ($currentUser->isAdmin() || $currentUser->isModerator()) ? $user->applicationText : null,

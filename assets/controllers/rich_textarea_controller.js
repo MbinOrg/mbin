@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { fetch } from '../utils/http';
+import { fetch } from '@app/utils/http';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -17,7 +17,7 @@ export default class extends Controller {
     emojiAutocompleteActive = false;
     mentionAutocompleteActive = false;
 
-    abortController;
+    abortController = null;
     requestActive = false;
 
     selectedSuggestionIndex = 0;

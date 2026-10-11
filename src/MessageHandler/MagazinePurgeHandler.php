@@ -91,7 +91,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
                 [
                     'magazine' => $this->magazine,
                 ],
-                ['id' => 'DESC'],
+                ['id' => \SortDirection::Descending],
                 $this->batchSize
             );
 
@@ -113,7 +113,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
                 [
                     'magazine' => $this->magazine,
                 ],
-                ['id' => 'DESC'],
+                ['id' => \SortDirection::Descending],
                 $this->batchSize
             );
 
@@ -135,7 +135,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
                 [
                     'magazine' => $this->magazine,
                 ],
-                ['id' => 'DESC'],
+                ['id' => \SortDirection::Descending],
                 $this->batchSize
             );
 
@@ -156,7 +156,7 @@ class MagazinePurgeHandler extends MbinMessageHandler
                 [
                     'magazine' => $this->magazine,
                 ],
-                ['id' => 'DESC'],
+                ['id' => \SortDirection::Descending],
                 $this->batchSize
             );
 

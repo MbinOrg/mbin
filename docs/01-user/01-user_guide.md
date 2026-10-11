@@ -60,7 +60,8 @@ We've included a wide range of options that will allow you to customize your exp
 options.
 
 - **General:** In this section, you can set your preferred home page (all, subscribed, moderated, favorites), hide adult
-  content, set user tagging options, adjust privacy settings, and configure notification settings.
+  content, tweak what is included in a feed, set user tagging options, adjust privacy settings, and configure
+  notification settings.
 
 - **Profile:** Here, you can write a few words about yourself (which will be visible in the "People" section), add an
   avatar and cover image.
@@ -68,9 +69,12 @@ options.
 - **Email:** In this section, you can change your email address. After changing to a new email, you will receive an
   activation link.
 
-- **Password:** In this section, you can change your account password.
+- **Password & 2FA:** In this section, you can change your account password and configure two-factor authentication.
 
-- **Blocks:** Here, you can manage blocked accounts, magazines, and domains.
+- **Filter lists:** With custom filter lists you can hide content and users from every Magazine which matches the 
+  defined words.
+
+- **Blocked:** Here, you can manage blocked accounts, magazines, and domains.
 
 - **Subscriptions:** In this section, you can manage subscriptions to other user accounts, magazines, and domains.
 

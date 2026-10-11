@@ -1,5 +1,7 @@
 # Upgrade
 
+Make sure to read the upgrade steps of every release you are going to jump over.
+
 ## Bare Metal / VM Upgrade
 
 If you perform a mbin upgrade (eg. `git pull`), be aware to _always_ execute the following Bash script:

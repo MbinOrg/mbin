@@ -277,11 +277,6 @@ services:
       class: App\Service\MonologFilterHandler
       public: false
 
-    # Feeds
-    debril.rss_atom.provider:
-        class: App\Feed\Provider
-        arguments: ['@App\Service\FeedManager']
-
     messenger.failure.add_error_details_stamp_listener:
         class: App\Utils\AddErrorDetailsStampListener
 

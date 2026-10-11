@@ -1,7 +1,7 @@
-import { fetch, ok } from '../utils/http';
+import { fetch, ok } from '@app/utils/http';
 import { Controller } from '@hotwired/stimulus';
-import getIntIdFromElement from '../utils/mbin';
-import router from '../utils/routing';
+import getIntIdFromElement from '@app/utils/mbin';
+import router from '@app/utils/routing';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
