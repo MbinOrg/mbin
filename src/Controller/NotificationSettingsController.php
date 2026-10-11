@@ -33,7 +33,7 @@ class NotificationSettingsController extends AbstractController
         $this->repository->setStatusByTarget($user, $subject, $status);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'notification_switch',
                     'attributes' => [
                         'target' => $subject,

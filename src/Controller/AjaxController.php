@@ -136,7 +136,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'entry',
                         'attributes' => [
@@ -153,7 +153,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'entry_comment',
                         'attributes' => [
@@ -172,7 +172,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'post',
                         'attributes' => [
@@ -189,7 +189,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'post_comment',
                         'attributes' => [
