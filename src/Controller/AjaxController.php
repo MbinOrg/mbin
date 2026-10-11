@@ -105,24 +105,7 @@ class AjaxController extends AbstractController
                 $text
             );
         } else {
-            $frame = '
-                <iframe
-                    allow="fullscreen *" sandbox="allow-scripts allow-same-origin" credentialless="true" csp="" referrerpolicy="same-origin"
-                    width="100" height="100" style="border-width: 1px; width: 100%%; height: 30rem;"
-                    %s title="%s"
-                    data-controller="iframe-size-adjust"
-                ></iframe>
-            ';
-            $frame = str_replace('\n', '', $frame);
-
-            $useEmbedUrl = true; // many servers might have not configured their CORS correct, so it might be better to not use the URL
-            if ($useEmbedUrl && null !== $data->embedUrl) {
-                $src = \sprintf('src="%s"', htmlspecialchars($data->embedUrl));
-            } elseif (null !== $data->html) {
-                $src = \sprintf('srcdoc="%s" src="%s"', htmlspecialchars($data->html), htmlspecialchars($data->url));
-            } else {
-                $src = \sprintf('src="%s"', htmlspecialchars($srcUrl));
-            }
+            $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
             if ($host = parse_url($data->url, PHP_URL_HOST)) {
                 $title = 'embedded link preview of '.$host;
@@ -130,7 +113,16 @@ class AjaxController extends AbstractController
                 $title = 'embedded link preview';
             }
 
-            $html = \sprintf($frame, $src, $title);
+            //TODO check if it escapes
+            $frame = $this->renderView('ajax/embed_iframe.html.twig', [
+                'embedUrl' => $useEmbedUrl ? $data->embedUrl : null,
+                'embedHtml' => $data->html,
+                'orgUrl' => $srcUrl,
+                'title' => $title,
+                'width' => $data->width,
+                'height' => $data->height,
+            ]);
+            $html = str_replace('\n', '', $frame);
         }
 
         return new JsonResponse(

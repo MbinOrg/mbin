@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
+//TODO separate service and DTO
 class Embed
 {
     public ?string $url = null;
@@ -26,6 +27,8 @@ class Embed
     public ?string $description = null;
     public ?string $image = null;
     public ?string $html = null;
+    public ?int $width = null;
+    public ?int $height = null;
 
     public function __construct(
         private CacheInterface $cache,
@@ -61,6 +64,8 @@ class Embed
             'description' => $this->description,
             'image' => $this->image,
             'html' => $this->html,
+            'width' => $this->width,
+            'height' => $this->height,
         ]);
 
         return $this->cache->get(
@@ -87,15 +92,21 @@ class Embed
                 $c->title = $embed->title;
                 $c->description = $embed->description;
                 $c->image = (string) $embed->image;
-                $c->html = $this->cleanIframe($oembed->html('html'));
                 $c->embedUrl = $this->extractEmbedUrl($embed);
 
                 try {
-                    if (!$c->html && $embed->code) {
+                    if ($embed->code) {
                         $c->html = $this->cleanIframe($embed->code->html);
+                        $c->width = $embed->code->width;
+                        $c->height = $embed->code->height;
                     }
                 } catch (\TypeError $e) {
                     $this->logger->info('[Embed::fetch] HTML prepare failed: '.$e->getMessage());
+                }
+                if($c->html === null) {
+                    $c->html = $this->cleanIframe($oembed->html('html'));
+                    $c->width = $oembed->int('width');
+                    $c->height = $oembed->int('height');
                 }
 
                 $this->logger->debug('[Embed::fetch] Fetch success, returning', [
@@ -104,6 +115,8 @@ class Embed
                     'description' => $c->description,
                     'image' => $c->image,
                     'html' => $c->html,
+                    'width' => $this->width,
+                    'height' => $this->height,
                 ]);
 
                 return $c;
