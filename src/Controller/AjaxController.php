@@ -27,7 +27,6 @@ use App\Service\EmbedService;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
-use App\Utils\Embed;
 use App\Utils\Polyfills;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\ParameterType;
@@ -54,16 +53,17 @@ class AjaxController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly UserPushSubscriptionManager $pushSubscriptionManager,
+        private readonly EmbedService $embedService,
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
         private readonly Security $security,
     ) {
     }
 
-    public function fetchTitle(Embed $embed, Request $request): JsonResponse
+    public function fetchTitle(Request $request): JsonResponse
     {
         $url = json_decode($request->getContent())->url;
-        $embed = $embed->fetch($url);
+        $embed = $this->embedService->fetch($url);
 
         return new JsonResponse(
             [
@@ -88,12 +88,12 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * Returns an embeded objects html value, to be used for front-end insertion.
+     * Returns an embedded objects html value, to be used for front-end insertion.
      */
-    public function fetchEmbed(EmbedService $embed, Request $request): JsonResponse
+    public function fetchEmbed(Request $request): JsonResponse
     {
         $srcUrl = Polyfills::requestParam($request, 'url');
-        $data = $embed->fetch($srcUrl);
+        $data = $this->embedService->fetch($srcUrl);
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
         if ($data->isImageUrl()) {
             $text = $data->html;
