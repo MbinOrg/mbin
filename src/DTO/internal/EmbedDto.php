@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\DTO\internal;
 
@@ -8,7 +9,6 @@ use App\Service\VideoManager;
 
 class EmbedDto
 {
-
     public ?string $url = null;
     public ?string $embedUrl = null;
     public ?string $title = null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -51,7 +52,8 @@ readonly class EmbedService
         return $embed;
     }
 
-    private function createFallbackEmbed(string $url): EmbedDto {
+    private function createFallbackEmbed(string $url): EmbedDto
+    {
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
         $embed->url = $url;
@@ -59,7 +61,8 @@ readonly class EmbedService
         return $embed;
     }
 
-    private function createPageEmbed(string $url): EmbedDto {
+    private function createPageEmbed(string $url): EmbedDto
+    {
         $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
 
         $this->logger->debug('[EmbedService::createPageEmbed] Start fetching', [
@@ -81,7 +84,7 @@ readonly class EmbedService
         $dto->url = $url;
         $dto->title = $embed->title;
         $dto->description = $embed->description;
-        $dto->image = strval($embed->image);
+        $dto->image = \strval($embed->image);
         $dto->embedUrl = $this->extractEmbedUrl($embed);
 
         try {
@@ -93,7 +96,7 @@ readonly class EmbedService
         } catch (\TypeError $e) {
             $this->logger->info('[EmbedService::createPageEmbed] HTML prepare failed: '.$e->getMessage());
         }
-        if($dto->html === null) {
+        if (null === $dto->html) {
             $dto->html = $this->cleanIframe($oembed->html('html'));
             $dto->width = $oembed->int('width');
             $dto->height = $oembed->int('height');
@@ -208,7 +211,7 @@ readonly class EmbedService
     }
 
     /**
-     * This tries to find known locations of embed iframe URLs
+     * This tries to find known locations of embed iframe URLs.
      */
     private function extractEmbedUrl(Extractor $embed): ?string
     {

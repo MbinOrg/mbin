@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
-use App\DTO\internal\EmbedDto;
 use App\Factory\WwwHttpClientFactory;
 use App\Service\EmbedService;
 use App\Service\SettingsManager;
