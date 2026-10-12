@@ -28,4 +28,18 @@ class GeneralUtil
         ProgressBar::setFormatDefinition(ProgressBar::FORMAT_VERY_VERBOSE, ProgressBar::getFormatDefinition(ProgressBar::FORMAT_VERY_VERBOSE).' - %message%');
         ProgressBar::setFormatDefinition(ProgressBar::FORMAT_DEBUG, ProgressBar::getFormatDefinition(ProgressBar::FORMAT_DEBUG).' - %message%');
     }
+
+    /**
+     * @param int|null $value
+     * @param int $min lower limit; must be >= 0
+     * @param int $max upper limit; must be > $min
+     * @param int $fallback
+     * @return int clamped between $min and $max or $fallback if it was null or < 0
+     */
+    public static function intBound(?int $value, int $min, int $max, int $fallback): int {
+        if ($value === null || $value < 0) {
+            return $fallback;
+        }
+        return max($min, min($max, $value));
+    }
 }

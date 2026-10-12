@@ -27,6 +27,7 @@ use App\Service\EmbedService;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
+use App\Utils\GeneralUtil;
 use App\Utils\Polyfills;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\ParameterType;
@@ -119,8 +120,8 @@ class AjaxController extends AbstractController
                 'embedHtml' => $data->html,
                 'orgUrl' => $srcUrl,
                 'title' => $title,
-                'width' => $data->width,
-                'height' => $data->height,
+                'width' => GeneralUtil::intBound($data->width, 160, 980, 520),
+                'height' => GeneralUtil::intBound($data->height, 120, 480, 250),
             ]);
             $html = str_replace('\n', '', $frame);
         }
