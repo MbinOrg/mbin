@@ -26,6 +26,7 @@ use App\Repository\UserRepository;
 use App\Service\EmbedService;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
+use App\Service\UrlAccessChecker;
 use App\Service\UserNoteManager;
 use App\Utils\GeneralUtil;
 use App\Utils\Polyfills;
@@ -55,6 +56,7 @@ class AjaxController extends AbstractController
         private readonly LoggerInterface $logger,
         private readonly UserPushSubscriptionManager $pushSubscriptionManager,
         private readonly EmbedService $embedService,
+        private readonly UrlAccessChecker $urlAccessChecker,
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
         private readonly Security $security,
@@ -109,21 +111,29 @@ class AjaxController extends AbstractController
         } else {
             $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
-            if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
-                $title = 'embedded link preview of '.$host;
-            } else {
-                $title = 'embedded link preview';
-            }
+            if($this->urlAccessChecker->checkNoPrivateNetwork($data->embedUrl ?? $data->url ?? $srcUrl)) {
+                if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
+                    $title = 'embedded link preview of ' . $host;
+                } else {
+                    $title = 'embedded link preview';
+                }
 
-            $frame = $this->renderView('ajax/embed_iframe.html.twig', [
-                'embedUrl' => $useEmbedUrl ? $data->embedUrl : null,
-                'embedHtml' => $data->html,
-                'orgUrl' => $srcUrl,
-                'title' => $title,
-                'width' => GeneralUtil::intBound($data->width, 160, 980, 520),
-                'height' => GeneralUtil::intBound($data->height, 120, 480, 250),
-            ]);
-            $html = str_replace('\n', '', $frame);
+                $frame = $this->renderView('ajax/embed_iframe.html.twig', [
+                    'embedUrl' => $useEmbedUrl ? $data->embedUrl : null,
+                    'embedHtml' => $data->html,
+                    'orgUrl' => $srcUrl,
+                    'title' => $title,
+                    'width' => GeneralUtil::intBound($data->width, 160, 980, 520),
+                    'height' => GeneralUtil::intBound($data->height, 120, 480, 250),
+                ]);
+                $html = str_replace('\n', '', $frame);
+            } else {
+                $html = \sprintf(
+                    '<a href="%s" class="embed-link">%s</a>',
+                    $data->embedUrl ?? $data->url ?? $srcUrl,
+                    $this->translator->trans('malicious_embed')
+                );
+            }
         }
 
         return new JsonResponse(
