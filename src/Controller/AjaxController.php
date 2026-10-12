@@ -111,9 +111,9 @@ class AjaxController extends AbstractController
         } else {
             $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
-            if($this->urlAccessChecker->checkNoPrivateNetwork($data->embedUrl ?? $data->url ?? $srcUrl)) {
+            if ($this->urlAccessChecker->checkNoPrivateNetwork($data->embedUrl ?? $data->url ?? $srcUrl)) {
                 if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
-                    $title = 'embedded link preview of ' . $host;
+                    $title = 'embedded link preview of '.$host;
                 } else {
                     $title = 'embedded link preview';
                 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -11,7 +12,8 @@ class UrlAccessChecker implements ResettableInterface
 {
     private NoPrivateNetworkHttpClient $privateHostCheck;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->privateHostCheck = new NoPrivateNetworkHttpClient(new MockHttpClient());
     }
 
@@ -20,7 +22,8 @@ class UrlAccessChecker implements ResettableInterface
         $this->privateHostCheck->reset();
     }
 
-    public function checkNoPrivateNetwork(string $url): bool {
+    public function checkNoPrivateNetwork(string $url): bool
+    {
         try {
             $this->privateHostCheck->request('GET', $url);
             return true;
