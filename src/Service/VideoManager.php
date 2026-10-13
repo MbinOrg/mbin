@@ -41,7 +41,7 @@ class VideoManager
             return true;
         }
 
-        return 1 === preg_match('/\.(?:ism|isml)\/manifest(?:\([^\/)]+\))?$/i', $path);
+        return 1 === preg_match('/\.(?:ism|isml)\/manifest(?:\([^\/)]+\))?$/i', $urlPath);
     }
 
     public static function isSupportedVideoMimeType(?string $mimeType): bool
