@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\internal\EmbedDto;
+use App\Utils\M3u8EmbedFixture;
 use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Factory\WwwHttpClientFactory;
@@ -25,11 +26,22 @@ readonly class EmbedService
         private WwwHttpClientFactory $httpClientFactory,
         private UrlAccessChecker $urlAccessChecker,
         private TranslatorInterface $translator,
+        private string $kernelEnvironment,
+        private M3u8EmbedFixture $m3u8EmbedFixture,
     ) {
     }
 
     public function fetch(string $url): EmbedDto
     {
+        if ('dev' === $this->kernelEnvironment && $this->m3u8EmbedFixture->getMasterUrl() === $url) {
+            $fixture = new EmbedDto();
+            $fixture->url = $url;
+            $fixture->title = 'Mbin master.m3u8 iframe regression fixture';
+            $fixture->html = $this->cleanIframe($this->m3u8EmbedFixture->getIframeHtml());
+
+            return $fixture;
+        }
+
         if ($this->settings->isLocalUrl($url)) {
             if (ImageManager::isImageUrl($url)) {
                 return $this->createLocalImageEmbed($url);

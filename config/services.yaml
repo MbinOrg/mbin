@@ -162,6 +162,7 @@ services:
             $monitoringCurlRequestsEnabled: '%mbin_monitoring_curl_requests_enabled%'
             $monitoringCurlRequestPersistingEnabled: '%mbin_monitoring_curl_request_persisting_enabled%'
             $imageCompressionQuality: '%mbin_image_compression_quality%'
+            $kernelEnvironment: '%kernel.environment%'
 
     kbin.s3_client:
         class: Aws\S3\S3Client
