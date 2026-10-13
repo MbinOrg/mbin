@@ -262,6 +262,14 @@ readonly class EmbedService
                     break;
                 }
             }
+
+            if ('video' === $node->tagName || 'img' === $node->tagName) {
+                $url = $node->getAttribute('src');
+                if ($url && (ImageManager::isImageUrl($url) || VideoManager::isVideoUrl($url))) {
+                    $ret = $url;
+                    break;
+                }
+            }
         }
 
         if (null !== $ret) {

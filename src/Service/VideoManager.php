@@ -16,8 +16,11 @@ class VideoManager
             return self::isSupportedVideoMimeType(substr($url, 5));
         }
 
-        $path = (string) parse_url($url, PHP_URL_PATH);
-        $urlExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (!$urlPath) {
+            return false;
+        }
+        $urlExt = strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         return \in_array($urlExt, self::VIDEO_FILE_EXTENSIONS, false);
     }
@@ -28,8 +31,11 @@ class VideoManager
             return false;
         }
 
-        $path = (string) parse_url($url, PHP_URL_PATH);
-        $urlExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (!$urlPath) {
+            return false;
+        }
+        $urlExt = strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         if (\in_array($urlExt, self::STREAM_MANIFEST_EXTENSIONS, true)) {
             return true;
