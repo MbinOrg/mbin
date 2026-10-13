@@ -38,6 +38,7 @@ readonly class EmbedService
     {
         if ('dev' === $this->kernelEnvironment && $this->m3u8EmbedFixture->getMasterUrl() === $url) {
             $fixture = new EmbedDto();
+            $fixture->synthetic = false;
             $fixture->url = $url;
             $fixture->title = 'Mbin master.m3u8 iframe regression fixture';
             $fixture->html = $this->cleanIframe($this->m3u8EmbedFixture->getIframeHtml());
