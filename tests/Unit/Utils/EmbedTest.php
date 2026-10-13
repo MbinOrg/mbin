@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Utils;
 use App\Factory\WwwHttpClientFactory;
 use App\Service\EmbedService;
 use App\Service\SettingsManager;
+use App\Service\UrlAccessChecker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmbedTest extends TestCase
 {
@@ -175,6 +177,8 @@ class EmbedTest extends TestCase
             $this->createStub(LoggerInterface::class),
             $this->createStub(EventDispatcherInterface::class),
             new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
+            new UrlAccessChecker(),
+            $this->createStub(TranslatorInterface::class),
         );
     }
 }

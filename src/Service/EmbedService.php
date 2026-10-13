@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 readonly class EmbedService
 {
@@ -22,6 +23,8 @@ readonly class EmbedService
         private LoggerInterface $logger,
         private EventDispatcherInterface $dispatcher,
         private WwwHttpClientFactory $httpClientFactory,
+        private UrlAccessChecker $urlAccessChecker,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -61,6 +64,15 @@ readonly class EmbedService
         return $embed;
     }
 
+    private function createUnsafeEmbed(string $url): EmbedDto
+    {
+        $urlEnc = htmlspecialchars($url);
+        $embed = new EmbedDto();
+        $embed->url = $url;
+        $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, $this->translator->trans('malicious_embed'));
+        return $embed;
+    }
+
     private function createPageEmbed(string $url): EmbedDto
     {
         $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
@@ -68,6 +80,10 @@ readonly class EmbedService
         $this->logger->debug('[EmbedService::createPageEmbed] Start fetching', [
             'url' => $url,
         ]);
+
+        if (!$this->urlAccessChecker->checkNoPrivateNetwork($url)) {
+            return $this->createUnsafeEmbed($url);
+        }
 
         try {
             $embed = $this->fetchEmbed($url);
@@ -86,6 +102,10 @@ readonly class EmbedService
         $dto->description = $embed->description;
         $dto->image = \strval($embed->image);
         $dto->embedUrl = $this->extractEmbedUrl($embed);
+
+        if ($dto->embedUrl && !$this->urlAccessChecker->checkNoPrivateNetwork($dto->embedUrl)) {
+            return $this->createUnsafeEmbed($dto->embedUrl);
+        }
 
         try {
             if ($embed->code) {
