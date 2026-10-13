@@ -31,6 +31,7 @@ class EntryCommentNoteFactory
         private readonly ApHttpClientInterface $client,
         private readonly ActivityPubManager $activityPubManager,
         private readonly MarkdownConverter $markdownConverter,
+        private readonly PollFactory $pollFactory,
     ) {
     }
 
@@ -51,7 +52,7 @@ class EntryCommentNoteFactory
 
         $note = array_merge($note ?? [], [
             'id' => $this->getActivityPubId($comment),
-            'type' => 'Note',
+            'type' => $comment->poll ? 'Question' : 'Note',
             'attributedTo' => $this->activityPubManager->getActorProfileId($comment->user),
             'inReplyTo' => $this->getReplyTo($comment),
             'to' => [
@@ -107,6 +108,10 @@ class EntryCommentNoteFactory
                 )
             )
         );
+
+        if ($comment->poll) {
+            $this->pollFactory->addToNote($note, $comment->poll);
+        }
 
         return $note;
     }

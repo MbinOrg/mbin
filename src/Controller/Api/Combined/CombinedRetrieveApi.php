@@ -845,19 +845,19 @@ class CombinedRetrieveApi extends BaseApi
 
         return match (true) {
             $item instanceof Entry => new ContentResponseDto(
-                entry: $this->serializeEntry($this->entryFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                entry: $this->serializeEntry($item, $this->tagLinkRepository->getTagsOfContent($item)),
                 boostedBy: $boostedBy,
             ),
             $item instanceof Post => new ContentResponseDto(
-                post: $this->serializePost($this->postFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                post: $this->serializePost($item, $this->tagLinkRepository->getTagsOfContent($item)),
                 boostedBy: $boostedBy,
             ),
             $item instanceof EntryComment => new ContentResponseDto(
-                entryComment: $this->serializeEntryComment($this->entryCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                entryComment: $this->serializeEntryComment($item, $this->tagLinkRepository->getTagsOfContent($item)),
                 boostedBy: $boostedBy,
             ),
             $item instanceof PostComment => new ContentResponseDto(
-                postComment: $this->serializePostComment($this->postCommentFactory->createDto($item), $this->tagLinkRepository->getTagsOfContent($item)),
+                postComment: $this->serializePostComment($item, $this->tagLinkRepository->getTagsOfContent($item)),
                 boostedBy: $boostedBy,
             ),
         };

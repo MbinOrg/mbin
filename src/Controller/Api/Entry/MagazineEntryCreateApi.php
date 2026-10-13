@@ -101,7 +101,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -180,7 +180,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -254,7 +254,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         ]);
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -361,7 +361,7 @@ class MagazineEntryCreateApi extends EntriesBaseApi
         $entry = $manager->create($dto, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($manager->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             status: 201,
             headers: $headers
         );
@@ -470,12 +470,11 @@ class MagazineEntryCreateApi extends EntriesBaseApi
 
         $entry = $manager->create($dto, $this->getUserOrThrow());
 
-        $retDto = $manager->createDto($entry);
         $tags = $this->tagLinkRepository->getTagsOfContent($entry);
         $crossposts = $this->entryRepository->findCross($entry);
 
         return new JsonResponse(
-            $this->serializeEntry($retDto, $tags, $crossposts),
+            $this->serializeEntry($entry, $tags, $crossposts),
             status: 201,
             headers: $headers
         );

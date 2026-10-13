@@ -106,6 +106,7 @@ class PostCommentCreateController extends AbstractController
     private function getForm(Post $post, ?PostComment $parent): FormInterface
     {
         $dto = new PostCommentDto();
+        $dto->addEmptyChoices();
 
         if ($parent && $this->getUser()->addMentionsPosts) {
             $handle = $this->mentionManager->addHandle([$parent->user->username])[0];

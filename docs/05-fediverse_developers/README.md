@@ -84,6 +84,30 @@ Each magazine has an AP actor at `https://instance.tld/m/name`:
 %object_message%
 ```
 
+### Polls
+
+Polls can be part of all of the above, except private messages. If that is the case, their `type` becomes `Question`.
+The deciding factor if an object is a thread or microblog in that case is the existence of the `title` property.
+
+Mbin's representation of polls are mostly the same as Mastodons (see [Mastodon's documentation](https://docs.joinmastodon.org/spec/activitypub/#Question)):
+
+- Poll options are part of the `oneOf` (for single choice polls) or the `anyOf` property (for multiple choice polls)
+- Each option has a `name` property, which is both the value and the label of this option
+- Each option has a `replies` property containing the amount of votes in their `totalItems` property
+
+```json
+%object_poll%
+```
+
+#### Poll Votes
+
+A vote in a poll is represented as a `Note` object with a `name` property containing the exact value of the choice that is voted for.
+For multiple-choice-polls, multiple activities will be sent, each containing one vote for one choice.
+
+```json
+%object_poll_vote%
+```
+
 ## Collections
 
 ### User Outbox

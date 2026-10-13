@@ -1241,3 +1241,17 @@ unblock_instance_globally_long: Unblock Instance for all Users
 in_reply_to: in reply to
 original_image: Original image
 invisible_or_deleted: invisible or deleted
+poll: Poll
+poll_edit_voters_reset: All votes will be reset after editing!
+poll_ends_at: Poll ends at
+poll_choices: Choices
+poll_is_multiple_choice: Is multiple choice
+poll_vote: Vote
+poll_show_results: Show results
+poll_hide_results: Hide results
+poll_ends: Poll ends
+poll_ended: Poll ended
+poll_voters: '{0}Persons|{1}Person|]1,Inf[ Persons'
+poll_update_results: Update results
+notification_title_poll_ended: A poll you have voted in has ended
+notification_title_poll_edited: A poll you have voted in has been edited

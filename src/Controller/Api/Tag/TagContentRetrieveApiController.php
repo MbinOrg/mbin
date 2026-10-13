@@ -198,7 +198,7 @@ class TagContentRetrieveApiController extends BaseApi
             try {
                 \assert($value instanceof Entry);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntry($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntry($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -353,7 +353,7 @@ class TagContentRetrieveApiController extends BaseApi
             try {
                 \assert($value instanceof EntryComment);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializeEntryComment($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializeEntryComment($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -509,7 +509,7 @@ class TagContentRetrieveApiController extends BaseApi
             try {
                 \assert($value instanceof Post);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializePost($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializePost($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }
@@ -665,7 +665,7 @@ class TagContentRetrieveApiController extends BaseApi
             try {
                 \assert($value instanceof PostComment);
                 $this->handlePrivateContent($value);
-                $dtos[] = $this->serializePostComment($factory->createDto($value), $this->tagLinkRepository->getTagsOfContent($value));
+                $dtos[] = $this->serializePostComment($value, $this->tagLinkRepository->getTagsOfContent($value));
             } catch (AccessDeniedException $e) {
                 continue;
             }

@@ -54,7 +54,7 @@ class ActivityPubJsonDriver extends JsonDriver
             $data['id'] = 'SCRUBBED_ID';
         }
 
-        if (isset($data['type']) && 'Note' === $data['type'] && isset($data['url'])) {
+        if (isset($data['type']) && ('Note' === $data['type'] || 'Question' === $data['type']) && isset($data['url'])) {
             $data['url'] = 'SCRUBBED_ID';
         }
 
@@ -68,6 +68,10 @@ class ActivityPubJsonDriver extends JsonDriver
 
         if (isset($data['updated'])) {
             $data['updated'] = 'SCRUBBED_DATE';
+        }
+
+        if (isset($data['endTime'])) {
+            $data['endTime'] = 'SCRUBBED_DATE';
         }
 
         if (isset($data['publicKey'])) {
@@ -99,7 +103,7 @@ class ActivityPubJsonDriver extends JsonDriver
             $data->id = 'SCRUBBED_ID';
         }
 
-        if (isset($data->type) && 'Note' === $data->type && isset($data->url)) {
+        if (isset($data->type) && ('Note' === $data->type || 'Question' === $data->type) && isset($data->url)) {
             $data->url = 'SCRUBBED_ID';
         }
 
@@ -113,6 +117,10 @@ class ActivityPubJsonDriver extends JsonDriver
 
         if (isset($data->updated)) {
             $data->updated = 'SCRUBBED_DATE';
+        }
+
+        if (isset($data->endTime)) {
+            $data->endTime = 'SCRUBBED_DATE';
         }
 
         if (isset($data->publicKey)) {

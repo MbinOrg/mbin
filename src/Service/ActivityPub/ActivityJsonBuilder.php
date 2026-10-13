@@ -83,7 +83,7 @@ class ActivityJsonBuilder
 
     public function buildCreateFromActivity(Activity $activity): array
     {
-        $o = $activity->objectEntry ?? $activity->objectEntryComment ?? $activity->objectPost ?? $activity->objectPostComment ?? $activity->objectMessage;
+        $o = $activity->objectEntry ?? $activity->objectEntryComment ?? $activity->objectPost ?? $activity->objectPostComment ?? $activity->objectMessage ?? $activity->objectPollVote;
         $item = $this->activityFactory->create($o, true);
 
         unset($item['@context']);

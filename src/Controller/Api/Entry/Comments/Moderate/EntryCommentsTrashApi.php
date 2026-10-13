@@ -82,7 +82,7 @@ class EntryCommentsTrashApi extends EntriesBaseApi
         // Force response to have all fields visible
         $visibility = $comment->visibility;
         $comment->visibility = VisibilityInterface::VISIBILITY_VISIBLE;
-        $response = $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment))->jsonSerialize();
+        $response = $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment))->jsonSerialize();
         $response['visibility'] = $visibility;
 
         return new JsonResponse(
@@ -159,7 +159,7 @@ class EntryCommentsTrashApi extends EntriesBaseApi
         }
 
         return new JsonResponse(
-            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
+            $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

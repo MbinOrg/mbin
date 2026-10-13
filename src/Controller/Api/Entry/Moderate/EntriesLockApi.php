@@ -80,7 +80,7 @@ class EntriesLockApi extends EntriesBaseApi
         $manager->toggleLock($entry, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializeEntry($factory->createDto($entry), $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
+            $this->serializeEntry($entry, $this->tagLinkRepository->getTagsOfContent($entry), $this->entryRepository->findCross($entry)),
             headers: $headers
         );
     }

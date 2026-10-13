@@ -88,6 +88,9 @@
                         <div data-collapsable-target="content" class="content formatted">
                             {{ entry.body|markdown("entry")|raw }}
                         </div>
+                        {% if entry.poll is not same as null %}
+                            {{ component('poll', {poll: entry.poll, isExternal: entry.apId is not same as null}) }}
+                        {% endif %}
                         <div data-collapsable-target="button"></div>
                     </div>
                 {% endif %}
