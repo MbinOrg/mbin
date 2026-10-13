@@ -23,10 +23,11 @@ use App\Repository\EntryRepository;
 use App\Repository\PostCommentRepository;
 use App\Repository\UserPushSubscriptionRepository;
 use App\Repository\UserRepository;
+use App\Service\EmbedService;
 use App\Service\Notification\UserPushSubscriptionManager;
 use App\Service\SettingsManager;
 use App\Service\UserNoteManager;
-use App\Utils\Embed;
+use App\Utils\GeneralUtil;
 use App\Utils\Polyfills;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\ParameterType;
@@ -53,16 +54,17 @@ class AjaxController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly UserPushSubscriptionManager $pushSubscriptionManager,
+        private readonly EmbedService $embedService,
         private readonly TranslatorInterface $translator,
         private readonly SettingsManager $settingsManager,
         private readonly Security $security,
     ) {
     }
 
-    public function fetchTitle(Embed $embed, Request $request): JsonResponse
+    public function fetchTitle(Request $request): JsonResponse
     {
         $url = json_decode($request->getContent())->url;
-        $embed = $embed->fetch($url);
+        $embed = $this->embedService->fetch($url);
 
         return new JsonResponse(
             [
@@ -87,13 +89,17 @@ class AjaxController extends AbstractController
     }
 
     /**
-     * Returns an embeded objects html value, to be used for front-end insertion.
+     * Returns an embedded objects html value, to be used for front-end insertion.
      */
-    public function fetchEmbed(Embed $embed, Request $request): JsonResponse
+    public function fetchEmbed(Request $request): JsonResponse
     {
-        $data = $embed->fetch(Polyfills::requestParam($request, 'url'));
+        $srcUrl = Polyfills::requestParam($request, 'url');
+        $data = $this->embedService->fetch($srcUrl);
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
-        if ($data->isImageUrl()) {
+        if (!$data->valid) {
+            // just return the generated placeholder
+            $html = $data->html;
+        } elseif ($data->isImageUrl() || $data->isVideoUrl()) {
             $text = $data->html;
             if (null === $text || '' === $text) {
                 $text = $this->translator->trans('original_image');
@@ -104,7 +110,24 @@ class AjaxController extends AbstractController
                 $text
             );
         } else {
-            $html = $data->html;
+            $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
+
+            if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
+                $title = 'embedded link preview of '.$host;
+            } else {
+                $title = 'embedded link preview';
+            }
+
+            // we don't have to check $srcUrl if it is malicious, as EmbedService already does that
+            $frame = $this->renderView('ajax/embed_iframe.html.twig', [
+                'embedUrl' => $useEmbedUrl ? $data->embedUrl : null,
+                'embedHtml' => $data->html,
+                'orgUrl' => $srcUrl,
+                'title' => $title,
+                'width' => GeneralUtil::intBound($data->width, 160, 980, 520),
+                'height' => GeneralUtil::intBound($data->height, 120, 480, 250),
+            ]);
+            $html = str_replace('\n', '', $frame);
         }
 
         return new JsonResponse(
@@ -119,7 +142,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'entry',
                         'attributes' => [
@@ -136,7 +159,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'entry_comment',
                         'attributes' => [
@@ -155,7 +178,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'post',
                         'attributes' => [
@@ -172,7 +195,7 @@ class AjaxController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'post_comment',
                         'attributes' => [

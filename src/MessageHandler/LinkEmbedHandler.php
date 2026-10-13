@@ -7,7 +7,7 @@ namespace App\MessageHandler;
 use App\Message\Contracts\MessageInterface;
 use App\Message\LinkEmbedMessage;
 use App\Repository\EmbedRepository;
-use App\Utils\Embed;
+use App\Service\EmbedService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -20,7 +20,7 @@ class LinkEmbedHandler extends MbinMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly KernelInterface $kernel,
         private readonly EmbedRepository $embedRepository,
-        private readonly Embed $embed,
+        private readonly EmbedService $embed,
         private readonly CacheItemPoolInterface $markdownCache,
     ) {
         parent::__construct($this->entityManager, $this->kernel);
@@ -40,16 +40,16 @@ class LinkEmbedHandler extends MbinMessageHandler
 
         foreach ($match[0] as $url) {
             try {
-                $embed = $this->embed->fetch($url)->html;
-                if ($embed) {
+                $valid = $this->embed->fetch($url)->valid;
+                if ($valid) {
                     $entity = new \App\Entity\Embed($url, true);
                     $this->embedRepository->add($entity);
                 }
             } catch (\Exception $e) {
-                $embed = false;
+                $valid = false;
             }
 
-            if (!$embed) {
+            if (!$valid) {
                 $entity = new \App\Entity\Embed($url, false);
                 $this->embedRepository->add($entity);
             }

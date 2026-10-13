@@ -16,7 +16,7 @@ trait PostCommentResponseTrait
             [
                 'id' => $comment->getId(),
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'post_comment',
                         'attributes' => [

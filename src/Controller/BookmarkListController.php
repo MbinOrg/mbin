@@ -119,7 +119,7 @@ class BookmarkListController extends AbstractController
         $subjectEntity = $this->entityManager->getRepository($subjectClass)->findOneBy(['id' => $subject_id]);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_menu_list',
                     'attributes' => [
                         'subject' => $subjectEntity,
