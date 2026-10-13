@@ -54,6 +54,16 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:instance:settings:edit');
         $token = $codes['token_type'].' '.$codes['access_token'];
 
+        $screeningSettings = [
+            'MBIN_STOPFORUMSPAM_ENABLED' => true,
+            'MBIN_STOPFORUMSPAM_AUTO_REJECT' => false,
+            'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE' => 97.5,
+            'MBIN_STOPFORUMSPAM_MIN_FREQUENCY' => 8,
+        ];
+        foreach ($screeningSettings as $key => $value) {
+            $this->settingsManager->set($key, $value);
+        }
+
         $settings = [
             'KBIN_DOMAIN' => 'kbinupdated.test',
             'KBIN_TITLE' => 'updated title',
@@ -93,8 +103,9 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(InstanceSettingsRetrieveApiTest::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
+        $expected = $settings + $screeningSettings;
         foreach ($jsonData as $key => $value) {
-            self::assertEquals($settings[$key], $value, "$key did not match!");
+            self::assertEquals($expected[$key], $value, "$key did not match!");
         }
 
         $settings = [
@@ -136,8 +147,28 @@ class InstanceSettingsUpdateApiTest extends WebTestCase
         $jsonData = self::getJsonResponse($this->client);
 
         self::assertArrayKeysMatch(InstanceSettingsRetrieveApiTest::INSTANCE_SETTINGS_RESPONSE_KEYS, $jsonData);
+        $expected = $settings + $screeningSettings;
         foreach ($jsonData as $key => $value) {
-            self::assertEquals($settings[$key], $value, "$key did not match!");
+            self::assertEquals($expected[$key], $value, "$key did not match!");
+        }
+    }
+
+    public function testApiRejectsInvalidScreeningThresholds(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($this->getUserByUsername('JohnDoe', isAdmin: true));
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read admin:instance:settings:edit');
+        $token = $codes['token_type'].' '.$codes['access_token'];
+        foreach ([
+            ['MBIN_STOPFORUMSPAM_MIN_CONFIDENCE', -1],
+            ['MBIN_STOPFORUMSPAM_MIN_CONFIDENCE', 101],
+            ['MBIN_STOPFORUMSPAM_MIN_FREQUENCY', 0],
+            ['MBIN_STOPFORUMSPAM_MIN_FREQUENCY', -1],
+        ] as [$key, $value]) {
+            $settings = $this->settingsManager->getDto()->jsonSerialize();
+            $settings[$key] = $value;
+            $this->client->jsonRequest('PUT', '/api/instance/settings', $settings, server: ['HTTP_AUTHORIZATION' => $token]);
+            self::assertResponseStatusCodeSame(400);
         }
     }
 

@@ -108,6 +108,12 @@
                 {{ form_label(form.MBIN_NEW_USERS_NEED_APPROVAL, 'new_users_need_approval') }}
                 {{ form_widget(form.MBIN_NEW_USERS_NEED_APPROVAL) }}
             </div>
+            <h2>{{ 'stopforumspam_title'|trans }}</h2>
+            <p>{{ 'stopforumspam_help'|trans }}</p>
+            {{ form_row(form.MBIN_STOPFORUMSPAM_ENABLED, {label: 'stopforumspam_enabled', row_attr: {class: 'checkbox'}}) }}
+            {{ form_row(form.MBIN_STOPFORUMSPAM_AUTO_REJECT, {label: 'stopforumspam_auto_reject', row_attr: {class: 'checkbox'}}) }}
+            {{ form_row(form.MBIN_STOPFORUMSPAM_MIN_CONFIDENCE, {label: 'stopforumspam_min_confidence'}) }}
+            {{ form_row(form.MBIN_STOPFORUMSPAM_MIN_FREQUENCY, {label: 'stopforumspam_min_frequency', type: 'text', attr: {inputmode: 'numeric', pattern: '[0-9]+'}}) }}
             <div class="row actions">
                 {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
             </div>

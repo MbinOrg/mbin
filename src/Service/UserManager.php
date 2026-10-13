@@ -73,6 +73,7 @@ readonly class UserManager
         private SettingsManager $settingsManager,
         private EventDispatcherInterface $eventDispatcher,
         private LoggerInterface $logger,
+        private RegistrationScreening $registrationScreening,
     ) {
     }
 
@@ -157,12 +158,23 @@ readonly class UserManager
         $this->dispatcher->dispatch(new UserFollowEvent($follower, $following, true));
     }
 
-    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true, ?bool $preApprove = null): User
+    public function create(UserDto $dto, bool $verifyUserEmail = true, $rateLimit = true, ?bool $preApprove = null, bool $publicRegistration = false): User
     {
+        if ($publicRegistration) {
+            $dto->ip = $this->requestStack->getCurrentRequest()?->getClientIp();
+        }
         if ($rateLimit) {
             $limiter = $this->userRegisterLimiter->create($dto->ip);
             if (false === $limiter->consume()->isAccepted()) {
                 throw new TooManyRequestsHttpException();
+            }
+        }
+        $screening = null;
+        if ($publicRegistration && !$dto->apId && true === $this->settingsManager->getDto()->MBIN_STOPFORUMSPAM_ENABLED) {
+            $screening = $this->registrationScreening->check($dto->ip);
+            if ($this->registrationScreening->shouldReject($screening, $this->settingsManager->getDto())) {
+                $this->logger->info('Registration rejected by StopForumSpam.');
+                throw new \App\Exception\RegistrationRejectedException();
             }
         }
         $status = EApplicationStatus::Approved;
@@ -171,6 +183,9 @@ readonly class UserManager
         }
 
         $user = new User($dto->email, $dto->username, '', ($dto->isBot) ? EUserType::Service : EUserType::Person, $dto->apProfileId, $dto->apId, applicationStatus: $status, applicationText: $dto->applicationText);
+        if (EApplicationStatus::Pending === $status) {
+            $user->setRegistrationScreening($screening);
+        }
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
         if (!$dto->apId) {
@@ -192,6 +207,25 @@ readonly class UserManager
                     'msg' => $e->getMessage(),
                     'ex' => \get_class($e),
                 ]);
+            }
+        }
+
+        if (null !== $screening && EApplicationStatus::Pending === $status) {
+            $admins = [];
+            try {
+                $admins = $this->userRepository->findAllAdmins();
+            } catch (\Throwable) {
+                $this->logger->error('Unable to find registration approval email recipients.');
+            }
+            foreach ($admins as $admin) {
+                if (!$admin->notifyOnUserSignup) {
+                    continue;
+                }
+                try {
+                    $this->bus->dispatch(new \App\Message\RegistrationApprovalEmailMessage($user->getId(), $admin->getId()));
+                } catch (\Throwable) {
+                    $this->logger->error('Unable to enqueue registration approval email.');
+                }
             }
         }
 
@@ -288,6 +322,10 @@ readonly class UserManager
 
     public function delete(User $user): void
     {
+        if (null !== $user->getRegistrationScreening()) {
+            $user->setRegistrationScreening(null);
+            $this->entityManager->flush();
+        }
         $this->bus->dispatch(new DeleteUserMessage($user->getId()));
     }
 
@@ -390,6 +428,7 @@ readonly class UserManager
      */
     public function deleteRequest(User $user, bool $immediately): void
     {
+        $user->setRegistrationScreening(null);
         if (!$immediately) {
             $user->softDelete();
 
@@ -478,6 +517,7 @@ readonly class UserManager
         if (EApplicationStatus::Rejected === $user->getApplicationStatus()) {
             return;
         }
+        $user->setRegistrationScreening(null);
         $user->setApplicationStatus(EApplicationStatus::Rejected);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -490,6 +530,7 @@ readonly class UserManager
         if (EApplicationStatus::Approved === $user->getApplicationStatus()) {
             return;
         }
+        $user->setRegistrationScreening(null);
         $user->setApplicationStatus(EApplicationStatus::Approved);
         $this->entityManager->persist($user);
         $this->entityManager->flush();

@@ -7,7 +7,6 @@ namespace App\Security;
 use App\DTO\UserDto;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Utils\Slugger;
@@ -30,7 +29,6 @@ class PrivacyPortalAuthenticator extends MbinOAuthAuthenticatorBase
         private readonly UserManager $userManager,
         private readonly SettingsManager $settingsManager,
         private readonly UserRepository $userRepository,
-        private readonly IpResolver $ipResolver,
         private readonly Slugger $slugger,
     ) {
         parent::__construct($router);
@@ -89,9 +87,8 @@ class PrivacyPortalAuthenticator extends MbinOAuthAuthenticatorBase
                 );
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
-                $dto->ip = $this->ipResolver->resolve();
 
-                $user = $this->userManager->create($dto, false);
+                $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthPrivacyPortalId = (string) $privacyPortalUser->getId();
                 $user->isVerified = true;
 

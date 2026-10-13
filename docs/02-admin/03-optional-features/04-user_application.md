@@ -13,3 +13,5 @@ MBIN_NEW_USERS_NEED_APPROVAL=true
 The admin will then see a new 'Signup request' panel in the admin interface where new user registrations will appear pending your approval or denial.
 
 When an administrator approves or denies an user application, the user will receive an email notification about the decision.
+
+Optional [StopForumSpam screening](10-stopforumspam.md) adds an IP reputation summary to pending applications and approval-request emails to administrators who enable signup notifications.

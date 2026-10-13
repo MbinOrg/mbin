@@ -1,0 +1,10 @@
+{% extends '_email/email_base.html.twig' %}
+
+{% block title %}{{ 'stopforumspam_approval_email_title'|trans }}{% endblock %}
+
+{% block body %}
+    <p>{{ user.username }}</p>
+    <p>{{ user.applicationText }}</p>
+    {% include 'admin/_registration_screening.html.twig' %}
+    <p><a href="{{ url('admin_signup_requests', {username: user.username}) }}">{{ 'stopforumspam_review_application'|trans }}</a></p>
+{% endblock %}

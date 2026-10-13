@@ -6,21 +6,23 @@ namespace App\Controller\Security;
 
 use App\Controller\AbstractController;
 use App\DTO\UserDto;
+use App\Exception\RegistrationRejectedException;
 use App\Form\UserRegisterType;
-use App\Service\IpResolver;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegisterController extends AbstractController
 {
     public function __construct(
         private readonly UserManager $manager,
-        private readonly IpResolver $ipResolver,
         private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -42,9 +44,14 @@ class RegisterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UserDto $dto */
             $dto = $form->getData();
-            $dto->ip = $this->ipResolver->resolve();
 
-            $this->manager->create($dto);
+            try {
+                $this->manager->create($dto, publicRegistration: true);
+            } catch (RegistrationRejectedException $exception) {
+                $form->addError(new FormError($this->translator->trans($exception->getMessageKey())));
+
+                return $this->render('user/register.html.twig', ['form' => $form->createView()], new Response(null, 422));
+            }
 
             $this->addFlash(
                 'success',

@@ -81,7 +81,7 @@ class GithubAuthenticator extends MbinOAuthAuthenticatorBase
 
                 $dto->plainPassword = bin2hex(random_bytes(20));
 
-                $user = $this->userManager->create($dto, false);
+                $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthGithubId = \strval($githubUser->getId());
                 $user->isVerified = true;
 
