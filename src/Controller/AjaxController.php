@@ -106,6 +106,8 @@ class AjaxController extends AbstractController
                 $data->url,
                 $text
             );
+        } elseif (null === $data->embedUrl && (null === $data->html || '' === $data->html)) {
+            $html = '';
         } else {
             $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
