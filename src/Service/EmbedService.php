@@ -9,11 +9,14 @@ use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Factory\WwwHttpClientFactory;
 use Embed\Embed as BaseEmbed;
 use Embed\Extractor;
+use League\Uri\Http;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+
+use function Embed\resolveUri;
 
 readonly class EmbedService
 {
@@ -59,6 +62,7 @@ readonly class EmbedService
     {
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
+        $embed->valid = false;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, 'Embed for '.$urlEnc);
         return $embed;
@@ -68,6 +72,7 @@ readonly class EmbedService
     {
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
+        $embed->valid = false;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, $this->translator->trans('malicious_embed'));
         return $embed;
@@ -242,21 +247,32 @@ readonly class EmbedService
 
         $dom = $this->parseXmlToDom($embedHtml);
 
+        $ret = null;
         foreach ($dom->getElementsByTagName('*') as $node) {
             /** @var \DOMElement $node */
             if ($node->hasAttribute('data-embed-url')) {
-                return $node->getAttribute('data-embed-url');
+                $ret = $node->getAttribute('data-embed-url');
+                break;
             }
 
             if ('iframe' === $node->tagName) {
                 $url = $node->getAttribute('src');
                 if (str_contains($url, '/embed')) {
-                    return $url;
+                    $ret = $url;
+                    break;
                 }
             }
         }
 
-        return null;
+        if (null !== $ret) {
+            // if the URL is relative, resolve it against the host of the embed source URL
+            if (!parse_url($ret, PHP_URL_HOST)) {
+                $baseUrl = $embed->getUri()->withPath('')->withQuery('');
+                $ret = \strval(resolveUri($baseUrl, Http::new($ret)));
+            }
+        }
+
+        return $ret;
     }
 
     private function parseXmlToDom(string $src): \DOMDocument

@@ -9,6 +9,10 @@ use App\Service\VideoManager;
 
 class EmbedDto
 {
+    /**
+     * @var bool if false the embed could not be loaded and will contain a placeholder element
+     */
+    public bool $valid = true;
     public ?string $url = null;
     public ?string $embedUrl = null;
     public ?string $title = null;

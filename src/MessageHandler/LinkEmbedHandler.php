@@ -40,16 +40,16 @@ class LinkEmbedHandler extends MbinMessageHandler
 
         foreach ($match[0] as $url) {
             try {
-                $embed = $this->embed->fetch($url)->html;
-                if ($embed) {
+                $valid = $this->embed->fetch($url)->valid;
+                if ($valid) {
                     $entity = new \App\Entity\Embed($url, true);
                     $this->embedRepository->add($entity);
                 }
             } catch (\Exception $e) {
-                $embed = false;
+                $valid = false;
             }
 
-            if (!$embed) {
+            if (!$valid) {
                 $entity = new \App\Entity\Embed($url, false);
                 $this->embedRepository->add($entity);
             }

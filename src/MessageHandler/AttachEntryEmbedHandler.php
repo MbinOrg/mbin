@@ -62,20 +62,20 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
             return;
         }
 
-        $html = $embed->html;
         $type = $embed->getType();
         $isImage = $embed->isImageUrl();
+        $embedValidHtml = $embed->valid && !$isImage;
 
         $cover = $this->fetchCover($entry, $embed);
 
-        if (!$html && !$cover && !$isImage) {
+        if (!$embedValidHtml && !$cover && !$isImage) {
             $this->logger->debug('[AttachEntryEmbedHandler::doWork] returning, as the embed is neither html, nor an image url and we could not extract an image from it either. URL: {u}', ['u' => $entry->url]);
 
             return;
         }
 
         $entry->type = $type;
-        $entry->hasEmbed = $html || $isImage;
+        $entry->hasEmbed = $embedValidHtml || $isImage;
         if ($cover) {
             $this->logger->debug('[AttachEntryEmbedHandler::doWork] setting entry ({id}) image to new one', ['id' => $entry->getId()]);
             $entry->image = $cover;
