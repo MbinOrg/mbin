@@ -310,7 +310,7 @@ class ContentRepository
             }
 
             if (null === $criteria->cachedUserBlockedInstances) {
-                if(!$criteria->user) {
+                if (!$criteria->user) {
                     $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
                 }
                 if (!$criteria->magazine) {
@@ -318,7 +318,7 @@ class ContentRepository
                 }
             } else {
                 $instanceBlocksParamNeeded = false;
-                if(!$criteria->user) {
+                if (!$criteria->user) {
                     $instanceBlockClauseUser = 'u.ap_domain IS NULL OR u.ap_domain NOT IN (:cachedUserBlockedInstances)';
                     $instanceBlocksParamNeeded = true;
                 }
@@ -326,7 +326,7 @@ class ContentRepository
                     $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR m.ap_domain NOT IN (:cachedUserBlockedInstances)';
                     $instanceBlocksParamNeeded = true;
                 }
-                if($instanceBlocksParamNeeded) {
+                if ($instanceBlocksParamNeeded) {
                     $parameters['cachedUserBlockedInstances'] = $criteria->cachedUserBlockedInstances;
                 }
             }

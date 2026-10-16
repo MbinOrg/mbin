@@ -213,34 +213,34 @@ class PostRepository extends ServiceEntityRepository
             );
             $qb->setParameter('magazineBlocker', $user);
 
-            if(!$criteria->magazine) {
+            if (!$criteria->magazine) {
                 $qb->andWhere(
                     'NOT EXISTS ('
-                    . 'SELECT 1 FROM ' . InstanceBlock::class . ' ib1 INNER JOIN ' . Magazine::class . ' ibm ON ib1.instanceDomain = ibm.apDomain '
-                    . 'WHERE ibm = p.magazine AND ib1.user = :blocker'
-                    . ') OR p.user = :blocker'
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = p.magazine AND ib1.user = :blocker'
+                    .') OR p.user = :blocker'
                 );
             } else {
                 $qb->andWhere(
                     'NOT EXISTS ('
-                    . 'SELECT 1 FROM ' . InstanceBlock::class . ' ib1 INNER JOIN ' . Magazine::class . ' ibm ON ib1.instanceDomain = ibm.apDomain '
-                    . 'WHERE ibm = p.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
-                    . ') OR p.user = :blocker'
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = p.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
+                    .') OR p.user = :blocker'
                 );
             }
-            if(!$criteria->user) {
+            if (!$criteria->user) {
                 $qb->andWhere(
                     'NOT EXISTS ('
-                    . 'SELECT 1 FROM ' . InstanceBlock::class . ' ib2 INNER JOIN ' . User::class . ' ibu ON ib2.instanceDomain = ibu.apDomain '
-                    . 'WHERE ibu = p.user AND ib2.user = :blocker'
-                    . ') OR p.user = :blocker'
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = p.user AND ib2.user = :blocker'
+                    .') OR p.user = :blocker'
                 );
             } else {
                 $qb->andWhere(
                     'NOT EXISTS ('
-                    . 'SELECT 1 FROM ' . InstanceBlock::class . ' ib2 INNER JOIN ' . User::class . ' ibu ON ib2.instanceDomain = ibu.apDomain '
-                    . 'WHERE ibu = p.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
-                    . ') OR p.user = :blocker'
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = p.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
+                    .') OR p.user = :blocker'
                 );
             }
         }

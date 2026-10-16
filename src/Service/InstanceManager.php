@@ -30,7 +30,7 @@ readonly class InstanceManager
         $instanceHost = $settingsManager->get('KBIN_DOMAIN');
         if (str_starts_with($instanceHost, 'http:') || str_starts_with($instanceHost, 'https:')) {
             $this->instanceDomain = parse_url($instanceHost, PHP_URL_HOST);
-            assert(is_string($this->instanceDomain) && $this->instanceDomain !== '');
+            \assert(\is_string($this->instanceDomain) && '' !== $this->instanceDomain);
         } else {
             $this->instanceDomain = $instanceHost;
         }
@@ -113,7 +113,7 @@ readonly class InstanceManager
 
     public function blockInstance(Instance $instance, User $user): void
     {
-        if($instance->domain === $this->instanceDomain) {
+        if ($instance->domain === $this->instanceDomain) {
             throw new BadRequestHttpException('you may not block the local instance');
         }
 
@@ -155,7 +155,7 @@ readonly class InstanceManager
     public function blockInstancesGlobally(array $instances): void
     {
         foreach ($instances as $instance) {
-            if($instance->domain === $this->instanceDomain) {
+            if ($instance->domain === $this->instanceDomain) {
                 throw new BadRequestHttpException('you may not block the local instance');
             }
         }

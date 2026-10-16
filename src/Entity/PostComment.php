@@ -351,15 +351,15 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
     public function canShow(?User $user, string $filterRealm): bool
     {
-        if($user === $this->user) {
+        if ($user === $this->user) {
             return true;
         }
 
-        if($this->containsBannedHashtags()) {
+        if ($this->containsBannedHashtags()) {
             return false;
         }
 
-        if($user) {
+        if ($user) {
             $blockedInstances = $user->blockedInstances->map(fn ($instance) => $instance->instanceDomain);
             return !$this->containsFilteredWords($user, $filterRealm)
                 && !$blockedInstances->contains($this->user->apDomain)

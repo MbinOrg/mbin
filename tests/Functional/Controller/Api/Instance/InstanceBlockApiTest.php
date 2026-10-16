@@ -171,7 +171,8 @@ class InstanceBlockApiTest extends WebTestCase
         $this->checkContent($items, false);
     }
 
-    public function testApiBlocksInUserEntries() {
+    public function testApiBlocksInUserEntries()
+    {
         $this->prepareContent();
         $codes = $this->authCodesUser1;
 
@@ -188,7 +189,8 @@ class InstanceBlockApiTest extends WebTestCase
         self::assertSame('test visible', $items[0]['title']);
     }
 
-    public function testApiBlocksInUserPosts() {
+    public function testApiBlocksInUserPosts()
+    {
         $this->prepareContent();
         $codes = $this->authCodesUser1;
 

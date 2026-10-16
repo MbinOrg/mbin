@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Instance;
 
@@ -11,7 +12,6 @@ use Symfony\Component\BrowserKit\Cookie;
 
 class InstanceBlockTest extends WebTestCase
 {
-
     private User $user;
     private EntryComment $entryCommentParentVisibleMag;
     private EntryComment $entryCommentParentInvisibleMag;
@@ -38,13 +38,14 @@ class InstanceBlockTest extends WebTestCase
         self::assertAnySelectorTextNotContains('.comment .content p', 'invisible');
     }
 
-    public function testEntryCommentChildrenHiddenOnSingleCommentClassicView(): void {
+    public function testEntryCommentChildrenHiddenOnSingleCommentClassicView(): void
+    {
         $this->prepareContent('testEntryCommentChildrenHiddenOnSingleCommentClassicView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
 
         $parentComment = $this->entryCommentParentVisibleMag;
-        $this->client->getCookieJar()->set( new Cookie('entry_comments_view', 'classic'));
+        $this->client->getCookieJar()->set(new Cookie('entry_comments_view', 'classic'));
         $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/t/'.$parentComment->entry->getId().'/_/comment/'.$parentComment->getId());
         self::assertAnySelectorTextContains('.comment .content p', 'test parent comment');
         self::assertAnySelectorTextContains('.comment .content p', 'visible');
@@ -58,7 +59,8 @@ class InstanceBlockTest extends WebTestCase
         self::assertAnySelectorTextNotContains('.comment .content p', 'invisible');
     }
 
-    public function testEntryCommentChildrenHiddenOnMagazineCommentsView(): void {
+    public function testEntryCommentChildrenHiddenOnMagazineCommentsView(): void
+    {
         $this->prepareContent('testEntryCommentChildrenHiddenOnSingleCommentClassicView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
@@ -98,13 +100,14 @@ class InstanceBlockTest extends WebTestCase
         self::assertSelectorNotExists('.post-comment .content p');
     }
 
-    public function testPostCommentChildrenHiddenOnSingleCommentClassicView(): void {
+    public function testPostCommentChildrenHiddenOnSingleCommentClassicView(): void
+    {
         $this->prepareContent('testPostCommentChildrenHiddenOnSingleCommentClassicView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
 
         $parentComment = $this->postCommentParentVisibleMag;
-        $this->client->getCookieJar()->set( new Cookie('entry_comments_view', 'classic'));
+        $this->client->getCookieJar()->set(new Cookie('entry_comments_view', 'classic'));
         $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
         self::assertAnySelectorTextContains('.post .content p', 'test parent');
         self::assertAnySelectorTextContains('.post-comment .content p', 'test parent comment');
@@ -118,7 +121,8 @@ class InstanceBlockTest extends WebTestCase
         self::assertSelectorNotExists('.post-comment .content p');
     }
 
-    public function testEntryHiddenOnMagazineView(): void {
+    public function testEntryHiddenOnMagazineView(): void
+    {
         $this->prepareContent('testEntryHiddenOnMagazineView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
@@ -134,7 +138,8 @@ class InstanceBlockTest extends WebTestCase
         self::assertAnySelectorTextNotContains('.entry header h2 a', 'invisible by user');
     }
 
-    public function testPostHiddenOnMagazineView(): void {
+    public function testPostHiddenOnMagazineView(): void
+    {
         $this->prepareContent('testPostHiddenOnMagazineView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
