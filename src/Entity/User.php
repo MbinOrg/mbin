@@ -234,6 +234,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blockedDomains;
+    #[OneToMany(mappedBy: 'user', targetEntity: InstanceBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    public Collection $blockedInstances;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $reports;
@@ -315,6 +317,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->blockers = new ArrayCollection();
         $this->blockedMagazines = new ArrayCollection();
         $this->blockedDomains = new ArrayCollection();
+        $this->blockedInstances = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
         $this->violations = new ArrayCollection();

@@ -171,6 +171,42 @@ class InstanceBlockApiTest extends WebTestCase
         $this->checkContent($items, false);
     }
 
+    public function testApiBlocksInUserEntries()
+    {
+        $this->prepareContent();
+        $codes = $this->authCodesUser1;
+
+        $this->callBlock($codes, ['3.example.com']);
+
+        $this->client->request(
+            'GET', '/api/users/'.$this->getUserByUsername('RemoA')->getId().'/entries',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+        $items = self::getJsonResponse($this->client)['items'];
+
+        self::assertCount(1, $items);
+        self::assertSame('test visible', $items[0]['title']);
+    }
+
+    public function testApiBlocksInUserPosts()
+    {
+        $this->prepareContent();
+        $codes = $this->authCodesUser1;
+
+        $this->callBlock($codes, ['3.example.com']);
+
+        $this->client->request(
+            'GET', '/api/users/'.$this->getUserByUsername('RemoA')->getId().'/posts',
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+        $items = self::getJsonResponse($this->client)['items'];
+
+        self::assertCount(1, $items);
+        self::assertSame('test visible', $items[0]['body']);
+    }
+
     public function testApiCanCreateGlobalBlocks(): void
     {
         $this->prepareContent();
