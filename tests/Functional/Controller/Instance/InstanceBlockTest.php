@@ -71,8 +71,11 @@ class InstanceBlockTest extends WebTestCase
 
         $parentComment = $this->entryCommentParentInvisibleMag;
         $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/comments');
-        // as the Magazine is instance-blocked, no comment may be shown
-        self::assertSelectorNotExists('.comment');
+        // as the Magazine is instance-blocked, no sub-comment are be shown but top comments are
+        self::assertAnySelectorTextContains('.comment .content p', 'test parent comment');
+        self::assertAnySelectorTextContains('.comment .content p', 'invisible top entryComment');
+        self::assertAnySelectorTextNotContains('.comment .content p', 'visible entryComment');
+        self::assertAnySelectorTextNotContains('.comment .content p', 'invisible entryComment');
     }
 
     public function testPostCommentChildrenHiddenOnSingleCommentView(): void
