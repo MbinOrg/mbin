@@ -115,6 +115,38 @@ class InstanceBlockTest extends WebTestCase
         self::assertSelectorNotExists('.post-comment .content p');
     }
 
+    public function testEntryHiddenOnMagazineView(): void {
+        $this->prepareContent('testEntryHiddenOnMagazineView');
+        $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
+        $this->client->loginUser($this->user);
+
+        $this->client->request('GET', '/m/'.$this->entryCommentParentVisibleMag->magazine->name.'/threads');
+        self::assertAnySelectorTextContains('.entry header h2 a', 'test parent');
+        self::assertAnySelectorTextNotContains('.entry header h2 a', 'invisible');
+
+        $this->client->request('GET', '/m/'.$this->entryCommentParentInvisibleMag->magazine->name.'/threads');
+        // the Magazine is instance-blocked but should still show allowed content as it is viewed directly
+        self::assertAnySelectorTextContains('.entry header h2 a', 'test parent');
+        self::assertAnySelectorTextContains('.entry header h2 a', 'invisible by magazine');
+        self::assertAnySelectorTextNotContains('.entry header h2 a', 'invisible by user');
+    }
+
+    public function testPostHiddenOnMagazineView(): void {
+        $this->prepareContent('testPostHiddenOnMagazineView');
+        $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
+        $this->client->loginUser($this->user);
+
+        $this->client->request('GET', '/m/'.$this->entryCommentParentVisibleMag->magazine->name.'/microblog');
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertAnySelectorTextNotContains('.post .content p', 'invisible');
+
+        $this->client->request('GET', '/m/'.$this->entryCommentParentInvisibleMag->magazine->name.'/microblog');
+        // the Magazine is instance-blocked but should still show allowed content as it is viewed directly
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertAnySelectorTextContains('.post .content p', 'invisible by magazine');
+        self::assertAnySelectorTextNotContains('.post .content p', 'invisible by user');
+    }
+
     private function prepareContent(string $namePrefix): void
     {
         $this->entityManager->persist(new Instance('1.example.com'));
@@ -174,6 +206,11 @@ class InstanceBlockTest extends WebTestCase
         $this->createPostComment("[$namePrefix] test invisible postComment by magazine", post: $post, user: $remoteUser1, parent: $this->postCommentParentInvisibleMag);
         $this->createPostComment("[$namePrefix] test invisible top postComment by magazine", post: $post, user: $remoteUser1);
         $this->entityManager->refresh($this->postCommentParentInvisibleMag);
+
+        $this->createEntry("[$namePrefix] test invisible by user", magazine: $magazine1, user: $remoteUser2);
+        $this->createEntry("[$namePrefix] test invisible by magazine", magazine: $magazine2, user: $remoteUser1);
+        $this->createPost("[$namePrefix] test invisible by user", magazine: $magazine1, user: $remoteUser2);
+        $this->createPost("[$namePrefix] test invisible by magazine", magazine: $magazine2, user: $remoteUser1);
 
         $this->user = $this->getUserByUsername("$namePrefix-JohnDoe");
     }
