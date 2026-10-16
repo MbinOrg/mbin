@@ -115,6 +115,8 @@ readonly class InstanceManager
 
         $block = new InstanceBlock($user, $instance, false);
         $this->entityManager->persist($block);
+        $user->blockedInstances->add($block);
+        $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
@@ -124,7 +126,9 @@ readonly class InstanceManager
     {
         $block = $this->instanceBlockRepository->findByUserAndInstance($user, $instance);
         if (null !== $block) {
+            $user->blockedInstances->removeElement($block);
             $this->entityManager->remove($block);
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
         }
 
