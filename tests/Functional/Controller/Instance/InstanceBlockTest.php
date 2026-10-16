@@ -75,6 +75,46 @@ class InstanceBlockTest extends WebTestCase
         self::assertSelectorNotExists('.comment');
     }
 
+    public function testPostCommentChildrenHiddenOnSingleCommentView(): void
+    {
+        $this->prepareContent('testPostCommentChildrenHiddenOnSingleCommentView');
+        $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
+        $this->client->loginUser($this->user);
+
+        $parentComment = $this->postCommentParentVisibleMag;
+        $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertAnySelectorTextContains('.post-comment .content p', 'test parent comment');
+        self::assertAnySelectorTextContains('.post-comment .content p', 'visible');
+        self::assertAnySelectorTextNotContains('.post-comment .content p', 'invisible');
+
+        $parentComment = $this->postCommentParentInvisibleMag;
+        $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
+        // as the Magazine is instance-blocked, no comment may be shown
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertSelectorNotExists('.post-comment .content p');
+    }
+
+    public function testPostCommentChildrenHiddenOnSingleCommentClassicView(): void {
+        $this->prepareContent('testPostCommentChildrenHiddenOnSingleCommentClassicView');
+        $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
+        $this->client->loginUser($this->user);
+
+        $parentComment = $this->postCommentParentVisibleMag;
+        $this->client->getCookieJar()->set( new Cookie('entry_comments_view', 'classic'));
+        $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertAnySelectorTextContains('.post-comment .content p', 'test parent comment');
+        self::assertAnySelectorTextContains('.post-comment .content p', 'visible');
+        self::assertAnySelectorTextNotContains('.post-comment .content p', 'invisible');
+
+        $parentComment = $this->postCommentParentInvisibleMag;
+        $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
+        // as the Magazine is instance-blocked, no comment may be shown
+        self::assertAnySelectorTextContains('.post .content p', 'test parent');
+        self::assertSelectorNotExists('.post-comment .content p');
+    }
+
     private function prepareContent(string $namePrefix): void
     {
         $this->entityManager->persist(new Instance('1.example.com'));
