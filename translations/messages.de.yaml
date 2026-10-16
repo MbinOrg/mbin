@@ -1306,3 +1306,19 @@ show_boost_following_help: Wenn diese Einstellung aktiviert ist werden Themen,
   Beiträge und Kommentare die von dir oder jemandem dem du folgst, in der 
   Kombiniert Ansicht deiner Abonnements und in der Mikroblog Ansicht angezeigt. 
   Das wirkt sich nur aus wenn die Sortierung auf 'Neu' gestellt ist.
+boosted_by: Geteilt von
+feed_allow_entry_comments: Kommentare aus Themen in dem kombinierten Feed 
+  einbeziehen
+feed_allow_post_comments: Kommentare von Mikroblogs in den Kombiniert Feed 
+  einbeziehen
+feed_allow_comments_hint: (könnte in langsamem Laden resultieren)
+block_unblock_instance: Blockiere / Entblockiere Instanz
+block_instance: Blockiere Instanz
+unblock_instance: Entblocke Instanz
+block_instance_globally_short: Global Blockieren
+block_instance_globally_long: Blockiere die Instanz für alle Nutzer
+unblock_instance_globally_short: Entblockiere Global
+unblock_instance_globally_long: Entblockiere Instanz für alle Nutzer
+in_reply_to: als Antwort auf
+original_image: Original Bild
+invisible_or_deleted: unsichtbar oder gelöscht
