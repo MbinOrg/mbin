@@ -18,10 +18,10 @@ use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 #[AsCommand(
-    name: 'mbin:oauth:clients:update',
-    description: 'This command updates all registered OAuth clients to migrate legacy settings.'
+    name: 'mbin:oauth:clients:upgrade',
+    description: 'This command upgrades all registered OAuth clients to migrate legacy settings.'
 )]
-class OAuthClientsUpdateCommand extends Command
+class OAuthClientsUpgradeCommand extends Command
 {
     
     private PasswordHasherInterface $passwordHasher;
@@ -47,6 +47,9 @@ class OAuthClientsUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * In older versions secrets were stored in plaintext. Now they have to be hashed.
+     */
     private function migrateClientSecret(Client $client): void {
         $secret = $client->getSecret();
         if($secret === null || str_starts_with($secret, '$')) {
