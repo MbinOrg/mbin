@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Command\Update;
 
 use App\Entity\Client;
-use App\Entity\User;
-use App\Repository\SearchRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,7 +20,6 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 )]
 class OAuthClientsUpgradeCommand extends Command
 {
-    
     private PasswordHasherInterface $passwordHasher;
 
     public function __construct(
@@ -50,9 +46,10 @@ class OAuthClientsUpgradeCommand extends Command
     /**
      * In older versions secrets were stored in plaintext. Now they have to be hashed.
      */
-    private function migrateClientSecret(Client $client): void {
+    private function migrateClientSecret(Client $client): void
+    {
         $secret = $client->getSecret();
-        if($secret === null || str_starts_with($secret, '$')) {
+        if (null === $secret || str_starts_with($secret, '$')) {
             return;
         }
 

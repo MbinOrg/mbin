@@ -12,9 +12,6 @@ use App\Entity\Client;
 use App\Entity\Image;
 use App\Entity\User;
 use App\Factory\ClientFactory;
-use App\Repository\UserRepository;
-use App\Service\SettingsManager;
-use App\Service\UserManager;
 use App\Utils\Polyfills;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -23,19 +20,15 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class CreateClientApi extends BaseApi
 {
-
     private ?PasswordHasherInterface $passwordHasher = null;
     private ClientManagerInterface $manager;
     private ClientFactory $clientFactory;
@@ -47,7 +40,8 @@ class CreateClientApi extends BaseApi
     }
 
     #[Required]
-    public function setClientFactory(ClientFactory $clientFactory): void {
+    public function setClientFactory(ClientFactory $clientFactory): void
+    {
         $this->clientFactory = $clientFactory;
     }
 
@@ -257,11 +251,12 @@ class CreateClientApi extends BaseApi
         return $dto;
     }
 
-    private function validateRequest(OAuth2ClientDto $dto): void {
+    private function validateRequest(OAuth2ClientDto $dto): void
+    {
         $validatorGroups = ['Default', 'creating'];
         // If the client being requested wishes to use the client_credentials flow,
         //   validate that it has a username.
-        if (in_array('client_credentials', $dto->grants)) {
+        if (\in_array('client_credentials', $dto->grants)) {
             $validatorGroups[] = 'client_credentials';
         }
 
@@ -274,17 +269,17 @@ class CreateClientApi extends BaseApi
     private function createClient(OAuth2ClientDto $dto, ?Image $image): Client
     {
         $secret = $dto->secret;
-        if($dto->public !== true) {
-            if($secret === null) {
+        if (true !== $dto->public) {
+            if (null === $secret) {
                 throw new BadRequestHttpException('Non-public clients require a secret');
             }
-            if(strlen($secret) < 32) {
+            if (\strlen($secret) < 32) {
                 throw new BadRequestHttpException('The secret has a low entropy');
             }
 
             $secret = $this->getPasswordHasher()->hash($secret);
         } else {
-            if($secret !== null) {
+            if (null !== $secret) {
                 throw new BadRequestHttpException('Public clients must not use a secret');
             }
         }
@@ -292,7 +287,7 @@ class CreateClientApi extends BaseApi
         $identifier = hash('sha256', random_bytes(256));
         $client = new Client($dto->name, $identifier, $secret);
 
-        if (in_array('client_credentials', $dto->grants)) {
+        if (\in_array('client_credentials', $dto->grants)) {
             $user = $this->createClientUser($dto);
             $client->setUser($user);
         }
@@ -301,7 +296,7 @@ class CreateClientApi extends BaseApi
         $client->setGrants(...array_map(fn (string $grant) => new Grant($grant), $dto->grants));
         $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), $dto->scopes));
         $client->setRedirectUris(...array_map(fn (string $redirectUri) => $this->validateRedirectUri($redirectUri), $dto->redirectUris));
-        if($image !== null) {
+        if (null !== $image) {
             $client->setImage($image);
         }
 
@@ -331,10 +326,11 @@ class CreateClientApi extends BaseApi
         return $this->userManager->create($userDto, false, false);
     }
 
-    private function validateRedirectUri(string $uri): RedirectUri {
+    private function validateRedirectUri(string $uri): RedirectUri
+    {
         $host = parse_url($uri, PHP_URL_HOST);
-        if($host === null || $host === $this->settingsManager->isLocalUrl($uri)) {
-            throw new BadRequestHttpException('Invalid redirect URI: ' . $uri);
+        if (null === $host || $host === $this->settingsManager->isLocalUrl($uri)) {
+            throw new BadRequestHttpException('Invalid redirect URI: '.$uri);
         }
 
         return new RedirectUri($uri);
@@ -342,7 +338,7 @@ class CreateClientApi extends BaseApi
 
     private function getPasswordHasher(): PasswordHasherInterface
     {
-        if($this->passwordHasher === null) {
+        if (null === $this->passwordHasher) {
             $this->passwordHasher = new NativePasswordHasher();
         }
         return $this->passwordHasher;
