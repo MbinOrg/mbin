@@ -11,7 +11,7 @@ use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
-use phpseclib3\Crypt\RSA;
+use phpseclib4\Crypt\RSA;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

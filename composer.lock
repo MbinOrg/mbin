@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1f6921438825f038708f4cc5abe81cb",
+    "content-hash": "d2bbd5b37594652585f7e97ad3087909",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3808,47 +3808,50 @@
         },
         {
             "name": "league/oauth2-server-bundle",
-            "version": "v1.2.3",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-server-bundle.git",
-                "reference": "cbe2ab7e47b071b5f0f5c1011798e4c4c823b6d8"
+                "reference": "e3f23d5acff652e5902397f398fd406001762773"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server-bundle/zipball/cbe2ab7e47b071b5f0f5c1011798e4c4c823b6d8",
-                "reference": "cbe2ab7e47b071b5f0f5c1011798e4c4c823b6d8",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server-bundle/zipball/e3f23d5acff652e5902397f398fd406001762773",
+                "reference": "e3f23d5acff652e5902397f398fd406001762773",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
+                "lcobucci/jwt": "^5.6",
                 "league/oauth2-server": "^9.2",
                 "nyholm/psr7": "^1.4",
-                "php": "^8.1",
+                "php": "^8.2",
                 "psr/http-factory": "^1.0",
                 "symfony/deprecation-contracts": "^3.0",
-                "symfony/event-dispatcher": "^6.4|^7.4|^8.1",
-                "symfony/filesystem": "^6.4|^7.4|^8.1",
-                "symfony/framework-bundle": "^6.4|^7.4|^8.1",
-                "symfony/password-hasher": "^6.4|^7.4|^8.1",
-                "symfony/psr-http-message-bridge": "^6.4|^7.4|^8.1",
-                "symfony/security-bundle": "^6.4|^7.4|^8.1"
+                "symfony/event-dispatcher": "^7.4|^8.1",
+                "symfony/filesystem": "^7.4|^8.1",
+                "symfony/framework-bundle": "^7.4|^8.1",
+                "symfony/password-hasher": "^7.4|^8.1",
+                "symfony/psr-http-message-bridge": "^7.4|^8.1",
+                "symfony/security-bundle": "^7.4|^8.1"
             },
             "conflict": {
-                "doctrine/doctrine-bundle": "<2.8.0",
-                "doctrine/orm": "<2.14",
-                "symfony/console": "<6.1"
+                "doctrine/dbal": "<4.0",
+                "doctrine/doctrine-bundle": "<2.15",
+                "doctrine/orm": "<3.0",
+                "symfony/error-handler": "<7.4.17"
             },
             "require-dev": {
-                "doctrine/doctrine-bundle": "^2.8|^3.0",
-                "doctrine/orm": "^2.14|^3.0",
+                "doctrine/dbal": "^4.0",
+                "doctrine/doctrine-bundle": "^2.15|^3.0",
+                "doctrine/orm": "^3.0",
                 "ext-pdo": "*",
                 "ext-pdo_sqlite": "*",
-                "php-cs-fixer/shim": "^3.38",
-                "phpstan/phpstan": "^2.1",
-                "phpstan/phpstan-symfony": "^2.0",
-                "rector/rector": "^2.5",
-                "symfony/browser-kit": "^6.4|^7.4|^8.1",
+                "php-cs-fixer/shim": "^3.95",
+                "phpstan/phpstan": "^2.3",
+                "phpstan/phpstan-symfony": "^2.1",
+                "rector/rector": "^2.6",
+                "symfony/browser-kit": "^7.4|^8.1",
                 "symfony/phpunit-bridge": "^8.1"
             },
             "suggest": {
@@ -3886,9 +3889,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/oauth2-server-bundle/issues",
-                "source": "https://github.com/thephpleague/oauth2-server-bundle/tree/v1.2.3"
+                "source": "https://github.com/thephpleague/oauth2-server-bundle/tree/v2.0.0"
             },
-            "time": "2026-09-27T15:50:17+00:00"
+            "time": "2026-10-14T12:51:18+00:00"
         },
         {
             "name": "league/uri",
@@ -6156,31 +6159,35 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.57",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4"
+                "reference": "1fe20b9acb08ce810cec24d8a9d02e7c13426e4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/1fe20b9acb08ce810cec24d8a9d02e7c13426e4c",
+                "reference": "1fe20b9acb08ce810cec24d8a9d02e7c13426e4c",
                 "shasum": ""
             },
             "require": {
-                "paragonie/constant_time_encoding": "^1|^2|^3",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": ">=5.6.1"
+                "paragonie/constant_time_encoding": "^2|^3",
+                "php": ">=8.1",
+                "symfony/polyfill-php82": "^1.26"
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "brianium/paratest": "^7.22",
+                "ext-xml": "*",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpunit/phpunit": "^13",
+                "squizlabs/php_codesniffer": "^3.7",
+                "vimeo/psalm": "*"
             },
             "suggest": {
                 "ext-dom": "Install the DOM extension to load XML formatted public keys.",
                 "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
                 "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
                 "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
             },
             "type": "library",
@@ -6189,7 +6196,7 @@
                     "phpseclib/bootstrap.php"
                 ],
                 "psr-4": {
-                    "phpseclib3\\": "phpseclib/"
+                    "phpseclib4\\": "phpseclib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6221,10 +6228,16 @@
                     "name": "Graham Campbell",
                     "email": "graham@alt-three.com",
                     "role": "Developer"
+                },
+                {
+                    "name": "Jack Worman",
+                    "email": "jack.worman@gmail.com",
+                    "homepage": "https://jackworman.com",
+                    "role": "Developer"
                 }
             ],
             "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
+            "homepage": "https://phpseclib.com/",
             "keywords": [
                 "BigInteger",
                 "aes",
@@ -6246,7 +6259,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.57"
+                "source": "https://github.com/phpseclib/phpseclib/tree/4.0.2"
             },
             "funding": [
                 {
@@ -6262,7 +6275,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-26T12:13:21+00:00"
+            "time": "2026-10-07T19:55:38+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
