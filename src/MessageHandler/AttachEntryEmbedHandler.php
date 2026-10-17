@@ -74,7 +74,9 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
             return;
         }
 
-        $entry->type = $type;
+        if (null === $entry->image) {
+            $entry->type = $type;
+        }
         $entry->hasEmbed = $embedValidHtml || $isImage;
         if ($cover) {
             $this->logger->debug('[AttachEntryEmbedHandler::doWork] setting entry ({id}) image to new one', ['id' => $entry->getId()]);
