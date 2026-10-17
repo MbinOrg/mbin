@@ -33,7 +33,7 @@ readonly class EmbedService
 
     public function fetch(string $url): EmbedDto
     {
-        if ($this->settings->isLocalUrl($url)) {
+        if ($this->settings->isLocalUrl($url) || $this->settings->isLocalMediaUrl($url)) {
             if (ImageManager::isImageUrl($url)) {
                 return $this->createLocalImageEmbed($url);
             }
