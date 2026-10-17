@@ -64,7 +64,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
 
         $type = $embed->getType();
         $isImage = $embed->isImageUrl();
-        $embedValidHtml = $embed->valid && !$isImage;
+        $embedValidHtml = $embed->isValid() && !$isImage;
 
         $cover = $this->fetchCover($entry, $embed);
 

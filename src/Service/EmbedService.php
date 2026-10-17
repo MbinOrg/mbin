@@ -58,21 +58,21 @@ readonly class EmbedService
         return $embed;
     }
 
-    private function createFallbackEmbed(string $url): EmbedDto
+    public function createFallbackEmbed(string $url): EmbedDto
     {
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
-        $embed->valid = false;
+        $embed->synthetic = true;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, 'Embed for '.$urlEnc);
         return $embed;
     }
 
-    private function createUnsafeEmbed(string $url): EmbedDto
+    public function createUnsafeEmbed(string $url): EmbedDto
     {
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
-        $embed->valid = false;
+        $embed->synthetic = true;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, $this->translator->trans('malicious_embed'));
         return $embed;
@@ -105,7 +105,7 @@ readonly class EmbedService
         $dto->url = $url;
         $dto->title = $embed->title;
         $dto->description = $embed->description;
-        $dto->image = \strval($embed->image);
+        $dto->image = null !== $embed->image ? \strval($embed->image) : null;
         $dto->embedUrl = $this->extractEmbedUrl($embed);
 
         if ($dto->embedUrl && !$this->urlAccessChecker->checkNoPrivateNetwork($dto->embedUrl)) {

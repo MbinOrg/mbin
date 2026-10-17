@@ -10,9 +10,9 @@ use App\Service\VideoManager;
 class EmbedDto
 {
     /**
-     * @var bool if false the embed could not be loaded and will contain a placeholder element
+     * @var bool if true the embed could not be loaded and will contain a placeholder element
      */
-    public bool $valid = true;
+    public bool $synthetic = true;
     public ?string $url = null;
     public ?string $embedUrl = null;
     public ?string $title = null;
@@ -37,6 +37,23 @@ class EmbedDto
         }
 
         return Entry::ENTRY_TYPE_LINK;
+    }
+
+    /**
+     * if false the embed is either synthetic or was loaded but has no content
+     * (to differentiate compare with $synthetic or hasContent()).
+     */
+    public function isValid(): bool
+    {
+        return !$this->synthetic && $this->hasContent();
+    }
+
+    /**
+     * indicates whenever an embed image or HTML could be extracted.
+     */
+    public function hasContent(): bool
+    {
+        return $this->html || $this->image;
     }
 
     public function isImageUrl(): bool

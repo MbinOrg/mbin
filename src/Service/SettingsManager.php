@@ -167,7 +167,7 @@ class SettingsManager
     public function isLocalUrl(string $url): bool
     {
         $prefix = $this->get('KBIN_DOMAIN');
-        if(!str_starts_with($prefix, 'https://') && !str_starts_with($prefix, 'http://')) {
+        if (!str_starts_with($prefix, 'https://') && !str_starts_with($prefix, 'http://')) {
             $prefix = 'https://'.$prefix;
         }
         return str_starts_with($url, $prefix);
