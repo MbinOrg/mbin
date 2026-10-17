@@ -228,7 +228,7 @@ class CreateClientApi extends BaseApi
         $dto->username = Polyfills::requestParam($request, 'username', $dto->username);
         $dto->description = Polyfills::requestParam($request, 'description', $dto->description);
         $dto->public = filter_var(Polyfills::requestParam($request, 'public', $dto->public), FILTER_VALIDATE_BOOL);
-        $dto->description = Polyfills::requestParam($request, 'secret', $dto->secret);
+        $dto->secret = Polyfills::requestParam($request, 'secret', $dto->secret);
 
         $redirectUris = Polyfills::requestParam($request, 'redirectUris', $dto->redirectUris);
         if (\is_string($redirectUris)) {

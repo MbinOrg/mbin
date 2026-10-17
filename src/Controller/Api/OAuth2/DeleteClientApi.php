@@ -15,11 +15,15 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeleteClientApi extends BaseApi
 {
+    private ?PasswordHasherInterface $passwordHasher = null;
+
     #[OA\Response(
         response: 204,
         description: 'The client has been deactivated',
@@ -65,7 +69,7 @@ class DeleteClientApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit(anonLimiterFactory: $apiOauthClientDeleteLimiter);
 
-        $dto = new OAuth2ClientDto(null);
+        $dto = new OAuth2ClientDto();
         $dto->identifier = Polyfills::requestParam($request, 'client_id');
         $dto->secret = Polyfills::requestParam($request, 'client_secret');
 
@@ -80,7 +84,7 @@ class DeleteClientApi extends BaseApi
             throw new BadRequestHttpException();
         }
 
-        if (!hash_equals($client->getSecret(), $dto->secret)) {
+        if (!$this->getPasswordHasher()->verify($client->getSecret(), $dto->secret)) {
             throw new BadRequestHttpException();
         }
 
@@ -92,5 +96,13 @@ class DeleteClientApi extends BaseApi
             status: 204,
             headers: $headers
         );
+    }
+
+    private function getPasswordHasher(): PasswordHasherInterface
+    {
+        if (null === $this->passwordHasher) {
+            $this->passwordHasher = new NativePasswordHasher();
+        }
+        return $this->passwordHasher;
     }
 }
