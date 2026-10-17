@@ -18,11 +18,11 @@ class ClientFactory
     ) {
     }
 
-    public function createDto(Client $client): OAuth2ClientDto
+    public function createDto(Client $client, bool $includeSecret = false): OAuth2ClientDto
     {
         return OAuth2ClientDto::create(
             $client->getIdentifier(),
-            $client->getSecret(),
+            $includeSecret ? $client->getSecret() : null,
             $client->getName(),
             $client->getUser() ? $this->userFactory->createSmallDto($client->getUser()) : null,
             $client->getContactEmail(),
