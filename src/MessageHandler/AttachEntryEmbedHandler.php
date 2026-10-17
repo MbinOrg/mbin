@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\DTO\internal\EmbedDto;
 use App\Entity\Entry;
 use App\Entity\Image;
 use App\Message\Contracts\MessageInterface;
 use App\Message\EntryEmbedMessage;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Service\EmbedService;
 use App\Service\ImageManagerInterface;
-use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -24,7 +25,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
     public function __construct(
         private readonly EntryRepository $entryRepository,
         private readonly KernelInterface $kernel,
-        private readonly Embed $embed,
+        private readonly EmbedService $embed,
         private readonly ImageManagerInterface $manager,
         private readonly ImageRepository $imageRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -61,20 +62,22 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
             return;
         }
 
-        $html = $embed->html;
         $type = $embed->getType();
         $isImage = $embed->isImageUrl();
+        $embedValidHtml = $embed->isValid() && !$isImage;
 
         $cover = $this->fetchCover($entry, $embed);
 
-        if (!$html && !$cover && !$isImage) {
+        if (!$embedValidHtml && !$cover && !$isImage) {
             $this->logger->debug('[AttachEntryEmbedHandler::doWork] returning, as the embed is neither html, nor an image url and we could not extract an image from it either. URL: {u}', ['u' => $entry->url]);
 
             return;
         }
 
-        $entry->type = $type;
-        $entry->hasEmbed = $html || $isImage;
+        if (null === $entry->image) {
+            $entry->type = $type;
+        }
+        $entry->hasEmbed = $embedValidHtml || $isImage;
         if ($cover) {
             $this->logger->debug('[AttachEntryEmbedHandler::doWork] setting entry ({id}) image to new one', ['id' => $entry->getId()]);
             $entry->image = $cover;
@@ -83,7 +86,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         $this->entityManager->flush();
     }
 
-    private function fetchCover(Entry $entry, Embed $embed): ?Image
+    private function fetchCover(Entry $entry, EmbedDto $embed): ?Image
     {
         if (!$entry->image) {
             if ($imageUrl = $this->getCoverUrl($entry, $embed)) {
@@ -103,7 +106,7 @@ class AttachEntryEmbedHandler extends MbinMessageHandler
         return null;
     }
 
-    private function getCoverUrl(Entry $entry, Embed $embed): ?string
+    private function getCoverUrl(Entry $entry, EmbedDto $embed): ?string
     {
         if ($embed->image) {
             return $embed->image;

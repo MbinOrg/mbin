@@ -27,7 +27,6 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
-use App\Utils\Embed;
 use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
@@ -49,7 +48,6 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
     private ConfigurationInterface $config;
 
     public function __construct(
-        private readonly Embed $embed,
         private readonly EmbedRepository $embedRepository,
         private readonly SettingsManager $settingsManager,
         private readonly UrlGeneratorInterface $urlGenerator,

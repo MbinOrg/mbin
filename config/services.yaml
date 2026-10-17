@@ -220,6 +220,7 @@ services:
             $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
             $mbinUseFederationAllowList: '%mbin_use_federation_allow_list%'
             $mbinSearchLang: '%mbin_search_lang%'
+            $kbinStorageUrl: '%kbin_storage_url%'
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:

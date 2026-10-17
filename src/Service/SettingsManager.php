@@ -30,6 +30,7 @@ class SettingsManager
         private readonly KernelInterface $kernel,
         private readonly InstanceRepository $instanceRepository,
         private readonly string $kbinDomain,
+        private readonly string $kbinStorageUrl,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
         private readonly string $kbinMetaDescription,
@@ -165,7 +166,17 @@ class SettingsManager
     #[Pure]
     public function isLocalUrl(string $url): bool
     {
-        return parse_url($url, PHP_URL_HOST) === $this->get('KBIN_DOMAIN');
+        $prefix = $this->get('KBIN_DOMAIN');
+        if (!str_starts_with($prefix, 'https://') && !str_starts_with($prefix, 'http://')) {
+            $prefix = 'https://'.$prefix;
+        }
+        return str_starts_with($url, $prefix);
+    }
+
+    #[Pure]
+    public function isLocalMediaUrl(string $url): bool
+    {
+        return str_starts_with($url, $this->kbinStorageUrl);
     }
 
     /**

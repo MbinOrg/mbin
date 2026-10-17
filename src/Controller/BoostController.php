@@ -29,7 +29,7 @@ class BoostController extends AbstractController
             return new JsonResponse(
                 [
                     'html' => $this->renderView(
-                        'components/_ajax.html.twig',
+                        'ajax/component.html.twig',
                         [
                             'component' => 'boost',
                             'attributes' => [
