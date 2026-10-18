@@ -100,9 +100,9 @@ class EntryPageFactory
         }
 
         if ($entry->body) {
-            $page['to'] = array_unique(
+            $page['to'] = array_values(array_unique(
                 array_merge($page['to'], $this->activityPubManager->createCcFromBody($entry->body))
-            );
+            ));
         }
 
         return $page;

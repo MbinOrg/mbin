@@ -12,6 +12,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Repository\ReputationRepository;
 use App\Service\ReputationManager;
+use App\Utils\Polyfills;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +36,7 @@ class UserReputationController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $page = (int) $request->get('p', 1);
+        $page = (int) Polyfills::requestParam($request, 'p', 1);
 
         $results = match ($this->manager->resolveType($reputationType)) {
             ReputationRepository::TYPE_ENTRY => $this->repository->getUserReputation($user, Entry::class, $page),

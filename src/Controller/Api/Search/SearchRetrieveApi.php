@@ -23,6 +23,7 @@ use App\Schema\PaginationSchema;
 use App\Schema\SearchActorSchema;
 use App\Service\SearchManager;
 use App\Service\SettingsManager;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -147,18 +148,18 @@ class SearchRetrieveApi extends BaseApi
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $q = $request->get('q');
+        $q = Polyfills::requestParam($request, 'q');
         if (null === $q) {
             throw new BadRequestHttpException();
         }
 
         $page = $this->getPageNb($request);
-        $perPage = self::constrainPerPage($request->get('perPage', SearchRepository::PER_PAGE));
-        $authorIdRaw = $request->get('authorId');
+        $perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', SearchRepository::PER_PAGE));
+        $authorIdRaw = Polyfills::requestParam($request, 'authorId');
         $authorId = null === $authorIdRaw ? null : \intval($authorIdRaw);
-        $magazineIdRaw = $request->get('magazineId');
+        $magazineIdRaw = Polyfills::requestParam($request, 'magazineId');
         $magazineId = null === $magazineIdRaw ? null : \intval($magazineIdRaw);
-        $type = $request->get('type');
+        $type = Polyfills::requestParam($request, 'type');
         if ('entry' !== $type && 'post' !== $type && null !== $type) {
             throw new BadRequestHttpException();
         }

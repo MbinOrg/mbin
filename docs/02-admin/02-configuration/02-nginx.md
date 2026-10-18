@@ -308,6 +308,10 @@ sudo systemctl restart nginx
 
 If you are using a reverse proxy, you need to configure your trusted proxies to use the `X-Forwarded-For` header. Mbin already configures the following trusted headers: `x-forwarded-for`, `x-forwarded-proto`, `x-forwarded-port` and `x-forwarded-prefix`.
 
+The proxy must preserve the public instance hostname in the `Host` header, for example with `proxy_set_header Host $host;`. Mbin rejects requests whose hostname does not match `KBIN_DOMAIN`. Configure `KBIN_DOMAIN` with the public hostname and any custom public port, rather than the backend address or port.
+
+At the public-facing proxy, forward the public scheme and port with `X-Forwarded-Proto` and `X-Forwarded-Port`. For an Nginx proxy that terminates TLS, these can be set with `proxy_set_header X-Forwarded-Proto $scheme;` and `proxy_set_header X-Forwarded-Port $server_port;`. If additional proxies sit between this proxy and Mbin, preserve those public values instead of replacing them with the internal connection's scheme and port. Mbin uses these headers only from configured trusted proxies; scheme or port differences are logged and corrected to the configured canonical URL.
+
 Trusted proxies can be configured in the `.env` file (or your `.env.local` file):
 
 ```sh

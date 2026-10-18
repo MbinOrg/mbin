@@ -8,6 +8,7 @@ use App\DTO\ContentStatsResponseDto;
 use App\DTO\VoteStatsResponseDto;
 use App\Repository\StatsContentRepository;
 use App\Repository\StatsVotesRepository;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -100,18 +101,18 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $request = $this->request->getCurrentRequest();
-        $resolution = $request->get('resolution');
-        $local = filter_var($request->get('local', false), FILTER_VALIDATE_BOOL);
+        $resolution = Polyfills::requestParam($request, 'resolution');
+        $local = filter_var(Polyfills::requestParam($request, 'local', false), FILTER_VALIDATE_BOOL);
 
         try {
-            $startString = $request->get('start');
+            $startString = Polyfills::requestParam($request, 'start');
             if (null === $startString) {
                 $start = null;
             } else {
                 $start = new \DateTime($startString);
             }
 
-            $endString = $request->get('end');
+            $endString = Polyfills::requestParam($request, 'end');
             if (null === $endString) {
                 $end = null;
             } else {
@@ -221,18 +222,18 @@ class InstanceRetrieveStatsApi extends InstanceBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
         $request = $this->request->getCurrentRequest();
-        $resolution = $request->get('resolution');
-        $local = filter_var($request->get('local', false), FILTER_VALIDATE_BOOL);
+        $resolution = Polyfills::requestParam($request, 'resolution');
+        $local = filter_var(Polyfills::requestParam($request, 'local', false), FILTER_VALIDATE_BOOL);
 
         try {
-            $startString = $request->get('start');
+            $startString = Polyfills::requestParam($request, 'start');
             if (null === $startString) {
                 $start = null;
             } else {
                 $start = new \DateTimeImmutable($startString);
             }
 
-            $endString = $request->get('end');
+            $endString = Polyfills::requestParam($request, 'end');
             if (null === $endString) {
                 $end = null;
             } else {

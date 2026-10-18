@@ -16,6 +16,7 @@ use App\Entity\Magazine;
 use App\Factory\EntryCommentFactory;
 use App\PageView\EntryCommentPageView;
 use App\Service\EntryManager;
+use App\Utils\Polyfills;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -65,16 +66,16 @@ class EntriesBaseApi extends BaseApi
     {
         $request = $this->request->getCurrentRequest();
         $deserialized = new EntryRequestDto();
-        $deserialized->title = $request->get('title');
-        $deserialized->url = $request->get('url');
-        $deserialized->body = $request->get('body');
-        $deserialized->tags = $request->get('tags');
-        $deserialized->body = $request->get('body');
+        $deserialized->title = Polyfills::requestParam($request, 'title');
+        $deserialized->url = Polyfills::requestParam($request, 'url');
+        $deserialized->body = Polyfills::requestParam($request, 'body');
+        $deserialized->tags = Polyfills::requestParam($request, 'tags');
+        $deserialized->body = Polyfills::requestParam($request, 'body');
         // TODO: Support badges whenever/however they're implemented
-        // $deserialized->badges = $request->get('badges');
-        $deserialized->isOc = filter_var($request->get('isOc'), FILTER_VALIDATE_BOOL);
-        $deserialized->lang = $request->get('lang');
-        $deserialized->isAdult = filter_var($request->get('isAdult'), FILTER_VALIDATE_BOOL);
+        // $deserialized->badges = Polyfills::requestParam($request, 'badges');
+        $deserialized->isOc = filter_var(Polyfills::requestParam($request, 'isOc'), FILTER_VALIDATE_BOOL);
+        $deserialized->lang = Polyfills::requestParam($request, 'lang');
+        $deserialized->isAdult = filter_var(Polyfills::requestParam($request, 'isAdult'), FILTER_VALIDATE_BOOL);
 
         return $deserialized;
     }
@@ -119,8 +120,8 @@ class EntriesBaseApi extends BaseApi
         $dto = $dto ? $dto : new EntryCommentDto();
         $deserialized = new EntryCommentRequestDto();
 
-        $deserialized->body = $request->get('body');
-        $deserialized->lang = $request->get('lang');
+        $deserialized->body = Polyfills::requestParam($request, 'body');
+        $deserialized->lang = Polyfills::requestParam($request, 'lang');
 
         $dto->ip = $this->ipResolver->resolve();
 
@@ -142,7 +143,7 @@ class EntriesBaseApi extends BaseApi
         }
 
         if (null === $depth) {
-            $depth = self::constrainDepth($this->request->getCurrentRequest()->get('d', self::DEPTH));
+            $depth = self::constrainDepth(Polyfills::requestParam($this->request->getCurrentRequest(), 'd', self::DEPTH));
         }
         $canModerate = null;
         if ($user = $this->getUser()) {

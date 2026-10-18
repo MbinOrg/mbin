@@ -12,7 +12,9 @@ use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Enums\EApplicationStatus;
 use App\Enums\EDirectMessageSettings;
+use App\Enums\EFrontContentOptions;
 use App\Enums\ESortOptions;
+use App\Enums\EUserType;
 use App\Repository\UserRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -114,14 +116,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public bool $showBoostsOfFollowing = false;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $showCommentsOfSubscribedHashtags = false;
-    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
-    public string $frontDefaultSort = ESortOptions::Hot->value;
-    #[Column(type: 'enumFrontContentOptions', nullable: true)]
-    public ?string $frontDefaultContent = null;
-    #[Column(type: 'enumSortOptions', nullable: false, options: ['default' => ESortOptions::Hot->value])]
-    public string $commentDefaultSort = ESortOptions::Hot->value;
-    #[Column(type: 'enumDirectMessageSettings', nullable: false, options: ['default' => EDirectMessageSettings::Everyone->value])]
-    public string $directMessageSetting = EDirectMessageSettings::Everyone->value;
+    #[Column(type: 'enum', enumType: ESortOptions::class, nullable: false, options: ['default' => ESortOptions::Hot])]
+    public ESortOptions $frontDefaultSort = ESortOptions::Hot;
+    #[Column(type: 'enum', enumType: EFrontContentOptions::class, nullable: true)]
+    public ?EFrontContentOptions $frontDefaultContent = null;
+    #[Column(type: 'enum', enumType: ESortOptions::class, nullable: false, options: ['default' => ESortOptions::Hot])]
+    public ESortOptions $commentDefaultSort = ESortOptions::Hot;
+    #[Column(type: 'enum', enumType: EDirectMessageSettings::class, nullable: false, options: ['default' => EDirectMessageSettings::Everyone])]
+    public EDirectMessageSettings $directMessageSetting = EDirectMessageSettings::Everyone;
     #[Column(type: 'text', nullable: true)]
     public ?string $about = null;
     #[Column(type: 'datetimetz')]
@@ -219,37 +221,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[OneToMany(mappedBy: 'user', targetEntity: HashtagSubscription::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $subscribedHashtags;
     #[OneToMany(mappedBy: 'follower', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $follows;
     #[OneToMany(mappedBy: 'following', targetEntity: UserFollow::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $followers;
     #[OneToMany(mappedBy: 'blocker', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blocks;
     #[OneToMany(mappedBy: 'blocked', targetEntity: UserBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public ?Collection $blockers;
     #[OneToMany(mappedBy: 'user', targetEntity: MagazineBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blockedMagazines;
     #[OneToMany(mappedBy: 'user', targetEntity: DomainBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $blockedDomains;
     #[OneToMany(mappedBy: 'user', targetEntity: HashtagBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[OrderBy(['createdAt' => 'DESC'])]
     public Collection $blockedHashtags;
     #[OneToMany(mappedBy: 'reporting', targetEntity: Report::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $reports;
     #[OneToMany(mappedBy: 'user', targetEntity: Favourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $favourites;
     #[OneToMany(mappedBy: 'reported', targetEntity: Report::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $violations;
     #[OneToMany(mappedBy: 'user', targetEntity: Notification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $notifications;
     #[OneToMany(mappedBy: 'user', targetEntity: UserPushSubscription::class, fetch: 'EXTRA_LAZY')]
     public Collection $pushSubscriptions;
@@ -269,8 +271,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     private array $totpBackupCodes = [];
     #[OneToMany(mappedBy: 'user', targetEntity: OAuth2UserConsent::class, orphanRemoval: true)]
     private Collection $oAuth2UserConsents;
-    #[Column(type: 'string', nullable: false, options: ['default' => self::USER_TYPE_PERSON])]
-    public string $type;
+    #[Column(type: 'enum', enumType: EUserType::class, nullable: false, options: ['default' => EUserType::Person])]
+    public EUserType $type = EUserType::Person;
 
     #[Column(type: 'text', nullable: true)]
     public ?string $applicationText;
@@ -282,14 +284,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     #[Column(type: 'text', nullable: true, insertable: false, updatable: false, options: ['default' => null])]
     private ?string $aboutTs;
 
-    #[Column(type: 'enumApplicationStatus', nullable: false, options: ['default' => EApplicationStatus::Approved->value])]
-    private string $applicationStatus;
+    #[Column(type: 'enum', enumType: EApplicationStatus::class, nullable: false, options: ['default' => EApplicationStatus::Approved])]
+    private EApplicationStatus $applicationStatus = EApplicationStatus::Approved;
 
     public function __construct(
         string $email,
         string $username,
         string $password,
-        string $type,
+        EUserType $type,
         ?string $apProfileId = null,
         ?string $apId = null,
         EApplicationStatus $applicationStatus = EApplicationStatus::Approved,
@@ -417,7 +419,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         // Magazines
         $magazines = $tokens->map(fn ($token) => $token->magazine);
         $criteria = Criteria::create()
-            ->orderBy(['lastActive' => Order::Descending]);
+            ->orderBy(['lastActive' => \SortDirection::Descending]);
 
         return $magazines->matching($criteria);
     }
@@ -1007,12 +1009,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function getApplicationStatus(): EApplicationStatus
     {
-        return EApplicationStatus::getFromString($this->applicationStatus);
+        return $this->applicationStatus;
     }
 
     public function setApplicationStatus(EApplicationStatus $applicationStatus): void
     {
-        $this->applicationStatus = $applicationStatus->value;
+        $this->applicationStatus = $applicationStatus;
     }
 
     /**
@@ -1022,9 +1024,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
      */
     public function canReceiveDirectMessage(User $dmAuthor): bool
     {
-        if (EDirectMessageSettings::Everyone->value === $this->directMessageSetting) {
+        if (EDirectMessageSettings::Everyone === $this->directMessageSetting) {
             return true;
-        } elseif (EDirectMessageSettings::FollowersOnly->value === $this->directMessageSetting) {
+        } elseif (EDirectMessageSettings::FollowersOnly === $this->directMessageSetting) {
             $criteria = Criteria::create()->where(Criteria::expr()->eq('follower', $dmAuthor));
 
             return $this->followers->matching($criteria)->count() > 0;

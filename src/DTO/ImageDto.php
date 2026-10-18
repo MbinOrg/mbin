@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[OA\Schema()]
 class ImageDto implements \JsonSerializable
