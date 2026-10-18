@@ -14,6 +14,7 @@ use App\Entity\DomainSubscription;
 use App\Entity\Entry;
 use App\Entity\EntryFavourite;
 use App\Entity\HashtagLink;
+use App\Entity\InstanceBlock;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -235,6 +236,37 @@ class EntryRepository extends ServiceEntityRepository
             if (!$criteria->domain) {
                 $qb->andWhere(
                     'e.domain IS null OR e.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
+                );
+            }
+
+            if (!$criteria->magazine) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = e.magazine AND ib1.user = :blocker'
+                    .') OR e.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = e.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
+                    .') OR e.user = :blocker'
+                );
+            }
+            if (!$criteria->user) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = e.user AND ib2.user = :blocker'
+                    .') OR e.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = e.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
+                    .') OR e.user = :blocker'
                 );
             }
 

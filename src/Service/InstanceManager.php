@@ -14,9 +14,12 @@ use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 readonly class InstanceManager
 {
+    private readonly string $instanceDomain;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SettingsManager $settingsManager,
@@ -24,6 +27,13 @@ readonly class InstanceManager
         private InstanceBlockRepository $instanceBlockRepository,
         private EventDispatcherInterface $dispatcher,
     ) {
+        $instanceHost = $settingsManager->get('KBIN_DOMAIN');
+        if (str_starts_with($instanceHost, 'http:') || str_starts_with($instanceHost, 'https:')) {
+            $this->instanceDomain = parse_url($instanceHost, PHP_URL_HOST);
+            \assert(\is_string($this->instanceDomain) && '' !== $this->instanceDomain);
+        } else {
+            $this->instanceDomain = $instanceHost;
+        }
     }
 
     public function addModerator(ModeratorDto $dto): void
@@ -103,6 +113,10 @@ readonly class InstanceManager
 
     public function blockInstance(Instance $instance, User $user): void
     {
+        if ($instance->domain === $this->instanceDomain) {
+            throw new BadRequestHttpException('you may not block the local instance');
+        }
+
         /** @var ?InstanceBlock $existing */
         $existing = $this->instanceBlockRepository->findOneBy(['instance' => $instance, 'user' => $user]);
         if (null !== $existing) {
@@ -115,6 +129,8 @@ readonly class InstanceManager
 
         $block = new InstanceBlock($user, $instance, false);
         $this->entityManager->persist($block);
+        $user->blockedInstances->add($block);
+        $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(new InstanceBlockedEvent($instance, $user, true));
@@ -124,7 +140,9 @@ readonly class InstanceManager
     {
         $block = $this->instanceBlockRepository->findByUserAndInstance($user, $instance);
         if (null !== $block) {
+            $user->blockedInstances->removeElement($block);
             $this->entityManager->remove($block);
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
         }
 
@@ -136,6 +154,12 @@ readonly class InstanceManager
      */
     public function blockInstancesGlobally(array $instances): void
     {
+        foreach ($instances as $instance) {
+            if ($instance->domain === $this->instanceDomain) {
+                throw new BadRequestHttpException('you may not block the local instance');
+            }
+        }
+
         $this->entityManager->wrapInTransaction(function () use ($instances) {
             foreach ($instances as $instance) {
                 $this->instanceBlockRepository->insertForAllUsers($instance);
