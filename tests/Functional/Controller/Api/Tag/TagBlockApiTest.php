@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Tag;
 
 use App\Tests\WebTestCase;
-use DateInterval;
 use PHPUnit\Framework\Attributes\Group;
 
 class TagBlockApiTest extends WebTestCase
@@ -278,7 +277,7 @@ class TagBlockApiTest extends WebTestCase
         $poster = $this->getUserByUsername('Poster');
         $mag = $this->getMagazineByName($prefix);
         $entry = $this->createEntry('parent', $mag, $poster);
-        $comment = $this->createEntryComment("parent comment", $entry, $poster);
+        $comment = $this->createEntryComment('parent comment', $entry, $poster);
         $this->createEntryComment("invisible 1 #{$prefix}_blocked", $entry, $poster);
         $this->createEntryComment("invisible 2 #{$prefix}_blocked", $entry, $poster, $comment);
         $commentVisible1 = $this->createEntryComment("visible 1 #{$prefix}_notblocked", $entry, $poster);
@@ -314,7 +313,7 @@ class TagBlockApiTest extends WebTestCase
         $poster = $this->getUserByUsername('Poster');
         $mag = $this->getMagazineByName($prefix);
         $post = $this->createPost('parent', $mag, $poster);
-        $comment = $this->createPostComment("parent comment", $post, $poster);
+        $comment = $this->createPostComment('parent comment', $post, $poster);
         $this->createPostComment("invisible 1 #{$prefix}_blocked", $post, $poster);
         $this->createPostComment("invisible 2 #{$prefix}_blocked", $post, $poster, parent: $comment);
         $commentVisible1 = $this->createPostComment("visible 1 #{$prefix}_notblocked", $post, $poster);

@@ -193,7 +193,7 @@ class TagSubscriptionApiController extends TagBaseApi
         $subs = $this->repository->findSubscribedTags(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage(Polyfills::requestParam($request,'perPage', TagRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request, 'perPage', TagRepository::PER_PAGE))
         );
 
         $dtos = [];

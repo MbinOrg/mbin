@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller\Tag;
 
@@ -10,7 +11,6 @@ use Symfony\Component\BrowserKit\Cookie;
 
 class TagBlockTest extends WebTestCase
 {
-
     private User $user;
     private EntryComment $entryCommentParent;
     private PostComment $postCommentParent;
