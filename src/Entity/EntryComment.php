@@ -368,9 +368,8 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         }
 
         if ($user) {
-            return $this->isAuthor($user)
-                || (!$this->containsFilteredWords($user, $filterRealm)
-                    && !$this->hashtags->exists(fn ($k, $hashtagLink) => $user->blockedHashtags->exists(fn ($k, $block) => $hashtagLink->hashtag === $block->hashtag)));
+            return !$this->containsFilteredWords($user, $filterRealm)
+                && !$this->hashtags->exists(fn ($k, $hashtagLink) => $user->blockedHashtags->exists(fn ($k, $block) => $hashtagLink->hashtag === $block->hashtag));
         }
 
         return true;
