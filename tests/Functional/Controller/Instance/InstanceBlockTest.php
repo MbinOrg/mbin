@@ -61,7 +61,7 @@ class InstanceBlockTest extends WebTestCase
 
     public function testEntryCommentChildrenHiddenOnMagazineCommentsView(): void
     {
-        $this->prepareContent('testEntryCommentChildrenHiddenOnSingleCommentClassicView');
+        $this->prepareContent('testEntryCommentChildrenHiddenOnMagazineCommentsView');
         $this->instanceManager->blockInstance($this->instanceRepository->findOneBy(['domain' => '3.example.com']), $this->user);
         $this->client->loginUser($this->user);
 
