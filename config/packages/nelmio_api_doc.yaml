@@ -109,11 +109,14 @@ nelmio_api_doc:
                                 delete: Delete any of your threads, posts, or comments.
                                 report: Report threads, posts, or comments.
                                 vote: Upvote, downvote, or boost threads, posts, or comments.
-                                subscribe: Subscribe or follow any magazine, domain, or user, and view the magazines, domains, and users you subscribe to.
+                                subscribe: Subscribe or follow any magazine, domain, or user, and view the magazines, domains, and users you subscribed to.
                                 block: Block or unblock any magazine, domain, or user, and view the magazines, domains, and users you have blocked.
-                                domain: Subscribe to or block domains, and view the domains you subscribe to or block.
-                                domain:subscribe: Subscribe or unsubscribe to domains and view the domains you subscribe to.
+                                domain: Subscribe to or block domains, and view the domains you subscribed to or block.
+                                domain:subscribe: Subscribe or unsubscribe to domains and view the domains you subscribed to.
                                 domain:block: Block or unblock domains and view the domains you have blocked.
+                                hashtag: Block hashtags, and view the hashtags you subscribed to.
+                                hashtag:block: Block or unblock hashtags and view the hashtags you have blocked.
+                                hashtag:subscribe: Subscribe or unsubscribe to hashtags and view the hashtags you subscribed to.
                                 entry: Create, edit, or delete your threads, and vote, boost, or report any thread.
                                 entry:create: Create new threads.
                                 entry:edit: Edit your existing threads.
@@ -226,11 +229,14 @@ nelmio_api_doc:
                                 delete: Delete any of your threads, posts, or comments.
                                 subscribe: Report threads, posts, or comments.
                                 block: Upvote, downvote, or boost threads, posts, or comments.
-                                vote: Subscribe or follow any magazine, domain, or user, and view the magazines, domains, and users you subscribe to.
+                                vote: Subscribe or follow any magazine, domain, or user, and view the magazines, domains, and users you subscribed to.
                                 report: Block or unblock any magazine, domain, or user, and view the magazines, domains, and users you have blocked.
-                                domain: Subscribe to or block domains, and view the domains you subscribe to or block.
-                                domain:subscribe: Subscribe or unsubscribe to domains and view the domains you subscribe to.
+                                domain: Subscribe to or block domains, and view the domains you subscribed to or block.
+                                domain:subscribe: Subscribe or unsubscribe to domains and view the domains you subscribed to.
                                 domain:block: Block or unblock domains and view the domains you have blocked.
+                                hashtag: Block hashtags, and view the hashtags you block.
+                                hashtag:block: Block or unblock hashtags and view the hashtags you have blocked.
+                                hashtag:subscribe: Subscribe or unsubscribe to hashtags and view the hashtags you subscribed to.
                                 entry: Create, edit, or delete your threads, and vote, boost, or report any thread.
                                 entry:create: Create new threads.
                                 entry:edit: Edit your existing threads.

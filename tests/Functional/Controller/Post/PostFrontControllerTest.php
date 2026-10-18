@@ -156,6 +156,27 @@ class PostFrontControllerTest extends WebTestCase
         }
     }
 
+    public function testHashtagBlock(): void
+    {
+        $user = $this->getUserByUsername('JaneDoe');
+        $otherUser = $this->getUserByUsername('JohnDoe');
+        $magazine = $this->getMagazineByName('testHashtagBlock', $otherUser);
+        $tag = $this->getHashtag('test');
+
+        $this->createPost('#test post 1', $magazine, $user);
+        $this->createPost('#test post 2', $magazine, $otherUser);
+
+        $this->tagManager->block($user, $tag);
+
+        $this->client->loginUser($user);
+        $this->client->request('GET', '/m/testHashtagBlock/microblog');
+
+        $this->assertAnySelectorTextContains('.post header', 'JaneDoe');
+        $this->assertAnySelectorTextContains('.post .content', 'test post 1');
+        $this->assertAnySelectorTextNotContains('.post header', 'JohnDoe');
+        $this->assertAnySelectorTextNotContains('.post .content', 'test post 2');
+    }
+
     public function testCustomDefaultSort(): void
     {
         $older = $this->createPost('Older entry');

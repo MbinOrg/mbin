@@ -38,6 +38,13 @@
             <div class="checkbox help-text">
                 {{ form_help(form.showFollowingBoosts) }}
             </div>
+            <div class="checkbox">
+                {{ form_label(form.showCommentsOfSubscribedHashtags, 'show_hashtag_sub_comments_label') }}
+                {{ form_widget(form.showCommentsOfSubscribedHashtags) }}
+            </div>
+            <div class="checkbox help-text">
+                {{ form_help(form.showCommentsOfSubscribedHashtags) }}
+            </div>
             <h2>{{ 'writing'|trans }}</h2>
             {{ form_row(form.addMentionsEntries, {label: 'add_mentions_entries', row_attr: {class: 'checkbox'}}) }}
             {{ form_row(form.addMentionsPosts, {label: 'add_mentions_posts', row_attr: {class: 'checkbox'}}) }}

@@ -95,6 +95,7 @@ abstract class Criteria
     public bool $moderated = false;
     public bool $favourite = false;
     public bool $includeBoosts = false;
+    public bool $includeCommentsWithSubscribedHashtag = false;
     public ?string $tag = null;
     public ?string $domain = null;
     public ?array $languages = null;
@@ -113,6 +114,9 @@ abstract class Criteria
     public ?array $cachedUserSubscribedDomains = null;
 
     /** @var int[]|null */
+    public ?array $cachedUserSubscribedHashtags = null;
+
+    /** @var int[]|null */
     public ?array $cachedUserBlocks = null;
 
     /** @var int[]|null */
@@ -123,6 +127,9 @@ abstract class Criteria
 
     /** @var string[]|null */
     public ?array $cachedUserBlockedInstances = null;
+
+    /** @var int[]|null */
+    public ?array $cachedUserBlockedHashtags = null;
 
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';
@@ -354,6 +361,7 @@ abstract class Criteria
         if ($this->subscribed) {
             $this->cachedUserSubscribedDomains = $sqlHelpers->getCachedUserSubscribedDomains($loggedInUser);
             $this->cachedUserSubscribedMagazines = $sqlHelpers->getCachedUserSubscribedMagazines($loggedInUser);
+            $this->cachedUserSubscribedHashtags = $sqlHelpers->getCachedUserSubscribedHashtags($loggedInUser);
         }
 
         if ($this->moderated) {
@@ -362,6 +370,7 @@ abstract class Criteria
 
         $this->cachedUserBlocks = $sqlHelpers->getCachedUserBlocks($loggedInUser);
         $this->cachedUserBlockedDomains = $sqlHelpers->getCachedUserDomainBlocks($loggedInUser);
+        $this->cachedUserBlockedHashtags = $sqlHelpers->getCachedUserHashtagBlocks($loggedInUser);
         $this->cachedUserBlockedMagazines = $sqlHelpers->getCachedUserMagazineBlocks($loggedInUser);
         $this->cachedUserBlockedInstances = $sqlHelpers->getCachedUserInstanceBlocks($loggedInUser);
     }

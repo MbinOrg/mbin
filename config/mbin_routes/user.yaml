@@ -160,6 +160,11 @@ user_settings_domain_blocks:
     path: /settings/blocked/domains
     methods: [GET]
 
+user_settings_tag_blocks:
+    controller: App\Controller\User\Profile\UserBlockController::hashtags
+    path: /settings/blocked/tags
+    methods: [GET]
+
 user_settings_user_blocks:
     controller: App\Controller\User\Profile\UserBlockController::users
     path: /settings/blocked/people
@@ -178,6 +183,11 @@ user_settings_magazine_subscriptions:
 user_settings_domain_subscriptions:
     controller: App\Controller\User\Profile\UserSubController::domains
     path: /settings/subscriptions/domains
+    methods: [GET]
+
+user_settings_hashtag_subscriptions:
+    controller: App\Controller\User\Profile\UserSubController::hashtags
+    path: /settings/subscriptions/hashtags
     methods: [GET]
 
 user_settings_user_subscriptions:

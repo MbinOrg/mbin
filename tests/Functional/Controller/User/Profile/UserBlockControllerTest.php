@@ -49,4 +49,18 @@ class UserBlockControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .pills .active', 'Domains');
         $this->assertSelectorTextContains('#main', 'kbin.pub');
     }
+
+    public function testUserCanSeeBlockedHashtags()
+    {
+        $this->client->loginUser($user = $this->getUserByUsername('JaneDoe'));
+
+        $tag = $this->getHashtag('taghash');
+        $this->tagManager->block($user, $tag);
+
+        $crawler = $this->client->request('GET', '/settings/blocked/tags');
+        $this->client->click($crawler->filter('#main .pills')->selectLink('Hashtags')->link());
+
+        $this->assertSelectorTextContains('#main .pills .active', 'Hashtags');
+        $this->assertSelectorTextContains('#main', 'taghash');
+    }
 }
