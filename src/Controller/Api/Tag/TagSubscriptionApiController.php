@@ -10,6 +10,7 @@ use App\Entity\HashtagSubscription;
 use App\Repository\TagRepository;
 use App\Schema\PaginationSchema;
 use App\Service\TagManager;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -192,7 +193,7 @@ class TagSubscriptionApiController extends TagBaseApi
         $subs = $this->repository->findSubscribedTags(
             $this->getPageNb($request),
             $this->getUserOrThrow(),
-            self::constrainPerPage($request->get('perPage', TagRepository::PER_PAGE))
+            self::constrainPerPage(Polyfills::requestParam($request,'perPage', TagRepository::PER_PAGE))
         );
 
         $dtos = [];

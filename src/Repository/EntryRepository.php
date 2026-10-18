@@ -239,10 +239,10 @@ class EntryRepository extends ServiceEntityRepository
             }
 
             $qb->andWhere(
-                'NOT EXISTS ('
+                '(NOT EXISTS ('
                 .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
                 .'WHERE hbl.entry = e AND hb.user = :blocker'
-                .') OR e.user = :blocker'
+                .') OR e.user = :blocker)'
             );
 
             $qb->setParameter('blocker', $user);

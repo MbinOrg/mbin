@@ -24,6 +24,7 @@ use App\Entity\Moderator;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
+use App\PageView\EntryCommentPageView;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -226,10 +227,10 @@ class EntryCommentRepository extends ServiceEntityRepository
             );
 
             $qb->andWhere(
-                'NOT EXISTS ('
+                '(NOT EXISTS ('
                     .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
                     .'WHERE hbl.entryComment = c AND hb.user = :blocker'
-                .') OR c.user = :blocker'
+                .') OR c.user = :blocker)'
             );
 
             if (!$criteria->domain) {
@@ -326,11 +327,15 @@ class EntryCommentRepository extends ServiceEntityRepository
 
     public function hydrateChildren(EntryComment ...$comments): void
     {
-        $children = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->andWhere('c.root IN (:ids)')
-            ->setParameter('ids', $comments)
-            ->getQuery()->getResult();
+            ->setParameter('ids', $comments);
 
+        $criteria = new EntryCommentPageView(1, $this->security);
+        $criteria->onlyParents = false;
+        $this->filter($qb, $criteria, $this->security->getUser());
+
+        $children = $qb->getQuery()->getResult();
         $this->hydrate(...$children);
     }
 

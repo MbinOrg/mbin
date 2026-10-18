@@ -182,10 +182,10 @@ class PostCommentRepository extends ServiceEntityRepository
             );
 
             $qb->andWhere(
-                'NOT EXISTS ('
+                '(NOT EXISTS ('
                     .'SELECT 1 FROM '.HashtagBlock::class.' hb INNER JOIN '.HashtagLink::class.' hbl ON hb.hashtag = hbl.hashtag '
                     .'WHERE hbl.postComment = c AND hb.user = :blocker'
-                .') OR c.user = :blocker'
+                .') OR c.user = :blocker)'
             );
 
             $qb->setParameter('blocker', $user);
@@ -261,11 +261,15 @@ class PostCommentRepository extends ServiceEntityRepository
 
     public function hydrateChildren(PostComment ...$comments): void
     {
-        $children = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->andWhere('c.root IN (:ids)')
-            ->setParameter('ids', $comments)
-            ->getQuery()->getResult();
+            ->setParameter('ids', $comments);
 
+        $criteria = new PostCommentPageView(1, $this->security);
+        $criteria->onlyParents = false;
+        $this->filter($qb, $criteria, $this->security->getUser());
+
+        $children = $qb->getQuery()->getResult();
         $this->hydrate(...$children);
     }
 

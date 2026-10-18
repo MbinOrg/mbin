@@ -119,6 +119,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         $this->children = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
 
         if ($parent) {
             $this->root = $parent->root ?? $parent;
@@ -318,7 +319,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
+            ->filter(fn (PostComment $comment) => $comment->canShow($loggedInUser, $filterRealm))
             ->toArray();
 
         // id sort
@@ -346,5 +347,23 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         }
 
         return $children;
+    }
+
+    public function canShow(?User $user, string $filterRealm): bool
+    {
+        if ($user === $this->user) {
+            return true;
+        }
+
+        if ($this->containsBannedHashtags()) {
+            return false;
+        }
+
+        if ($user) {
+            return !$this->containsFilteredWords($user, $filterRealm)
+                && !$this->hashtags->exists(fn ($k, $hashtagLink) => $user->blockedHashtags->exists(fn ($k, $block) => $hashtagLink->hashtag === $block->hashtag));
+        }
+
+        return true;
     }
 }
