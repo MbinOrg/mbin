@@ -45,6 +45,7 @@ class Page extends ActivityPubContent
      * @throws EntityNotFoundException    if the user could not be found or a sub exception occurred
      * @throws PostingRestrictedException if the target magazine has Magazine::postingRestrictedToMods = true and the actor is a magazine or a user that is not a mod
      * @throws InstanceBannedException    if the actor is from a banned instance
+     * @throws InvalidApObjectException
      * @throws \Exception                 if there was an error
      */
     public function create(array $object, bool $stickyIt = false): Entry
