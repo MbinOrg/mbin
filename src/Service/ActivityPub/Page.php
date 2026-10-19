@@ -9,6 +9,7 @@ use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApObjectException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -51,7 +52,11 @@ class Page extends ActivityPubContent
         // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
-            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            if (!($existing instanceof Entry)) {
+                throw new InvalidApObjectException('[Page::create()] expected a Page type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+            }
+            return $existing;
         }
         $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
@@ -70,7 +75,11 @@ class Page extends ActivityPubContent
             if ($current) {
                 $this->logger->debug('Page already exists, not creating it');
 
-                return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+                $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+                if (!($existing instanceof Entry)) {
+                    throw new InvalidApObjectException('[Page::create()] expected a Page type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+                }
+                return $existing;
             }
 
             if (\is_string($object['to'])) {

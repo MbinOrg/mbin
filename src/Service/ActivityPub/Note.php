@@ -16,6 +16,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApObjectException;
 use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -55,6 +56,7 @@ class Note extends ActivityPubContent
      * @throws InstanceBannedException
      * @throws EntryLockedException
      * @throws PostLockedException
+     * @throws InvalidApObjectException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -62,7 +64,11 @@ class Note extends ActivityPubContent
         // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
-            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            if (!($existing instanceof EntryComment) && !($existing instanceof PostComment) && !($existing instanceof Post)) {
+                throw new InvalidApObjectException('[Note::create()] expected a Note type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+            }
+            return $existing;
         }
         if ($this->settingsManager->isBannedInstance($object['id'])) {
             throw new InstanceBannedException();
