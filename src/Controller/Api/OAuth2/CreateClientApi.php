@@ -9,10 +9,9 @@ use App\DTO\ImageUploadDto;
 use App\DTO\OAuth2ClientDto;
 use App\DTO\UserDto;
 use App\Entity\Client;
+use App\Entity\Image;
+use App\Entity\User;
 use App\Factory\ClientFactory;
-use App\Repository\UserRepository;
-use App\Service\SettingsManager;
-use App\Service\UserManager;
 use App\Utils\Polyfills;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -23,12 +22,29 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class CreateClientApi extends BaseApi
 {
+    private ?PasswordHasherInterface $passwordHasher = null;
+    private ClientManagerInterface $manager;
+    private ClientFactory $clientFactory;
+
+    #[Required]
+    public function setClientManager(ClientManagerInterface $clientManager): void
+    {
+        $this->manager = $clientManager;
+    }
+
+    #[Required]
+    public function setClientFactory(ClientFactory $clientFactory): void
+    {
+        $this->clientFactory = $clientFactory;
+    }
+
     #[OA\Response(
         response: 201,
         description: 'Returns the created oauth2 client. Be sure to save the identifier and secret since these will be how you obtain tokens for the API.',
@@ -84,72 +100,22 @@ class CreateClientApi extends BaseApi
      * if they're determined enough, the user could retrieve the secret from their device's memory.
      */
     public function __invoke(
-        ClientManagerInterface $manager,
-        ClientFactory $clientFactory,
-        UserManager $userManager,
-        UserRepository $userRepository,
-        SettingsManager $settingsManager,
-        ValidatorInterface $validator,
-        SerializerInterface $serializer,
         RateLimiterFactoryInterface $apiOauthClientLimiter,
     ): JsonResponse {
-        if ($settingsManager->get('KBIN_ADMIN_ONLY_OAUTH_CLIENTS') && !$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedHttpException('This instance only allows admins to create oauth clients');
-        }
+        $this->checkAvailable();
 
         $headers = $this->rateLimit($apiOauthClientLimiter, $apiOauthClientLimiter);
 
         $request = $this->request->getCurrentRequest();
         /** @var OAuth2ClientDto $dto */
-        $dto = $serializer->deserialize($request->getContent(), OAuth2ClientDto::class, 'json', ['groups' => ['creating']]);
+        $reqDto = $this->serializer->deserialize($request->getContent(), OAuth2ClientDto::class, 'json', ['groups' => ['creating']]);
+        $this->validateRequest($reqDto);
 
-        $validatorGroups = ['Default', 'creating'];
-        // If the client being requested wishes to use the client_credentials flow,
-        //   validate that it has a username.
-        if (false !== array_search('client_credentials', $dto->grants)) {
-            $validatorGroups[] = 'client_credentials';
-        }
-
-        $errors = $validator->validate($dto, groups: $validatorGroups);
-        if (0 < \count($errors)) {
-            throw new BadRequestHttpException((string) $errors);
-        }
-
-        $identifier = hash('md5', random_bytes(16));
-        // If a public client is requested, use null for the secret
-        $secret = $dto->public ? null : hash('sha512', random_bytes(32));
-        $client = new Client($dto->name, $identifier, $secret);
-
-        if (false !== array_search('client_credentials', $dto->grants)) {
-            if ($userRepository->findOneByUsername($dto->username)) {
-                throw new BadRequestHttpException('That username/email is taken!');
-            }
-            if ($userRepository->findOneBy(['email' => $dto->contactEmail])) {
-                throw new BadRequestHttpException('That username/email is taken!');
-            }
-            $userDto = new UserDto();
-            $userDto->username = $dto->username;
-            $userDto->email = $dto->contactEmail;
-            // Only way to authenticate as this user will be to use client_credentials, unless they guess the very random password
-            $userDto->plainPassword = hash('sha512', random_bytes(32));
-            // This user is a bot user.
-            $userDto->isBot = true;
-            // Rate limiting is handled by the apiClientLimiter
-            $user = $userManager->create($userDto, false, false);
-            $client->setUser($user);
-        }
-        $client->setDescription($dto->description);
-        $client->setContactEmail($dto->contactEmail);
-        $client->setGrants(...array_map(fn (string $grant) => new Grant($grant), $dto->grants));
-        $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), $dto->scopes));
-        $client->setRedirectUris(...array_map(fn (string $redirectUri) => new RedirectUri($redirectUri), $dto->redirectUris));
-
-        $manager->save($client);
-
-        $dto = $clientFactory->createDto($client);
+        [$client, $secret] = $this->createClient($reqDto, null);
+        $respDto = $this->clientFactory->createDto($client, $secret);
 
         return new JsonResponse(
-            $dto,
+            $respDto,
             status: 201,
             headers: $headers
         );
@@ -220,86 +186,43 @@ class CreateClientApi extends BaseApi
      * if they're determined enough, the user could retrieve the secret from their device's memory.
      */
     public function uploadImage(
-        ClientManagerInterface $manager,
-        ClientFactory $clientFactory,
-        UserManager $userManager,
-        UserRepository $userRepository,
-        SettingsManager $settingsManager,
-        ValidatorInterface $validator,
         RateLimiterFactoryInterface $apiOauthClientLimiter,
     ): JsonResponse {
-        if ($settingsManager->get('KBIN_ADMIN_ONLY_OAUTH_CLIENTS') && !$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedHttpException('This instance only allows admins to create oauth clients');
-        }
+        $this->checkAvailable();
 
         $headers = $this->rateLimit($apiOauthClientLimiter, $apiOauthClientLimiter);
 
         $image = $this->handleUploadedImage();
+        $reqDto = $this->deserializeClientFromForm();
+        $this->validateRequest($reqDto);
 
-        $dto = $this->deserializeClientFromForm();
-
-        $validatorGroups = ['Default'];
-        // If the client being requested wishes to use the client_credentials flow,
-        //   validate that it has a username.
-        if (false !== array_search('client_credentials', $dto->grants)) {
-            $validatorGroups[] = 'client_credentials';
-        }
-
-        $errors = $validator->validate($dto, groups: $validatorGroups);
-        if (0 < \count($errors)) {
-            throw new BadRequestHttpException((string) $errors);
-        }
-
-        $identifier = hash('md5', random_bytes(16));
-        // If a public client is requested, use null for the secret
-        $secret = $dto->public ? null : hash('sha512', random_bytes(32));
-        $client = new Client($dto->name, $identifier, $secret);
-
-        if (false !== array_search('client_credentials', $dto->grants)) {
-            if ($userRepository->findOneByUsername($dto->username)) {
-                throw new BadRequestHttpException('That username/email is taken!');
-            }
-            if ($userRepository->findOneBy(['email' => $dto->contactEmail])) {
-                throw new BadRequestHttpException('That username/email is taken!');
-            }
-            $userDto = new UserDto();
-            $userDto->username = $dto->username;
-            $userDto->email = $dto->contactEmail;
-            // Only way to authenticate as this user will be to use client_credentials, unless they guess the very random password
-            $userDto->plainPassword = hash('sha512', random_bytes(32));
-            // This user is a bot user.
-            $userDto->isBot = true;
-            // Rate limiting is handled by the apiClientLimiter
-            $user = $userManager->create($userDto, false, false);
-            $client->setUser($user);
-        }
-        $client->setDescription($dto->description);
-        $client->setContactEmail($dto->contactEmail);
-        $client->setGrants(...array_map(fn (string $grant) => new Grant($grant), $dto->grants));
-        $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), $dto->scopes));
-        $client->setRedirectUris(...array_map(fn (string $redirectUri) => new RedirectUri($redirectUri), $dto->redirectUris));
-        $client->setImage($image);
-
-        $manager->save($client);
-
-        $dto = $clientFactory->createDto($client);
+        [$client, $secret] = $this->createClient($reqDto, $image);
+        $respDto = $this->clientFactory->createDto($client, $secret);
 
         return new JsonResponse(
-            $dto,
+            $respDto,
             status: 201,
             headers: $headers
         );
     }
 
-    protected function deserializeClientFromForm(?OAuth2ClientDto $dto = null): OAuth2ClientDto
+    private function checkAvailable(): void
+    {
+        if ($this->settingsManager->get('KBIN_ADMIN_ONLY_OAUTH_CLIENTS') && !$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedHttpException('This instance only allows admins to create oauth clients');
+        }
+    }
+
+    private function deserializeClientFromForm(): OAuth2ClientDto
     {
         $request = $this->request->getCurrentRequest();
-        $dto = $dto ? $dto : new OAuth2ClientDto();
+        $dto = new OAuth2ClientDto();
         $dto->name = Polyfills::requestParam($request, 'name', $dto->name);
         $dto->contactEmail = Polyfills::requestParam($request, 'contactEmail', $dto->contactEmail);
+        $dto->username = Polyfills::requestParam($request, 'username', $dto->username);
         $dto->description = Polyfills::requestParam($request, 'description', $dto->description);
         $dto->public = filter_var(Polyfills::requestParam($request, 'public', $dto->public), FILTER_VALIDATE_BOOL);
-        $dto->username = Polyfills::requestParam($request, 'username', $dto->username);
+        $dto->secret = Polyfills::requestParam($request, 'secret', $dto->secret);
 
         $redirectUris = Polyfills::requestParam($request, 'redirectUris', $dto->redirectUris);
         if (\is_string($redirectUris)) {
@@ -320,5 +243,92 @@ class CreateClientApi extends BaseApi
         $dto->scopes = $scopes;
 
         return $dto;
+    }
+
+    private function validateRequest(OAuth2ClientDto $dto): void
+    {
+        $validatorGroups = ['Default', 'creating'];
+        // If the client being requested wishes to use the client_credentials flow,
+        //   validate that it has a username.
+        if (\in_array('client_credentials', $dto->grants)) {
+            $validatorGroups[] = 'client_credentials';
+        }
+
+        $errors = $this->validator->validate($dto, groups: $validatorGroups);
+        if (0 < \count($errors)) {
+            throw new BadRequestHttpException((string) $errors);
+        }
+    }
+
+    /**
+     * @return array [Client, secret]
+     */
+    private function createClient(OAuth2ClientDto $dto, ?Image $image): array
+    {
+        if (true === $dto->public) {
+            $secret = null;
+            $hashedSecret = null;
+        } else {
+            $secret = hash('sha256', random_bytes(256));
+            $hashedSecret = $this->getPasswordHasher()->hash($secret);
+        }
+        $identifier = hash('sha256', random_bytes(256));
+        $client = new Client($dto->name, $identifier, $hashedSecret);
+
+        if (\in_array('client_credentials', $dto->grants)) {
+            $user = $this->createClientUser($dto);
+            $client->setUser($user);
+        }
+        $client->setDescription($dto->description);
+        $client->setContactEmail($dto->contactEmail);
+        $client->setGrants(...array_map(fn (string $grant) => new Grant($grant), $dto->grants));
+        $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), $dto->scopes));
+        $client->setRedirectUris(...array_map(fn (string $redirectUri) => $this->validateRedirectUri($redirectUri), $dto->redirectUris));
+        if (null !== $image) {
+            $client->setImage($image);
+        }
+
+        $this->manager->save($client);
+
+        return [$client, $secret];
+    }
+
+    private function createClientUser(OAuth2ClientDto $dto): User
+    {
+        if ($this->userRepository->findOneByUsername($dto->username)) {
+            throw new BadRequestHttpException('That username/email is taken!');
+        }
+        if ($this->userRepository->findOneBy(['email' => $dto->contactEmail])) {
+            throw new BadRequestHttpException('That username/email is taken!');
+        }
+
+        $userDto = new UserDto();
+        $userDto->username = $dto->username;
+        $userDto->email = $dto->contactEmail;
+        // Only way to authenticate as this user will be to use client_credentials, unless they guess the very random password
+        $userDto->plainPassword = hash('sha512', random_bytes(512));
+        // This user is a bot user.
+        $userDto->isBot = true;
+
+        // Rate limiting is handled by the apiClientLimiter
+        return $this->userManager->create($userDto, false, false);
+    }
+
+    private function validateRedirectUri(string $uri): RedirectUri
+    {
+        $host = parse_url($uri, PHP_URL_HOST);
+        if (null === $host || $host === $this->settingsManager->isLocalUrl($uri)) {
+            throw new BadRequestHttpException('Invalid redirect URI: '.$uri);
+        }
+
+        return new RedirectUri($uri);
+    }
+
+    private function getPasswordHasher(): PasswordHasherInterface
+    {
+        if (null === $this->passwordHasher) {
+            $this->passwordHasher = new NativePasswordHasher();
+        }
+        return $this->passwordHasher;
     }
 }

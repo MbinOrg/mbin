@@ -35,6 +35,8 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -136,8 +138,10 @@ trait FactoryTrait
     {
         /** @var ClientManagerInterface $manager */
         $manager = self::getContainer()->get(ClientManagerInterface::class);
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = new NativePasswordHasher();
 
-        $client = new Client('/kbin Test Client', 'testclient', 'testsecret');
+        $client = new Client('/kbin Test Client', 'testclient', $hasher->hash('testsecret'));
         $client->setDescription('An OAuth2 client for testing purposes');
         $client->setContactEmail('test@kbin.test');
         $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), OAuth2ClientDto::AVAILABLE_SCOPES));
@@ -166,11 +170,12 @@ trait FactoryTrait
     {
         /** @var ClientManagerInterface $clientManager */
         $clientManager = self::getContainer()->get(ClientManagerInterface::class);
-
         /** @var UserManager $userManager */
         $userManager = self::getContainer()->get(UserManager::class);
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = new NativePasswordHasher();
 
-        $client = new Client('/kbin Test Client', 'testclient', 'testsecret');
+        $client = new Client('/kbin Test Client', 'testclient', $hasher->hash('testsecret'));
 
         $userDto = new UserDto();
         $userDto->username = 'test_bot';
