@@ -153,7 +153,7 @@ class OAuth2ClientDto extends ImageUploadDto implements \JsonSerializable
     #[Groups(['created', 'deleting'])]
     public ?string $identifier = null;
     #[Assert\NotBlank(groups: ['deleting'])]
-    #[Groups(['creating', 'deleting'])]
+    #[Groups(['created', 'deleting'])]
     public ?string $secret = null;
     #[Assert\NotBlank(groups: ['creating'])]
     #[Groups(['creating', 'created'])]

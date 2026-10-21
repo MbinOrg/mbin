@@ -42,7 +42,6 @@ POST /api/client
   "contactEmail": "contact@some.dev",
   "description": "A client that I will be using to authenticate to /mbin's API",
   "public": false,
-  "secret": "bt89rojcefngyiuebh2orjiroewerkweur",
   "redirectUris": [
     "https://localhost:3000/redirect",
     "myapp://redirect"
@@ -59,14 +58,12 @@ POST /api/client
 }
 ```
 
-`secret`: Only if public is set to true (otherwise set to null). 
-A secret string you will later use to prove that the request comes from you. Must have at least 32 randomly generated characters.
-
-2. Save the identifier returned by this API call.
+2. Save the identifier and secret returned by this API call - this will be the only time you can access the secret for a private client.
 
 ```json
 {
     "identifier": "someRandomString",
+    "secret": "anEvenLongerRandomStringThatYouShouldKeepSafe",
     ... # more info about the client that just confirms what you've created
 }
 ```

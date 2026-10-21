@@ -98,9 +98,6 @@ class CreateClientApi extends BaseApi
      * authorization_code flow. A public client cannot use the client_credentials flow. Public clients
      * are recommended because apps running on user devices technically cannot store secrets safely -
      * if they're determined enough, the user could retrieve the secret from their device's memory.
-     *
-     *  If you are creating a private client you have to provide a secret on client-registration and when calling /token.
-     *  It is recommended to create it as a hex-string of at least 128 bits of randomness.
      */
     public function __invoke(
         RateLimiterFactoryInterface $apiOauthClientLimiter,
@@ -114,8 +111,8 @@ class CreateClientApi extends BaseApi
         $reqDto = $this->serializer->deserialize($request->getContent(), OAuth2ClientDto::class, 'json', ['groups' => ['creating']]);
         $this->validateRequest($reqDto);
 
-        $client = $this->createClient($reqDto, null);
-        $respDto = $this->clientFactory->createDto($client);
+        [$client, $secret] = $this->createClient($reqDto, null);
+        $respDto = $this->clientFactory->createDto($client, $secret);
 
         return new JsonResponse(
             $respDto,
@@ -187,9 +184,6 @@ class CreateClientApi extends BaseApi
      * authorization_code flow. A public client cannot use the client_credentials flow. Public clients
      * are recommended because apps running on user devices technically cannot store secrets safely -
      * if they're determined enough, the user could retrieve the secret from their device's memory.
-     *
-     * If you are creating a private client you have to provide a secret on client-registration and when calling /token.
-     * It is recommended to create it as a hex-string of at least 128 bits of randomness.
      */
     public function uploadImage(
         RateLimiterFactoryInterface $apiOauthClientLimiter,
@@ -202,8 +196,8 @@ class CreateClientApi extends BaseApi
         $reqDto = $this->deserializeClientFromForm();
         $this->validateRequest($reqDto);
 
-        $client = $this->createClient($reqDto, $image);
-        $respDto = $this->clientFactory->createDto($client);
+        [$client, $secret] = $this->createClient($reqDto, $image);
+        $respDto = $this->clientFactory->createDto($client, $secret);
 
         return new JsonResponse(
             $respDto,
@@ -266,26 +260,20 @@ class CreateClientApi extends BaseApi
         }
     }
 
-    private function createClient(OAuth2ClientDto $dto, ?Image $image): Client
+    /**
+     * @return array [Client, secret]
+     */
+    private function createClient(OAuth2ClientDto $dto, ?Image $image): array
     {
-        $secret = $dto->secret;
-        if (true !== $dto->public) {
-            if (null === $secret) {
-                throw new BadRequestHttpException('Non-public clients require a secret');
-            }
-            if (\strlen($secret) < 32) {
-                throw new BadRequestHttpException('The secret has a low entropy');
-            }
-
-            $secret = $this->getPasswordHasher()->hash($secret);
+        if (true === $dto->public) {
+            $secret = null;
+            $hashedSecret = null;
         } else {
-            if (null !== $secret) {
-                throw new BadRequestHttpException('Public clients must not use a secret');
-            }
+            $secret = hash('sha256', random_bytes(256));
+            $hashedSecret = $this->getPasswordHasher()->hash($secret);
         }
-
         $identifier = hash('sha256', random_bytes(256));
-        $client = new Client($dto->name, $identifier, $secret);
+        $client = new Client($dto->name, $identifier, $hashedSecret);
 
         if (\in_array('client_credentials', $dto->grants)) {
             $user = $this->createClientUser($dto);
@@ -302,7 +290,7 @@ class CreateClientApi extends BaseApi
 
         $this->manager->save($client);
 
-        return $client;
+        return [$client, $secret];
     }
 
     private function createClientUser(OAuth2ClientDto $dto): User

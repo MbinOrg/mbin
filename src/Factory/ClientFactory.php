@@ -10,19 +10,19 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
-class ClientFactory
+readonly class ClientFactory
 {
     public function __construct(
-        private readonly ImageFactory $imageFactory,
-        private readonly UserFactory $userFactory,
+        private ImageFactory $imageFactory,
+        private UserFactory $userFactory,
     ) {
     }
 
-    public function createDto(Client $client, bool $includeSecret = false): OAuth2ClientDto
+    public function createDto(Client $client, #[\SensitiveParameter] ?string $secret): OAuth2ClientDto
     {
         return OAuth2ClientDto::create(
             $client->getIdentifier(),
-            $includeSecret ? $client->getSecret() : null,
+            $secret,
             $client->getName(),
             $client->getUser() ? $this->userFactory->createSmallDto($client->getUser()) : null,
             $client->getContactEmail(),
