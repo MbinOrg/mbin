@@ -10,7 +10,7 @@ If you perform a mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 ./bin/post-upgrade
 ```
 
-And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache issues. And reload the PHP FPM service if you have OPCache enabled.
+And when needed also execute: `./bin/console mbin:cache:clear` to get rid of Redis cache issues. And reload the PHP FPM service if you have OPCache enabled.
 
 ## Docker Upgrade
 
@@ -19,7 +19,5 @@ And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis cache
 
 ```bash
 $ docker compose exec php bin/console cache:clear
-$ docker compose exec redis redis-cli
-> auth REDIS_PASSWORD
-> FLUSHDB
+$ docker compose exec php bin/console mbin:cache:clear
 ```
