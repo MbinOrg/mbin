@@ -23,6 +23,8 @@ class ClearCachesCommand extends Command
         'images',
     ];
 
+    private const string REDIS_SESSION_PREFIX = 'sf_s';
+
     private bool $verbose = false;
     private bool $dryRun = false;
     private SymfonyStyle $io;
@@ -84,7 +86,9 @@ class ClearCachesCommand extends Command
         $this->io->section('Clearing Redis');
 
         try {
-            $keys = $this->redis->keys('sf_s*');
+            $keys = $this->redis->keys('*');
+            $keys = array_filter($keys, fn ($key) => !str_starts_with($key, self::REDIS_SESSION_PREFIX));
+
             if ($this->verbose) {
                 $this->io->text('Keys to delete: '.implode(', ', $keys));
             }
