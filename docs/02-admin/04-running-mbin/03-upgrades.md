@@ -10,7 +10,7 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 
 ### Clear Cache
 
-And when needed also execute: `sudo redis-cli FLUSHDB` to get rid of Redis/KeyDB cache issues. And reload the PHP FPM service if you have OPCache enabled.
+And when needed also execute: `./bin/console mbin:cache:clear` to get rid of Redis/KeyDB cache issues. And reload the PHP FPM service if you have OPCache enabled.
 
 ## Docker
 

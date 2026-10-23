@@ -272,6 +272,11 @@ services:
                   event: kernel.controller_arguments,
               }
 
+    # Commands
+    App\Command\ClearCachesCommand:
+        arguments:
+            $redis: '@cache.default_redis_provider'
+
     # Monolog handlers
     log_filter_handler:
       class: App\Service\MonologFilterHandler
