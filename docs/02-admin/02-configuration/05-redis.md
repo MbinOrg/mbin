@@ -70,8 +70,8 @@ valkey-cli BGSAVE
 valkey-cli INFO persistence
 ```
 
-Before restarting, wait for the snapshot to complete: `rdb_bgsave_in_progress` must be `0`, `rdb_last_bgsave_status` must be `ok`, and `rdb_last_save_time` must reflect the new save. Resolve errors and save the matching settings in the configuration file: `CONFIG SET` alone does not survive restarts.
+Before restarting, confirm the new snapshot completed successfully in `INFO persistence` (`rdb_bgsave_in_progress:0`, `rdb_last_bgsave_status:ok`, and an updated `rdb_last_save_time`). Save the settings in the configuration file; `CONFIG SET` alone does not survive restarts.
 
-If also enabling optional AOF, run `CONFIG SET appendfsync everysec` and `CONFIG SET appendonly yes` using the same CLI. Before restarting, check `INFO persistence`: `aof_enabled` must be `1`, `aof_rewrite_in_progress` and `aof_rewrite_scheduled` both `0`, and `aof_last_bgrewrite_status` and `aof_last_write_status` both `ok`. Persist these settings in the configuration file too. See [Valkey's live AOF migration instructions](https://valkey.io/topics/persistence/#how-i-can-switch-to-aof-if-im-currently-using-dumprdb-snapshots).
+For optional AOF, follow [Valkey's live migration instructions](https://valkey.io/topics/persistence/#how-i-can-switch-to-aof-if-im-currently-using-dumprdb-snapshots) before restarting.
 
-Persistence does not prevent session expiry or memory-pressure eviction: `volatile-*` policies can evict sessions because they expire. Monitor memory and provide capacity for both sessions and cache.
+Sessions can still expire or be evicted under `volatile-*` policies. Monitor memory usage to avoid eviction.
