@@ -50,9 +50,7 @@ Since [Mbin v1.11.0](https://github.com/MbinOrg/mbin/releases/tag/v1.11.0), Redi
 
 ```ruby
 # RDB snapshots: seconds / minimum changes since the last snapshot (any condition triggers a save)
-save 3600 1
-save 300 100
-save 60 10000
+save 3600 1 300 100 60 10000
 
 # Append-only file (AOF)
 appendonly yes
