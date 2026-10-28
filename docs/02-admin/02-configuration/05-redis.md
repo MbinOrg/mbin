@@ -57,7 +57,7 @@ appendonly yes
 appendfsync everysec
 ```
 
-Snapshotting alone provides persistence, but a crash can lose changes since the last snapshot. **AOF is optional**: `appendonly yes` with `appendfsync everysec` reduces potential loss to roughly one second of writes, with additional disk I/O and storage. Adjust the schedule to your workload; see [Valkey's persistence and backup guidance](https://valkey.io/topics/persistence/). Use a writable data directory with sufficient disk space and, for containers, a persistent volume.
+**AOF (Append Only File) is optional** and logs writes for recovery after a restart. Enable it with `appendonly yes` and `appendfsync everysec`; see [Valkey's persistence documentation](https://valkey.io/topics/persistence/).
 
 ### Existing instances
 
