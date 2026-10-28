@@ -91,3 +91,4 @@ services:
             test: ['CMD', 'valkey-cli', 'ping']
         volumes:
             - ./docker/valkey.conf:/valkey.conf:ro,Z
+            - ./storage/valkey:/data:rw,Z
