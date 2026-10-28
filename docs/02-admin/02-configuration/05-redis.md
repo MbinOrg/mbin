@@ -46,33 +46,25 @@ server-threads 4
 
 ## Persistence
 
-Since [Mbin v1.11.0](https://github.com/MbinOrg/mbin/releases/tag/v1.11.0), Redis/KeyDB/Valkey stores sessions as well as cache. Enable persistence to preserve sessions across server restarts.
-
-For production, we recommend periodic RDB snapshots together with append-only file (AOF) persistence. Replace the old `save ""` setting and any existing snapshot schedule with:
+Since [Mbin v1.11.0](https://github.com/MbinOrg/mbin/releases/tag/v1.11.0), Redis/KeyDB/Valkey also stores sessions. To preserve them across restarts, replace `save ""` and any existing snapshot schedule with this recommended production configuration:
 
 ```ruby
-# SNAPSHOTS
+# RDB snapshots: seconds / minimum changes since the last snapshot (any condition triggers a save)
 save 3600 1
 save 300 100
 save 60 10000
 
-# APPEND-ONLY FILE
+# Append-only file (AOF)
 appendonly yes
 appendfsync everysec
 ```
 
-The snapshot conditions are alternatives: save after one hour with at least one change, five minutes with at least 100 changes, or one minute with at least 10,000 changes since the last snapshot.
+Snapshots alone can lose changes since the last snapshot after a crash; AOF with `everysec` limits potential loss to roughly one second of writes, with additional disk I/O and storage. Adjust the schedule to your workload; see [Valkey's persistence and backup guidance](https://valkey.io/topics/persistence/). Use a writable data directory with sufficient disk space and, for containers, a persistent volume.
 
-Snapshots alone can lose changes since the last snapshot after a crash. AOF with `appendfsync everysec` reduces potential loss to roughly one second of writes, at the cost of additional disk I/O and storage. Adjust the snapshot schedule to suit your workload. See the [Valkey persistence documentation](https://valkey.io/topics/persistence/) for the tradeoffs and backup guidance.
-
-Ensure the configured data directory is writable by the service user and has sufficient disk space. For containers, the data directory must use a persistent volume to survive container recreation.
-
-### Enable persistence on an existing instance
+### Existing instances
 
 > [!WARNING]
-> If the running instance has persistence disabled, simply changing the configuration and restarting can lose its current sessions. Initialize persistence on the running instance first.
-
-Use the CLI for your server (`valkey-cli`, `redis-cli`, or `keydb-cli`), with the appropriate connection, database and authentication options. For example, with Valkey:
+> If persistence is disabled, initialize it on the running server **before restarting** to avoid losing current sessions. Use your server's CLI (`valkey-cli`, `redis-cli`, or `keydb-cli`) with the appropriate connection, database and authentication options:
 
 ```bash
 valkey-cli CONFIG SET appendfsync everysec
@@ -81,6 +73,6 @@ valkey-cli CONFIG SET save "3600 1 300 100 60 10000"
 valkey-cli INFO persistence
 ```
 
-Before restarting, verify that `aof_enabled` is `1`, both `aof_rewrite_in_progress` and `aof_rewrite_scheduled` are `0`, and `aof_last_bgrewrite_status` and `aof_last_write_status` are `ok`. Resolve any errors before proceeding. Also save the matching settings shown above in the server configuration file; `CONFIG SET` changes alone do not survive restarts. See [Valkey's instructions for enabling AOF on a running server](https://valkey.io/topics/persistence/#how-i-can-switch-to-aof-if-im-currently-using-dumprdb-snapshots).
+Before restarting, check `INFO persistence`: `aof_enabled` must be `1`, `aof_rewrite_in_progress` and `aof_rewrite_scheduled` both `0`, and `aof_last_bgrewrite_status` and `aof_last_write_status` both `ok`. Resolve errors and save the matching settings in the configuration file: `CONFIG SET` alone does not survive restarts. See [Valkey's live AOF migration instructions](https://valkey.io/topics/persistence/#how-i-can-switch-to-aof-if-im-currently-using-dumprdb-snapshots).
 
-Persistence does not prevent normal session expiry or eviction under memory pressure. With a `volatile-*` eviction policy, session keys can also be evicted because they have an expiry. Monitor memory use and allow sufficient capacity for both sessions and cache.
+Persistence does not prevent session expiry or memory-pressure eviction: `volatile-*` policies can evict sessions because they expire. Monitor memory and provide capacity for both sessions and cache.
