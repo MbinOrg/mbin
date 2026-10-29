@@ -74,7 +74,7 @@ class ActivityPubManager
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
        #[Target('apUpdateActorLimiter')]
-private readonly RateLimiterFactoryInterface $apUpdateActorLimiter,
+        private readonly RateLimiterFactoryInterface $apUpdateActorLimiter,
         private readonly EntryRepository $entryRepository,
         private readonly EntryManager $entryManager,
         private readonly RemoteInstanceManager $remoteInstanceManager,

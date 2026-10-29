@@ -43,7 +43,7 @@ class PostCommentManager implements ContentManagerInterface
         private readonly ImageRepository $imageRepository,
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('postCommentLimiter')]
-private readonly RateLimiterFactoryInterface $postCommentLimiter,
+        private readonly RateLimiterFactoryInterface $postCommentLimiter,
         private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager,

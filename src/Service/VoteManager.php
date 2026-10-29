@@ -27,7 +27,7 @@ class VoteManager
     public function __construct(
         private readonly VoteFactory $factory,
         #[Target('voteLimiter')]
-private readonly RateLimiterFactoryInterface $voteLimiter,
+        private readonly RateLimiterFactoryInterface $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingsManager $settingsManager,

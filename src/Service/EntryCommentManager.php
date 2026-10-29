@@ -41,7 +41,7 @@ class EntryCommentManager implements ContentManagerInterface
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentFactory $factory,
        #[Target('entryCommentLimiter')]
-private readonly RateLimiterFactoryInterface $entryCommentLimiter,
+        private readonly RateLimiterFactoryInterface $entryCommentLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,

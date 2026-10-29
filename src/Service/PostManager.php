@@ -52,7 +52,7 @@ class PostManager implements ContentManagerInterface
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('postLimiter')]
-private readonly RateLimiterFactoryInterface $postLimiter,
+        private readonly RateLimiterFactoryInterface $postLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,

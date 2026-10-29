@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Repository\ReputationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Query\Expr\OrderBy;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -126,7 +125,8 @@ class AdminUsersController extends AbstractController
         );
     }
 
-    private function parseSort(string $sort): \SortDirection {
+    private function parseSort(string $sort): \SortDirection
+    {
         return match ($sort) {
             'ASC' => \SortDirection::Ascending,
             'DESC' => \SortDirection::Descending,

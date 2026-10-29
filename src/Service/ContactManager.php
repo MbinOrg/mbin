@@ -20,7 +20,7 @@ class ContactManager
         private readonly MailerInterface $mailer,
         private readonly TranslatorInterface $translator,
        #[Target('contactLimiter')]
-private readonly RateLimiterFactoryInterface $contactLimiter,
+        private readonly RateLimiterFactoryInterface $contactLimiter,
     ) {
     }
 

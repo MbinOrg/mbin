@@ -26,7 +26,7 @@ class AccountDeletionController extends AbstractController
         private readonly Security $security,
         private readonly UserManager $userManager,
         #[Target('userDeleteLimiter')]
-private readonly RateLimiterFactoryInterface $userDeleteLimiter,
+        private readonly RateLimiterFactoryInterface $userDeleteLimiter,
         private readonly IpResolver $ipResolver,
         private readonly LoggerInterface $logger,
         private readonly UserPasswordHasherInterface $userPasswordHasher,

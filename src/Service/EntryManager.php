@@ -61,7 +61,7 @@ class EntryManager implements ContentManagerInterface
         private readonly EntryFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('entryLimiter')]
-private readonly RateLimiterFactoryInterface $entryLimiter,
+        private readonly RateLimiterFactoryInterface $entryLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,

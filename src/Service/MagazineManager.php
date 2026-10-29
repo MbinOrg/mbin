@@ -46,7 +46,7 @@ class MagazineManager
         private readonly MagazineFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('magazineLimiter')]
-private readonly RateLimiterFactoryInterface $magazineLimiter,
+        private readonly RateLimiterFactoryInterface $magazineLimiter,
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,
