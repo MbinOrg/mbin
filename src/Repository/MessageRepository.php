@@ -39,10 +39,10 @@ class MessageRepository extends ServiceEntityRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_OLD:
-                $qb->orderBy('m.createdAt', 'ASC');
+                $qb->orderBy('m.createdAt', \SortDirection::Ascending);
                 break;
             default:
-                $qb->orderBy('m.createdAt', 'DESC');
+                $qb->orderBy('m.createdAt', \SortDirection::Descending);
         }
 
         $messages = new Pagerfanta(
@@ -67,7 +67,7 @@ class MessageRepository extends ServiceEntityRepository
         $results = $this->createQueryBuilder('m')
             ->where('m.createdAt < :previous_message')
             ->andWhere('m.thread = :thread')
-            ->orderBy('m.createdAt', 'DESC')
+            ->orderBy('m.createdAt', \SortDirection::Descending)
             ->setMaxResults(1)
             ->setParameter('previous_message', $message->createdAt)
             ->setParameter('thread', $message->thread)

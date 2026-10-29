@@ -169,7 +169,7 @@ class InstanceRepository extends ServiceEntityRepository
     public function findAllOrdered(): array
     {
         $qb = $this->createQueryBuilder('i')
-            ->orderBy('i.domain', 'ASC');
+            ->orderBy('i.domain', \SortDirection::Ascending);
 
         return $qb->getQuery()->getResult();
     }

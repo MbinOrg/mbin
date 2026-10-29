@@ -41,6 +41,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -62,6 +63,7 @@ readonly class UserManager
         private MessageBusInterface $bus,
         private EmailVerifier $verifier,
         private EntityManagerInterface $entityManager,
+        #[Target('userRegisterLimiter')]
         private RateLimiterFactoryInterface $userRegisterLimiter,
         private UserFollowRequestRepository $requestRepository,
         private UserFollowRepository $userFollowRepository,

@@ -17,6 +17,7 @@ use App\Factory\VoteFactory;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -25,6 +26,7 @@ class VoteManager
 {
     public function __construct(
         private readonly VoteFactory $factory,
+        #[Target('voteLimiter')]
         private readonly RateLimiterFactoryInterface $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,

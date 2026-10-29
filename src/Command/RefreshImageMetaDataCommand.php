@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 
 #[AsCommand(
     name: 'mbin:images:refresh-meta',
@@ -25,6 +26,7 @@ class RefreshImageMetaDataCommand extends Command
 {
     public function __construct(
         private readonly ImageRepository $imageRepository,
+        #[Target('publicUploadsFilesystem')]
         private readonly FilesystemOperator $publicUploadsFilesystem,
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
