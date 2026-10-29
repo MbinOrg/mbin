@@ -23,7 +23,7 @@
                 'own': app.user and entry.isAuthor(app.user),
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not entry.isAdult,
                 'isSingle': isSingle is same as true
-            })}).without('id') }}
+            }) ~ subject_custom_css_marker(entry)}).without('id') }}
                 id="entry-{{ entry.id }}"
                 data-controller="subject preview mentions html-refresh"
                 data-action="notifications:Notification@window->subject#notification">

@@ -244,6 +244,13 @@ class EntryFrontController extends AbstractController
             $baseData['user'] = $user;
         }
 
+        $cssUsers = [];
+        foreach ($data['results'] as $subject) {
+            $cssUsers[] = $subject->user->username;
+        }
+        $cssUsers = array_unique($cssUsers);
+        $baseData['cssUserNames'] = implode(',', $cssUsers);
+
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
                 'html' => $this->renderView($templatePath.'_list.html.twig', $baseData),

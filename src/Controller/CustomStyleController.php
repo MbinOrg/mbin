@@ -5,18 +5,33 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\MagazineRepository;
+use App\Repository\UserRepository;
+use App\Service\SettingsManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomStyleController extends AbstractController
 {
+
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly SettingsManager $settings,
+    ) {
+
+    }
+
     public function __invoke(Request $request, MagazineRepository $repository): Response
     {
         $magazineName = $request->query->get('magazine');
         $magazine = $repository->findOneByName($magazineName);
 
+        $userNames = $request->query->get('userNames', '');
+        $users = $this->findUsers($userNames);
+
         $css = $this->renderView('styles/custom.css.twig', [
+            'includeMbinStyles' => true,
             'magazine' => $magazine,
+            'cssUsers' => $users,
         ]);
 
         return $this->createResponse($request, $css);
@@ -30,12 +45,35 @@ class CustomStyleController extends AbstractController
 
         if (!empty($customCss)) {
             $response->setContent($customCss);
-            $response->setEtag(md5($response->getContent()));
+            $response->setEtag(hash('sha256', $response->getContent()));
             $response->isNotModified($request);
         } else {
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
         }
 
         return $response;
+    }
+
+    private function findUsers(string $userNames): array
+    {
+        $names = explode(',', $userNames);
+        $localPostfix = '@'.$this->settings->getDto()->KBIN_DOMAIN;
+        $users = [];
+
+        foreach ($names as $name) {
+            if(str_ends_with($name, $localPostfix)) {
+                $name = substr($name, 0, -strlen($localPostfix));
+                if(str_starts_with($name, '@')) {
+                    $name = substr($name, 1);
+                }
+            }
+
+            $user = $this->userRepository->findOneBy(['username' => $name]);
+            if($user) {
+                $users[] = $user;
+            }
+        }
+
+        return $users;
     }
 }
