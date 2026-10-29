@@ -61,6 +61,7 @@
         "phpstan/phpdoc-parser": "^2.3.2",
         "predis/predis": "^3.5.1",
         "privacyportal/oauth2-privacyportal": "^0.1.1",
+        "sabberworm/php-css-parser": "^9.5",
         "scheb/2fa-backup-code": "^8.6.0",
         "scheb/2fa-bundle": "^8.6.0",
         "scheb/2fa-totp": "^8.6.0",
