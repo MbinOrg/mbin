@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\DTO\ContactDto;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -18,7 +19,8 @@ class ContactManager
         private readonly SettingsManager $settings,
         private readonly MailerInterface $mailer,
         private readonly TranslatorInterface $translator,
-        private readonly RateLimiterFactoryInterface $contactLimiter,
+       #[Target('contactLimiter')]
+private readonly RateLimiterFactoryInterface $contactLimiter,
     ) {
     }
 

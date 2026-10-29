@@ -32,6 +32,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -50,7 +51,8 @@ class PostManager implements ContentManagerInterface
         private readonly TagExtractor $tagExtractor,
         private readonly PostFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactoryInterface $postLimiter,
+       #[Target('postLimiter')]
+private readonly RateLimiterFactoryInterface $postLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,

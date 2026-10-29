@@ -10,6 +10,7 @@ use App\Service\IpResolver;
 use App\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +25,8 @@ class AccountDeletionController extends AbstractController
     public function __construct(
         private readonly Security $security,
         private readonly UserManager $userManager,
-        private readonly RateLimiterFactoryInterface $userDeleteLimiter,
+        #[Target('userDeleteLimiter')]
+private readonly RateLimiterFactoryInterface $userDeleteLimiter,
         private readonly IpResolver $ipResolver,
         private readonly LoggerInterface $logger,
         private readonly UserPasswordHasherInterface $userPasswordHasher,

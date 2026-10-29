@@ -26,6 +26,7 @@ use App\Service\Contracts\ContentManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -41,7 +42,8 @@ class PostCommentManager implements ContentManagerInterface
         private readonly PostCommentFactory $factory,
         private readonly ImageRepository $imageRepository,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactoryInterface $postCommentLimiter,
+       #[Target('postCommentLimiter')]
+private readonly RateLimiterFactoryInterface $postCommentLimiter,
         private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly EntityManagerInterface $entityManager,

@@ -38,6 +38,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -59,7 +60,8 @@ class EntryManager implements ContentManagerInterface
         private readonly BadgeManager $badgeManager,
         private readonly EntryFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RateLimiterFactoryInterface $entryLimiter,
+       #[Target('entryLimiter')]
+private readonly RateLimiterFactoryInterface $entryLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,
