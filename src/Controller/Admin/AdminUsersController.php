@@ -12,13 +12,13 @@ use Doctrine\ORM\Query\Expr\OrderBy;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminUsersController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $repository,
-        private readonly RequestStack $request,
         private readonly ReputationRepository $reputationRepository,
     ) {
     }
@@ -36,7 +36,7 @@ class AdminUsersController extends AbstractController
                 page: $p,
                 onlyLocal: !($withFederated ?? false),
                 searchTerm: $search,
-                orderBy: new OrderBy("u.$field", $sort),
+                orderBy: new OrderBy("u.$field", $this->parseSort($sort)),
             );
         $userIds = array_map(fn (User $user) => $user->getId(), [...$users]);
         $attitudes = $this->reputationRepository->getUserAttitudes(...$userIds);
@@ -67,7 +67,7 @@ class AdminUsersController extends AbstractController
                 'users' => $this->repository->findAllInactivePaginated(
                     $p,
                     searchTerm: $search,
-                    orderBy: new OrderBy("u.$field", $sort)
+                    orderBy: new OrderBy("u.$field", $this->parseSort($sort))
                 ),
                 'sortField' => $field,
                 'order' => $sort,
@@ -91,7 +91,7 @@ class AdminUsersController extends AbstractController
                     $p,
                     onlyLocal: !($withFederated ?? false),
                     searchTerm: $search,
-                    orderBy: new OrderBy("u.$field", $sort)
+                    orderBy: new OrderBy("u.$field", $this->parseSort($sort))
                 ),
                 'withFederated' => $withFederated,
                 'sortField' => $field,
@@ -116,7 +116,7 @@ class AdminUsersController extends AbstractController
                     $p,
                     onlyLocal: !($withFederated ?? false),
                     searchTerm: $search,
-                    orderBy: new OrderBy("u.$field", $sort),
+                    orderBy: new OrderBy("u.$field", $this->parseSort($sort)),
                 ),
                 'withFederated' => $withFederated,
                 'sortField' => $field,
@@ -124,5 +124,13 @@ class AdminUsersController extends AbstractController
                 'searchTerm' => $search,
             ]
         );
+    }
+
+    private function parseSort(string $sort): \SortDirection {
+        return match ($sort) {
+            'ASC' => \SortDirection::Ascending,
+            'DESC' => \SortDirection::Descending,
+            default => throw new BadRequestHttpException('The "sort" parameter must be ASC or DESC'),
+        };
     }
 }

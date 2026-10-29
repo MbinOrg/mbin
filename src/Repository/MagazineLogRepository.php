@@ -52,7 +52,7 @@ class MagazineLogRepository extends ServiceEntityRepository
                 ->setParameter('magazine', $magazine);
         }
 
-        $qb->orderBy('ml.createdAt', 'DESC');
+        $qb->orderBy('ml.createdAt', \SortDirection::Descending);
 
         $pager = new Pagerfanta(new QueryAdapter($qb));
         try {

@@ -49,7 +49,7 @@ class NotificationRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('n.id', 'DESC');
+            ->orderBy('n.id', \SortDirection::Descending);
 
         if (self::STATUS_ALL !== $status) {
             $qb->andWhere('n.status = :status')
