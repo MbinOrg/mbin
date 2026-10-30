@@ -49,6 +49,10 @@ readonly class CustomCssService
         return self::SELECTOR_MARKER_GENERAL.self::SELECTOR_MARKER_SOFTWARE.self::SELECTOR_MARKER_USER.$userId;
     }
 
+    public function createConstraintStyleClass(User $user): string {
+        return str_replace('.', ' ', $this->createConstraintSelector($user));
+    }
+
     public function validatePublicCss(string $src, ?User $user, bool $addSelectorConstraints): string {
         if($src === '') {
             throw new \InvalidArgumentException('empty CSS src is invalid');

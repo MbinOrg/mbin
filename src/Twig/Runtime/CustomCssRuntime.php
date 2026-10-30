@@ -27,6 +27,6 @@ readonly class CustomCssRuntime implements RuntimeExtensionInterface
             return '';
         }
 
-        return $this->cssService->createConstraintSelector($user);
+        return $this->cssService->createConstraintStyleClass($user);
     }
 }
