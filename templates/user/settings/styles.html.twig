@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'general'|trans }} - {{ app.user.username|username(false) }} - {{ parent() -}}
+{%- endblock -%}
+
+
+{% block mainClass %}page-settings page-settings-general{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include('user/settings/_options.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include 'layout/_flash.html.twig' %}
+<div id="content" class="section">
+    <div class="container">
+        <h1 hidden>{{ 'general'|trans }}</h1>
+        {{ form_start(form) }}
+        <h2>{{ 'appearance'|trans }}</h2>
+
+        {{ form_row(form.customCss, {label: 'custom_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.customPublicCss, {label: 'custom_public_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.ignoreMagazinesCustomCss, {label: 'ignore_magazines_custom_css', row_attr: {class: 'checkbox'}}) }}
+
+        <div class="row actions">
+            {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+{% endblock %}

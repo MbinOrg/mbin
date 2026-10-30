@@ -13,7 +13,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class UserSettingsManager
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly CustomCssService $cssService,
+        private readonly EntityManagerInterface $entityManager,
+    )
     {
     }
 
@@ -38,6 +41,7 @@ class UserSettingsManager
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
+            $user->customPublicCss,
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
             $user->directMessageSetting->value,
@@ -49,6 +53,12 @@ class UserSettingsManager
 
     public function update(User $user, UserSettingsDto $dto): void
     {
+        if($dto->customPublicCss === '') {
+            $dto->customPublicCss = null;
+        } else if($dto->customPublicCss !== null) {
+            $dto->customPublicCss = $this->cssService->validatePublicCss($dto->customPublicCss, $user, true);
+        }
+
         $user->notifyOnNewEntry = $dto->notifyOnNewEntry;
         $user->notifyOnNewPost = $dto->notifyOnNewPost;
         $user->notifyOnNewPostReply = $dto->notifyOnNewPostReply;
@@ -67,6 +77,7 @@ class UserSettingsManager
         $user->featuredMagazines = $dto->featuredMagazines ? array_unique($dto->featuredMagazines) : null;
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
+        $user->customPublicCss = $dto->customPublicCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
         $user->directMessageSetting = null !== $dto->directMessageSetting ? EDirectMessageSettings::getFromString($dto->directMessageSetting) : null;
         $user->frontDefaultContent = null !== $dto->frontDefaultContent ? EFrontContentOptions::getFromString($dto->frontDefaultContent) : null;
