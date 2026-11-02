@@ -54,6 +54,16 @@ class Embed
             return $this;
         }
 
+        // A direct link to a video file only needs a player pointing at it. Downloading the
+        // file to build the preview is wasteful, and large files exhaust the PHP memory limit.
+        if (preg_match('#^https?://#i', $url) && VideoManager::isVideoUrl($url)) {
+            $c = clone $this;
+            $c->url = $url;
+            $c->html = \sprintf('<video src="%s" controls></video>', htmlspecialchars($url, ENT_QUOTES));
+
+            return $c;
+        }
+
         $this->logger->debug('[Embed::fetch] leftover data', [
             'url' => $this->url,
             'title' => $this->title,
