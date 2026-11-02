@@ -324,7 +324,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (EntryComment $comment) => $comment->canShow($loggedInUser, $filterRealm))
+            ->filter(fn (EntryComment $comment) => $comment->canShow($loggedInUser, $filterRealm, $entryCommentCriteria))
             ->toArray();
 
         switch ($entryCommentCriteria->sortOption) {
@@ -357,9 +357,14 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $children;
     }
 
-    public function canShow(?User $user, string $filterRealm): bool
+    public function canShow(?User $user, string $filterRealm, MbinCriteria $criteria): bool
     {
         if ($user === $this->user) {
+            return true;
+        }
+
+        if ($criteria->moderated && null !== $user
+            && ($user->isAdmin() || $user->isModerator() || $this->magazine->userIsModerator($user))) {
             return true;
         }
 

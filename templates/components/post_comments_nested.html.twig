@@ -1,6 +1,6 @@
 {% if view is same as constant('App\\Controller\\User\\ThemeSettingsController::CLASSIC') %}
     {% for reply in comment.nested %}
-        {% if reply.canShow(app.user, 'comments') %}
+        {% if reply.canShow(app.user, 'comments', criteria) %}
             {{ component('post_comment', {
                 comment: reply,
                 showNested: false,

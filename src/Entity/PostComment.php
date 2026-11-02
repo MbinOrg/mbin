@@ -319,7 +319,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (PostComment $comment) => $comment->canShow($loggedInUser, $filterRealm))
+            ->filter(fn (PostComment $comment) => $comment->canShow($loggedInUser, $filterRealm, $postCommentCriteria))
             ->toArray();
 
         // id sort
@@ -349,9 +349,14 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $children;
     }
 
-    public function canShow(?User $user, string $filterRealm): bool
+    public function canShow(?User $user, string $filterRealm, MbinCriteria $criteria): bool
     {
         if ($user === $this->user) {
+            return true;
+        }
+
+        if ($criteria->moderated && null !== $user
+            && ($user->isAdmin() || $user->isModerator() || $this->magazine->userIsModerator($user))) {
             return true;
         }
 

@@ -107,7 +107,7 @@ class InstanceBlockTest extends WebTestCase
         $this->client->loginUser($this->user);
 
         $parentComment = $this->postCommentParentVisibleMag;
-        $this->client->getCookieJar()->set(new Cookie('entry_comments_view', 'classic'));
+        $this->client->getCookieJar()->set(new Cookie('post_comments_view', 'classic'));
         $this->client->request('GET', '/m/'.$parentComment->magazine->name.'/p/'.$parentComment->post->getId());
         self::assertAnySelectorTextContains('.post .content p', 'test parent');
         self::assertAnySelectorTextContains('.post-comment .content p', 'test parent comment');
