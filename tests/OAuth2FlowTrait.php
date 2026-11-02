@@ -31,7 +31,7 @@ trait OAuth2FlowTrait
         );
     }
 
-    protected static function runAuthorizationCodeFlowToConsentPage(KernelBrowser $client, string $scopes, string $state, string $clientId = 'testclient', string $redirectToUri = 'https://localhost:3001'): void
+    protected static function runAuthorizationCodeFlowToConsentPage(KernelBrowser $client, string $scopes, string $state, string $clientId = 'testclient', string $redirectToUri = 'https://localhost:3001', bool $expectSuccess = true): ?array
     {
         $query = self::buildPrivateAuthCodeQuery($clientId, $scopes, $state, $redirectToUri);
 
@@ -41,8 +41,15 @@ trait OAuth2FlowTrait
 
         $redirectUri = '/consent?'.$query;
 
-        self::assertResponseRedirects($redirectUri);
-        $client->followRedirect();
+        if ($expectSuccess) {
+            self::assertResponseRedirects($redirectUri);
+            $client->followRedirect();
+            return null;
+        } else {
+            $response = $client->getResponse();
+            self::assertJson($response->getContent());
+            return json_decode($response->getContent(), associative: true);
+        }
     }
 
     protected static function runAuthorizationCodeFlowToRedirectUri(KernelBrowser $client, string $scopes, string $consent, string $state, string $clientId = 'testclient', string $redirectUri = 'https://localhost:3001'): void
