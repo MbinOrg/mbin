@@ -33,11 +33,19 @@ readonly class EmbedService
 
     public function fetch(string $url): EmbedDto
     {
-        if ($this->settings->isLocalUrl($url) || $this->settings->isLocalMediaUrl($url)) {
-            if (ImageManager::isImageUrl($url)) {
-                return $this->createLocalImageEmbed($url);
-            }
+        if (!str_starts_with($url, 'https://')) {
+            return $this->createFallbackEmbed($url);
+        }
 
+        if (ImageManager::isImageUrl($url)) {
+            return $this->createImageEmbed($url);
+        }
+        if (VideoManager::isVideoUrl($url)) {
+            return $this->createVideoEmbed($url);
+        }
+
+        if ($this->settings->isLocalUrl($url) || $this->settings->isLocalMediaUrl($url)) {
+            // local URLs which are no image / video are blocked
             return $this->createFallbackEmbed($url);
         }
 
@@ -50,11 +58,19 @@ readonly class EmbedService
         );
     }
 
-    private function createLocalImageEmbed(string $url): EmbedDto
+    private function createImageEmbed(string $url): EmbedDto
     {
         $embed = new EmbedDto();
         $embed->url = $url;
-        $embed->html = \sprintf('<img src="%s">', $url);
+        $embed->html = \sprintf('<img src="%s" />', htmlspecialchars($url));
+        return $embed;
+    }
+
+    private function createVideoEmbed(string $url): EmbedDto
+    {
+        $embed = new EmbedDto();
+        $embed->url = $url;
+        $embed->html = \sprintf('<video src="%s" controls />', htmlspecialchars($url));
         return $embed;
     }
 
