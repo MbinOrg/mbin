@@ -245,30 +245,30 @@ class EntryCommentRepository extends ServiceEntityRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_HOT:
-                $qb->orderBy('c.upVotes', 'DESC');
+                $qb->orderBy('c.upVotes', \SortDirection::Descending);
                 break;
             case Criteria::SORT_TOP:
                 if (DownvotesMode::Disabled === $this->settingsManager->getDownvotesMode()) {
-                    $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
+                    $qb->orderBy('c.upVotes + c.favouriteCount', \SortDirection::Descending);
                 } else {
-                    $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', 'DESC');
+                    $qb->orderBy('c.upVotes + c.favouriteCount - c.downVotes', \SortDirection::Descending);
                 }
                 break;
             case Criteria::SORT_ACTIVE:
-                $qb->orderBy('c.lastActive', 'DESC');
+                $qb->orderBy('c.lastActive', \SortDirection::Descending);
                 break;
             case Criteria::SORT_NEW:
-                $qb->orderBy('c.createdAt', 'DESC');
+                $qb->orderBy('c.createdAt', \SortDirection::Descending);
                 break;
             case Criteria::SORT_OLD:
-                $qb->orderBy('c.createdAt', 'ASC');
+                $qb->orderBy('c.createdAt', \SortDirection::Ascending);
                 break;
             default:
-                $qb->addOrderBy('c.lastActive', 'DESC');
+                $qb->addOrderBy('c.lastActive', \SortDirection::Descending);
         }
 
-        $qb->addOrderBy('c.createdAt', 'DESC');
-        $qb->addOrderBy('c.id', 'DESC');
+        $qb->addOrderBy('c.createdAt', \SortDirection::Descending);
+        $qb->addOrderBy('c.id', \SortDirection::Descending);
 
         return $qb;
     }
