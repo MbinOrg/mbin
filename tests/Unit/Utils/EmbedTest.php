@@ -20,6 +20,36 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmbedTest extends TestCase
 {
+    public function testOnlyHttpsIsRequested(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse('<title>Public page</title>');
+        });
+
+        $this->createEmbed($httpClient)->fetch('http://93.184.216.34/article');
+        $this->createEmbed($httpClient)->fetch('http://example.com/article');
+        $this->createEmbed($httpClient)->fetch('http://example.com/image.jpg');
+        $this->createEmbed($httpClient)->fetch('ftp://example.com/image.jpg');
+
+        self::assertSame(0, $requestCount);
+    }
+
+    public function testUrlGetsHttpsPrepended(): void
+    {
+        $requestedUrl = null;
+        $httpClient = new MockHttpClient(function ($method, $url) use (&$requestedUrl): MockResponse {
+            $requestedUrl = $url;
+
+            return new MockResponse('<title>Public page</title>');
+        });
+
+        $this->createEmbed($httpClient)->fetch('example.com/article');
+        self::assertSame('https://example.com/article', $requestedUrl);
+    }
+
     public function testPublicUrlIsRequested(): void
     {
         $requestCount = 0;
@@ -29,7 +59,7 @@ class EmbedTest extends TestCase
             return new MockResponse('<title>Public page</title>');
         });
 
-        $result = $this->createEmbed($httpClient)->fetch('http://93.184.216.34/article');
+        $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/article');
 
         self::assertSame(1, $requestCount);
         self::assertSame('Public page', $result->title);
@@ -56,12 +86,12 @@ class EmbedTest extends TestCase
      */
     public static function privateNetworkUrlProvider(): iterable
     {
-        yield 'IPv4 loopback' => ['http://127.0.0.1/admin'];
-        yield 'IPv4 private network' => ['http://192.168.1.1/admin'];
-        yield 'IPv4 link-local network' => ['http://169.254.169.254/latest/meta-data'];
-        yield 'IPv6 loopback' => ['http://[::1]/admin'];
-        yield 'DNS-resolved loopback' => ['http://localhost/admin'];
-        yield 'DNS-resolved loopback subdomain' => ['http://sub.localhost/admin'];
+        yield 'IPv4 loopback' => ['https://127.0.0.1/admin'];
+        yield 'IPv4 private network' => ['https://192.168.1.1/admin'];
+        yield 'IPv4 link-local network' => ['https://169.254.169.254/latest/meta-data'];
+        yield 'IPv6 loopback' => ['https://[::1]/admin'];
+        yield 'DNS-resolved loopback' => ['https://localhost/admin'];
+        yield 'DNS-resolved loopback subdomain' => ['https://sub.localhost/admin'];
     }
 
     public function testRedirectToPrivateNetworkIsNotRequested(): void
@@ -72,15 +102,45 @@ class EmbedTest extends TestCase
 
             return new MockResponse('', [
                 'http_code' => 302,
-                'redirect_url' => 'http://127.0.0.1/admin',
-                'response_headers' => ['location: http://127.0.0.1/admin'],
+                'redirect_url' => 'https://127.0.0.1/admin',
+                'response_headers' => ['location: https://127.0.0.1/admin'],
             ]);
         });
 
-        $result = $this->createEmbed($httpClient)->fetch('http://93.184.216.34/redirect');
+        $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/redirect');
 
         self::assertSame(1, $requestCount);
         self::assertNull($result->title);
+    }
+
+    public function testFetchIsSkippedForImages(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse('_');
+        });
+
+        $result = $this->createEmbed($httpClient)->fetch('https://example.com/image.jpg');
+
+        self::assertSame(0, $requestCount);
+        self::assertStringContainsString('<img src="https://example.com/image.jpg"', $result->html);
+    }
+
+    public function testFetchIsSkippedForVideos(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse('_');
+        });
+
+        $result = $this->createEmbed($httpClient)->fetch('https://example.com/video.webm');
+
+        self::assertSame(0, $requestCount);
+        self::assertStringContainsString('<video src="https://example.com/video.webm"', $result->html);
     }
 
     public function testUnsupportedVideoSourceHtmlIsRejected(): void

@@ -34,7 +34,12 @@ readonly class EmbedService
     public function fetch(string $url): EmbedDto
     {
         if (!str_starts_with($url, 'https://')) {
-            return $this->createFallbackEmbed($url);
+            if (str_contains($url, '://')) {
+                // only allow https protocol
+                return $this->createFallbackEmbed($url);
+            } else {
+                $url = 'https://'.$url;
+            }
         }
 
         if (ImageManager::isImageUrl($url)) {
