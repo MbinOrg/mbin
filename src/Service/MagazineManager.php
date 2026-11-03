@@ -31,6 +31,7 @@ use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -44,6 +45,7 @@ class MagazineManager
     public function __construct(
         private readonly MagazineFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
+       #[Target('magazineLimiter')]
         private readonly RateLimiterFactoryInterface $magazineLimiter,
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,

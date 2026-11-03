@@ -8,6 +8,8 @@ use App\Tests\WebTestCase;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 class ImageRepositoryReferenceCheckTest extends WebTestCase
 {
@@ -159,7 +161,10 @@ class ImageRepositoryReferenceCheckTest extends WebTestCase
 
         /** @var ClientManagerInterface $manager */
         $manager = self::getContainer()->get(ClientManagerInterface::class);
-        $client = new Client('dummy client', 'dummyclient', 'testsecret');
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = new NativePasswordHasher();
+
+        $client = new Client('dummy client', 'dummyclient', $hasher->hash('testsecret'));
         $client->setDescription('An OAuth2 client for testIsImageReferencedOAuthClient');
         $client->setContactEmail('testIsImageReferencedOAuthClient@kbin.test');
         $client->setGrants(new Grant('authorization_code'), new Grant('refresh_token'));

@@ -26,6 +26,7 @@ use App\Service\Contracts\ContentManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -39,6 +40,7 @@ class EntryCommentManager implements ContentManagerInterface
         private readonly TagExtractor $tagExtractor,
         private readonly MentionManager $mentionManager,
         private readonly EntryCommentFactory $factory,
+       #[Target('entryCommentLimiter')]
         private readonly RateLimiterFactoryInterface $entryCommentLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly MessageBusInterface $bus,

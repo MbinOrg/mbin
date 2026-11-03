@@ -38,7 +38,7 @@ class MessageThreadRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('mt');
         $qb->where(':user MEMBER OF mt.participants')
             ->andWhere($qb->expr()->exists('SELECT m FROM '.Message::class.' m WHERE m.thread = mt'))
-            ->orderBy('mt.updatedAt', 'DESC')
+            ->orderBy('mt.updatedAt', \SortDirection::Descending)
             ->setParameter(':user', $user);
 
         if (null !== $interlocutor) {

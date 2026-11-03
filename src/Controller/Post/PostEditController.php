@@ -56,7 +56,7 @@ class PostEditController extends AbstractController
                         [
                             'id' => $post->getId(),
                             'html' => $this->renderView(
-                                'components/_ajax.html.twig',
+                                'ajax/component.html.twig',
                                 [
                                     'component' => 'post',
                                     'attributes' => [
