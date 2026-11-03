@@ -32,7 +32,7 @@ class BookmarkController extends AbstractController
         $this->bookmarkManager->addBookmarkToDefaultList($this->getUserOrThrow(), $subjectEntity);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_standard',
                     'attributes' => [
                         'subject' => $subjectEntity,
@@ -53,7 +53,7 @@ class BookmarkController extends AbstractController
         $subjectEntity = $this->entityManager->getRepository($subjectClass)->findOneBy(['id' => $subject_id]);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_standard',
                     'attributes' => [
                         'subject' => $subjectEntity,
@@ -79,7 +79,7 @@ class BookmarkController extends AbstractController
         $this->bookmarkManager->addBookmark($user, $list, $subjectEntity);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_list',
                     'attributes' => [
                         'subject' => $subjectEntity,
@@ -102,7 +102,7 @@ class BookmarkController extends AbstractController
         $this->bookmarkRepository->removeAllBookmarksForContent($this->getUserOrThrow(), $subjectEntity);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_standard',
                     'attributes' => [
                         'subject' => $subjectEntity,
@@ -128,7 +128,7 @@ class BookmarkController extends AbstractController
         $this->bookmarkRepository->removeBookmarkFromList($user, $list, $subjectEntity);
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'html' => $this->renderView('components/_ajax.html.twig', [
+                'html' => $this->renderView('ajax/component.html.twig', [
                     'component' => 'bookmark_list',
                     'attributes' => [
                         'subject' => $subjectEntity,

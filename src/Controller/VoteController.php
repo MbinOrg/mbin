@@ -39,7 +39,7 @@ class VoteController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse(
                 [
-                    'html' => $this->renderView('components/_ajax.html.twig', [
+                    'html' => $this->renderView('ajax/component.html.twig', [
                         'component' => 'vote',
                         'attributes' => [
                             'subject' => $vote->getSubject(),
