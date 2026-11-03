@@ -18,7 +18,6 @@ use App\Markdown\CommonMark\Node\CommunityLink;
 use App\Markdown\CommonMark\Node\MentionLink;
 use App\Markdown\CommonMark\Node\RoutedMentionLink;
 use App\Markdown\CommonMark\Node\TagLink;
-use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Repository\ApActivityRepository;
@@ -31,7 +30,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\Node\Node;
-use League\CommonMark\Node\StringContainerInterface;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Util\HtmlElement;
@@ -137,15 +135,12 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             ]);
         }
 
-        // skip rendering links inside the label (not allowed)
+        // skip rendering links inside the label (not allowed) and skip potentially harmful elements
         $childContent = null;
         if ($node->hasChildren()) {
             $cnodes = [];
             foreach ($node->children() as $n) {
-                if (
-                    ($n instanceof Link && $n instanceof StringContainerInterface)
-                    || $n instanceof UnresolvableLink
-                ) {
+                if (!EmbedElement::checkForbiddenDescendantNodes($n, true)) {
                     $cnodes[] = new Text($n->getLiteral());
                 } else {
                     $cnodes[] = $n;
@@ -193,7 +188,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             RoutedMentionLink::class => $this->generateUrlForRoute($node, $renderTarget),
             default => $apLink ?? $node->getUrl(),
         };
-        $title = $childContent ?? $url;
+        $title = $childContent ?? htmlspecialchars($url);
 
         if (RegexHelper::isLinkPotentiallyUnsafe($url)) {
             return new HtmlElement(
