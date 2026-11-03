@@ -46,6 +46,7 @@ use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Exception\CacheException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -72,6 +73,7 @@ class ActivityPubManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
+       #[Target('apUpdateActorLimiter')]
         private readonly RateLimiterFactoryInterface $apUpdateActorLimiter,
         private readonly EntryRepository $entryRepository,
         private readonly EntryManager $entryManager,
@@ -539,6 +541,7 @@ class ActivityPubManager
         ); // @todo multiple images
 
         if (\count($images)) {
+            $persistingImage = false;
             try {
                 $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
@@ -549,16 +552,27 @@ class ActivityPubManager
                         }
                     }
                 }
+
                 if ($tempFile = $this->imageManager->download($imageObject['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
                     $image->sourceUrl = $imageObject['url'];
                     if ($image && isset($imageObject['name'])) {
                         $image->altText = $imageObject['name'];
                     }
+
+                    $persistingImage = true;
                     $this->entityManager->persist($image);
                     $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
+                $this->logger->error('[ActivityPubManager::handleImages()] unable to store image: url = {url}, during persist = {fromDoctrine}', [
+                    'url' => null !== $imageObject ? $imageObject['url'] : '<no image obj>',
+                    'fromDoctrine' => $persistingImage,
+                ]);
+                if ($persistingImage) {
+                    // exceptions coming from doctrine have to be rethrown as the EntityManager will be closed on error
+                    throw $e;
+                }
                 return null;
             }
 
