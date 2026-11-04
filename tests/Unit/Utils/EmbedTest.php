@@ -239,6 +239,7 @@ class EmbedTest extends TestCase
             new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
             new UrlAccessChecker(),
             $this->createStub(TranslatorInterface::class),
+            'prod',
         );
     }
 }
