@@ -29,10 +29,9 @@ class ClientResponseDto implements \JsonSerializable
     public ?array $scopes = null;
 
     public function __construct(?Client $client, ?UserDto $user)
-    {
-        if(($client?->getUser() !== null && $user === null)
+    {if(($client?->getUser() !== null && $user === null)
             || ($client?->getUser() === null && $user !== null)
-            || $client?->getUser()->getId() !== $user->getId()) {
+            || $client?->getUser()?->getId() !== $user?->getId()) {
             throw new \InvalidArgumentException('$user must be created from $client->user');
         }
 
