@@ -195,7 +195,7 @@ class RetrieveClientApi extends BaseApi
     private function createClientResponseDto(Client $client): ClientResponseDto
     {
         $user = $client->getUser();
-        $userDto = $user !== null ? $this->userFactory->createDto($user) : null;
+        $userDto = null !== $user ? $this->userFactory->createDto($user) : null;
         return new ClientResponseDto($client, $userDto);
     }
 }

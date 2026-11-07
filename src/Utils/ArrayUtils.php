@@ -45,7 +45,7 @@ class ArrayUtils
 
     public static function filter(iterable $arr, callable $callback, int $mode = 0): array
     {
-        if(gettype($arr) !== 'array') {
+        if ('array' !== \gettype($arr)) {
             $arr = iterator_to_array($arr);
         }
         /** @var array $arr */
@@ -54,7 +54,7 @@ class ArrayUtils
 
     public static function map(iterable $arr, callable $callback): array
     {
-        if(gettype($arr) !== 'array') {
+        if ('array' !== \gettype($arr)) {
             $arr = iterator_to_array($arr);
         }
         /** @var array $arr */

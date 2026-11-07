@@ -143,7 +143,7 @@ class MessageManager
 
         $participants[] = $author;
         foreach ($participants as $participant) {
-            if(!($participant instanceof User)) {
+            if (!($participant instanceof User)) {
                 throw new LogicException('MessageManager::createMessage() got some non-users as participants: '.implode(', ', array_map(fn ($participant) => $participant->getApId(), $participants)));
             }
         }

@@ -26,7 +26,8 @@ class ArrayUtilTest extends TestCase
         self::assertSame([2, 4], array_values(ArrayUtils::filter($iter, fn ($item) => ($item & 1) === 0)));
     }
 
-    public function testMap(): void {
+    public function testMap(): void
+    {
         $arr = [1, 2, 3, 4, 5];
         $iter = new \ArrayIterator($arr);
 
@@ -45,7 +46,8 @@ class ArrayUtilTest extends TestCase
         self::assertEquals([(object) ['a' => 0], (object) ['a' => 1], (object) ['a' => 2, 'b' => 4]], $iter->getArrayCopy());
     }
 
-    public function testCount(): void{
+    public function testCount(): void
+    {
         $arr = [1, 2, 3, 4, 5];
         $iter = new \ArrayIterator($arr);
 

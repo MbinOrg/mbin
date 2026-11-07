@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Entity\Client;
-use App\Entity\User;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
@@ -29,8 +28,9 @@ class ClientResponseDto implements \JsonSerializable
     public ?array $scopes = null;
 
     public function __construct(?Client $client, ?UserDto $user)
-    {if(($client?->getUser() !== null && $user === null)
-            || ($client?->getUser() === null && $user !== null)
+    {
+    if ((null !== $client?->getUser() && null === $user)
+            || (null === $client?->getUser() && null !== $user)
             || $client?->getUser()?->getId() !== $user?->getId()) {
             throw new \InvalidArgumentException('$user must be created from $client->user');
         }

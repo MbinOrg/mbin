@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
-use App\Repository\MagazineSubscriptionRepository;
 use App\Repository\MagazineSubscriptionRequestRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
