@@ -99,7 +99,7 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return ReadableCollection<MonitoringQuery>
+     * @return ReadableCollection<int, MonitoringQuery>
      */
     public function getQueriesSorted(string $sortBy = 'durationMilliseconds', \SortDirection $sortDirection = \SortDirection::Descending): ReadableCollection
     {
@@ -160,7 +160,7 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return ReadableCollection<MonitoringTwigRender>
+     * @return ReadableCollection<int, MonitoringTwigRender>
      */
     public function getRootTwigRenders(): ReadableCollection
     {
@@ -170,7 +170,7 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return ReadableCollection<MonitoringCurlRequest>
+     * @return ReadableCollection<int, MonitoringCurlRequest>
      */
     public function getRequestsSorted(string $sortBy = 'durationMilliseconds', \SortDirection $sortDirection = \SortDirection::Descending): ReadableCollection
     {

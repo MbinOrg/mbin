@@ -267,6 +267,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
+    #[\Override]
     public function addVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, PostVote::class);
@@ -282,13 +283,14 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
+    #[\Override]
     public function removeVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, PostVote::class);
 
         if ($this->votes->removeElement($votable)) {
-            if ($votable->getPost() === $this) {
-                $votable->setPost(null);
+            if ($votable->post === $this) {
+                $votable->post = null;
             }
         }
 

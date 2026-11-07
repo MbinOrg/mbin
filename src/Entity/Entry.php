@@ -274,6 +274,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
+    #[\Override]
     public function addVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, EntryVote::class);
@@ -296,6 +297,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
+    #[\Override]
     public function removeVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, EntryVote::class);

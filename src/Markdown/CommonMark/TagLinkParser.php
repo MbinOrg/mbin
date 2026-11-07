@@ -17,11 +17,13 @@ class TagLinkParser implements InlineParserInterface
     {
     }
 
+    #[\Override]
     public function getMatchDefinition(): InlineParserMatch
     {
         return InlineParserMatch::regex(RegPatterns::LOCAL_TAG_REGEX);
     }
 
+    #[\Override]
     public function parse(InlineParserContext $inlineContext): bool
     {
         $cursor = $inlineContext->getCursor();

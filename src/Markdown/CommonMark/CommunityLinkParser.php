@@ -24,11 +24,13 @@ class CommunityLinkParser implements InlineParserInterface
     ) {
     }
 
+    #[\Override]
     public function getMatchDefinition(): InlineParserMatch
     {
         return InlineParserMatch::regex(RegPatterns::COMMUNITY_REGEX);
     }
 
+    #[\Override]
     public function parse(InlineParserContext $inlineContext): bool
     {
         $cursor = $inlineContext->getCursor();

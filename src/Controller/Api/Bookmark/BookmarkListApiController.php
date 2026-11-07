@@ -165,7 +165,7 @@ class BookmarkListApiController extends BaseApi
         }
         $pagerfanta = $this->bookmarkRepository->findPopulatedByList($bookmarkList, $criteria, $perPage);
         $objects = $pagerfanta->getCurrentPageResults();
-        $items = ArrayUtils::map($objects, fn (ContentInterface $item) => $this->serializeContentInterface($item));
+        $items = ArrayUtils::map($objects, fn (ContentInterface $item): array => $this->serializeContentInterface($item));
         $result = $this->serializePaginated($items, $pagerfanta);
 
         return new JsonResponse($result, status: 200, headers: $headers);

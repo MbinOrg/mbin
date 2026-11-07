@@ -17,24 +17,24 @@ use League\CommonMark\Node\Node;
 use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
 use League\CommonMark\Parser\InlineParserContext;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class MentionLinkParser implements InlineParserInterface
 {
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
-        private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly UserRepository $userRepository,
     ) {
     }
 
+    #[\Override]
     public function getMatchDefinition(): InlineParserMatch
     {
         // support for unicode international domains
         return InlineParserMatch::regex(RegPatterns::MENTION_REGEX);
     }
 
+    #[\Override]
     public function parse(InlineParserContext $inlineContext): bool
     {
         $cursor = $inlineContext->getCursor();
@@ -150,9 +150,9 @@ class MentionLinkParser implements InlineParserInterface
         return match ($type) {
             MentionType::Magazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteMagazine => ['route' => 'front_magazine', 'param' => 'name'],
-            MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
-            MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
-            MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
+            MentionType::RemoteUser => ['route' => 'user_overview', 'param' => 'username'],
+            MentionType::Search => ['route' => 'search', 'param' => 'search[q]'],
+            MentionType::User => ['route' => 'user_overview', 'param' => 'username'],
         };
     }
 }

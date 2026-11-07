@@ -157,6 +157,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this->apId;
     }
 
+    #[\Override]
     public function addVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, EntryCommentVote::class);
@@ -169,6 +170,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this;
     }
 
+    #[\Override]
     public function removeVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, EntryCommentVote::class);

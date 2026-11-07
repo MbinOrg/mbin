@@ -147,6 +147,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $this->apId;
     }
 
+    #[\Override]
     public function addVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, PostCommentVote::class);
@@ -159,6 +160,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $this;
     }
 
+    #[\Override]
     public function removeVote(Vote $votable): self
     {
         Assert::isInstanceOf($votable, PostCommentVote::class);
