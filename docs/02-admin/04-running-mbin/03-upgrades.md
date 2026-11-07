@@ -10,7 +10,7 @@ If you perform a Mbin upgrade (eg. `git pull`), be aware to _always_ execute the
 
 ### Clear Cache
 
-For stale rendered HTML fragments or application cache, run from the Mbin directory as the application user. This clears Symfony's application cache namespace while preserving sessions:
+For stale rendered HTML fragments or application cache, run the following command from the Mbin:
 
 ```bash
 APP_ENV=prod APP_DEBUG=0 php bin/console cache:pool:clear cache.app

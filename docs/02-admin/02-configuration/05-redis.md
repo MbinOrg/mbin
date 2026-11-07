@@ -53,8 +53,8 @@ Since [Mbin v1.11.0](https://github.com/MbinOrg/mbin/releases/tag/v1.11.0), Redi
 save 3600 1 300 100 60 10000
 
 # Optional: enable AOF for greater durability
-appendonly yes
-appendfsync everysec
+#appendonly yes
+#appendfsync everysec
 ```
 
 **AOF (Append Only File) is optional** and logs writes for recovery after a restart. Enable it with `appendonly yes` and `appendfsync everysec`; see [Valkey's persistence documentation](https://valkey.io/topics/persistence/).
