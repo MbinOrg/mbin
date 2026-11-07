@@ -126,7 +126,7 @@ EOF
 fi
 
 echo "Setting up storage directories..."
-mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
+mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs,valkey}
 echo "Configuring OAuth2 keys..."
 openssl genrsa -des3 -out ./storage/oauth/private.pem -passout "pass:$OAUTH_PASS" 4096
 openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem -passin "pass:$OAUTH_PASS"
