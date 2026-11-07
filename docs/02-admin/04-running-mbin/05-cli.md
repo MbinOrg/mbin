@@ -456,6 +456,26 @@ Usage:
 php bin/console mbin:users:remove-marked-for-deletion
 ```
 
+### Clear caches
+
+This command allows you to delete cached data according to the passed parameters.
+
+The following caches can be deleted (separate them by space in the command):
+- `redis`: clear all keys in Redis / Valkey, except the stored Symfony sessions
+- `images`: delete all cached thumbnail image files (files in the `cache` dir of the public file storage)
+
+Usage:
+
+```bash
+php bin/console mbin:cache:clear [-s|--show] [--dry-run] [chaches]
+```
+
+If no `caches` are passed, the default is `redis`.
+
+Options:
+- `-s`|`--show`: show everything what is being deleted
+- `--dry-run`: don't delete anything
+
 ### Messengers-Failed-Remove-All
 
 > [!NOTE]
