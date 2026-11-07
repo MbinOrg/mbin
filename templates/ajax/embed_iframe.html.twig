@@ -1,0 +1,13 @@
+{% set useSrcDoc = embedUrl is same as null and embedHtml is not same as null %}
+
+<iframe
+        allow="fullscreen" credentialless="true" csp="" referrerpolicy="same-origin"
+        sandbox="allow-scripts {% if not useSrcDoc %}allow-same-origin{% endif %}"
+        width="{{ width }}" height="{{ height }}" style="border-width: 1px; box-sizing: border-box; width: 100%; max-width: {{ width }}px; height: {{ height }}px;"
+        title="{{ title }}"
+        {% if useSrcDoc %}
+        srcdoc="{{ embedHtml }}" src="{{ embedUrl }}"
+        {% else %}
+        src="{{ embedUrl ?? orgUrl }}"
+        {% endif %}
+></iframe>

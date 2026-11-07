@@ -50,7 +50,7 @@ class MagazineSubController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'magazine_sub',
                         'attributes' => [

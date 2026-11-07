@@ -9,6 +9,7 @@ use App\Entity\Entry;
 use App\Entity\User;
 use App\Exception\EntityNotFoundException;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApObjectException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -44,6 +45,7 @@ class Page extends ActivityPubContent
      * @throws EntityNotFoundException    if the user could not be found or a sub exception occurred
      * @throws PostingRestrictedException if the target magazine has Magazine::postingRestrictedToMods = true and the actor is a magazine or a user that is not a mod
      * @throws InstanceBannedException    if the actor is from a banned instance
+     * @throws InvalidApObjectException
      * @throws \Exception                 if there was an error
      */
     public function create(array $object, bool $stickyIt = false): Entry
@@ -51,7 +53,11 @@ class Page extends ActivityPubContent
         // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
-            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            if (!($existing instanceof Entry)) {
+                throw new InvalidApObjectException('[Page::create()] expected a Page type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+            }
+            return $existing;
         }
         $actorUrl = $this->activityPubManager->getSingleActorFromAttributedTo($object['attributedTo']);
         if ($this->settingsManager->isBannedInstance($actorUrl)) {
@@ -70,7 +76,11 @@ class Page extends ActivityPubContent
             if ($current) {
                 $this->logger->debug('Page already exists, not creating it');
 
-                return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+                $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+                if (!($existing instanceof Entry)) {
+                    throw new InvalidApObjectException('[Page::create()] expected a Page type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+                }
+                return $existing;
             }
 
             if (\is_string($object['to'])) {

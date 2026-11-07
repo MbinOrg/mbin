@@ -205,7 +205,7 @@ class OAuth2ClientApiTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(204);
 
-        $jsonData = self::getAuthorizationCodeTokenResponse($this->client);
+        $jsonData = self::runAuthorizationCodeFlowToConsentPage($this->client, 'read write', 'oauth2state', expectSuccess: false);
 
         self::assertResponseStatusCodeSame(401);
 
