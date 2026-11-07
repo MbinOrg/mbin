@@ -147,26 +147,26 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $this->apId;
     }
 
-    public function addVote(Vote $vote): self
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostCommentVote::class);
+        Assert::isInstanceOf($votable, PostCommentVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->setComment($this);
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->setComment($this);
         }
 
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostCommentVote::class);
+        Assert::isInstanceOf($votable, PostCommentVote::class);
 
-        if ($this->votes->removeElement($vote)) {
+        if ($this->votes->removeElement($votable)) {
             // set the owning side to null (unless already changed)
-            if ($vote->getComment() === $this) {
-                $vote->setComment(null);
+            if ($votable->getComment() === $this) {
+                $votable->setComment(null);
             }
         }
 

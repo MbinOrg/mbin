@@ -267,13 +267,13 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
-    public function addVote(Vote $vote): self
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostVote::class);
+        Assert::isInstanceOf($votable, PostVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->post = $this;
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->post = $this;
         }
 
         $this->updateScore();
@@ -282,13 +282,13 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostVote::class);
+        Assert::isInstanceOf($votable, PostVote::class);
 
-        if ($this->votes->removeElement($vote)) {
-            if ($vote->getPost() === $this) {
-                $vote->setPost(null);
+        if ($this->votes->removeElement($votable)) {
+            if ($votable->getPost() === $this) {
+                $votable->setPost(null);
             }
         }
 

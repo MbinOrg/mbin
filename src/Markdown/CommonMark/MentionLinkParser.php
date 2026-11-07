@@ -35,23 +35,23 @@ class MentionLinkParser implements InlineParserInterface
         return InlineParserMatch::regex(RegPatterns::MENTION_REGEX);
     }
 
-    public function parse(InlineParserContext $ctx): bool
+    public function parse(InlineParserContext $inlineContext): bool
     {
-        $cursor = $ctx->getCursor();
-        $cursor->advanceBy($ctx->getFullMatchLength());
+        $cursor = $inlineContext->getCursor();
+        $cursor->advanceBy($inlineContext->getFullMatchLength());
 
-        $matches = $ctx->getSubMatches();
+        $matches = $inlineContext->getSubMatches();
         $username = $matches['0'];
         $domain = $matches['1'] ?? $this->settingsManager->get('KBIN_DOMAIN');
 
         $fullUsername = $username.'@'.$domain;
 
-        CommunityLinkParser::removeSurroundingLink($ctx, $username, $domain);
+        CommunityLinkParser::removeSurroundingLink($inlineContext, $username, $domain);
 
         [$type, $data] = $this->resolveType($username, $domain);
 
         if ($data instanceof User && $data->apPublicUrl) {
-            $ctx->getContainer()->appendChild(
+            $inlineContext->getContainer()->appendChild(
                 new ActivityPubMentionLink(
                     $data->apPublicUrl,
                     '@'.$username,
@@ -73,7 +73,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
         };
 
-        $ctx->getContainer()->appendChild(
+        $inlineContext->getContainer()->appendChild(
             $this->generateNode(
                 ...$routeDetails,
                 slug: $slug,

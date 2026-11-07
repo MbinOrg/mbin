@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\CreatedAtTrait;
+use App\Repository\MagazineSubscriptionRepository;
+use App\Repository\MagazineSubscriptionRequestRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -14,7 +16,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
-#[Entity(repositoryClass: MagazineSubscription::class)]
+#[Entity(repositoryClass: MagazineSubscriptionRequestRepository::class)]
 #[Table]
 #[UniqueConstraint(name: 'magazine_subscription_requests_idx', columns: ['user_id', 'magazine_id'])]
 class MagazineSubscriptionRequest

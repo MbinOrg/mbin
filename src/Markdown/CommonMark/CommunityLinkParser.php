@@ -29,12 +29,12 @@ class CommunityLinkParser implements InlineParserInterface
         return InlineParserMatch::regex(RegPatterns::COMMUNITY_REGEX);
     }
 
-    public function parse(InlineParserContext $ctx): bool
+    public function parse(InlineParserContext $inlineContext): bool
     {
-        $cursor = $ctx->getCursor();
-        $cursor->advanceBy($ctx->getFullMatchLength());
+        $cursor = $inlineContext->getCursor();
+        $cursor->advanceBy($inlineContext->getFullMatchLength());
 
-        $matches = $ctx->getSubMatches();
+        $matches = $inlineContext->getSubMatches();
         $handle = $matches['0'];
         $domain = $matches['1'] ?? $this->settingsManager->get('KBIN_DOMAIN');
 
@@ -42,10 +42,10 @@ class CommunityLinkParser implements InlineParserInterface
         $isRemote = $this->isRemoteCommunity($domain);
         $magazine = $this->magazineRepository->findOneByName($isRemote ? $fullHandle : $handle);
 
-        $this->removeSurroundingLink($ctx, $handle, $domain);
+        $this->removeSurroundingLink($inlineContext, $handle, $domain);
 
         if ($magazine) {
-            $ctx->getContainer()->appendChild(
+            $inlineContext->getContainer()->appendChild(
                 new CommunityLink(
                     $this->urlGenerator->generate('front_magazine', ['name' => $magazine->name]),
                     '!'.$handle,
@@ -59,7 +59,7 @@ class CommunityLinkParser implements InlineParserInterface
         }
 
         if ($isRemote) {
-            $ctx->getContainer()->appendChild(
+            $inlineContext->getContainer()->appendChild(
                 new ActorSearchLink(
                     $this->urlGenerator->generate('search', ['search[q]' => $fullHandle], UrlGeneratorInterface::ABSOLUTE_URL),
                     '!'.$fullHandle,
@@ -71,7 +71,7 @@ class CommunityLinkParser implements InlineParserInterface
         }
 
         // unable to resolve a local '!' link so don't even try.
-        $ctx->getContainer()->appendChild(new UnresolvableLink('!'.$handle));
+        $inlineContext->getContainer()->appendChild(new UnresolvableLink('!'.$handle));
 
         return true;
     }

@@ -9,6 +9,7 @@ use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\MonitoringPerformanceTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
@@ -98,9 +99,9 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return Collection<MonitoringQuery>
+     * @return ReadableCollection<MonitoringQuery>
      */
-    public function getQueriesSorted(string $sortBy = 'durationMilliseconds', string $sortDirection = 'DESC'): Collection
+    public function getQueriesSorted(string $sortBy = 'durationMilliseconds', \SortDirection $sortDirection = \SortDirection::Descending): ReadableCollection
     {
         $criteria = new Criteria(orderings: [$sortBy => $sortDirection]);
 
@@ -159,9 +160,9 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return Collection<MonitoringTwigRender>
+     * @return ReadableCollection<MonitoringTwigRender>
      */
-    public function getRootTwigRenders(): Collection
+    public function getRootTwigRenders(): ReadableCollection
     {
         $criteria = new Criteria(expression: Criteria::expr()->isNull('parent'));
 
@@ -169,9 +170,9 @@ class MonitoringExecutionContext
     }
 
     /**
-     * @return Collection<MonitoringCurlRequest>
+     * @return ReadableCollection<MonitoringCurlRequest>
      */
-    public function getRequestsSorted(string $sortBy = 'durationMilliseconds', string $sortDirection = 'DESC'): Collection
+    public function getRequestsSorted(string $sortBy = 'durationMilliseconds', \SortDirection $sortDirection = \SortDirection::Descending): ReadableCollection
     {
         $criteria = new Criteria(orderings: [$sortBy => $sortDirection]);
 

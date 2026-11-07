@@ -274,13 +274,13 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
-    public function addVote(Vote $vote): self
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryVote::class);
+        Assert::isInstanceOf($votable, EntryVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->entry = $this;
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->entry = $this;
         }
 
         $this->updateScore();
@@ -296,13 +296,13 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryVote::class);
+        Assert::isInstanceOf($votable, EntryVote::class);
 
-        if ($this->votes->removeElement($vote)) {
-            if ($vote->entry === $this) {
-                $vote->entry = null;
+        if ($this->votes->removeElement($votable)) {
+            if ($votable->entry === $this) {
+                $votable->entry = null;
             }
         }
 
