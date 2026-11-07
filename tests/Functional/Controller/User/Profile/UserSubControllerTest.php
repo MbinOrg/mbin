@@ -49,4 +49,19 @@ class UserSubControllerTest extends WebTestCase
         $this->assertSelectorTextContains('#main .pills .active', 'Domains');
         $this->assertSelectorTextContains('#main', 'kbin.pub');
     }
+
+    public function testUserCanSeeSubscribedHashtags()
+    {
+        $this->client->loginUser($user = $this->getUserByUsername('JaneDoe'));
+
+        $entry = $this->getEntryByTitle('testUserCanSeeSubscribedHashtags', body: 'body with #sometag');
+
+        $this->tagManager->subscribe($user, $this->tagRepository->findOneBy(['tag' => 'sometag']));
+
+        $crawler = $this->client->request('GET', '/settings/subscriptions/hashtags');
+        $this->client->click($crawler->filter('#main .pills')->selectLink('Hashtags')->link());
+
+        $this->assertSelectorTextContains('#main .pills .active', 'Hashtags');
+        $this->assertSelectorTextContains('#main', 'sometag');
+    }
 }

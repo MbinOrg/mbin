@@ -281,6 +281,27 @@ class EntryFrontControllerTest extends WebTestCase
         $this->assertStringContainsString('{"html":', $this->client->getResponse()->getContent());
     }
 
+    public function testHashtagBlock(): void
+    {
+        $user = $this->getUserByUsername('JaneDoe');
+        $otherUser = $this->getUserByUsername('JohnDoe');
+        $magazine = $this->getMagazineByName('testHashtagBlock', $otherUser);
+        $tag = $this->getHashtag('test');
+
+        $this->createEntry('entry 1', $magazine, $user, body: '#test 1');
+        $this->createEntry('entry 2', $magazine, $otherUser, body: '#test 2');
+
+        $this->tagManager->block($user, $tag);
+
+        $this->client->loginUser($user);
+        $this->client->request('GET', '/m/testHashtagBlock/threads');
+
+        $this->assertAnySelectorTextContains('.entry header', 'entry 1');
+        $this->assertAnySelectorTextContains('.entry .meta', 'JaneDoe');
+        $this->assertAnySelectorTextNotContains('.entry header', 'entry 2');
+        $this->assertAnySelectorTextNotContains('.entry .meta', 'JohnDoe');
+    }
+
     public function testCustomDefaultSort(): void
     {
         $older = $this->getEntryByTitle('Older entry');
