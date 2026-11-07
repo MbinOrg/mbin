@@ -43,7 +43,7 @@ class EntryCommentDeletedNotification extends Notification
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
         $message = \sprintf('%s %s - %s', $trans->trans('comment'), $this->entryComment->getShortTitle(), $this->entryComment->isTrashed() ? $trans->trans('removed') : $trans->trans('deleted'));
-        $slash = $this->entryComment->user->avatar && !str_starts_with('/', $this->entryComment->user->avatar->filePath) ? '/' : '';
+        $slash = $this->entryComment->user->avatar && !str_starts_with($this->entryComment->user->avatar->filePath, '/') ? '/' : '';
         $avatarUrl = $this->entryComment->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->entryComment->user->avatar->filePath : null;
         $url = $urlGenerator->generate('entry_comment_view', [
             'entry_id' => $this->entryComment->entry->getId(),

@@ -18,6 +18,7 @@ use App\Schema\Errors\NotFoundErrorSchema;
 use App\Schema\Errors\TooManyRequestsErrorSchema;
 use App\Schema\Errors\UnauthorizedErrorSchema;
 use App\Schema\PaginationSchema;
+use App\Utils\ArrayUtils;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -164,7 +165,7 @@ class BookmarkListApiController extends BaseApi
         }
         $pagerfanta = $this->bookmarkRepository->findPopulatedByList($bookmarkList, $criteria, $perPage);
         $objects = $pagerfanta->getCurrentPageResults();
-        $items = array_map(fn (ContentInterface $item) => $this->serializeContentInterface($item), $objects);
+        $items = ArrayUtils::map($objects, fn (ContentInterface $item): array => $this->serializeContentInterface($item));
         $result = $this->serializePaginated($items, $pagerfanta);
 
         return new JsonResponse($result, status: 200, headers: $headers);

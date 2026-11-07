@@ -8,6 +8,7 @@ use App\Entity\Notification;
 use App\Entity\Post;
 use App\Event\Post\PostHasBeenSeenEvent;
 use App\Repository\NotificationRepository;
+use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -43,11 +44,11 @@ class PostShowSubscriber implements EventSubscriberInterface
 
         $notifications = $this->repository->findUnreadPostNotifications($this->security->getUser(), $post);
 
-        if (!$notifications) {
+        if (!ArrayUtils::count($notifications)) {
             return;
         }
 
-        array_map(fn ($notification) => $notification->status = Notification::STATUS_READ, $notifications);
+        ArrayUtils::foreach($notifications, fn ($notification) => $notification->status = Notification::STATUS_READ);
 
         $this->entityManager->flush();
     }

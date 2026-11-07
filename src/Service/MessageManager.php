@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 class MessageManager
 {
@@ -141,9 +142,16 @@ class MessageManager
         }
 
         $participants[] = $author;
+        foreach ($participants as $participant) {
+            if (!($participant instanceof User)) {
+                throw new LogicException('MessageManager::createMessage() got some non-users as participants: '.implode(', ', array_map(fn ($participant) => $participant->getApId(), $participants)));
+            }
+        }
+
         $message = new MessageDto();
         $message->body = $this->activityPubManager->extractMarkdownContent($object);
         $message->apId = $object['id'] ?? null;
+
         $threads = $this->messageThreadRepository->findByParticipants($participants);
         if (\sizeof($threads) > 0) {
             return $this->toMessage($message, $threads[0], $author);
