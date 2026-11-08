@@ -21,6 +21,8 @@ Please, follow the [linting guide](02-linting.md).
 
 Comply with **our version** of [Collective Code Construction Contract (C4)](03-C4.md) specification. Read this document to understand how we work together and how the development process works at Mbin.
 
+You are also required to comply with the projects [AI policy](03-ai-policy.md). It describes to what degree AI usage is allowed and states the expected responsibilities.
+
 ## Translations
 
 Translations are done in [Weblate](https://hosted.weblate.org/projects/mbin/).
