@@ -46,6 +46,7 @@ This requirement extends through the entire review process. Contributors must re
 
 AI tools hallucinate package names, produce subtly broken access controls, and may reproduce vulnerable patterns from their training data. Contributors must manually verify all dependencies, access control logic, authentication patterns, and security implications in AI-generated code before submitting.
 
+Use of AI for finding security issues is **not** discouraged. \
 AI-generated security reports must be independently verified before submission; unverified reports might be closed without response.
 
 ### No Autonomous Agent Submissions
