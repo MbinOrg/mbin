@@ -49,7 +49,7 @@ class DomainSubController extends AbstractController
         return new JsonResponse(
             [
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'domain_sub',
                         'attributes' => [

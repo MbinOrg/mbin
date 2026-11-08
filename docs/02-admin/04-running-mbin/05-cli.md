@@ -548,3 +548,12 @@ Usage:
 ```bash
 php bin/console mbin:update:local-domain
 ```
+
+### Upgrade OAuth clients
+
+This command needs to be run whenever a Mbin update changes the internal OAuth implementation.
+
+Usage:
+```bash
+php bin/console mbin:oauth:clients:upgrade
+```

@@ -19,6 +19,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Constraints\Image;
@@ -38,6 +39,7 @@ class ImageManager implements ImageManagerInterface
 
     public function __construct(
         private readonly string $storageUrl,
+        #[Target('publicUploadsFilesystem')]
         private readonly FilesystemOperator $publicUploadsFilesystem,
         private readonly MimeTypesInterface $mimeTypeGuesser,
         private readonly ValidatorInterface $validator,
@@ -54,7 +56,11 @@ class ImageManager implements ImageManagerInterface
 
     public static function isImageUrl(string $url): bool
     {
-        $urlExt = mb_strtolower(pathinfo($url, PATHINFO_EXTENSION));
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (!$urlPath) {
+            return false;
+        }
+        $urlExt = mb_strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         $types = array_map(fn ($type) => str_replace('image/', '', $type), self::IMAGE_MIMETYPES);
 

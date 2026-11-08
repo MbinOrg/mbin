@@ -8,6 +8,7 @@ league_oauth2_server:
         auth_code_ttl: PT10M
         enable_client_credentials_grant: true
         enable_password_grant: false
+        enable_implicit_grant: true
         enable_refresh_token_grant: true
         enable_auth_code_grant: true
         enable_device_code_grant: false

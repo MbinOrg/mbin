@@ -32,7 +32,7 @@ class PostCommentRootUpdateCommand extends Command
             ->where('c.parent IS NOT NULL')
             ->andWhere('c.root IS NULL')
             ->andWhere('c.updateMark = false')
-            ->orderBy('c.id', 'ASC')
+            ->orderBy('c.id', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
 

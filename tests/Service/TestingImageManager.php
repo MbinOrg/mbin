@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -27,6 +28,7 @@ class TestingImageManager implements ImageManagerInterface
 
     public function __construct(
         string $storageUrl,
+        #[Target('publicUploadsFilesystem')]
         FilesystemOperator $publicUploadsFilesystem,
         MimeTypesInterface $mimeTypeGuesser,
         ValidatorInterface $validator,

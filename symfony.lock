@@ -356,9 +356,6 @@
     "psr/log": {
         "version": "1.1.4"
     },
-    "ralouphie/getallheaders": {
-        "version": "3.0.3"
-    },
     "scheb/2fa-bundle": {
         "version": "6.9",
         "recipe": {

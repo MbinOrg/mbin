@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service\ActivityPub;
 
 use App\Entity\Contracts\ActivityPubActorInterface;
-use phpseclib3\Crypt\RSA;
+use phpseclib4\Crypt\RSA;
 
 class KeysGenerator
 {

@@ -27,7 +27,7 @@ class SettingsManagerTest extends WebTestCase
     {
         SettingsManager::resetDto();
 
-        // Set max images bytes (as if its coming from the .env)
+        // Set max images bytes (as if it's coming from the .env)
         $setMaxImagesBytes = 1500000;
 
         $settingsRepository = $this->createStub(SettingsRepository::class);
@@ -47,6 +47,7 @@ class SettingsManagerTest extends WebTestCase
             kernel: $kernel,
             instanceRepository: $instanceRepository,
             kbinDomain: 'domain.tld',
+            kbinStorageUrl: 'http://domain.tld/media',
             kbinTitle: 'title',
             kbinMetaTitle: 'meta title',
             kbinMetaDescription: 'meta description',
@@ -79,7 +80,7 @@ class SettingsManagerTest extends WebTestCase
     {
         SettingsManager::resetDto();
 
-        // Set max images bytes (as if its coming from the .env)
+        // Set max images bytes (as if it's coming from the .env)
         $setMaxImagesBytes = 1572864;
 
         $settingsRepository = $this->createStub(SettingsRepository::class);
@@ -99,6 +100,7 @@ class SettingsManagerTest extends WebTestCase
             kernel: $kernel,
             instanceRepository: $instanceRepository,
             kbinDomain: 'domain.tld',
+            kbinStorageUrl: 'http://domain.tld/media',
             kbinTitle: 'title',
             kbinMetaTitle: 'meta title',
             kbinMetaDescription: 'meta description',
