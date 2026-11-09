@@ -24,6 +24,8 @@ class UserRetrieveApiTest extends WebTestCase
         'homepage',
         'frontDefaultSort',
         'commentDefaultSort',
+        'showFollowingBoosts',
+        'showCommentsOfSubscribedHashtags',
         'featuredMagazines',
         'preferredLanguages',
         'customCss',

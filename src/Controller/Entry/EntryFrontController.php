@@ -217,6 +217,7 @@ class EntryFrontController extends AbstractController
         }
 
         $criteria->includeBoosts = Criteria::SORT_NEW === $criteria->sortOption && $user->showBoostsOfFollowing;
+        $criteria->includeCommentsWithSubscribedHashtag = $user->showCommentsOfSubscribedHashtags;
 
         if (0 < \count($user->preferredLanguages)) {
             $criteria->languages = $user->preferredLanguages;

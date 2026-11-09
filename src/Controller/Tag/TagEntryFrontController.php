@@ -14,6 +14,7 @@ use Pagerfanta\PagerfantaInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TagEntryFrontController extends AbstractController
 {
@@ -27,17 +28,25 @@ class TagEntryFrontController extends AbstractController
 
     public function __invoke(?string $name, ?string $sortBy, ?string $time, ?string $type, Request $request): Response
     {
+        $tag = $this->tagManager->transliterate(strtolower($name));
+
+        $hashtag = $this->tagRepository->findOneBy(['tag' => $tag]);
+        if (null === $hashtag) {
+            throw new NotFoundHttpException();
+        }
+
         $criteria = new EntryPageView($this->getPageNb($request), $this->security);
         $criteria->showSortOption($criteria->resolveSort($sortBy))
             ->setTime($criteria->resolveTime($time))
             ->setType($criteria->resolveType($type))
-            ->setTag($this->tagManager->transliterate(strtolower($name)));
+            ->setTag($tag);
         $method = $criteria->resolveSort($sortBy);
         $listing = $this->$method($criteria);
 
         return $this->render(
             'tag/front.html.twig',
             [
+                'hashtag' => $hashtag,
                 'tag' => $name,
                 'entries' => $listing,
                 'counts' => $this->tagRepository->getCounts($name),

@@ -12,11 +12,9 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity]
-#[Table]
 #[UniqueConstraint(name: 'domain_block_idx', columns: ['user_id', 'domain_id'])]
 #[Cache(usage: 'NONSTRICT_READ_WRITE')]
 class DomainBlock
@@ -27,7 +25,7 @@ class DomainBlock
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'blockedDomains')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    public ?User $user;
+    public User $user;
     #[ManyToOne(targetEntity: Domain::class)]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public ?Domain $domain;
