@@ -28,12 +28,13 @@ readonly class EmbedService
         private WwwHttpClientFactory $httpClientFactory,
         private UrlAccessChecker $urlAccessChecker,
         private TranslatorInterface $translator,
+        private string $kernelEnvironment,
     ) {
     }
 
     public function fetch(string $url): EmbedDto
     {
-        if (!str_starts_with($url, 'https://')) {
+        if (!(str_starts_with($url, 'https://') || ('dev' === $this->kernelEnvironment && str_starts_with($url, 'http://')))) {
             if (str_contains($url, '://')) {
                 // only allow https protocol
                 return $this->createFallbackEmbed($url);

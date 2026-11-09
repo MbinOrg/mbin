@@ -119,6 +119,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         $this->children = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
 
         if ($parent) {
             $this->root = $parent->root ?? $parent;
@@ -320,7 +321,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
+            ->filter(fn (PostComment $comment) => $comment->canShow($loggedInUser, $filterRealm, $postCommentCriteria))
             ->toArray();
 
         // id sort
@@ -348,5 +349,30 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         }
 
         return $children;
+    }
+
+    public function canShow(?User $user, string $filterRealm, MbinCriteria $criteria): bool
+    {
+        if ($user === $this->user) {
+            return true;
+        }
+
+        if ($criteria->moderated && null !== $user
+            && ($user->isAdmin() || $user->isModerator() || $this->magazine->userIsModerator($user))) {
+            return true;
+        }
+
+        if ($this->containsBannedHashtags()) {
+            return false;
+        }
+
+        if ($user) {
+            $blockedInstances = $user->blockedInstances->map(fn ($instance) => $instance->instanceDomain);
+            return !$this->containsFilteredWords($user, $filterRealm)
+                && !$blockedInstances->contains($this->user->apDomain)
+                && !$blockedInstances->contains($this->magazine->apDomain);
+        }
+
+        return true;
     }
 }
