@@ -25,6 +25,7 @@ use App\Exception\InvalidWebfingerException;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\MagazineFactory;
 use App\Factory\UserFactory;
+use App\Factory\WwwHttpClientFactory;
 use App\Message\ActivityPub\Inbox\CreateMessage;
 use App\Message\ActivityPub\UpdateActorMessage;
 use App\Message\DeleteImageMessage;
@@ -51,9 +52,20 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ActivityPubManager
 {
+
+    public const string AP_OBJECT_KEY_USER_CONTENT_CSS = '_fedi_custom_css_content';
+
+    private readonly HttpClientInterface $generalHttpClient;
+
     public function __construct(
         private readonly ApActivityRepository $activityRepository,
         private readonly UserRepository $userRepository,
@@ -73,14 +85,17 @@ class ActivityPubManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
-       #[Target('apUpdateActorLimiter')]
+        #[Target('apUpdateActorLimiter')]
         private readonly RateLimiterFactoryInterface $apUpdateActorLimiter,
         private readonly EntryRepository $entryRepository,
         private readonly EntryManager $entryManager,
         private readonly RemoteInstanceManager $remoteInstanceManager,
         private readonly InstanceRepository $instanceRepository,
         private readonly CacheInterface $cache,
+        private readonly CustomCssService $cssService,
+        WwwHttpClientFactory $httpClientFactory,
     ) {
+        $this->generalHttpClient = $httpClientFactory->getClient();
     }
 
     public function getActorProfileId(ActivityPubActorInterface $actor): string
@@ -468,6 +483,15 @@ class ActivityPubManager
                 $user->cover = null;
             }
 
+            if(isset($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS]) && $actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS] !== '') {
+                [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS], $user);
+                $user->customPublicCss = $css;
+                $user->customPublicCssIntegrity = $integrity;
+            } elseif(null !== $user->customPublicCss) {
+                $user->customPublicCss = null;
+                $user->customPublicCssIntegrity = null;
+            }
+
             if (isset($actor['publicKey']['publicKeyPem']) && $user->publicKey !== $actor['publicKey']['publicKeyPem']) {
                 if (null !== $user->publicKey) {
                     // only log the message if there already was a public key. When initially created the actors do not get one
@@ -506,6 +530,37 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    private function processCustomCss(string $css, User $user): array
+    {
+        try {
+            if(str_starts_with($css, 'https://')) {
+                $cssResp = $this->generalHttpClient->request('GET', $css);
+                if($cssResp->getStatusCode() !== 200) {
+                    $this->logger->warning('[ActivityPubManager::processCustomCss()] remote user object contained custom CSS as URL which could not be fetched: property = {key}, resp code = {code}', [
+                        'key' => self::AP_OBJECT_KEY_USER_CONTENT_CSS,
+                        'code' => $cssResp->getStatusCode(),
+                    ]);
+                    return [null, null];
+                }
+                $cssContent = $cssResp->getContent();
+
+                $this->cssService->validatePublicCss($cssContent, $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+
+                $integrity = 'sha384-'.base64_encode(hash('sha384', $cssContent, true));
+                return [$css, $integrity];
+            } else {
+                $css = $this->cssService->validatePublicCss($css, $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+                return [$css, null];
+            }
+        } catch (\Exception|TransportExceptionInterface|HttpExceptionInterface $e) {
+            $this->logger->info('[ActivityPubManager::processCustomCss()] remote user object contained invalid: property = {key}, error = {msg}', [
+                'key' => self::AP_OBJECT_KEY_USER_CONTENT_CSS,
+                'msg' => $e->getMessage(),
+            ]);
+            return [null, null];
+        }
     }
 
     public function handleImages(array|string $attachment): ?Image

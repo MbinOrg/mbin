@@ -9,8 +9,12 @@ use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
+use App\Service\ActivityPubManager;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Group(name: 'ActivityPub')]
 #[Group(name: 'NonThreadSafe')]
@@ -196,6 +200,65 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
         self::assertNull($user->title);
+    }
+
+    public function testUpdateRemoteUserCssInline(): void
+    {
+        // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
+
+        $css = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
+
+        $object = $this->updateUser['object'];
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $css;
+        $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
+        $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
+        self::assertNotNull($user);
+        self::assertEquals($css, $user->customPublicCss);
+        self::assertNull($user->customPublicCssIntegrity);
+
+        $object = $this->updateUser['object'];
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS]);
+        $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
+        $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
+        self::assertNotNull($user);
+        self::assertNull($user->customPublicCss);
+        self::assertNull($user->customPublicCssIntegrity);
+    }
+
+    public function testUpdateRemoteUserCssUrl(): void
+    {
+        // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
+
+        $css = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
+        $cssUrl = $this->urlGenerator->generate('custom_style', ['userNames' => $this->remoteUser->username, 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->remoteUser->customPublicCss = $css;
+
+        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($cssUrl, $css) {
+            if($url === $cssUrl) {
+                return new MockResponse($css);
+            }
+            return null;
+        });
+
+        $object = $this->updateUser['object'];
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $cssUrl;
+        $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
+        $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
+        self::assertNotNull($user);
+        self::assertEquals($cssUrl, $user->customPublicCss);
+        self::assertEquals('sha384-xDnJPVKqEcC1q8NbNn9jd3S4RiG1/jy+Y4gf8Htnxd0fGREnZ0pEsXREvWfM2KYm', $user->customPublicCssIntegrity);
+
+        $object = $this->updateUser['object'];
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS]);
+        $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
+        $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
+        self::assertNotNull($user);
+        self::assertNull($user->customPublicCss);
+        self::assertNull($user->customPublicCssIntegrity);
     }
 
     public function testUpdateRemoteMagazine(): void

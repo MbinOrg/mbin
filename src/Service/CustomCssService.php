@@ -10,19 +10,29 @@ use Sabberworm\CSS\CSSList\CSSList;
 use Sabberworm\CSS\CSSList\Document;
 use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\Position\Positionable;
+use Sabberworm\CSS\Property\Declaration;
 use Sabberworm\CSS\Property\Selector;
 use Sabberworm\CSS\Property\Selector\CompoundSelector;
 use Sabberworm\CSS\RuleSet\AtRuleSet;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\RuleSet\RuleSet;
 use Sabberworm\CSS\Settings;
+use Sabberworm\CSS\Value\RuleValueList;
 use Sabberworm\CSS\Value\URL;
+use Sabberworm\CSS\Value\Value;
 use Sabberworm\CSS\Value\ValueList;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use function PHPUnit\Framework\stringStartsWith;
 
 readonly class CustomCssService
 {
+
+    /** do not check the selectors */
+    public const int ENFORCE_SELECTOR_MODE_NONE = 0;
+    /** check the selectors if they start with a valid fediCustomCss class */
+    public const int ENFORCE_SELECTOR_MODE_VERIFY = 1;
+    /** check the selectors if they start with a valid fediCustomCss and add the classes if the selector has none */
+    public const int ENFORCE_SELECTOR_MODE_ADD = 2;
 
     public const string SELECTOR_MARKER_GENERAL = '.fediCustomCss';
     public const string SELECTOR_MARKER_SOFTWARE = '.fediCustomCss-software-mbin';
@@ -39,26 +49,16 @@ readonly class CustomCssService
 
     public function createConstraintSelector(User $user): string
     {
-        $userId = $this->personFactory->getActivityPubId($user);
-        // convert base64 encoding to valid CSS identifier (https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/ident)
-        $userId = base64_encode($userId);
-        $userId = str_replace('+', '-', $userId);
-        $userId = str_replace('/', '_', $userId);
-        $userId = str_replace('=', '', $userId);
-
-        return self::SELECTOR_MARKER_GENERAL.self::SELECTOR_MARKER_SOFTWARE.self::SELECTOR_MARKER_USER.$userId;
+        return self::SELECTOR_MARKER_GENERAL.self::SELECTOR_MARKER_SOFTWARE.$this->userMarker($user);
     }
 
     public function createConstraintStyleClass(User $user): string {
         return str_replace('.', ' ', $this->createConstraintSelector($user));
     }
 
-    public function validatePublicCss(string $src, ?User $user, bool $addSelectorConstraints): string {
+    public function validatePublicCss(string $src, ?User $user, int $selectorEnforcementMode): string {
         if($src === '') {
             throw new \InvalidArgumentException('empty CSS src is invalid');
-        }
-        if($addSelectorConstraints && $user === null) {
-            throw new \InvalidArgumentException('if $addSelectorConstraints a User mit be supplied');
         }
 
         if(strlen($src) > self::CSS_MAX_SIZE) {
@@ -72,8 +72,21 @@ readonly class CustomCssService
             $parsed->setComments([]);
             $this->validateCssList($parsed);
 
-            if($user !== null) {
-                $this->enforceSelectorConstraints($parsed, $user, $addSelectorConstraints);
+            switch ($selectorEnforcementMode) {
+                case self::ENFORCE_SELECTOR_MODE_NONE:
+                    break;
+                case self::ENFORCE_SELECTOR_MODE_VERIFY:
+                    if($user === null) {
+                        throw new \InvalidArgumentException('selector enforcement requires a User');
+                    }
+                    $this->enforceSelectorConstraints($parsed, $user, false);
+                    break;
+                case self::ENFORCE_SELECTOR_MODE_ADD:
+                    if($user === null) {
+                        throw new \InvalidArgumentException('selector enforcement requires a User');
+                    }
+                    $this->enforceSelectorConstraints($parsed, $user, true);
+                    break;
             }
 
             return $parsed->render();
@@ -119,17 +132,20 @@ readonly class CustomCssService
         }
 
         foreach ($css->getDeclarations() as $declaration) {
-            $value = $declaration->getValue();
-            if($value instanceof URL) {
-                if(!str_starts_with($value->getURL()->getString(), 'data:image/')) {
-                    throw new BadRequestHttpException('The CSS contained rules which are not allowed at line ' . $declaration->getLineNumber());
-                }
+            $this->validateCssRuleValue($declaration, $declaration->getValue());
+        }
+    }
+
+    private function validateCssRuleValue(Declaration $declaration, Value|string|null $value): void
+    {
+        if($value instanceof ValueList) {
+            foreach ($value->getListComponents() as $component) {
+                $this->validateCssRuleValue($declaration, $component);
             }
-            if($value instanceof ValueList) {
-                foreach ($value->getListComponents() as $component){
-                    if($component instanceof URL) {
-                        throw new BadRequestHttpException('The CSS contained rules which are not allowed at line '.$declaration->getLineNumber());
-                    }
+        } else {
+            if ($value instanceof URL) {
+                if (!str_starts_with($value->getURL()->getString(), 'data:image/')) {
+                    throw new BadRequestHttpException('The CSS contained rules which are not allowed at line ' . $declaration->getLineNumber());
                 }
             }
         }
@@ -143,16 +159,21 @@ readonly class CustomCssService
             foreach ($block->getSelectors() as $selector) {
                 $components = $selector->getComponents();
 
-                if(count($components) >= 1 && $components[0]->getValue() === $constraintSelector) {
+                if(count($components) >= 1 && (
+                    $components[0]->getValue() === $constraintSelector
+                    || $this->checkFediSelector($components[0]->getValue(), $user))
+                ) {
                     continue;
                 }
 
+                // check if a partial fedi selector exists -> throw exception as it is malformed
                 foreach ($components as $component) {
                     if(str_contains($component->getValue(), 'fediCustomCss')) {
                         throw new BadRequestHttpException('The CSS has a block with invalid fediCustomCss selector at line '.$block->getLineNumber());
                     }
                 }
 
+                // no fedi selector exists at all -> add or throw
                 if($addMissingClasses) {
                     array_unshift($components, new CompoundSelector($constraintSelector));
                     $selector->setComponents($components);
@@ -161,5 +182,40 @@ readonly class CustomCssService
                 }
             }
         }
+    }
+
+    private function checkFediSelector(string $selector, User $user): bool
+    {
+        // $parts = ['', '.fediCustomCss', software_marker, user_marker]
+        $parts = explode('.', $selector);
+        if(count($parts) < 4) {
+            return false;
+        }
+
+        if($parts[0] !== '' || ('.'.$parts[1]) !== self::SELECTOR_MARKER_GENERAL) {
+            return false;
+        }
+
+        if(preg_match('/^fediCustomCss-software-[a-z0-9]{3,64}$/', $parts[2]) !== 1) {
+            return false;
+        }
+
+        if(('.'.$parts[3]) !== $this->userMarker($user)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function userMarker(User $user): string
+    {
+        $userId = $this->personFactory->getActivityPubId($user);
+        // convert base64 encoding to valid CSS identifier (https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/ident)
+        $userId = base64_encode($userId);
+        $userId = str_replace('+', '-', $userId);
+        $userId = str_replace('/', '_', $userId);
+        $userId = str_replace('=', '', $userId);
+
+        return self::SELECTOR_MARKER_USER.$userId;
     }
 }

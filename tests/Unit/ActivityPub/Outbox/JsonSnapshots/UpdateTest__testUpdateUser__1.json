@@ -29,6 +29,7 @@
         "following": "https://kbin.test/u/user/following",
         "followers": "https://kbin.test/u/user/followers",
         "publicKey": "SCRUBBED_KEY",
+        "_fedi_custom_css_content": "https://kbin.test/custom-style?userNames=user&includeSiteStyles=false",
         "endpoints": {
             "sharedInbox": "https://kbin.test/f/inbox"
         }

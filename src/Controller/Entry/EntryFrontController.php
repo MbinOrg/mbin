@@ -15,6 +15,7 @@ use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
+use App\Utils\ArrayUtils;
 use App\Utils\SqlHelpers;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -246,10 +247,9 @@ class EntryFrontController extends AbstractController
 
         $cssUsers = [];
         foreach ($data['results'] as $subject) {
-            $cssUsers[] = $subject->user->username;
+            $cssUsers[] = $subject->user;
         }
-        $cssUsers = array_unique($cssUsers);
-        $baseData['cssUserNames'] = implode(',', $cssUsers);
+        $baseData['contentAuthors'] = ArrayUtils::uniqueBy($cssUsers, fn(User $user) => $user->getId());
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([

@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
+use App\Service\ActivityPubManager;
 use App\Service\ImageManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -90,6 +91,14 @@ class PersonFactory
                 'url' => $this->imageManager->getUrl($user->avatar),
                 // @todo media url
             ];
+        }
+
+        if ($user->customPublicCss) {
+            $person[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $this->urlGenerator->generate(
+                'custom_style',
+                ['userNames' => $user->username, 'includeSiteStyles' => 'false'],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
         }
 
         return $person;

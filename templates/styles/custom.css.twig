@@ -3,7 +3,7 @@
     since the next thing you fight should be the browser's css parser
 #}
 
-{% if includeMbinStyles is same as true %}
+{% if includeSiteStyles is same as true %}
 /* site dynamic styles */
 {{ include('components/_details_label.css.twig') }}
 {% endif %}
@@ -15,14 +15,14 @@
 {% endif %}
 {% endif %}
 
-{% if app.user is defined and app.user and app.user.customCss %}
-/* user styles */
-{{ app.user.customCss|raw }}
-{% endif %}
-
 {% for cssUser in cssUsers %}
 {% if cssUser.customPublicCss is not same as null %}
-/* user public styles */
+/* {{ cssUser.username }} public styles */
 {{ cssUser.customPublicCss|raw }}
 {% endif %}
 {% endfor %}
+
+{% if includeSiteStyles is same as true and app.user is defined and app.user and app.user.customCss %}
+/* user styles */
+{{ app.user.customCss|raw }}
+{% endif %}

@@ -22,6 +22,8 @@ class CustomStyleController extends AbstractController
 
     public function __invoke(Request $request, MagazineRepository $repository): Response
     {
+        $includeSiteStyles = $request->query->get('includeSiteStyles', 'true') === 'true';
+
         $magazineName = $request->query->get('magazine');
         $magazine = $repository->findOneByName($magazineName);
 
@@ -29,19 +31,25 @@ class CustomStyleController extends AbstractController
         $users = $this->findUsers($userNames);
 
         $css = $this->renderView('styles/custom.css.twig', [
-            'includeMbinStyles' => true,
+            'includeSiteStyles' => $includeSiteStyles,
             'magazine' => $magazine,
             'cssUsers' => $users,
         ]);
 
-        return $this->createResponse($request, $css);
+        return $this->createResponse($request, $css, $includeSiteStyles);
     }
 
-    private function createResponse(Request $request, ?string $customCss): Response
+    private function createResponse(Request $request, ?string $customCss, bool $private): Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/css');
-        $response->setPrivate();
+
+        if($private) {
+            $response->setPrivate();
+        } else {
+            $response->setPublic();
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        }
 
         if (!empty($customCss)) {
             $response->setContent($customCss);

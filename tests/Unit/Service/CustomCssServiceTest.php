@@ -17,20 +17,20 @@ class CustomCssServiceTest extends TestCase
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@charset "UTF-8"', null, false));
+            fn() => $service->validatePublicCss('@charset "UTF-8"', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@import "../style.css"', null, false));
+            fn() => $service->validatePublicCss('@import "../style.css"', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@keyframes kf {}', null, false));
+            fn() => $service->validatePublicCss('@keyframes kf {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@somerule r {}', null, false));
+            fn() => $service->validatePublicCss('@somerule r {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
     }
 
     public function testDetectInvalidSyntax(): void {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('html {color: blue} .fail {invalid;}', null, false));
+            fn() => $service->validatePublicCss('html {color: blue} .fail {invalid;}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
     }
 
     public function testSimplifiesCss(): void {
@@ -41,39 +41,45 @@ class CustomCssServiceTest extends TestCase
                 prop2: rgb(0, 0, 0);
         }
         
-        h1 {;;}
+        .any h1 {;;}
         ';
 
-        self::assertSame(".classA > .classB {prop1: 0;prop2: #000;}\nh1 {}", $service->validatePublicCss($css, null, false));
+        self::assertSame(".classA > .classB {prop1: 0;prop2: #000;}\n.any h1 {}", $service->validatePublicCss($css, null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
     }
 
     public function testDetectsWildcardSelector(): void {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('* {}', null, false));
+            fn() => $service->validatePublicCss('* {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls * {}', null, false));
+            fn() => $service->validatePublicCss('.cls * {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('a, .cls * {}', null, false));
+            fn() => $service->validatePublicCss('a, .cls * {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
     }
 
     public function testDetectsSelectorNotStartsWithClass(): void {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('div .cls {}', null, false));
+            fn() => $service->validatePublicCss('div .cls {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss(':hover {}', null, false));
+            fn() => $service->validatePublicCss(':hover {}', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
     }
 
     public function testDetectsUrlValues(): void {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls { background-image: url("/image.png") }', null, false));
+            fn() => $service->validatePublicCss('.cls { background-image: url("/image.png") }', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
+        self::assertThrows(BadRequestHttpException::class,
+            fn() => $service->validatePublicCss('.cls { content: url("/image.png") }', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
+        self::assertThrows(BadRequestHttpException::class,
+            fn() => $service->validatePublicCss('.cls { content: "a" url("/image.png")/"alt" }', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE));
+
         // should not throw
-        $service->validatePublicCss('.cls { background-image: url("data:image/png;base64;......") }', null, false);
+        $service->validatePublicCss('.cls { background-image: url("data:image/png;base64;......") }', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE);
+        $service->validatePublicCss('.cls { content: "a" url("data:image/png;base64;......") }', null, CustomCssService::ENFORCE_SELECTOR_MODE_NONE);
     }
 
     public function testDetectsFaultyConstraintSelector(): void {
@@ -84,21 +90,36 @@ class CustomCssServiceTest extends TestCase
         $user2->apId = 'https://remote.local/u/test';
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls {}', $user1, false));
+            fn() => $service->validatePublicCss('.cls {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss {}', $user1, false));
+            fn() => $service->validatePublicCss('.fediCustomCss {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $user1, false));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $user1, false));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $user1, false));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user2, false));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
 
         // should not throw
-        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user1, false);
-        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).' {}', $user2, false);
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).' {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).'.abc {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).' .abc {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+    }
+
+    public function testDetectsNonMbinSelector(): void {
+        $service = $this->createService();
+        $user = new User('', '', '', EUserType::Person);
+        $user->username = 'testuser';
+
+        self::assertThrows(BadRequestHttpException::class,
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-soft-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY));
+
+        // should not throw
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-lemmy.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+        $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-some123.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
     }
 
     public function testAddsConstraintSelector(): void {
@@ -109,32 +130,32 @@ class CustomCssServiceTest extends TestCase
         $user2->apId = 'https://remote.local/u/test';
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss {}', $user1, true));
+            fn() => $service->validatePublicCss('.fediCustomCss {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $user1, true));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $user1, true));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $user1, true));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user2, true));
+            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_ADD));
 
         $user1Selector = '.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1);
         self::assertSame(
             $user1Selector.'.cls {}',
-            $service->validatePublicCss(' .cls {}', $user1, true)
+            $service->validatePublicCss(' .cls {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD)
         );
         self::assertSame(
             '.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).'.cls {}',
-            $service->validatePublicCss('.cls {}', $user2, true)
+            $service->validatePublicCss('.cls {}', $user2, CustomCssService::ENFORCE_SELECTOR_MODE_ADD)
         );
         self::assertSame(
             $user1Selector.".cls {}\n".$user1Selector.'.cls2 .a {}',
-            $service->validatePublicCss(".cls {}\n.cls2 .a {}", $user1, true)
+            $service->validatePublicCss(".cls {}\n.cls2 .a {}", $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD)
         );
         self::assertSame(
             $user1Selector.'.cls, '.$user1Selector.'.cls a {}',
-            $service->validatePublicCss('.cls, .cls a {}', $user1, true)
+            $service->validatePublicCss('.cls, .cls a {}', $user1, CustomCssService::ENFORCE_SELECTOR_MODE_ADD)
         );
     }
 

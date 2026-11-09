@@ -191,6 +191,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $customCss = null;
     #[Column(type: 'text', nullable: true)]
     public ?string $customPublicCss = null;
+    #[Column(type: 'text', nullable: true)]
+    public ?string $customPublicCssIntegrity = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $ignoreMagazinesCustomCss = false;
     #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

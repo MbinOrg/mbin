@@ -56,7 +56,7 @@ class UserSettingsManager
         if($dto->customPublicCss === '') {
             $dto->customPublicCss = null;
         } else if($dto->customPublicCss !== null) {
-            $dto->customPublicCss = $this->cssService->validatePublicCss($dto->customPublicCss, $user, true);
+            $dto->customPublicCss = $this->cssService->validatePublicCss($dto->customPublicCss, $user, CustomCssService::ENFORCE_SELECTOR_MODE_ADD);
         }
 
         $user->notifyOnNewEntry = $dto->notifyOnNewEntry;

@@ -1,0 +1,4 @@
+<link rel="stylesheet" href="{{ path('custom_style', { magazine: this.magazine, userNames: this.styleUsersLocal()|join(',') }) }}" >
+{% for ref in this.styleUsersRemote() %}
+<link rel="stylesheet" href="{{ ref.url }}" integrity="{{ ref.hash }}" crossorigin="anonymous" referrerpolicy="same-origin" >
+{% endfor %}
