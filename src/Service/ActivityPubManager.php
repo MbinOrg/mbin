@@ -63,6 +63,7 @@ class ActivityPubManager
 {
 
     public const string AP_OBJECT_KEY_USER_CONTENT_CSS = '_fedi_custom_css_content';
+    public const string AP_OBJECT_KEY_USER_PROFILE_CSS = '_fedi_custom_css_profile';
 
     private readonly HttpClientInterface $generalHttpClient;
 
@@ -484,12 +485,21 @@ class ActivityPubManager
             }
 
             if(isset($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS]) && $actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS] !== '') {
-                [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS], $user);
-                $user->customPublicCss = $css;
-                $user->customPublicCssIntegrity = $integrity;
-            } elseif(null !== $user->customPublicCss) {
-                $user->customPublicCss = null;
-                $user->customPublicCssIntegrity = null;
+                [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS], $user, self::AP_OBJECT_KEY_USER_CONTENT_CSS);
+                $user->customPublicContentCss = $css;
+                $user->customPublicContentCssIntegrity = $integrity;
+            } elseif(null !== $user->customPublicContentCss) {
+                $user->customPublicContentCss = null;
+                $user->customPublicContentCssIntegrity = null;
+            }
+
+            if(isset($actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS]) && $actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS] !== '') {
+                [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS], $user, self::AP_OBJECT_KEY_USER_PROFILE_CSS);
+                $user->customPublicProfileCss = $css;
+                $user->customPublicProfileCssIntegrity = $integrity;
+            } elseif(null !== $user->customPublicProfileCss) {
+                $user->customPublicProfileCss = null;
+                $user->customPublicProfileCssIntegrity = null;
             }
 
             if (isset($actor['publicKey']['publicKeyPem']) && $user->publicKey !== $actor['publicKey']['publicKeyPem']) {
@@ -532,31 +542,51 @@ class ActivityPubManager
         return null;
     }
 
-    private function processCustomCss(string $css, User $user): array
+    private function processCustomCss(string $css, User $user, string $apObjKey): array
     {
+        $forProfile = $apObjKey === self::AP_OBJECT_KEY_USER_PROFILE_CSS;
+
         try {
             if(str_starts_with($css, 'https://')) {
+                if(filter_var($css, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) === false) {
+                    $this->logger->info('[ActivityPubManager::processCustomCss()] remote user {apId} object contained invalid: property = {key}, error = invalid URL', [
+                        'apId' => $user->getApId(),
+                        'key' => $apObjKey,
+                    ]);
+                    return [null, null];
+                }
+
                 $cssResp = $this->generalHttpClient->request('GET', $css);
                 if($cssResp->getStatusCode() !== 200) {
-                    $this->logger->warning('[ActivityPubManager::processCustomCss()] remote user object contained custom CSS as URL which could not be fetched: property = {key}, resp code = {code}', [
-                        'key' => self::AP_OBJECT_KEY_USER_CONTENT_CSS,
+                    $this->logger->warning('[ActivityPubManager::processCustomCss()] remote user {apId} object contained custom CSS as URL which could not be fetched: property = {key}, resp code = {code}', [
+                        'apId' => $user->getApId(),
+                        'key' => $apObjKey,
                         'code' => $cssResp->getStatusCode(),
                     ]);
                     return [null, null];
                 }
                 $cssContent = $cssResp->getContent();
 
-                $this->cssService->validatePublicCss($cssContent, $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+                $this->cssService->validatePublicCss(
+                    $cssContent,
+                    $forProfile ? $this->cssService->remoteUserPageProfile : $this->cssService->remoteUserContentProfile,
+                    $forProfile ? null : $user
+                );
 
                 $integrity = 'sha384-'.base64_encode(hash('sha384', $cssContent, true));
                 return [$css, $integrity];
             } else {
-                $css = $this->cssService->validatePublicCss($css, $user, CustomCssService::ENFORCE_SELECTOR_MODE_VERIFY);
+                $css = $this->cssService->validatePublicCss(
+                    $css,
+                    $forProfile ? $this->cssService->remoteUserPageProfile : $this->cssService->remoteUserContentProfile,
+                    $forProfile ? null : $user
+                );
                 return [$css, null];
             }
         } catch (\Exception|TransportExceptionInterface|HttpExceptionInterface $e) {
-            $this->logger->info('[ActivityPubManager::processCustomCss()] remote user object contained invalid: property = {key}, error = {msg}', [
-                'key' => self::AP_OBJECT_KEY_USER_CONTENT_CSS,
+            $this->logger->info('[ActivityPubManager::processCustomCss()] remote user {apId} object contained invalid: property = {key}, error = {msg}', [
+                'apId' => $user->getApId(),
+                'key' => $apObjKey,
                 'msg' => $e->getMessage(),
             ]);
             return [null, null];

@@ -20,7 +20,10 @@ class UserStylesType extends AbstractType
             ->add('customCss', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('customPublicCss', TextareaType::class, [
+            ->add('customPublicContentCss', TextareaType::class, [
+                'required' => false,
+            ])
+            ->add('customPublicProfileCss', TextareaType::class, [
                 'required' => false,
             ])
             ->add(

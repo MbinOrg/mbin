@@ -93,10 +93,17 @@ class PersonFactory
             ];
         }
 
-        if ($user->customPublicCss) {
+        if ($user->customPublicContentCss) {
             $person[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $this->urlGenerator->generate(
                 'custom_style',
                 ['userNames' => $user->username, 'includeSiteStyles' => 'false'],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+        }
+        if ($user->customPublicProfileCss) {
+            $person[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS] = $this->urlGenerator->generate(
+                'custom_style',
+                ['profile' => $user->username, 'includeSiteStyles' => 'false'],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
         }

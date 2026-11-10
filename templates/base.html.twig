@@ -56,7 +56,11 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-        {{ component('custom_css_inclusion', { magazine: magazine.name|default(null), contentUsers: contentAuthors|default(null) }) }}
+        {{ component('custom_css_inclusion', {
+            magazine: magazine.name|default(null),
+            profile: profileUser|default(null),
+            contentUsers: contentAuthors|default(null),
+        }) }}
     {% endblock %}
 
     {% block javascripts %}

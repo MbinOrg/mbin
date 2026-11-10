@@ -10,12 +10,14 @@ use App\Enums\EDirectMessageSettings;
 use App\Enums\EFrontContentOptions;
 use App\Enums\ESortOptions;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class UserSettingsManager
 {
     public function __construct(
         private readonly CustomCssService $cssService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     )
     {
     }
@@ -41,7 +43,8 @@ class UserSettingsManager
             $user->featuredMagazines,
             $user->preferredLanguages,
             $user->customCss,
-            $user->customPublicCss,
+            $user->customPublicContentCss,
+            $user->customPublicProfileCss,
             $user->ignoreMagazinesCustomCss,
             $user->notifyOnUserSignup,
             $user->directMessageSetting->value,
@@ -53,10 +56,15 @@ class UserSettingsManager
 
     public function update(User $user, UserSettingsDto $dto): void
     {
-        if($dto->customPublicCss === '') {
-            $dto->customPublicCss = null;
-        } else if($dto->customPublicCss !== null) {
-            $dto->customPublicCss = $this->cssService->validatePublicCss($dto->customPublicCss, $user, CustomCssService::ENFORCE_SELECTOR_MODE_ADD);
+        if($dto->customPublicContentCss === '') {//TODO this change is not federated as it is a setting
+            $dto->customPublicContentCss = null;
+        } else if($dto->customPublicContentCss !== null) {
+            $dto->customPublicContentCss = $this->cssService->validatePublicCss($dto->customPublicContentCss, $this->cssService->localUserContentProfile, $user);
+        }
+        if($dto->customPublicProfileCss === '') {
+            $dto->customPublicProfileCss = null;
+        } else if($dto->customPublicProfileCss !== null) {
+            $dto->customPublicProfileCss = $this->cssService->validatePublicCss($dto->customPublicProfileCss, $this->cssService->localUserPageProfile, null);
         }
 
         $user->notifyOnNewEntry = $dto->notifyOnNewEntry;
@@ -77,7 +85,8 @@ class UserSettingsManager
         $user->featuredMagazines = $dto->featuredMagazines ? array_unique($dto->featuredMagazines) : null;
         $user->preferredLanguages = $dto->preferredLanguages ? array_unique($dto->preferredLanguages) : [];
         $user->customCss = $dto->customCss;
-        $user->customPublicCss = $dto->customPublicCss;
+        $user->customPublicContentCss = $dto->customPublicContentCss;
+        $user->customPublicProfileCss = $dto->customPublicProfileCss;
         $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
         $user->directMessageSetting = null !== $dto->directMessageSetting ? EDirectMessageSettings::getFromString($dto->directMessageSetting) : null;
         $user->frontDefaultContent = null !== $dto->frontDefaultContent ? EFrontContentOptions::getFromString($dto->frontDefaultContent) : null;
@@ -92,6 +101,16 @@ class UserSettingsManager
 
         if (null !== $dto->indexable) {
             $user->apIndexable = $dto->indexable;
+        }
+
+        // integrity is only for remote user CSS via URL
+        if($user->customPublicContentCssIntegrity !== null || $user->customPublicProfileCssIntegrity !== null) {
+            $user->customPublicContentCssIntegrity = null;
+            $user->customPublicProfileCssIntegrity = null;
+
+            $this->logger->error('[UserSettingsManager::update()] user {name} had public css integrity set, which should not be possible for local users', [
+                'name' => $user->getUsername()
+            ]);
         }
 
         $this->entityManager->flush();

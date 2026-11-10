@@ -10,6 +10,7 @@ class CustomCssInclusionComponent
 {
 
     public ?string $magazine = null;
+    public ?User $profile = null;
     /** @var User[]|null $contentUsers */
     public ?array $contentUsers = null;
 
@@ -21,7 +22,7 @@ class CustomCssInclusionComponent
 
         $names = [];
         foreach($this->contentUsers as $user) {
-            if($user->customPublicCss !== null && !str_starts_with($user->customPublicCss, 'https://')) {
+            if($user->customPublicContentCss !== null && !$this->isCssRemote($user->customPublicContentCss)) {
                 $names[] = $user->getUsername();
             }
         }
@@ -35,13 +36,26 @@ class CustomCssInclusionComponent
 
         $links = [];
         foreach($this->contentUsers as $user) {
-            if($user->customPublicCss !== null && str_starts_with($user->customPublicCss, 'https://')) {
+            if($user->customPublicContentCss !== null && $this->isCssRemote($user->customPublicContentCss)) {
                 $links[] = [
-                    'url' => $user->customPublicCss,
-                    'hash' => $user->customPublicCssIntegrity ?? 'null',
+                    'url' => $user->customPublicContentCss,
+                    'hash' => $user->customPublicContentCssIntegrity ?? 'null',
                 ];
             }
         }
         return $links;
+    }
+
+    public function hasLocalProfileStyle(): bool {
+        return $this->profile?->customPublicProfileCss !== null && !$this->isCssRemote($this->profile->customPublicProfileCss);
+    }
+
+    public function hasRemoteProfileStyle(): bool {
+        return $this->profile?->customPublicProfileCss !== null && $this->isCssRemote($this->profile->customPublicProfileCss);
+    }
+
+    private function isCssRemote(string $css): bool
+    {
+        return str_starts_with($css, 'https://');
     }
 }

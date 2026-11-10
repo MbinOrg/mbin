@@ -30,9 +30,18 @@ class CustomStyleController extends AbstractController
         $userNames = $request->query->get('userNames', '');
         $users = $this->findUsers($userNames);
 
+        $profileName = $request->query->get('profile', '');
+        $profile = $this->findUsers($profileName);
+        if(count($profile) > 0) {
+            $profile = $profile[0];
+        } else {
+            $profile = null;
+        }
+
         $css = $this->renderView('styles/custom.css.twig', [
             'includeSiteStyles' => $includeSiteStyles,
             'magazine' => $magazine,
+            'profile' => $profile,
             'cssUsers' => $users,
         ]);
 

@@ -15,10 +15,23 @@
 {% endif %}
 {% endif %}
 
+{% if profile is not same as null and profile.customPublicProfileCss is not same as null %}
+/* {{ profile.username }} public profile styles */
+{% if profile.customPublicProfileCss starts with 'https://' %}
+/* remote CSS not included: {{ profile.customPublicProfileCss|raw }} */
+{% else %}
+{{ profile.customPublicProfileCss|raw }}
+{% endif %}
+{% endif %}
+
 {% for cssUser in cssUsers %}
-{% if cssUser.customPublicCss is not same as null %}
-/* {{ cssUser.username }} public styles */
-{{ cssUser.customPublicCss|raw }}
+{% if cssUser.customPublicContentCss is not same as null %}
+/* {{ cssUser.username }} public content styles */
+{% if cssUser.customPublicContentCss starts with 'https://' %}
+/* remote CSS not included: {{ cssUser.customPublicContentCss|raw }} */
+{% else %}
+{{ cssUser.customPublicContentCss|raw }}
+{% endif %}
 {% endif %}
 {% endfor %}
 

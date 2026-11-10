@@ -206,59 +206,78 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
     {
         // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
 
-        $css = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
+        $contentCss = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
+        $profileCss = '.user-box {color: red;}';
 
         $object = $this->updateUser['object'];
-        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $css;
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $contentCss;
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS] = $profileCss;
         $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertEquals($css, $user->customPublicCss);
-        self::assertNull($user->customPublicCssIntegrity);
+        self::assertEquals($contentCss, $user->customPublicContentCss);
+        self::assertNull($user->customPublicContentCssIntegrity);
+        self::assertEquals($profileCss, $user->customPublicProfileCss);
+        self::assertNull($user->customPublicProfileCssIntegrity);
 
         $object = $this->updateUser['object'];
         unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS]);
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS]);
         $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertNull($user->customPublicCss);
-        self::assertNull($user->customPublicCssIntegrity);
+        self::assertNull($user->customPublicContentCss);
+        self::assertNull($user->customPublicContentCssIntegrity);
+        self::assertNull($user->customPublicProfileCss);
+        self::assertNull($user->customPublicProfileCssIntegrity);
     }
 
     public function testUpdateRemoteUserCssUrl(): void
     {
         // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
 
-        $css = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
-        $cssUrl = $this->urlGenerator->generate('custom_style', ['userNames' => $this->remoteUser->username, 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
-        $this->remoteUser->customPublicCss = $css;
+        $contentCss = $this->customCssService->createConstraintSelector($this->remoteUser).'.subject {color: red;}';
+        $contentCssUrl = $this->urlGenerator->generate('custom_style', ['userNames' => $this->remoteUser->username, 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->remoteUser->customPublicContentCss = $contentCss;
+        $profileCss = '.user-box {color: red;}';
+        $profileCssUrl = $this->urlGenerator->generate('custom_style', ['profile' => $this->remoteUser->username, 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->remoteUser->customPublicProfileCss = $profileCss;
 
-        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($cssUrl, $css) {
-            if($url === $cssUrl) {
-                return new MockResponse($css);
+        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($contentCssUrl, $contentCss, $profileCssUrl, $profileCss) {
+            if($url === $contentCssUrl) {
+                return new MockResponse($contentCss);
+            }
+            if($url === $profileCssUrl) {
+                return new MockResponse($profileCss);
             }
             return null;
         });
 
         $object = $this->updateUser['object'];
-        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $cssUrl;
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS] = $contentCssUrl;
+        $object[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS] = $profileCssUrl;
         $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertEquals($cssUrl, $user->customPublicCss);
-        self::assertEquals('sha384-xDnJPVKqEcC1q8NbNn9jd3S4RiG1/jy+Y4gf8Htnxd0fGREnZ0pEsXREvWfM2KYm', $user->customPublicCssIntegrity);
+        self::assertEquals($contentCssUrl, $user->customPublicContentCss);
+        self::assertEquals('sha384-xDnJPVKqEcC1q8NbNn9jd3S4RiG1/jy+Y4gf8Htnxd0fGREnZ0pEsXREvWfM2KYm', $user->customPublicContentCssIntegrity);
+        self::assertEquals($profileCssUrl, $user->customPublicProfileCss);
+        self::assertEquals('sha384-ykgDoyYODq62NR/HfedX/Gcg95i60ZbWON5XR8OSjvzOHaGNyhO5eVYZsJb7/nUi', $user->customPublicProfileCssIntegrity);
 
         $object = $this->updateUser['object'];
         unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_CONTENT_CSS]);
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS]);
         $this->testingApHttpClient->actorObjects[$this->updateUser['object']['id']] = $object;
         $this->bus->dispatch(new ActivityMessage(json_encode($this->updateUser)));
         $user = $this->userRepository->findOneBy(['apPublicUrl' => $this->updateUser['object']['id']]);
         self::assertNotNull($user);
-        self::assertNull($user->customPublicCss);
-        self::assertNull($user->customPublicCssIntegrity);
+        self::assertNull($user->customPublicContentCss);
+        self::assertNull($user->customPublicContentCssIntegrity);
+        self::assertNull($user->customPublicProfileCss);
+        self::assertNull($user->customPublicProfileCssIntegrity);
     }
 
     public function testUpdateRemoteMagazine(): void

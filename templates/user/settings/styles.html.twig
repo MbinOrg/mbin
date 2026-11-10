@@ -24,7 +24,8 @@
         <h2>{{ 'appearance'|trans }}</h2>
 
         {{ form_row(form.customCss, {label: 'custom_css', row_attr: {class: 'textarea'}}) }}
-        {{ form_row(form.customPublicCss, {label: 'custom_public_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.customPublicProfileCss, {label: 'custom_public_profile_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.customPublicContentCss, {label: 'custom_public_content_css', row_attr: {class: 'textarea'}}) }}
         {{ form_row(form.ignoreMagazinesCustomCss, {label: 'ignore_magazines_custom_css', row_attr: {class: 'checkbox'}}) }}
 
         <div class="row actions">

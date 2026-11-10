@@ -27,24 +27,23 @@ use function PHPUnit\Framework\stringStartsWith;
 readonly class CustomCssService
 {
 
-    /** do not check the selectors */
-    public const int ENFORCE_SELECTOR_MODE_NONE = 0;
-    /** check the selectors if they start with a valid fediCustomCss class */
-    public const int ENFORCE_SELECTOR_MODE_VERIFY = 1;
-    /** check the selectors if they start with a valid fediCustomCss and add the classes if the selector has none */
-    public const int ENFORCE_SELECTOR_MODE_ADD = 2;
-
     public const string SELECTOR_MARKER_GENERAL = '.fediCustomCss';
     public const string SELECTOR_MARKER_SOFTWARE = '.fediCustomCss-software-mbin';
     public const string SELECTOR_MARKER_USER = '.fediCustomCss-user-';
 
-    private const int CSS_MAX_SIZE = 10 * 1024;
+    public CustomCssProfile $localUserContentProfile;
+    public CustomCssProfile $remoteUserContentProfile;
+    public CustomCssProfile $localUserPageProfile;
+    public CustomCssProfile $remoteUserPageProfile;
 
     public function __construct(
         private PersonFactory $personFactory,
     )
     {
-
+        $this->localUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD);
+        $this->remoteUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY);
+        $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
     }
 
     public function createConstraintSelector(User $user): string
@@ -56,12 +55,14 @@ readonly class CustomCssService
         return str_replace('.', ' ', $this->createConstraintSelector($user));
     }
 
-    public function validatePublicCss(string $src, ?User $user, int $selectorEnforcementMode): string {
+    public function validatePublicCss(string $src, CustomCssProfile $profile, ?User $user): string {
+        $profile->checkNeedsUser($user);
+
         if($src === '') {
             throw new \InvalidArgumentException('empty CSS src is invalid');
         }
 
-        if(strlen($src) > self::CSS_MAX_SIZE) {
+        if(strlen($src) > $profile->maxSize()) {
             throw new BadRequestHttpException('The CSS is too big');
         }
 
@@ -70,23 +71,12 @@ readonly class CustomCssService
             $parsed = $parser->parse();
 
             $parsed->setComments([]);
-            $this->validateCssList($parsed);
+            $this->validateCssList($profile, $parsed);
 
-            switch ($selectorEnforcementMode) {
-                case self::ENFORCE_SELECTOR_MODE_NONE:
-                    break;
-                case self::ENFORCE_SELECTOR_MODE_VERIFY:
-                    if($user === null) {
-                        throw new \InvalidArgumentException('selector enforcement requires a User');
-                    }
-                    $this->enforceSelectorConstraints($parsed, $user, false);
-                    break;
-                case self::ENFORCE_SELECTOR_MODE_ADD:
-                    if($user === null) {
-                        throw new \InvalidArgumentException('selector enforcement requires a User');
-                    }
-                    $this->enforceSelectorConstraints($parsed, $user, true);
-                    break;
+            if($profile->mode === CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY) {
+                $this->enforceSelectorConstraints($parsed, $user, false);
+            } elseif ($profile->mode === CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD) {
+                $this->enforceSelectorConstraints($parsed, $user, true);
             }
 
             return $parsed->render();
@@ -98,52 +88,64 @@ readonly class CustomCssService
         }
     }
 
-    private function validateCssList(CSSList $css): void {
+    private function validateCssList(CustomCssProfile $profile, CSSList $css): void {
+        if($profile->allowAllDeclarations) {
+            return;
+        }
+
         foreach ($css->getContents() as $item) {
             if($item instanceof DeclarationBlock) {
-                $this->validateCssDeclarationBlock($item);
+                $this->validateCssDeclarationBlock($profile, $item);
             } else {
                 $lineText = ($item instanceof Positionable) ? ' at line '.$item->getLineNumber() : '';
                 throw new BadRequestHttpException('The CSS contained rules which are not allowed'.$lineText);
             }
-
         }
     }
 
-    private function validateCssDeclarationBlock(DeclarationBlock $css): void {
+    private function validateCssDeclarationBlock(CustomCssProfile $profile, DeclarationBlock $css): void {
         foreach ($css->getSelectors() as $selector) {
             if(count($selector->getComponents()) === 0) {
                 throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
             }
 
-            if(!($selector->getComponents()[0] instanceof CompoundSelector) || !str_starts_with($selector->getComponents()[0]->getValue(), '.')) {
-                throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
+            if($profile->requireSelectorStartsWithClass) {
+                if (!($selector->getComponents()[0] instanceof CompoundSelector) || !str_starts_with($selector->getComponents()[0]->getValue(), '.')) {
+                    throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line ' . $css->getLineNumber());
+                }
             }
 
-            foreach ($selector->getComponents() as $component) {
-                if(str_contains($component->getValue(), '*')) {//TODO maybe allow *
-                    throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
+            if(!$profile->allowSelectorStar) {
+                foreach ($selector->getComponents() as $component) {
+                    if (str_contains($component->getValue(), '*')) {//TODO maybe allow *
+                        throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line ' . $css->getLineNumber());
+                    }
                 }
             }
         }
 
+        if($profile->allowAllRules) {
+            return;
+        }
+
+        //TODO maybe allow some at-rules like keyframes (possibly prefixed)
         if($css->getRuleSet() instanceof AtRuleSet) {
             throw new BadRequestHttpException('The CSS contained rules which are not allowed at line '.$css->getLineNumber());
         }
 
         foreach ($css->getDeclarations() as $declaration) {
-            $this->validateCssRuleValue($declaration, $declaration->getValue());
+            $this->validateCssRuleValue($profile, $declaration, $declaration->getValue());
         }
     }
 
-    private function validateCssRuleValue(Declaration $declaration, Value|string|null $value): void
+    private function validateCssRuleValue(CustomCssProfile $profile, Declaration $declaration, Value|string|null $value): void
     {
         if($value instanceof ValueList) {
             foreach ($value->getListComponents() as $component) {
-                $this->validateCssRuleValue($declaration, $component);
+                $this->validateCssRuleValue($profile, $declaration, $component);
             }
         } else {
-            if ($value instanceof URL) {
+            if ($value instanceof URL && !$profile->allowNonInlineUrls) {
                 if (!str_starts_with($value->getURL()->getString(), 'data:image/')) {
                     throw new BadRequestHttpException('The CSS contained rules which are not allowed at line ' . $declaration->getLineNumber());
                 }
@@ -217,5 +219,49 @@ readonly class CustomCssService
         $userId = str_replace('=', '', $userId);
 
         return self::SELECTOR_MARKER_USER.$userId;
+    }
+}
+
+readonly class CustomCssProfile {
+
+    /** do not check the selectors */
+    public const int ENFORCE_SELECTOR_MODE_NONE = 0;
+    /** check the selectors if they start with a valid fediCustomCss class */
+    public const int ENFORCE_SELECTOR_MODE_VERIFY = 1;
+    /** check the selectors if they start with a valid fediCustomCss and add the classes if the selector has none */
+    public const int ENFORCE_SELECTOR_MODE_ADD = 2;
+
+    // defaults should be the strictest available
+    public function __construct(
+        public int $mode,
+        public int $maxSizeKb = 4,
+        public bool $requireSelectorStartsWithClass = true,
+        public bool $allowSelectorStar = false,
+        public bool $allowNonInlineUrls = false,
+        public bool $allowAllRules = false,
+        public bool $allowAllDeclarations = false,
+    )
+    {
+        if(
+            $mode !== self::ENFORCE_SELECTOR_MODE_NONE
+            && $mode !== self::ENFORCE_SELECTOR_MODE_VERIFY
+            && $mode !== self::ENFORCE_SELECTOR_MODE_ADD
+        ) {
+            throw new \InvalidArgumentException('invalid mode');
+        }
+    }
+
+    public function checkNeedsUser(?User $user): void {
+        if($this->mode === self::ENFORCE_SELECTOR_MODE_NONE && $user !== null) {
+            throw new \InvalidArgumentException('on no selector enforcement no User may be set');
+        }
+        if($this->mode !== self::ENFORCE_SELECTOR_MODE_NONE && $user === null) {
+            throw new \InvalidArgumentException('selector enforcement requires a User');
+        }
+    }
+
+    public function maxSize(): int
+    {
+        return $this->maxSizeKb * 1024;
     }
 }
