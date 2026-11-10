@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\Notification;
 use App\Event\Entry\EntryHasBeenSeenEvent;
 use App\Repository\NotificationRepository;
+use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -43,11 +44,11 @@ class EntryShowSubscriber implements EventSubscriberInterface
 
         $notifications = $this->repository->findUnreadEntryNotifications($this->security->getUser(), $entry);
 
-        if (!\count($notifications)) {
+        if (!ArrayUtils::count($notifications)) {
             return;
         }
 
-        array_map(fn ($notification) => $notification->status = Notification::STATUS_READ, $notifications);
+        ArrayUtils::foreach($notifications, fn ($notification) => $notification->status = Notification::STATUS_READ);
 
         $this->entityManager->flush();
     }

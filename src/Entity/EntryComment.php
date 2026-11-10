@@ -158,26 +158,28 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this->apId;
     }
 
-    public function addVote(Vote $vote): self
+    #[\Override]
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryCommentVote::class);
+        Assert::isInstanceOf($votable, EntryCommentVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->setComment($this);
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->setComment($this);
         }
 
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    #[\Override]
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryCommentVote::class);
+        Assert::isInstanceOf($votable, EntryCommentVote::class);
 
-        if ($this->votes->removeElement($vote)) {
+        if ($this->votes->removeElement($votable)) {
             // set the owning side to null (unless already changed)
-            if ($vote->comment === $this) {
-                $vote->setComment(null);
+            if ($votable->comment === $this) {
+                $votable->setComment(null);
             }
         }
 

@@ -80,7 +80,7 @@ class RetrieveClientApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $dto = new ClientResponseDto($client);
+        $dto = $this->createClientResponseDto($client);
 
         return new JsonResponse(
             $dto,
@@ -183,12 +183,19 @@ class RetrieveClientApi extends BaseApi
         $dtos = [];
         foreach ($pagerfanta->getCurrentPageResults() as $client) {
             \assert($client instanceof Client);
-            array_push($dtos, new ClientResponseDto($client));
+            $dtos[] = $this->createClientResponseDto($client);
         }
 
         return new JsonResponse(
             $this->serializePaginated($dtos, $pagerfanta),
             headers: $headers
         );
+    }
+
+    private function createClientResponseDto(Client $client): ClientResponseDto
+    {
+        $user = $client->getUser();
+        $userDto = null !== $user ? $this->userFactory->createDto($user) : null;
+        return new ClientResponseDto($client, $userDto);
     }
 }

@@ -54,7 +54,7 @@ class MagazineBanNotification extends Notification
                 $this->ban->reason
             );
         }
-        $slash = $this->ban->magazine->icon && !str_starts_with('/', $this->ban->magazine->icon->filePath) ? '/' : '';
+        $slash = $this->ban->magazine->icon && !str_starts_with($this->ban->magazine->icon->filePath, '/') ? '/' : '';
         $avatarUrl = $this->ban->magazine->icon ? '/media/cache/resolve/avatar_thumb'.$slash.$this->ban->magazine->icon->filePath : null;
 
         return new PushNotification($this->getId(), $message, $trans->trans('notification_title_ban', locale: $locale), avatarUrl: $avatarUrl);

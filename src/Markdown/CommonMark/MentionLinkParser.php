@@ -17,41 +17,41 @@ use League\CommonMark\Node\Node;
 use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
 use League\CommonMark\Parser\InlineParserContext;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class MentionLinkParser implements InlineParserInterface
 {
     public function __construct(
         private readonly MagazineRepository $magazineRepository,
-        private readonly MessageBusInterface $bus,
         private readonly SettingsManager $settingsManager,
         private readonly UserRepository $userRepository,
     ) {
     }
 
+    #[\Override]
     public function getMatchDefinition(): InlineParserMatch
     {
         // support for unicode international domains
         return InlineParserMatch::regex(RegPatterns::MENTION_REGEX);
     }
 
-    public function parse(InlineParserContext $ctx): bool
+    #[\Override]
+    public function parse(InlineParserContext $inlineContext): bool
     {
-        $cursor = $ctx->getCursor();
-        $cursor->advanceBy($ctx->getFullMatchLength());
+        $cursor = $inlineContext->getCursor();
+        $cursor->advanceBy($inlineContext->getFullMatchLength());
 
-        $matches = $ctx->getSubMatches();
+        $matches = $inlineContext->getSubMatches();
         $username = $matches['0'];
         $domain = $matches['1'] ?? $this->settingsManager->get('KBIN_DOMAIN');
 
         $fullUsername = $username.'@'.$domain;
 
-        CommunityLinkParser::removeSurroundingLink($ctx, $username, $domain);
+        CommunityLinkParser::removeSurroundingLink($inlineContext, $username, $domain);
 
         [$type, $data] = $this->resolveType($username, $domain);
 
         if ($data instanceof User && $data->apPublicUrl) {
-            $ctx->getContainer()->appendChild(
+            $inlineContext->getContainer()->appendChild(
                 new ActivityPubMentionLink(
                     $data->apPublicUrl,
                     '@'.$username,
@@ -73,7 +73,7 @@ class MentionLinkParser implements InlineParserInterface
             MentionType::User => [$this->resolveRouteDetails($type), $username, '@'.$username, '@'.$fullUsername, $username],
         };
 
-        $ctx->getContainer()->appendChild(
+        $inlineContext->getContainer()->appendChild(
             $this->generateNode(
                 ...$routeDetails,
                 slug: $slug,
@@ -150,9 +150,9 @@ class MentionLinkParser implements InlineParserInterface
         return match ($type) {
             MentionType::Magazine => ['route' => 'front_magazine', 'param' => 'name'],
             MentionType::RemoteMagazine => ['route' => 'front_magazine', 'param' => 'name'],
-            MentionType::RemoteUser => ['route' => 'user_overview',  'param' => 'username'],
-            MentionType::Search => ['route' => 'search',         'param' => 'search[q]'],
-            MentionType::User => ['route' => 'user_overview',  'param' => 'username'],
+            MentionType::RemoteUser => ['route' => 'user_overview', 'param' => 'username'],
+            MentionType::Search => ['route' => 'search', 'param' => 'search[q]'],
+            MentionType::User => ['route' => 'user_overview', 'param' => 'username'],
         };
     }
 }
