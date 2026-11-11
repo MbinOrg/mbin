@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\DTO\PollChoiceResponseDto;
-use App\DTO\PollResponseDto;
 use App\DTO\PostDto;
 use App\DTO\PostResponseDto;
-use App\Entity\PollChoice;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\BookmarkListRepository;
@@ -42,12 +39,7 @@ class PostFactory
 
         $pollDto = null;
         if ($dto->addPoll) {
-            $pollDto = new PollResponseDto();
-            $pollDto->endDate = $dto->pollEndsAt;
-            $pollDto->voterCount = $post->poll->voterCount;
-            $user = $this->security->getUser();
-            $pollDto->currentUserHasVoted = $user instanceof User ? $post->poll->hasUserVoted($user) : null;
-            $pollDto->choices = $post->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $post->poll->choices->toArray()) : null;
+            $pollDto = $dto->getPollResponseDto($post->poll, $this->security->getUser());
         }
 
         return PostResponseDto::create(
@@ -106,6 +98,10 @@ class PostFactory
         $dto->apDislikeCount = $post->apDislikeCount;
         $dto->apShareCount = $post->apShareCount;
         $dto->setId($post->getId());
+
+        if ($post->poll) {
+            $dto->mergePollIntoDto($post->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

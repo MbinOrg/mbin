@@ -6,6 +6,6 @@ namespace App\Message;
 
 use App\Message\Contracts\AsyncMessageInterface;
 
-class CheckPollEndedMessage implements AsyncMessageInterface
+class CheckPollsEndedMessage implements AsyncMessageInterface
 {
 }

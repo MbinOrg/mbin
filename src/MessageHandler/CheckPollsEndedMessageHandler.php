@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Message\CheckPollEndedMessage;
+use App\Message\CheckPollsEndedMessage;
 use App\Message\Contracts\MessageInterface;
 use App\Repository\PollRepository;
 use App\Service\Notification\PollNotificationManager;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class CheckPollEndedMessageHandler extends MbinMessageHandler
+class CheckPollsEndedMessageHandler extends MbinMessageHandler
 {
     public function __construct(
         private readonly PollRepository $pollRepository,
@@ -26,14 +26,15 @@ class CheckPollEndedMessageHandler extends MbinMessageHandler
         parent::__construct($entityManager, $kernel);
     }
 
-    public function __invoke(CheckPollEndedMessage $message): void
+    public function __invoke(CheckPollsEndedMessage $message): void
     {
         $this->workWrapper($message);
     }
 
+    #[\Override]
     public function doWork(MessageInterface $message): void
     {
-        if (!$message instanceof CheckPollEndedMessage) {
+        if (!$message instanceof CheckPollsEndedMessage) {
             throw new \LogicException();
         }
 

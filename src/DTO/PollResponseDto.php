@@ -16,6 +16,10 @@ class PollResponseDto implements \JsonSerializable
     public int $voterCount = 0;
     public ?bool $currentUserHasVoted = null;
     public ?\DateTimeImmutable $endDate = null;
+
+    /**
+     * @var PollChoiceResponseDto[]
+     */
     #[OA\Property(type: 'array', items: new OA\Items(ref: new Model(type: PollChoiceResponseDto::class)))]
     public ?array $choices = null;
 
@@ -30,6 +34,7 @@ class PollResponseDto implements \JsonSerializable
         return $dto;
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

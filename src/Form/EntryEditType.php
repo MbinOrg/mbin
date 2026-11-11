@@ -14,10 +14,9 @@ use App\Form\EventListener\ImageListener;
 use App\Form\EventListener\RemovePollFieldsOnEntryEdit;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
+use App\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -88,29 +87,9 @@ class EntryEditType extends AbstractType
             ->add('lang', LanguageType::class)
             ->add('isOc', CheckboxType::class, [
                 'required' => false,
-            ])
-            ->add('isMultipleChoicePoll', CheckboxType::class, [
-                'required' => false,
-                'label' => 'poll_is_multiple_choice',
-            ])
-            ->add('pollEndsAt', DateTimeType::class, [
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-                'required' => false,
-                'label' => 'poll_ends_at',
-            ])
-            ->add('choices', CollectionType::class, [
-                'entry_type' => TextType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'required' => false,
-                'attr' => [
-                    'class' => 'existing-collection-items',
-                ],
-                'label' => 'poll_choices',
-            ])
-            ->add('submit', SubmitType::class);
+            ]);
+        FormUtils::addPollFieldsToType($builder, addAddPollField: false);
+        $builder->add('submit', SubmitType::class);
 
         $builder->get('tags')->addModelTransformer(
             new TagTransformer()

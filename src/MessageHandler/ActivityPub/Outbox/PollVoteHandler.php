@@ -11,7 +11,6 @@ use App\MessageHandler\MbinMessageHandler;
 use App\Service\ActivityPub\ActivityJsonBuilder;
 use App\Service\ActivityPub\Wrapper\CreateWrapper;
 use App\Service\DeliverManager;
-use App\Service\PollManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -26,7 +25,6 @@ class PollVoteHandler extends MbinMessageHandler
         private readonly CreateWrapper $createWrapper,
         private readonly ActivityJsonBuilder $activityJsonBuilder,
         private readonly DeliverManager $deliverManager,
-        private readonly PollManager $pollManager,
         private readonly LoggerInterface $logger,
         KernelInterface $kernel,
     ) {
@@ -55,7 +53,7 @@ class PollVoteHandler extends MbinMessageHandler
             return;
         }
 
-        $content = $this->pollManager->getContentOfPoll($vote->poll);
+        $content = $vote->poll->getSubject();
         if (null === $content) {
             $this->logger->warning('Could not find the content the poll {p} belongs to', ['p' => $vote->poll]);
 

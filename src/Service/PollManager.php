@@ -17,10 +17,7 @@ use App\Event\Poll\PollEditedEvent;
 use App\Event\Poll\PollPreEditedEvent;
 use App\Event\Poll\PollVoteEvent;
 use App\Exception\PollHasEndedException;
-use App\Repository\EntryCommentRepository;
-use App\Repository\EntryRepository;
-use App\Repository\PostCommentRepository;
-use App\Repository\PostRepository;
+use App\Service\ActivityPub\ApHttpClientInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
@@ -31,11 +28,8 @@ readonly class PollManager
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
-        private EntryRepository $entryRepository,
-        private EntryCommentRepository $entryCommentRepository,
-        private PostRepository $postRepository,
-        private PostCommentRepository $postCommentRepository,
         private LoggerInterface $logger,
+        private ApHttpClientInterface $apHttpClient,
     ) {
     }
 
@@ -56,16 +50,18 @@ readonly class PollManager
     public function edit(?Poll $poll, ContentWithPollDto $dto, User $editor): void
     {
         $this->logger->info('[PollManager] the poll {p} was changed, resetting all votes', ['p' => $poll->getId()]);
-        $this->eventDispatcher->dispatch(new PollPreEditedEvent($poll, $this->getContentOfPoll($poll), $editor));
+        $this->eventDispatcher->dispatch(new PollPreEditedEvent($poll, $poll->getSubject(), $editor));
         $poll->endDate = $dto->pollEndsAt;
         $poll->multipleChoice = $dto->isMultipleChoicePoll;
         foreach ($poll->choices as $choice) {
             // remove all choices, which also removes all votes
             $this->entityManager->remove($choice);
         }
+        $poll->voterCount = 0;
         $this->createChoices($dto, $poll);
         $this->entityManager->flush();
-        $this->eventDispatcher->dispatch(new PollEditedEvent($poll, $this->getContentOfPoll($poll), $editor));
+        $this->entityManager->refresh($poll); // refresh the poll object to get the new choices in there
+        $this->eventDispatcher->dispatch(new PollEditedEvent($poll, $poll->getSubject(), $editor));
     }
 
     private function createChoices(ContentWithPollDto $dto, Poll $poll): void
@@ -83,15 +79,15 @@ readonly class PollManager
     }
 
     /**
-     * @param Entry|EntryComment|Post|PostComment $content              where the poll belongs to
-     * @param string[]                            $choices              the choices a user votes for
-     * @param bool                                $allowMultipleChoices if the context allows for the user to vote again, that should only be allowed from activity pub
+     * @param Entry|EntryComment|Post|PostComment $content            where the poll belongs to
+     * @param string[]                            $choices            the choices a user votes for
+     * @param bool                                $allowMultipleVotes if the context allows for the user to vote again, that should only be allowed from activity pub
      *
      * @throws ORMException
      * @throws PollHasEndedException
      * @throws \LogicException
      */
-    public function vote(Poll $poll, Entry|EntryComment|Post|PostComment $content, User $user, array $choices, bool $allowMultipleChoices = false): void
+    public function vote(Poll $poll, Entry|EntryComment|Post|PostComment $content, User $user, array $choices, bool $allowMultipleVotes = false): void
     {
         if (!$poll->multipleChoice && \sizeof($choices) > 1) {
             throw new \LogicException('Poll does not allow multiple choices.');
@@ -99,41 +95,47 @@ readonly class PollManager
         if (0 === \sizeof($choices)) {
             throw new \LogicException('No choice found');
         }
-        if ($poll->hasUserVoted($user) && !$allowMultipleChoices) {
-            throw new \LogicException('Already voted');
-        }
         if ($poll->hasEnded()) {
             throw new PollHasEndedException('Poll has already ended');
+        }
+        if ($poll->hasUserVoted($user)) {
+            if (!$allowMultipleVotes) {
+                throw new \LogicException('Already voted');
+            } elseif (!$poll->multipleChoice) {
+                $userVotes = $poll->getUserVotes($user);
+                foreach ($userVotes as $userVote) {
+                    // remove existing votes for single choice polls
+                    $this->entityManager->remove($userVote);
+                    $this->entityManager->flush();
+                    if ($poll->isRemote) {
+                        --$userVote->choice->voteCount;
+                    } else {
+                        $userVote->choice->updateOrIncrementVoteCount();
+                        $this->entityManager->flush();
+                    }
+                }
+            }
         }
 
         $voteEntities = [];
         foreach (array_unique($choices) as $choice) {
             $choiceEntity = $poll->findChoice($choice);
-            $vote = new PollVote();
-            $vote->voter = $user;
-            $vote->poll = $poll;
-            $vote->choice = $choiceEntity;
+            if (!$choiceEntity) {
+                throw new \LogicException("Couldn't find a poll option by the name '$choice'");
+            }
+            $vote = PollVote::create($user, $poll, $choiceEntity);
             $this->entityManager->persist($vote);
             $voteEntities[] = $vote;
             $this->entityManager->flush();
             $this->entityManager->refresh($choiceEntity);
-            $choiceEntity->updateVoteCount();
+            $choiceEntity->updateOrIncrementVoteCount();
         }
         $this->entityManager->flush();
         $this->entityManager->refresh($poll);
-        $poll->updateVoterCount();
+        $poll->updateOrIncrementVoterCount();
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatch(new PollVoteEvent($poll, $content, $user, $voteEntities));
-    }
-
-    public function getContentOfPoll(Poll $poll): Entry|EntryComment|Post|PostComment|null
-    {
-        return $this->entryRepository->findOneBy(['poll' => $poll])
-            ?? $this->entryCommentRepository->findOneBy(['poll' => $poll])
-            ?? $this->postRepository->findOneBy(['poll' => $poll])
-            ?? $this->postCommentRepository->findOneBy(['poll' => $poll])
-        ;
     }
 
     public function hasPollProperties(array $object): bool
@@ -164,7 +166,7 @@ readonly class PollManager
     }
 
     /**
-     * Call PollManager::canCreateFromApObject() first, this that $object contains all the necessary information.
+     * Call PollManager::canCreateFromApObject() first, to ensure that $object contains all the necessary information.
      *
      * @throws \DateMalformedStringException
      */
@@ -212,6 +214,15 @@ readonly class PollManager
             $pollChoice->voteCount = $choice['replies']['totalItems'];
         }
         $this->entityManager->flush();
+    }
+
+    public function fetchPollCounts(Poll $poll): void
+    {
+        $this->apHttpClient->invalidateActivityObjectCache($poll->getSubject()->apId);
+        $object = $this->apHttpClient->getActivityObject($poll->getSubject()->apId);
+        if ($this->hasPollProperties($object)) {
+            $this->updatePollCounts($poll, $object);
+        }
     }
 
     public function extractPollChanges(array $object, ContentWithPollDto $dto): bool

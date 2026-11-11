@@ -45,6 +45,16 @@ class PollVote implements ActivityPubActivityInterface
         $this->createdAtTraitConstruct();
     }
 
+    public static function create(User $user, Poll $poll, PollChoice $choice): self
+    {
+        $vote = new PollVote();
+        $vote->voter = $user;
+        $vote->poll = $poll;
+        $vote->choice = $choice;
+        return $vote;
+    }
+
+    #[\Override]
     public function getUser(): ?User
     {
         return $this->voter;

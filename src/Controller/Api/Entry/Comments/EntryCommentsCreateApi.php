@@ -118,7 +118,6 @@ class EntryCommentsCreateApi extends EntriesBaseApi
 
         // Rate limiting already taken care of
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
-        $dto->parent = $parent;
 
         return new JsonResponse(
             $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
@@ -226,7 +225,6 @@ class EntryCommentsCreateApi extends EntriesBaseApi
 
         // Rate limiting already taken care of
         $comment = $manager->create($dto, $this->getUserOrThrow(), rateLimit: false);
-        $dto->parent = $parent;
 
         return new JsonResponse(
             $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),

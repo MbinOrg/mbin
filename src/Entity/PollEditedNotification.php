@@ -25,11 +25,13 @@ class PollEditedNotification extends Notification
         $this->poll = $poll;
     }
 
+    #[\Override]
     public function getType(): string
     {
         return 'poll_edited';
     }
 
+    #[\Override]
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
         $content = $this->poll->entry ?? $this->poll->entryComment ?? $this->poll->post ?? $this->poll->postComment;

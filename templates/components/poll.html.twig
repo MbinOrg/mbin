@@ -1,7 +1,8 @@
 <div class="poll">
     {% set forceResults = app.request.query.get('showResults')|bool %}
     {% if app.user and poll.hasUserVoted(app.user) is not same as true and poll.hasEnded() is not same as true and forceResults is not same as true %}
-        <form action="/poll/{{ poll.id }}/vote" method="get">
+        <form action="{{ path('poll_vote', {id: poll.id}) }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('poll_vote_' ~ poll.id) }}">
             {% if poll.multipleChoice %}
                 {% for choice in poll.choices %}
                     <div class="checkbox">

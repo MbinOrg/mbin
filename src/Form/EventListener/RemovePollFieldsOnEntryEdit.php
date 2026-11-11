@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormEvents;
 
 final class RemovePollFieldsOnEntryEdit implements EventSubscriberInterface
 {
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [FormEvents::PRE_SET_DATA => 'preSetData'];

@@ -12,7 +12,7 @@ class PollVoteControllerTest extends WebTestCase
     public function testCannotVoteAnonymously(): void
     {
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $this->entityManager->flush();
 
         $this->client->request('PUT', "/api/entry/{$entry->getId()}/poll/vote?choices[]=B");
@@ -23,7 +23,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -40,7 +40,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -57,7 +57,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $entry->poll->endDate = new \DateTimeImmutable('now - 1 day');
         $this->entityManager->flush();
 
@@ -75,7 +75,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -95,7 +95,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with poll');
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -117,7 +117,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with multiple choice poll');
-        $entry->poll = $this->createSimplePoll(true, false);
+        $entry->poll = $this->createSimplePoll($entry, true, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -137,7 +137,7 @@ class PollVoteControllerTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with comment');
         $entryComment = $this->createEntryComment('comment with poll', $entry);
-        $entryComment->poll = $this->createSimplePoll(false, false);
+        $entryComment->poll = $this->createSimplePoll($entryComment, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -157,7 +157,7 @@ class PollVoteControllerTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $entry = $this->getEntryByTitle('Entry with comment');
         $entryComment = $this->createEntryComment('comment with poll', $entry);
-        $entryComment->poll = $this->createSimplePoll(true, false);
+        $entryComment->poll = $this->createSimplePoll($entryComment, true, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -176,7 +176,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('Post with poll');
-        $post->poll = $this->createSimplePoll(false, false);
+        $post->poll = $this->createSimplePoll($post, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -195,7 +195,7 @@ class PollVoteControllerTest extends WebTestCase
     {
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('Post with poll');
-        $post->poll = $this->createSimplePoll(true, false);
+        $post->poll = $this->createSimplePoll($post, true, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -215,7 +215,7 @@ class PollVoteControllerTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('Post with comment');
         $postComment = $this->createPostComment('comment with poll', $post);
-        $postComment->poll = $this->createSimplePoll(false, false);
+        $postComment->poll = $this->createSimplePoll($postComment, false, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();
@@ -235,7 +235,7 @@ class PollVoteControllerTest extends WebTestCase
         $user = $this->getUserByUsername('user');
         $post = $this->createPost('Post with comment');
         $postComment = $this->createPostComment('comment with poll', $post);
-        $postComment->poll = $this->createSimplePoll(true, false);
+        $postComment->poll = $this->createSimplePoll($postComment, true, false);
         $this->entityManager->flush();
 
         self::createOAuth2AuthCodeClient();

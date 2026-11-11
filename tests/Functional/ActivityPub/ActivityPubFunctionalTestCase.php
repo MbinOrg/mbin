@@ -210,7 +210,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     {
         $entry = $this->getEntryByTitle('remote entry'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
         if ($addPoll) {
-            $entry->poll = $this->createSimplePoll(false, true);
+            $entry->poll = $this->createSimplePoll($entry, false, true);
         }
 
         $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
@@ -247,7 +247,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $entry = $entries[array_key_first($entries)];
         $comment = $this->createEntryComment('remote entry comment'.($addPoll ? ' with poll' : ''), $entry, $user);
         if ($addPoll) {
-            $comment->poll = $this->createSimplePoll(false, true);
+            $comment->poll = $this->createSimplePoll($comment, false, true);
         }
         $json = $this->entryCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -281,7 +281,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     {
         $post = $this->createPost('remote post'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
         if ($addPoll) {
-            $post->poll = $this->createSimplePoll(false, true);
+            $post->poll = $this->createSimplePoll($post, false, true);
         }
         $json = $this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -317,7 +317,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $post = $posts[array_key_first($posts)];
         $comment = $this->createPostComment('remote post comment'.($addPoll ? ' with poll' : ''), $post, $user);
         if ($addPoll) {
-            $comment->poll = $this->createSimplePoll(false, true);
+            $comment->poll = $this->createSimplePoll($comment, false, true);
         }
         $json = $this->postCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -351,7 +351,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     {
         $entry = $this->getEntryByTitle('remote entry in local'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
         if ($addPoll) {
-            $entry->poll = $this->createSimplePoll($pollMultipleChoice, true);
+            $entry->poll = $this->createSimplePoll($entry, $pollMultipleChoice, true);
         }
         $json = $this->pageFactory->create($entry, $this->tagLinkRepository->getTagsOfContent($entry));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -384,7 +384,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $entry = $entries[array_key_first($entries)];
         $comment = $this->createEntryComment('remote entry comment'.($addPoll ? ' with poll' : ''), $entry, $user);
         if ($addPoll) {
-            $comment->poll = $this->createSimplePoll(false, true);
+            $comment->poll = $this->createSimplePoll($comment, false, true);
         }
         $json = $this->entryCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -415,7 +415,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
     {
         $post = $this->createPost('remote post in local'.($addPoll ? ' with poll' : ''), magazine: $magazine, user: $user);
         if ($addPoll) {
-            $post->poll = $this->createSimplePoll(false, true);
+            $post->poll = $this->createSimplePoll($post, false, true);
         }
         $json = $this->postNoteFactory->create($post, $this->tagLinkRepository->getTagsOfContent($post));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;
@@ -448,7 +448,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $post = $posts[array_key_first($posts)];
         $comment = $this->createPostComment('remote post comment in local'.($addPoll ? ' with poll' : ''), $post, $user);
         if ($addPoll) {
-            $comment->poll = $this->createSimplePoll(false, true);
+            $comment->poll = $this->createSimplePoll($comment, false, true);
         }
         $json = $this->postCommentNoteFactory->create($comment, $this->tagLinkRepository->getTagsOfContent($comment));
         $this->testingApHttpClient->activityObjects[$json['id']] = $json;

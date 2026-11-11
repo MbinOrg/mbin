@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Poll;
-use App\Entity\PollVote;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,9 +33,14 @@ class PollRepository extends ServiceEntityRepository
      */
     public function getAllLocalVotersOfPoll(Poll $poll): array
     {
-        $localVotes = array_filter($poll->votes->toArray(), fn (PollVote $vote) => null === $vote->voter->apId);
+        $users = [];
+        foreach ($poll->votes as $vote) {
+            if (null === $vote->voter->apId) {
+                $users[$vote->voter->getId()] = $vote->voter;
+            }
+        }
 
-        return array_map(fn (PollVote $vote) => $vote->voter, $localVotes);
+        return array_values($users);
     }
 
     /**

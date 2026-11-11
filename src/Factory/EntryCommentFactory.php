@@ -6,10 +6,7 @@ namespace App\Factory;
 
 use App\DTO\EntryCommentDto;
 use App\DTO\EntryCommentResponseDto;
-use App\DTO\PollChoiceResponseDto;
-use App\DTO\PollResponseDto;
 use App\Entity\EntryComment;
-use App\Entity\PollChoice;
 use App\Entity\User;
 use App\PageView\EntryCommentPageView;
 use App\Repository\BookmarkListRepository;
@@ -46,12 +43,7 @@ class EntryCommentFactory
         $dto = $this->createDto($comment);
         $pollDto = null;
         if ($dto->addPoll) {
-            $pollDto = new PollResponseDto();
-            $pollDto->endDate = $dto->pollEndsAt;
-            $pollDto->voterCount = $comment->poll->voterCount;
-            $user = $this->security->getUser();
-            $pollDto->currentUserHasVoted = $user instanceof User ? $comment->poll->hasUserVoted($user) : null;
-            $pollDto->choices = $comment->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $comment->poll->choices->toArray()) : null;
+            $pollDto = $dto->getPollResponseDto($comment->poll, $this->security->getUser());
         }
 
         return EntryCommentResponseDto::create(
@@ -133,6 +125,10 @@ class EntryCommentFactory
         $dto->apDislikeCount = $comment->apDislikeCount;
         $dto->apShareCount = $comment->apShareCount;
         $dto->setId($comment->getId());
+
+        if ($comment->poll) {
+            $dto->mergePollIntoDto($comment->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

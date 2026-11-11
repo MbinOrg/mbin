@@ -6,11 +6,8 @@ namespace App\Factory;
 
 use App\DTO\EntryDto;
 use App\DTO\EntryResponseDto;
-use App\DTO\PollChoiceResponseDto;
-use App\DTO\PollResponseDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
-use App\Entity\PollChoice;
 use App\Entity\User;
 use App\Repository\BookmarkListRepository;
 use App\Repository\TagLinkRepository;
@@ -51,12 +48,7 @@ class EntryFactory
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
         $pollDto = null;
         if ($dto->addPoll) {
-            $user = $this->security->getUser();
-            $pollDto = new PollResponseDto();
-            $pollDto->voterCount = $entry->poll->voterCount;
-            $pollDto->endDate = $entry->poll->endDate;
-            $pollDto->currentUserHasVoted = $user instanceof User ? $entry->poll->hasUserVoted($user) : null;
-            $pollDto->choices = $entry->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $entry->poll->choices->toArray()) : null;
+            $pollDto = $dto->getPollResponseDto($entry->poll, $this->security->getUser());
         }
 
         return EntryResponseDto::create(
@@ -130,12 +122,7 @@ class EntryFactory
         $dto->tags = $this->tagLinkRepository->getTagsOfContent($entry);
 
         if ($entry->poll) {
-            $dto->addPoll = true;
-            $dto->pollEndsAt = $entry->poll->endDate;
-            $dto->isMultipleChoicePoll = $entry->poll->multipleChoice;
-            foreach ($entry->poll->choices as $choice) {
-                $dto->choices[] = $choice->name;
-            }
+            $dto->mergePollIntoDto($entry->poll);
         }
 
         $currentUser = $this->security->getUser();

@@ -280,7 +280,7 @@ class PollVoteController extends BaseApi
         return $this->voteOnPoll($request, $pollManager, $this->getUserOrThrow(), $comment, $poll, $headers);
     }
 
-    public function voteOnPoll(Request $request, PollManager $pollManager, User $user, Entry|EntryComment|Post|PostComment $content, Poll $poll, array $headers): JsonResponse
+    private function voteOnPoll(Request $request, PollManager $pollManager, User $user, Entry|EntryComment|Post|PostComment $content, Poll $poll, array $headers): JsonResponse
     {
         if ($content->poll->getId() !== $poll->getId() || $content->poll->hasEnded() || $content->poll->hasUserVoted($user)) {
             throw new BadRequestHttpException();

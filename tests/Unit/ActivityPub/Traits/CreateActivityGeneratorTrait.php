@@ -19,7 +19,7 @@ trait CreateActivityGeneratorTrait
     public function getCreateEntryWithPollActivity(): Activity
     {
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
-        $entry->poll = $this->createSimplePoll(false, true);
+        $entry->poll = $this->createSimplePoll($entry, false, true);
 
         return $this->createWrapper->build($entry);
     }
@@ -27,7 +27,7 @@ trait CreateActivityGeneratorTrait
     public function getCreateEntryWithMultipleChoicePollActivity(): Activity
     {
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
-        $entry->poll = $this->createSimplePoll(true, true);
+        $entry->poll = $this->createSimplePoll($entry, true, true);
 
         return $this->createWrapper->build($entry);
     }
@@ -51,7 +51,7 @@ trait CreateActivityGeneratorTrait
     {
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
         $entryComment = $this->createEntryComment('test', entry: $entry, user: $this->user);
-        $entryComment->poll = $this->createSimplePoll(false, true);
+        $entryComment->poll = $this->createSimplePoll($entryComment, false, true);
 
         return $this->createWrapper->build($entryComment);
     }
@@ -60,7 +60,7 @@ trait CreateActivityGeneratorTrait
     {
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
         $entryComment = $this->createEntryComment('test', entry: $entry, user: $this->user);
-        $entryComment->poll = $this->createSimplePoll(false, true);
+        $entryComment->poll = $this->createSimplePoll($entryComment, false, true);
 
         return $this->createWrapper->build($entryComment);
     }
@@ -79,7 +79,7 @@ trait CreateActivityGeneratorTrait
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
         $entryComment = $this->createEntryComment('test', entry: $entry, user: $this->user);
         $entryComment2 = $this->createEntryComment('test', entry: $entry, user: $this->user, parent: $entryComment);
-        $entryComment2->poll = $this->createSimplePoll(false, true);
+        $entryComment2->poll = $this->createSimplePoll($entryComment2, false, true);
 
         return $this->createWrapper->build($entryComment2);
     }
@@ -89,7 +89,7 @@ trait CreateActivityGeneratorTrait
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
         $entryComment = $this->createEntryComment('test', entry: $entry, user: $this->user);
         $entryComment2 = $this->createEntryComment('test', entry: $entry, user: $this->user, parent: $entryComment);
-        $entryComment2->poll = $this->createSimplePoll(true, true);
+        $entryComment2->poll = $this->createSimplePoll($entryComment2, true, true);
 
         return $this->createWrapper->build($entryComment2);
     }
@@ -104,7 +104,7 @@ trait CreateActivityGeneratorTrait
     public function getCreatePostActivityWithPoll(): Activity
     {
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
-        $post->poll = $this->createSimplePoll(false, true);
+        $post->poll = $this->createSimplePoll($post, false, true);
 
         return $this->createWrapper->build($post);
     }
@@ -112,7 +112,7 @@ trait CreateActivityGeneratorTrait
     public function getCreatePostActivityWithMultipleChoicePoll(): Activity
     {
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
-        $post->poll = $this->createSimplePoll(true, true);
+        $post->poll = $this->createSimplePoll($post, true, true);
 
         return $this->createWrapper->build($post);
     }
@@ -129,7 +129,7 @@ trait CreateActivityGeneratorTrait
     {
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
         $postComment = $this->createPostComment('test', post: $post, user: $this->user);
-        $postComment->poll = $this->createSimplePoll(false, true);
+        $postComment->poll = $this->createSimplePoll($postComment, false, true);
 
         return $this->createWrapper->build($postComment);
     }
@@ -138,7 +138,7 @@ trait CreateActivityGeneratorTrait
     {
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
         $postComment = $this->createPostComment('test', post: $post, user: $this->user);
-        $postComment->poll = $this->createSimplePoll(true, true);
+        $postComment->poll = $this->createSimplePoll($postComment, true, true);
 
         return $this->createWrapper->build($postComment);
     }
@@ -157,7 +157,7 @@ trait CreateActivityGeneratorTrait
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
         $postComment = $this->createPostComment('test', post: $post, user: $this->user);
         $postComment2 = $this->createPostComment('test', post: $post, user: $this->user, parent: $postComment);
-        $postComment2->poll = $this->createSimplePoll(false, true);
+        $postComment2->poll = $this->createSimplePoll($postComment2, false, true);
 
         return $this->createWrapper->build($postComment2);
     }
@@ -167,7 +167,7 @@ trait CreateActivityGeneratorTrait
         $post = $this->createPost('test', magazine: $this->magazine, user: $this->user);
         $postComment = $this->createPostComment('test', post: $post, user: $this->user);
         $postComment2 = $this->createPostComment('test', post: $post, user: $this->user, parent: $postComment);
-        $postComment2->poll = $this->createSimplePoll(true, true);
+        $postComment2->poll = $this->createSimplePoll($postComment2, true, true);
 
         return $this->createWrapper->build($postComment2);
     }
@@ -184,7 +184,7 @@ trait CreateActivityGeneratorTrait
     {
         $user2 = $this->getUserByUsername('user2');
         $entry = $this->getEntryByTitle('test', magazine: $this->magazine, user: $this->user);
-        $entry->poll = $this->createSimplePoll(false, false);
+        $entry->poll = $this->createSimplePoll($entry, false, false);
 
         $vote = new PollVote();
         $vote->poll = $entry->poll;

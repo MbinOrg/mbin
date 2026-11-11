@@ -20,6 +20,7 @@ use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApObjectException;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidPollChoiceException;
 use App\Exception\InvalidWebfingerException;
 use App\Exception\PollHasEndedException;
 use App\Exception\PostLockedException;
@@ -67,6 +68,7 @@ class Note extends ActivityPubContent
      * @throws PostLockedException
      * @throws InvalidApObjectException
      * @throws PollHasEndedException
+     * @throws InvalidPollChoiceException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post|PollVote
@@ -102,8 +104,12 @@ class Note extends ActivityPubContent
 
             if (isset($object['name'])) {
                 if ($parent instanceof Entry || $parent instanceof EntryComment || $parent instanceof Post || $parent instanceof PostComment) {
-                    if ($parent->poll && $parent->poll->findChoice($object['name'])) {
-                        return $this->voteOnPoll($parent->poll, $parent, $object);
+                    if ($parent->poll) {
+                        if ($parent->poll->findChoice($object['name'])) {
+                            return $this->voteOnPoll($parent->poll, $parent, $object);
+                        } else {
+                            throw new InvalidPollChoiceException($object['name'], $parent->poll->getId());
+                        }
                     }
                 }
             }
@@ -188,7 +194,15 @@ class Note extends ActivityPubContent
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->entryCommentManager->create($dto, $actor, false);
+            $comment = $this->entryCommentManager->create($dto, $actor, false);
+
+            if ($this->pollManager->hasPollProperties($object)) {
+                $poll = $this->pollManager->createFromApObject($object);
+                $comment->poll = $poll;
+                $this->entityManager->flush();
+            }
+
+            return $comment;
         } elseif ($actor instanceof Magazine) {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {
@@ -316,7 +330,15 @@ class Note extends ActivityPubContent
             $dto->apDislikeCount = $this->activityPubManager->extractRemoteDislikeCount($object);
             $dto->apShareCount = $this->activityPubManager->extractRemoteShareCount($object);
 
-            return $this->postCommentManager->create($dto, $actor, false);
+            $comment = $this->postCommentManager->create($dto, $actor, false);
+
+            if ($this->pollManager->hasPollProperties($object)) {
+                $poll = $this->pollManager->createFromApObject($object);
+                $comment->poll = $poll;
+                $this->entityManager->flush();
+            }
+
+            return $comment;
         } elseif ($actor instanceof Magazine) {
             throw new UnrecoverableMessageHandlingException('Actor "'.$object['attributedTo'].'" is not a user, but a magazine for post "'.$dto->apId.'".');
         } else {

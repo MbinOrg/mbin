@@ -28,7 +28,7 @@ class PollChoice
     public int $voteCount = 0;
 
     /**
-     * @var Collection<PollVote>
+     * @var Collection<array-key, PollVote>
      */
     #[OneToMany(targetEntity: PollVote::class, mappedBy: 'choice')]
     public Collection $votes;
@@ -43,7 +43,7 @@ class PollChoice
     }
 
     /**
-     * @return Collection<PollVote>
+     * @return Collection<array-key, PollVote>
      */
     public function getUserVotes(User $user): Collection
     {
@@ -58,7 +58,11 @@ class PollChoice
         return !$this->getUserVotes($user)->isEmpty();
     }
 
-    public function updateVoteCount(): void
+    /**
+     * This function increases the voterCount by one if its poll remote.
+     * If it is part of a local poll, it instead updates the voterCount from the database.
+     */
+    public function updateOrIncrementVoteCount(): void
     {
         if ($this->poll->isRemote) {
             ++$this->voteCount;

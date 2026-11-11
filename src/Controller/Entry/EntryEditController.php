@@ -10,7 +10,6 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Form\EntryEditType;
 use App\Service\EntryManager;
-use App\Service\PollManager;
 use App\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -27,7 +26,6 @@ class EntryEditController extends AbstractController
         private readonly EntryManager $manager,
         private readonly LoggerInterface $logger,
         private readonly SettingsManager $settingsManager,
-        private readonly PollManager $pollManager,
     ) {
     }
 

@@ -100,12 +100,12 @@ class PostsBaseApi extends BaseApi
     /**
      * Serialize a comment tree to JSON.
      *
-     * @param ?PostComment $comment The root comment to base the tree on
-     * @param ?int         $depth   how many levels of children to include. If null (default), retrieves depth from query parameter 'd'.
+     * @param PostComment $comment The root comment to base the tree on
+     * @param ?int        $depth   how many levels of children to include. If null (default), retrieves depth from query parameter 'd'.
      *
      * @return array An associative array representation of the comment's hierarchy, to be used as JSON
      */
-    protected function serializePostCommentTree(?PostComment $comment, PostCommentPageView $commentPageView, ?int $depth = null): array
+    protected function serializePostCommentTree(PostComment $comment, PostCommentPageView $commentPageView, ?int $depth = null): array
     {
         if (null === $depth) {
             $depth = self::constrainDepth(Polyfills::requestParam($this->request->getCurrentRequest(), 'd', self::DEPTH));

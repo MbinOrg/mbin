@@ -19,6 +19,7 @@ class DebugCommand extends Command
         parent::__construct();
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->pollRepository->getAllEndedPollsToSentNotifications() as $poll) {

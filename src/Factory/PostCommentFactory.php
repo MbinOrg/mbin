@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\DTO\PollChoiceResponseDto;
-use App\DTO\PollResponseDto;
 use App\DTO\PostCommentDto;
 use App\DTO\PostCommentResponseDto;
-use App\Entity\PollChoice;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\PageView\PostCommentPageView;
@@ -47,12 +44,7 @@ class PostCommentFactory
 
         $pollDto = null;
         if ($dto->addPoll) {
-            $pollDto = new PollResponseDto();
-            $pollDto->endDate = $dto->pollEndsAt;
-            $pollDto->voterCount = $comment->poll->voterCount;
-            $user = $this->security->getUser();
-            $pollDto->currentUserHasVoted = $user instanceof User ? $comment->poll->hasUserVoted($user) : null;
-            $pollDto->choices = $comment->poll->choices ? array_map(fn (PollChoice $choice) => PollChoiceResponseDto::createFromPollChoice($choice, $user), $comment->poll->choices->toArray()) : null;
+            $pollDto = $dto->getPollResponseDto($comment->poll, $this->security->getUser());
         }
 
         return PostCommentResponseDto::create(
@@ -133,6 +125,10 @@ class PostCommentFactory
         $dto->apLikeCount = $comment->apLikeCount;
         $dto->apDislikeCount = $comment->apDislikeCount;
         $dto->apShareCount = $comment->apShareCount;
+
+        if ($comment->poll) {
+            $dto->mergePollIntoDto($comment->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

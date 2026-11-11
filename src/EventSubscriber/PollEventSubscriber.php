@@ -23,6 +23,7 @@ readonly class PollEventSubscriber implements EventSubscriberInterface
     ) {
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -36,11 +37,11 @@ readonly class PollEventSubscriber implements EventSubscriberInterface
     {
         if ($event->poll->isRemote && null === $event->voter->apId) {
             // remote poll, local user -> send the vote
-            foreach ($event->poll->votes as $vote) {
+            foreach ($event->votes as $vote) {
                 $this->bus->dispatch(new PollVoteMessage($vote->uuid->toString()));
             }
         } elseif (!$event->poll->isRemote) {
-            // remote poll -> send update with new vote numbers
+            // local poll -> send update of the poll with new vote numbers
             $this->bus->dispatch(new UpdateMessage($event->content->getId(), \get_class($event->content)));
             $event->content->editedAt = new \DateTimeImmutable();
         }

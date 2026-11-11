@@ -28,6 +28,7 @@ class PollChoiceResponseDto implements \JsonSerializable
         return $dto;
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

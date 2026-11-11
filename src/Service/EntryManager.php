@@ -253,19 +253,6 @@ class EntryManager implements ContentManagerInterface
         return $entry;
     }
 
-    public function refreshFromRemote(Entry $entry, EntryDto $dto): void
-    {
-        if ($entry->poll) {
-            $this->pollManager->refreshFromRemote($entry->poll, $dto);
-        }
-
-        $entry->apLikeCount = $dto->apLikeCount;
-        $entry->apDislikeCount = $dto->apDislikeCount;
-        $entry->apShareCount = $dto->apShareCount;
-        $entry->updateScore();
-        $entry->updateRanking();
-    }
-
     public function delete(User $user, Entry $entry): void
     {
         if ($user->apDomain && $user->apDomain !== parse_url($entry->apId ?? '', PHP_URL_HOST) && !$entry->magazine->userIsModerator($user)) {

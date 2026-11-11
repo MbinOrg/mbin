@@ -12,6 +12,7 @@ use App\Entity\User;
 use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidPollChoiceException;
 use App\Exception\InvalidWebfingerException;
 use App\Exception\PollHasEndedException;
 use App\Exception\PostingRestrictedException;
@@ -121,6 +122,8 @@ class CreateHandler extends MbinMessageHandler
             $this->logger->info('[CreateHandler::doWork] Did not create the comment, because the entry/post is locked');
         } catch (PollHasEndedException) {
             $this->logger->info('[CreateHandler::doWork] Did not create the vote ({vId}), because the poll ({pId}) has already ended', ['vId' => $object['id'], 'pId' => $object['inReplyTo']]);
+        } catch (InvalidPollChoiceException $ex) {
+            $this->logger->info('[CreateHandler::doWork] Did not create the poll vote ({vId}), because the choice "{choice}" does not exist', ['vId' => $object['id'], 'choice' => $ex->pollChoice]);
         }
     }
 
@@ -132,6 +135,7 @@ class CreateHandler extends MbinMessageHandler
      * @throws EntryLockedException
      * @throws PostLockedException
      * @throws PollHasEndedException
+     * @throws InvalidPollChoiceException
      */
     private function handleChain(array $object, bool $stickyIt, ?array $fullCreatePayload): void
     {

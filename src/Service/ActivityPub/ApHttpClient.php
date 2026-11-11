@@ -78,6 +78,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @return array|string|null JSON Response body (as PHP Object)
      */
+    #[\Override]
     public function getActivityObject(string $url, bool $decoded = true): array|string|null
     {
         $key = $this->getActivityObjectCacheKey($url);
@@ -149,11 +150,13 @@ class ApHttpClient implements ApHttpClientInterface
         return $content;
     }
 
+    #[\Override]
     public function getActivityObjectCacheKey(string $url): string
     {
         return 'ap_object_'.hash('sha256', $url);
     }
 
+    #[\Override]
     public function invalidateActivityObjectCache(string $url): void
     {
         $this->cache->delete($this->getActivityObjectCacheKey($url));
@@ -166,6 +169,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws \LogicException|InvalidApPostException if the AP actor object cannot be found
      */
+    #[\Override]
     public function getInboxUrl(string $apProfileId): string
     {
         $actor = $this->getActorObject($apProfileId);
@@ -185,6 +189,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidWebfingerException|InvalidArgumentException
      */
+    #[\Override]
     public function getWebfingerObject(string $url): ?array
     {
         $key = 'wf_'.hash('sha256', $url);
@@ -248,6 +253,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidApPostException|InvalidArgumentException
      */
+    #[\Override]
     public function getActorObject(string $apProfileId): ?array
     {
         $key = $this->getActorCacheKey($apProfileId);
@@ -332,6 +338,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @param string $apProfileId AP profile ID to remove from cache
      */
+    #[\Override]
     public function invalidateActorObjectCache(string $apProfileId): void
     {
         $this->cache->delete($this->getActorCacheKey($apProfileId));
@@ -342,6 +349,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @param string $apAddress AP address to remove from cache
      */
+    #[\Override]
     public function invalidateCollectionObjectCache(string $apAddress): void
     {
         $this->cache->delete($this->getCollectionCacheKey($apAddress));
@@ -355,6 +363,7 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidArgumentException
      */
+    #[\Override]
     public function getCollectionObject(string $apAddress): ?array
     {
         $key = $this->getCollectionCacheKey($apAddress);
@@ -471,6 +480,7 @@ class ApHttpClient implements ApHttpClientInterface
      * @throws InvalidApPostException      if the POST request fails with a non-2xx response status code
      * @throws TransportExceptionInterface
      */
+    #[\Override]
     public function post(string $url, User|Magazine $actor, ?array $body = null, bool $useOldPrivateKey = false): void
     {
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
@@ -524,6 +534,7 @@ class ApHttpClient implements ApHttpClientInterface
         $this->cache->save($item);
     }
 
+    #[\Override]
     public function fetchInstanceNodeInfoEndpoints(string $domain, bool $decoded = true): array|string|null
     {
         $url = "https://$domain/.well-known/nodeinfo";
@@ -537,6 +548,7 @@ class ApHttpClient implements ApHttpClientInterface
         return $decoded ? json_decode($resp, true) : $resp;
     }
 
+    #[\Override]
     public function fetchInstanceNodeInfo(string $url, bool $decoded = true): array|string|null
     {
         $resp = $this->generalFetchCached('nodeinfo_', 'nodeinfo', $url, ApRequestType::NodeInfo);
@@ -770,6 +782,7 @@ class ApHttpClient implements ApHttpClientInterface
         });
     }
 
+    #[\Override]
     public function getInstancePublicKey(): string
     {
         return $this->cache->get('instance_public_key', function (ItemInterface $item) {

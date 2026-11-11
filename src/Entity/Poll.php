@@ -45,26 +45,26 @@ class Poll
     public bool $sentNotifications = false;
 
     /**
-     * @var Collection<PollVote>
+     * @var Collection<array-key, PollVote>
      */
     #[OneToMany(targetEntity: PollVote::class, mappedBy: 'poll')]
     public Collection $votes;
 
-    /** @var Collection<PollChoice> */
+    /** @var Collection<array-key, PollChoice> */
     #[OneToMany(targetEntity: PollChoice::class, mappedBy: 'poll')]
     public Collection $choices;
 
     #[OneToOne(targetEntity: Entry::class, mappedBy: 'poll')]
-    public ?Entry $entry;
+    public ?Entry $entry = null;
 
     #[OneToOne(targetEntity: EntryComment::class, mappedBy: 'poll')]
-    public ?EntryComment $entryComment;
+    public ?EntryComment $entryComment = null;
 
     #[OneToOne(targetEntity: Post::class, mappedBy: 'poll')]
-    public ?Post $post;
+    public ?Post $post = null;
 
     #[OneToOne(targetEntity: PostComment::class, mappedBy: 'poll')]
-    public ?PostComment $postComment;
+    public ?PostComment $postComment = null;
 
     public function __construct(?\DateTimeImmutable $endDate = null)
     {
@@ -125,7 +125,11 @@ class Poll
         return $result;
     }
 
-    public function updateVoterCount(): void
+    /**
+     * This function increases the voterCount by one if it is a remote poll.
+     * If it is a local poll, it instead updates the voterCount from the database.
+     */
+    public function updateOrIncrementVoterCount(): void
     {
         if ($this->isRemote) {
             ++$this->voterCount;

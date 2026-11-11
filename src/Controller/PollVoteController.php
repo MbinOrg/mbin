@@ -9,7 +9,6 @@ use App\Entity\EntryComment;
 use App\Entity\Poll;
 use App\Entity\Post;
 use App\Entity\PostComment;
-use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\PollManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -24,7 +23,6 @@ class PollVoteController extends AbstractController
     public function __construct(
         private readonly PollManager $pollManager,
         private readonly LoggerInterface $logger,
-        private readonly ApHttpClientInterface $apHttpClient,
     ) {
     }
 
@@ -32,9 +30,12 @@ class PollVoteController extends AbstractController
     public function vote(#[MapEntity] Poll $poll, Request $request): Response
     {
         $user = $this->getUserOrThrow();
-        $choices = $request->query->all('choice');
-
-        $content = $this->pollManager->getContentOfPoll($poll);
+        $csrf = $request->getPayload()->get('_token');
+        if (!$this->isCsrfTokenValid('poll_vote_'.$poll->getId(), $csrf)) {
+            throw $this->createAccessDeniedException('Invalid CSRF Token');
+        }
+        $choices = $request->getPayload()->all('choice');
+        $content = $poll->getSubject();
 
         if (null === $content) {
             throw new NotFoundHttpException();
@@ -61,11 +62,7 @@ class PollVoteController extends AbstractController
             throw new BadRequestHttpException('Cannot refresh the vote counts of a local poll');
         }
 
-        $this->apHttpClient->invalidateActivityObjectCache($poll->getSubject()->apId);
-        $object = $this->apHttpClient->getActivityObject($poll->getSubject()->apId);
-        if ($this->pollManager->hasPollProperties($object)) {
-            $this->pollManager->updatePollCounts($poll, $object);
-        }
+        $this->pollManager->fetchPollCounts($poll);
 
         return $this->redirectToPollContent($poll);
     }
