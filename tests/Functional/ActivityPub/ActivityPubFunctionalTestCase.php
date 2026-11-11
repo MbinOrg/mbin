@@ -88,6 +88,7 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         for ($i = \sizeof($this->entitiesToRemoveAfterSetup) - 1; $i >= 0; --$i) {
             $this->entityManager->remove($this->entitiesToRemoveAfterSetup[$i]);
         }
+        $this->entitiesToRemoveAfterSetup = [];
         $this->entries = new ArrayCollection();
         $this->magazines = new ArrayCollection();
         $this->users = new ArrayCollection();
@@ -201,6 +202,24 @@ abstract class ActivityPubFunctionalTestCase extends ActivityPubTestCase
         $this->settingsManager->set('KBIN_DOMAIN', $this->prev);
         $context->setHost($this->prev);
         $this->prev = null;
+    }
+
+    protected function postSetupRunInRemoteDomain(string $remoteDomain, callable $lambda): void
+    {
+        $this->switchToRemoteDomain($remoteDomain);
+
+        $lambda();
+        for ($i = \sizeof($this->entitiesToRemoveAfterSetup) - 1; $i >= 0; --$i) {
+            $this->entityManager->remove($this->entitiesToRemoveAfterSetup[$i]);
+        }
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+        $this->entitiesToRemoveAfterSetup = [];
+        $this->entries = new ArrayCollection();
+        $this->magazines = new ArrayCollection();
+        $this->users = new ArrayCollection();
+
+        $this->switchToLocalDomain();
     }
 
     /**

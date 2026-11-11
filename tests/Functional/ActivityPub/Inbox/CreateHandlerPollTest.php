@@ -40,39 +40,16 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
     public function setUpLocalEntities(): void
     {
         $this->setupRemoteActor();
-
-        $this->localEntryWithPoll = $this->getEntryByTitle('A local entry with a poll');
-        $this->localEntryWithPoll->poll = $this->createSimplePoll($this->localEntryWithPoll, false, false);
-        $this->localEntryWithMultipleChoicePoll = $this->getEntryByTitle('A local entry with a multiple choice poll');
-        $this->localEntryWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryWithMultipleChoicePoll, true, false);
-        $this->localEntryCommentWithPoll = $this->createEntryComment('A local entry comment with a poll');
-        $this->localEntryCommentWithPoll->poll = $this->createSimplePoll($this->localEntryCommentWithPoll, false, false);
-        $this->localEntryCommentWithMultipleChoicePoll = $this->createEntryComment('A local entry comment with a multiple choice poll');
-        $this->localEntryCommentWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryCommentWithMultipleChoicePoll, true, false);
-        $this->localPostWithPoll = $this->createPost('A local post with a poll');
-        $this->localPostWithPoll->poll = $this->createSimplePoll($this->localPostWithPoll, false, false);
-        $this->localPostWithMultipleChoicePoll = $this->createPost('A local post with a multiple choice poll');
-        $this->localPostWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localPostWithMultipleChoicePoll, true, false);
-        $this->localPostCommentWithPoll = $this->createPostComment('A local post comment with a poll');
-        $this->localPostCommentWithPoll->poll = $this->createSimplePoll($this->localPostCommentWithPoll, false, false);
-        $this->localPostCommentWithMultipleChoicePoll = $this->createPostComment('A local post comment with a multiple choice poll');
-        $this->localPostCommentWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localPostCommentWithMultipleChoicePoll, true, false);
-    }
-
-    public function setUpLateRemoteEntities(): void
-    {
-        $this->remoteVoteOnLocalPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithPoll->poll, $this->remoteUser, 'B');
-        $this->remoteVoteOnLocalMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
-        $this->remoteVoteOnLocalEntryCommentPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryCommentWithPoll->poll, $this->remoteUser, 'B');
-        $this->remoteVoteOnLocalEntryCommentMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryCommentWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
-        $this->remoteVoteOnLocalPostPoll = $this->createRemoteVoteOnLocalPoll($this->localPostWithPoll->poll, $this->remoteUser, 'B');
-        $this->remoteVoteOnLocalPostMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localPostWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
-        $this->remoteVoteOnLocalPostCommentPoll = $this->createRemoteVoteOnLocalPoll($this->localPostCommentWithPoll->poll, $this->remoteUser, 'B');
-        $this->remoteVoteOnLocalPostCommentMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localPostCommentWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
     }
 
     public function testRemoteVoteOnLocalEntryWithPoll(): void
     {
+        $this->localEntryWithPoll = $this->getEntryByTitle('A local entry with a poll');
+        $this->localEntryWithPoll->poll = $this->createSimplePoll($this->localEntryWithPoll, false, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithPoll->poll, $this->remoteUser, 'B');
+        });
+
         $this->bus->dispatch(new ActivityMessage(json_encode($this->remoteVoteOnLocalPoll)));
         $entry = $this->entryRepository->find($this->localEntryWithPoll->getId());
         self::assertNotNull($entry);
@@ -84,6 +61,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalEntryWithMultipleChoicePoll(): void
     {
+        $this->localEntryWithMultipleChoicePoll = $this->getEntryByTitle('A local entry with a multiple choice poll');
+        $this->localEntryWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $choiceA = $this->remoteVoteOnLocalMultipleChoicePoll;
         $choiceB = $this->remoteVoteOnLocalMultipleChoicePoll;
         $choiceB['object']['name'] = 'B';
@@ -106,6 +89,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVoteOnLocalEntryCommentWithPoll(): void
     {
+        $this->localEntryCommentWithPoll = $this->createEntryComment('A local entry comment with a poll');
+        $this->localEntryCommentWithPoll->poll = $this->createSimplePoll($this->localEntryCommentWithPoll, false, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalEntryCommentPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryCommentWithPoll->poll, $this->remoteUser, 'B');
+        });
+
         $this->bus->dispatch(new ActivityMessage(json_encode($this->remoteVoteOnLocalEntryCommentPoll)));
         $entryComment = $this->entryCommentRepository->find($this->localEntryCommentWithPoll->getId());
         self::assertNotNull($entryComment);
@@ -117,6 +106,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalEntryCommentWithMultipleChoicePoll(): void
     {
+        $this->localEntryCommentWithMultipleChoicePoll = $this->createEntryComment('A local entry comment with a multiple choice poll');
+        $this->localEntryCommentWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryCommentWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalEntryCommentMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryCommentWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $choiceA = $this->remoteVoteOnLocalEntryCommentMultipleChoicePoll;
         $choiceB = $this->remoteVoteOnLocalEntryCommentMultipleChoicePoll;
         $choiceB['object']['name'] = 'B';
@@ -139,6 +134,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVoteOnLocalPostWithPoll(): void
     {
+        $this->localPostWithPoll = $this->createPost('A local post with a poll');
+        $this->localPostWithPoll->poll = $this->createSimplePoll($this->localPostWithPoll, false, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPostPoll = $this->createRemoteVoteOnLocalPoll($this->localPostWithPoll->poll, $this->remoteUser, 'B');
+        });
+
         $this->bus->dispatch(new ActivityMessage(json_encode($this->remoteVoteOnLocalPostPoll)));
         $post = $this->postRepository->find($this->localPostWithPoll->getId());
         self::assertNotNull($post);
@@ -150,6 +151,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalPostWithMultipleChoicePoll(): void
     {
+        $this->localPostWithMultipleChoicePoll = $this->createPost('A local post with a multiple choice poll');
+        $this->localPostWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localPostWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPostMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localPostWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $choiceA = $this->remoteVoteOnLocalPostMultipleChoicePoll;
         $choiceB = $this->remoteVoteOnLocalPostMultipleChoicePoll;
         $choiceB['object']['name'] = 'B';
@@ -172,6 +179,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVoteOnLocalPostCommentWithPoll(): void
     {
+        $this->localPostCommentWithPoll = $this->createPostComment('A local post comment with a poll');
+        $this->localPostCommentWithPoll->poll = $this->createSimplePoll($this->localPostCommentWithPoll, false, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPostCommentPoll = $this->createRemoteVoteOnLocalPoll($this->localPostCommentWithPoll->poll, $this->remoteUser, 'B');
+        });
+
         $this->bus->dispatch(new ActivityMessage(json_encode($this->remoteVoteOnLocalPostCommentPoll)));
         $postComment = $this->postCommentRepository->find($this->localPostCommentWithPoll->getId());
         self::assertNotNull($postComment);
@@ -183,6 +196,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalPostCommentWithMultipleChoicePoll(): void
     {
+        $this->localPostCommentWithMultipleChoicePoll = $this->createPostComment('A local post comment with a multiple choice poll');
+        $this->localPostCommentWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localPostCommentWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPostCommentMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localPostCommentWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $choiceA = $this->remoteVoteOnLocalPostCommentMultipleChoicePoll;
         $choiceB = $this->remoteVoteOnLocalPostCommentMultipleChoicePoll;
         $choiceB['object']['name'] = 'B';
@@ -205,6 +224,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalEntryWithPollWithInvalidChoice(): void
     {
+        $this->localEntryWithMultipleChoicePoll = $this->getEntryByTitle('A local entry with a multiple choice poll');
+        $this->localEntryWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $choiceA2 = $this->remoteVoteOnLocalMultipleChoicePoll;
         $choiceA2['object']['name'] = 'A2';
         $this->bus->dispatch(new ActivityMessage(json_encode($choiceA2)));
@@ -216,6 +241,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testRemoteVotesOnLocalEntryWithEndedPoll(): void
     {
+        $this->localEntryWithMultipleChoicePoll = $this->getEntryByTitle('A local entry with a multiple choice poll');
+        $this->localEntryWithMultipleChoicePoll->poll = $this->createSimplePoll($this->localEntryWithMultipleChoicePoll, true, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalMultipleChoicePoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithMultipleChoicePoll->poll, $this->remoteUser, 'A');
+        });
+
         $entry = $this->entryRepository->find($this->localEntryWithMultipleChoicePoll->getId());
         self::assertNotNull($entry);
         self::assertNotNull($entry->poll);
@@ -231,6 +262,12 @@ class CreateHandlerPollTest extends ActivityPubFunctionalTestCase
 
     public function testMultipleRemoteVotesOnLocalEntry(): void
     {
+        $this->localEntryWithPoll = $this->getEntryByTitle('A local entry with a poll');
+        $this->localEntryWithPoll->poll = $this->createSimplePoll($this->localEntryWithPoll, false, false);
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->remoteVoteOnLocalPoll = $this->createRemoteVoteOnLocalPoll($this->localEntryWithPoll->poll, $this->remoteUser, 'B');
+        });
+
         $choiceA = $this->remoteVoteOnLocalPoll;
         $choiceA['object']['name'] = 'A';
         $this->bus->dispatch(new ActivityMessage(json_encode($choiceA)));

@@ -24,8 +24,6 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     private array $announcePost;
     private array $announcePostComment;
     private array $createEntry;
-    private array $createEntryWithPoll;
-    private array $createEntryWithMultipleChoicePoll;
     private array $createEntryWithUrlAndImage;
     private array $createEntryComment;
     private array $createPost;
@@ -38,21 +36,6 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function setUpRemoteEntities(): void
     {
-        $this->announceEntry = $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
-        $this->announceEntryComment = $this->createRemoteEntryCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
-        $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
-        $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
-        $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createEntryWithPoll = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser, addPoll: true);
-        $this->createEntryWithMultipleChoicePoll = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser, addPoll: true, pollMultipleChoice: true);
-        $this->createEntryWithUrlAndImage = $this->createRemoteEntryWithUrlAndImageInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
-        $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
-        $this->setupMastodonPost();
-        $this->setupMastodonPostWithoutTagArray();
-        $this->setupPostWithOtherPublicStrings();
     }
 
     public function setUpLocalEntities(): void
@@ -62,6 +45,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateAnnouncedEntry(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announceEntry = $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
         $entry = $this->entryRepository->findOneBy(['apId' => $this->announceEntry['object']['object']['id']]);
         self::assertNotNull($entry);
@@ -70,6 +56,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreateAnnouncedEntry')]
     public function testCreateAnnouncedEntryComment(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announceEntry = $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+            $this->announceEntryComment = $this->createRemoteEntryCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntryComment)));
         $entryComment = $this->entryCommentRepository->findOneBy(['apId' => $this->announceEntryComment['object']['object']['id']]);
@@ -79,6 +69,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreateAnnouncedEntryComment')]
     public function testCannotCreateAnnouncedEntryCommentInLockedEntry(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announceEntry = $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+            $this->announceEntryComment = $this->createRemoteEntryCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announceEntry)));
         $entry = $this->entryRepository->findOneBy(['apId' => $this->announceEntry['object']['object']['id']]);
         self::assertNotNull($entry);
@@ -93,6 +87,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateAnnouncedPost(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
         $post = $this->postRepository->findOneBy(['apId' => $this->announcePost['object']['object']['id']]);
         self::assertNotNull($post);
@@ -101,6 +98,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreateAnnouncedPost')]
     public function testCreateAnnouncedPostComment(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+            $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePostComment)));
         $postComment = $this->postCommentRepository->findOneBy(['apId' => $this->announcePostComment['object']['object']['id']]);
@@ -110,6 +111,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreateAnnouncedPostComment')]
     public function testCannotCreateAnnouncedPostCommentInLockedPost(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->announcePost = $this->createRemotePostInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+            $this->announcePostComment = $this->createRemotePostCommentInRemoteMagazine($this->remoteMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->announcePost)));
         $post = $this->postRepository->findOneBy(['apId' => $this->announcePost['object']['object']['id']]);
         self::assertNotNull($post);
@@ -124,6 +129,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateEntry(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntry)));
         $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntry['object']['id']]);
         self::assertNotNull($entry);
@@ -136,50 +144,11 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
     }
 
-    public function testCreateEntryWithPoll(): void
-    {
-        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithPoll)));
-        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithPoll['object']['id']]);
-        self::assertNotNull($entry);
-        self::assertNotNull($entry->poll);
-        self::assertFalse($entry->poll->multipleChoice);
-        self::assertTrue($entry->poll->isRemote);
-        $this->entityManager->refresh($entry->poll);
-        self::assertNotNull($entry->poll->findChoice('A'));
-        self::assertNotNull($entry->poll->findChoice('B'));
-        self::assertNotNull($entry->poll->findChoice('C'));
-        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
-        $postedObjects = $this->testingApHttpClient->getPostedObjects();
-        self::assertNotEmpty($postedObjects);
-        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
-        self::assertEquals($this->createEntryWithPoll['id'], $postedObjects[0]['payload']['object']['id']);
-        self::assertEquals($this->createEntryWithPoll['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
-        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
-    }
-
-    public function testCreateEntryWithMultipleChoicePoll(): void
-    {
-        $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithMultipleChoicePoll)));
-        $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithMultipleChoicePoll['object']['id']]);
-        self::assertNotNull($entry);
-        self::assertNotNull($entry->poll);
-        self::assertTrue($entry->poll->multipleChoice);
-        self::assertTrue($entry->poll->isRemote);
-        $this->entityManager->refresh($entry->poll);
-        self::assertNotNull($entry->poll->findChoice('A'));
-        self::assertNotNull($entry->poll->findChoice('B'));
-        self::assertNotNull($entry->poll->findChoice('C'));
-        self::assertTrue($this->localMagazine->isSubscribed($this->remoteSubscriber));
-        $postedObjects = $this->testingApHttpClient->getPostedObjects();
-        self::assertNotEmpty($postedObjects);
-        // the id of the 'Create' activity should be wrapped in a 'Announce' activity
-        self::assertEquals($this->createEntryWithMultipleChoicePoll['id'], $postedObjects[0]['payload']['object']['id']);
-        self::assertEquals($this->createEntryWithMultipleChoicePoll['object']['id'], $postedObjects[0]['payload']['object']['object']['id']);
-        self::assertEquals($this->remoteSubscriber->apInboxUrl, $postedObjects[0]['inboxUrl']);
-    }
-
     public function testCreateEntryWithUrlAndImage(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createEntryWithUrlAndImage = $this->createRemoteEntryWithUrlAndImageInLocalMagazine($this->localMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntryWithUrlAndImage)));
         $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntryWithUrlAndImage['object']['id']]);
         self::assertNotNull($entry);
@@ -197,6 +166,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreateEntry')]
     public function testCreateEntryComment(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createEntry = $this->createRemoteEntryInLocalMagazine($this->localMagazine, $this->remoteUser);
+            $this->createEntryComment = $this->createRemoteEntryCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createEntry)));
         $entry = $this->entryRepository->findOneBy(['apId' => $this->createEntry['object']['id']]);
         self::assertNotNull($entry);
@@ -214,6 +187,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreatePost(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createPost)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createPost['object']['id']]);
         self::assertNotNull($post);
@@ -229,6 +205,10 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     #[Depends('testCreatePost')]
     public function testCreatePostComment(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createPost = $this->createRemotePostInLocalMagazine($this->localMagazine, $this->remoteUser);
+            $this->createPostComment = $this->createRemotePostCommentInLocalMagazine($this->localMagazine, $this->remoteUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createPost)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createPost['object']['id']]);
         self::assertNotNull($post);
@@ -246,6 +226,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testCreateMessage(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
         $message = $this->messageRepository->findOneBy(['apId' => $this->createMessage['object']['id']]);
         self::assertNotNull($message);
@@ -254,12 +237,20 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     public function testCreateMessageFollowersOnlyFails(): void
     {
         $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly;
+
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
+        });
+
         self::expectException(HandlerFailedException::class);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
     }
 
     public function testCreateMessageFollowersOnly(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
+        });
         $this->localUser->directMessageSetting = EDirectMessageSettings::FollowersOnly;
         $this->userManager->follow($this->remoteUser, $this->localUser);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
@@ -271,12 +262,20 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
     {
         $this->localUser->directMessageSetting = EDirectMessageSettings::Nobody;
         $this->userManager->follow($this->remoteUser, $this->localUser);
+
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->createMessage = $this->createRemoteMessage($this->remoteUser, $this->localUser);
+        });
+
         self::expectException(HandlerFailedException::class);
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMessage)));
     }
 
     public function testMastodonMentionInPost(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->setupMastodonPost();
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMastodonPostWithMention)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMention['object']['id']]);
         self::assertNotNull($post);
@@ -289,6 +288,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testMastodonMentionInPostWithoutTagArray(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->setupMastodonPostWithoutTagArray();
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createMastodonPostWithMentionWithoutTagArray)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createMastodonPostWithMentionWithoutTagArray['object']['id']]);
         self::assertNotNull($post);
@@ -299,6 +301,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testPostWithPublicNs(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->setupPostWithOtherPublicStrings();
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createPostWithPublicNS)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createPostWithPublicNS['object']['id']]);
         self::assertNotNull($post);
@@ -307,6 +312,9 @@ class CreateHandlerTest extends ActivityPubFunctionalTestCase
 
     public function testPostWithPublicShortURL(): void
     {
+        $this->postSetupRunInRemoteDomain($this->remoteDomain, function () {
+            $this->setupPostWithOtherPublicStrings();
+        });
         $this->bus->dispatch(new ActivityMessage(json_encode($this->createPostWithPublicShortURL)));
         $post = $this->postRepository->findOneBy(['apId' => $this->createPostWithPublicShortURL['object']['id']]);
         self::assertNotNull($post);
