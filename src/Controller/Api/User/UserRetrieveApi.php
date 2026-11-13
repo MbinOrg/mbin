@@ -7,6 +7,7 @@ namespace App\Controller\Api\User;
 use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\UserResponseDto;
 use App\DTO\UserSettingsDto;
+use App\DTO\UserStylesDto;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
@@ -214,6 +215,48 @@ class UserRetrieveApi extends UserBaseApi
         $headers = $this->rateLimit($apiReadLimiter);
 
         $dto = $manager->createDto($this->getUserOrThrow());
+
+        return new JsonResponse(
+            $dto,
+            headers: $headers
+        );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the current user\'s style settings',
+        content: new Model(type: UserStylesDto::class),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Tag(name: 'user')]
+    #[Security(name: 'oauth2', scopes: ['user:profile:read'])]
+    #[IsGranted('ROLE_OAUTH2_USER:PROFILE:READ')]
+    public function styles(
+        UserSettingsManager $manager,
+        RateLimiterFactoryInterface $apiReadLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter);
+
+        $dto = $manager->createStylesDto($this->getUserOrThrow());
 
         return new JsonResponse(
             $dto,

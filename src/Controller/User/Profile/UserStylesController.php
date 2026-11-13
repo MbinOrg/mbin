@@ -25,7 +25,7 @@ class UserStylesController extends AbstractController
     public function __invoke(UserSettingsManager $manager, Request $request): Response
     {
         $user = $this->getUserOrThrow();
-        $dto = $manager->createDto($user);
+        $dto = $manager->createStylesDto($user);
 
         $form = $this->createForm(UserStylesType::class, $dto);
         try {
@@ -33,7 +33,7 @@ class UserStylesController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $manager->update($user, $dto);
+                $manager->updateStyles($user, $dto);
 
                 $this->addFlash('success', 'flash_user_settings_general_success');
                 $this->redirectToRefererOrHome($request);

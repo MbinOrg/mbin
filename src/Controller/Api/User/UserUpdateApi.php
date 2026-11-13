@@ -7,6 +7,7 @@ namespace App\Controller\Api\User;
 use App\DTO\UserProfileRequestDto;
 use App\DTO\UserResponseDto;
 use App\DTO\UserSettingsDto;
+use App\DTO\UserStylesDto;
 use App\Factory\UserFactory;
 use App\Service\UserManager;
 use App\Service\UserSettingsManager;
@@ -129,6 +130,59 @@ class UserUpdateApi extends UserBaseApi
 
         return new JsonResponse(
             $manager->createDto($this->getUserOrThrow()),
+            headers: $headers
+        );
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'User styles updated',
+        content: new Model(type: UserStylesDto::class),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Permission denied due to missing or expired token',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\UnauthorizedErrorSchema::class))
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'You are being rate limited',
+        content: new OA\JsonContent(ref: new Model(type: \App\Schema\Errors\TooManyRequestsErrorSchema::class)),
+        headers: [
+            new OA\Header(header: 'X-RateLimit-Remaining', schema: new OA\Schema(type: 'integer'), description: 'Number of requests left until you will be rate limited'),
+            new OA\Header(header: 'X-RateLimit-Retry-After', schema: new OA\Schema(type: 'integer'), description: 'Unix timestamp to retry the request after'),
+            new OA\Header(header: 'X-RateLimit-Limit', schema: new OA\Schema(type: 'integer'), description: 'Number of requests available'),
+        ]
+    )]
+    #[OA\RequestBody(content: new Model(type: UserSettingsDto::class))]
+    #[OA\Tag(name: 'user')]
+    #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
+    #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
+    public function styles(
+        UserSettingsManager $manager,
+        ValidatorInterface $validator,
+        RateLimiterFactoryInterface $apiUpdateLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiUpdateLimiter);
+
+        $settings = $manager->createStylesDto($this->getUserOrThrow());
+
+        $dto = $this->deserializeUserStyles($settings);
+
+        $errors = $validator->validate($dto);
+        if (\count($errors) > 0) {
+            throw new BadRequestHttpException((string) $errors);
+        }
+
+        $manager->updateStyles($this->getUserOrThrow(), $dto);
+
+        return new JsonResponse(
+            $manager->createStylesDto($this->getUserOrThrow()),
             headers: $headers
         );
     }

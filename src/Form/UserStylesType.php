@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\DTO\UserSettingsDto;
+use App\DTO\UserStylesDto;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -38,7 +39,7 @@ class UserStylesType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => UserSettingsDto::class,
+                'data_class' => UserStylesDto::class,
             ]
         );
     }
