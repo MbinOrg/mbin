@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use League\CommonMark\Util\RegexHelper;
 use League\Uri\UriString;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -67,5 +68,37 @@ class UrlUtils
         $absoluteUri = UriString::normalize(UriString::resolve($subPath, $baseUri));
 
         return str_starts_with($absoluteUri, $baseUri);
+    }
+
+    /**
+     * Checks if the given URL is a valid URL and has a scheme one would expect on links (so no js for example)
+     * @param string $url URL to check
+     * @param bool $allowNonHttp if false, only HTTP and HTTPS are allowed schemes; if true other web protocols are allowed too (e.g. FTP)
+     * @return bool
+     */
+    public static function checkValidUrl(string $url, bool $allowNonHttp = false): bool {
+        if(strlen(trim($url)) === 0 || str_starts_with($url, '//')) {
+            return false;
+        }
+
+        $parsed = parse_url($url);
+        if(!$parsed) {
+            return false;
+        }
+
+        $allowedSchemes = ['http', 'https'];
+        if($allowNonHttp) {
+            //TODO maybe add more
+            $allowedSchemes = [...$allowedSchemes, 'ftp'];
+        }
+        if(!in_array($parsed['scheme'] ?? 'http', $allowedSchemes)) {
+            return false;
+        }
+
+        if(str_contains($url, "\t") || str_contains($url, "\n") || str_contains($url, "\r") || str_contains($url, "\0")) {
+            return false;
+        }
+
+        return true;
     }
 }

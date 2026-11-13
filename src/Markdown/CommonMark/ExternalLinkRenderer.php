@@ -26,6 +26,8 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
+use App\Tests\Unit\Utils\UrlUtilsTest;
+use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
@@ -152,7 +154,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $url = $node->getUrl();
         $apLink = null;
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (UrlUtils::checkValidUrl($url, true)) {
             $apActivity = null;
             try {
                 $apActivity = $this->activityRepository->findByObjectId($url);
@@ -190,7 +192,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         };
         $title = $childContent ?? htmlspecialchars($url);
 
-        if (RegexHelper::isLinkPotentiallyUnsafe($url)) {
+        if (!UrlUtils::checkValidUrl($url)) {
             return new HtmlElement(
                 'span',
                 ['class' => 'unsafe-link'],

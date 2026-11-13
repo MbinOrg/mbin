@@ -7,6 +7,7 @@ namespace App\Twig\Runtime;
 use App\Entity\Contracts\ContentInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\SettingsManager;
+use App\Utils\UrlUtils;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class LinkExtensionRuntime implements RuntimeExtensionInterface
@@ -42,5 +43,13 @@ class LinkExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $domain;
+    }
+
+    public function isUrlSafe(?string $url): bool
+    {
+        if($url === null) {
+            return true;
+        }
+        return UrlUtils::checkValidUrl($url);
     }
 }

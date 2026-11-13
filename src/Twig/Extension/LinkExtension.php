@@ -16,6 +16,7 @@ class LinkExtension extends AbstractExtension
             new TwigFunction('get_rel', [LinkExtensionRuntime::class, 'getRel']),
             new TwigFunction('get_url_fragment', [LinkExtensionRuntime::class, 'getHtmlClass']),
             new TwigFunction('get_url_domain', [LinkExtensionRuntime::class, 'getLinkDomain']),
+            new TwigFunction('is_url_safe', [LinkExtensionRuntime::class, 'isUrlSafe']),
         ];
     }
 }
