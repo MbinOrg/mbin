@@ -8,6 +8,7 @@ use App\Factory\WwwHttpClientFactory;
 use App\Service\EmbedService;
 use App\Service\SettingsManager;
 use App\Service\UrlAccessChecker;
+use App\Utils\M3u8EmbedFixture;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -79,6 +80,51 @@ class EmbedTest extends TestCase
 
         self::assertSame(0, $requestCount);
         self::assertNull($result->title);
+    }
+
+    public function testDevelopmentFixtureExercisesSanitizerWithoutNetworkRequest(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse();
+        });
+
+        $url = (new M3u8EmbedFixture('mbin.localhost:8080'))->getMasterUrl();
+        $result = $this->createEmbed($httpClient, 'dev')->fetch($url);
+
+        self::assertSame($url, $result->url);
+        self::assertNull($result->html);
+        self::assertSame(0, $requestCount);
+    }
+
+    #[DataProvider('fixtureIsolationProvider')]
+    public function testFixtureShortcutIsRestricted(string $environment, string $url): void
+    {
+        $requests = 0;
+        $httpClient = new MockHttpClient(function () use (&$requests): MockResponse {
+            ++$requests;
+
+            return new MockResponse();
+        });
+
+        $result = $this->createEmbed($httpClient, $environment)->fetch($url);
+
+        self::assertNull($result->title);
+        self::assertSame(0, $requests);
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function fixtureIsolationProvider(): iterable
+    {
+        $url = (new M3u8EmbedFixture('mbin.localhost:8080'))->getMasterUrl();
+        yield 'production' => ['prod', $url];
+        yield 'test' => ['test', $url];
+        yield 'different port' => ['dev', str_replace(':8080', ':8123', $url)];
+        yield 'different path' => ['dev', $url.'?other=1'];
     }
 
     /**
@@ -229,7 +275,7 @@ class EmbedTest extends TestCase
         }
     }
 
-    private function createEmbed(?HttpClientInterface $httpClient = null): EmbedService
+    private function createEmbed(?HttpClientInterface $httpClient = null, string $kernelEnvironment = 'test'): EmbedService
     {
         return new EmbedService(
             new ArrayAdapter(),
@@ -239,7 +285,8 @@ class EmbedTest extends TestCase
             new WwwHttpClientFactory($httpClient ?? $this->createStub(HttpClientInterface::class)),
             new UrlAccessChecker(),
             $this->createStub(TranslatorInterface::class),
-            'prod',
+            $kernelEnvironment,
+            new M3u8EmbedFixture('mbin.localhost:8080'),
         );
     }
 }
