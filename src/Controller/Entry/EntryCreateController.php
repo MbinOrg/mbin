@@ -89,6 +89,7 @@ class EntryCreateController extends AbstractController
         $dto->isAdult = '1' === $isNsfw;
         $dto->isOc = '1' === $isOc;
         $dto->tags = $tags;
+        $dto->addEmptyChoices();
 
         if (null !== $imageHash) {
             $img = $this->imageRepository->findOneBySha256(hex2bin($imageHash));

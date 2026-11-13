@@ -10,6 +10,7 @@ use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\ImageListener;
 use App\Form\Type\LanguageType;
 use App\Service\SettingsManager;
+use App\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -44,8 +45,11 @@ class PostCommentType extends AbstractType
                 ]
             )
             ->add('imageUrl', UrlType::class, ['required' => false, 'default_protocol' => 'https'])
-            ->add('imageAlt', TextareaType::class, ['required' => false])
-            ->add('submit', SubmitType::class);
+            ->add('imageAlt', TextareaType::class, ['required' => false]);
+
+        FormUtils::addPollFieldsToType($builder);
+
+        $builder->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber($this->defaultLanguage);
         $builder->addEventSubscriber($this->imageListener);

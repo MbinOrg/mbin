@@ -1,0 +1,27 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        "https://kbin.test/contexts"
+    ],
+    "id": "SCRUBBED_ID",
+    "type": "Create",
+    "actor": "https://kbin.test/u/user2",
+    "published": "SCRUBBED_DATE",
+    "to": [
+        "https://kbin.test/u/user"
+    ],
+    "cc": [],
+    "object": {
+        "id": "SCRUBBED_ID",
+        "attributedTo": "https://kbin.test/u/user2",
+        "to": [
+            "https://kbin.test/u/user"
+        ],
+        "cc": [],
+        "type": "Note",
+        "published": "SCRUBBED_DATE",
+        "inReplyTo": "SCRUBBED_ID",
+        "name": "A"
+    }
+}

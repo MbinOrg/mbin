@@ -80,7 +80,7 @@ class PostsLockApi extends PostsBaseApi
         $manager->toggleLock($post, $this->getUserOrThrow());
 
         return new JsonResponse(
-            $this->serializePost($factory->createDto($post), $this->tagLinkRepository->getTagsOfContent($post)),
+            $this->serializePost($post, $this->tagLinkRepository->getTagsOfContent($post)),
             headers: $headers
         );
     }

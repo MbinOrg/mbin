@@ -10,9 +10,9 @@ use App\Form\DataTransformer\TagTransformer;
 use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
-// use App\Form\Type\BadgesType;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
+use App\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -84,8 +84,10 @@ class EntryType extends AbstractType
             ->add('lang', LanguageType::class)
             ->add('isOc', CheckboxType::class, [
                 'required' => false,
-            ])
-            ->add('submit', SubmitType::class);
+            ]);
+
+        FormUtils::addPollFieldsToType($builder);
+        $builder->add('submit', SubmitType::class);
 
         $builder->get('tags')->addModelTransformer(
             new TagTransformer()

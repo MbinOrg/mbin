@@ -42,10 +42,14 @@ class EntryFactory
         );
     }
 
-    public function createResponseDto(EntryDto|Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
+    public function createResponseDto(Entry $entry, array $tags, ?array $crosspostedEntries = null): EntryResponseDto
     {
-        $dto = $entry instanceof Entry ? $this->createDto($entry) : $entry;
+        $dto = $this->createDto($entry);
         $badges = $dto->badges ? array_map(fn (Badge $badge) => $this->badgeFactory->createDto($badge), $dto->badges->toArray()) : null;
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = $dto->getPollResponseDto($entry->poll, $this->security->getUser());
+        }
 
         return EntryResponseDto::create(
             $dto->getId(),
@@ -77,6 +81,7 @@ class EntryFactory
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($entry),
             crosspostedEntries: $crosspostedEntries,
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto
         );
     }
 
@@ -115,6 +120,10 @@ class EntryFactory
         $dto->apDislikeCount = $entry->apDislikeCount;
         $dto->apShareCount = $entry->apShareCount;
         $dto->tags = $this->tagLinkRepository->getTagsOfContent($entry);
+
+        if ($entry->poll) {
+            $dto->mergePollIntoDto($entry->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

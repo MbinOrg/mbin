@@ -33,9 +33,14 @@ class PostFactory
         );
     }
 
-    public function createResponseDto(PostDto|Post $post, array $tags): PostResponseDto
+    public function createResponseDto(Post $post, array $tags): PostResponseDto
     {
-        $dto = $post instanceof Post ? $this->createDto($post) : $post;
+        $dto = $this->createDto($post);
+
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = $dto->getPollResponseDto($post->poll, $this->security->getUser());
+        }
 
         return PostResponseDto::create(
             $dto->getId(),
@@ -61,6 +66,7 @@ class PostFactory
             $dto->slug,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($post),
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto,
         );
     }
 
@@ -92,6 +98,10 @@ class PostFactory
         $dto->apDislikeCount = $post->apDislikeCount;
         $dto->apShareCount = $post->apShareCount;
         $dto->setId($post->getId());
+
+        if ($post->poll) {
+            $dto->mergePollIntoDto($post->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given
