@@ -32,11 +32,13 @@ class M3u8EmbedFixtures extends BaseFixture
         $this->slugger = $slugger;
     }
 
+    #[\Override]
     public static function getGroups(): array
     {
         return [self::GROUP];
     }
 
+    #[\Override]
     protected function loadData(ObjectManager $manager): void
     {
         if ('dev' !== $this->kernelEnvironment) {
