@@ -36,7 +36,7 @@ readonly class EmbedService
     public function fetch(string $url): EmbedDto
     {
         if (!(str_starts_with($url, 'https://') || ('dev' === $this->kernelEnvironment && str_starts_with($url, 'http://')))) {
-            if(!UrlUtils::checkValidUrl($url)){
+            if (!UrlUtils::checkValidUrl($url)) {
                 return $this->createUnsafeEmbed($url);
             } elseif (str_contains($url, '://')) {
                 // only allow https protocol

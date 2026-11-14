@@ -43,7 +43,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
         $url = $node->getUrl();
         $label = null;
 
-        if(!UrlUtils::checkValidUrl($url, true)) {
+        if (!UrlUtils::checkValidUrl($url, true)) {
             return EmbedElement::buildDestructed(htmlspecialchars($url), htmlspecialchars($this->getAltText($node)));
         }
 

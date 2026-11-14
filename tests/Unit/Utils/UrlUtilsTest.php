@@ -38,12 +38,13 @@ class UrlUtilsTest extends TestCase
         self::assertFalse(UrlUtils::checkValidUrl('javascript:alert();'));
         self::assertFalse(UrlUtils::checkValidUrl("https://\texample.com/"));
         self::assertFalse(UrlUtils::checkValidUrl("https://\0example.com/"));
-        self::assertFalse(UrlUtils::checkValidUrl(""));
-        self::assertFalse(UrlUtils::checkValidUrl("  "));
+        self::assertFalse(UrlUtils::checkValidUrl(''));
+        self::assertFalse(UrlUtils::checkValidUrl('  '));
         self::assertFalse(UrlUtils::checkValidUrl(" \t "));
     }
 
-    public function testGetOrigin(): void {
+    public function testGetOrigin(): void
+    {
         self::assertSame('https://example.com:443', UrlUtils::getOrigin('https://example.com/abc'));
         self::assertSame('http://example.com:80', UrlUtils::getOrigin('http://example.com/abc'));
         self::assertSame('https://example.com:8080', UrlUtils::getOrigin('https://example.com:8080/abc'));

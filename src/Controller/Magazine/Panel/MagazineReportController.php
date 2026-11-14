@@ -13,7 +13,6 @@ use App\Service\ReportManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineReportController extends AbstractController

@@ -302,51 +302,52 @@ class ActivityHandler extends MbinMessageHandler
         return true;
     }
 
-    private function verifyActivityActorOrigin(array $apObject) {
+    private function verifyActivityActorOrigin(array $apObject)
+    {
         $id = $apObject['id'] ?? null;
-        if(!$id) {
+        if (!$id) {
             throw new InvalidApObjectException('AP Object is missing id', $apObject);
         }
         $objectOrigin = UrlUtils::getOrigin($id);
-        if(!$objectOrigin) {
+        if (!$objectOrigin) {
             throw new InvalidApObjectException('AP Object ID is an invalid URL', $apObject);
         }
 
         $actors = [];
-        if(isset($apObject['actor'])) {
+        if (isset($apObject['actor'])) {
             $actors[] = $apObject['actor'];
         }
-        if(isset($apObject['attributedTo'])) {
+        if (isset($apObject['attributedTo'])) {
             $actors = [...$actors, ...$this->activityPubManager->getActorFromAttributedTo($apObject['attributedTo'], false)];
         }
 
         foreach ($actors as $actor) {
-            if(is_string($actor)) {
+            if (\is_string($actor)) {
                 $id = $actor;
-            } elseif(is_array($actor)) {
+            } elseif (\is_array($actor)) {
                 $id = $actor['id'] ?? null;
             } else {
                 throw new InvalidApObjectException('AP Object actor/attributedTo is malformed', $apObject);
             }
 
-            if(!$id) {
+            if (!$id) {
                 throw new InvalidApObjectException('AP Object actor/attributedTo is missing id', $apObject);
             }
             $actorOrigin = UrlUtils::getOrigin($id);
-            if(!$actorOrigin) {
+            if (!$actorOrigin) {
                 throw new InvalidApObjectException('AP Object actor/attributedTo ID is an invalid URL', $apObject);
             }
 
-            if($actorOrigin !== $objectOrigin) {
+            if ($actorOrigin !== $objectOrigin) {
                 throw new InvalidApObjectException('AP Object and its actor/attributedTo have different origins', $apObject);
             }
         }
 
         $embeddedObjects = [];
-        if(isset($apObject['object'])) {
+        if (isset($apObject['object'])) {
             $embeddedObjects[] = $apObject['object'];
         }
-        if(isset($apObject['payload'])) {
+        if (isset($apObject['payload'])) {
             $embeddedObjects[] = $apObject['payload'];
         }
         foreach ($embeddedObjects as $child) {

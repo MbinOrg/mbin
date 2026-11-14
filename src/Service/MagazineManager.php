@@ -282,7 +282,7 @@ class MagazineManager
 
     public function removeModerator(Magazine $magazine, Moderator $moderator, ?User $removedBy): void
     {
-        if($magazine->getId() !== $moderator->magazine->getId()) {
+        if ($magazine->getId() !== $moderator->magazine->getId()) {
             throw new HttpException(404, 'moderator not found for this magazine');
         }
 

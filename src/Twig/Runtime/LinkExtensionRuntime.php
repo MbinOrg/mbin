@@ -47,7 +47,7 @@ class LinkExtensionRuntime implements RuntimeExtensionInterface
 
     public function isUrlSafe(?string $url): bool
     {
-        if($url === null) {
+        if (null === $url) {
             return true;
         }
         return UrlUtils::checkValidUrl($url);

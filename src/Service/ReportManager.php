@@ -53,10 +53,10 @@ class ReportManager
 
     public function reject(Report $report, User $moderator, Magazine $magazine, bool $checkModerator = true): void
     {
-        if($magazine->getId() !== $report->magazine->getId()) {
+        if ($magazine->getId() !== $report->magazine->getId()) {
             throw new HttpException(404, 'report not found for this magazine');
         }
-        if($checkModerator && !$magazine->userIsModerator($moderator)) {
+        if ($checkModerator && !$magazine->userIsModerator($moderator)) {
             throw new HttpException(403, 'you have no access to this report');
         }
 
@@ -77,10 +77,10 @@ class ReportManager
 
     public function accept(Report $report, User $moderator, Magazine $magazine, bool $checkModerator = true): void
     {
-        if($magazine->getId() !== $report->magazine->getId()) {
+        if ($magazine->getId() !== $report->magazine->getId()) {
             throw new HttpException(404, 'report not found for this magazine');
         }
-        if($checkModerator && !$magazine->userIsModerator($moderator)) {
+        if ($checkModerator && !$magazine->userIsModerator($moderator)) {
             throw new HttpException(403, 'you have no access to this report');
         }
 
