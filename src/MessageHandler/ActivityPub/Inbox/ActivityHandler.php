@@ -303,10 +303,10 @@ class ActivityHandler extends MbinMessageHandler
         return true;
     }
 
-    private function verifyActivityActorOrigin(array $apObject)
+    private function verifyActivityActorOrigin(array $apObject): void
     {
         $id = $apObject['id'] ?? null;
-        if (!$id) {
+        if (!\is_string($id)) {
             throw new InvalidApObjectException('AP Object is missing id', $apObject);
         }
         $objectOrigin = UrlUtils::getOrigin($id);
@@ -352,7 +352,9 @@ class ActivityHandler extends MbinMessageHandler
             $embeddedObjects[] = $apObject['payload'];
         }
         foreach ($embeddedObjects as $child) {
-            $this->verifyActivityActorOrigin($child);
+            if (\is_array($child) && isset($child['type'])) {
+                $this->verifyActivityActorOrigin($child);
+            }
         }
     }
 }
