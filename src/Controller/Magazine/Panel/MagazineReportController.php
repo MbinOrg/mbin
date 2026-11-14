@@ -13,6 +13,7 @@ use App\Service\ReportManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MagazineReportController extends AbstractController
@@ -55,7 +56,7 @@ class MagazineReportController extends AbstractController
     ): Response {
         $this->validateCsrf('report_approve', $request->getPayload()->get('token'));
 
-        $this->reportManager->accept($report, $this->getUserOrThrow());
+        $this->reportManager->accept($report, $this->getUserOrThrow(), $magazine, false);
 
         return $this->redirectToRefererOrHome($request);
     }
@@ -71,7 +72,7 @@ class MagazineReportController extends AbstractController
     ): Response {
         $this->validateCsrf('report_decline', $request->getPayload()->get('token'));
 
-        $this->reportManager->reject($report, $this->getUserOrThrow());
+        $this->reportManager->reject($report, $this->getUserOrThrow(), $magazine, false);
 
         return $this->redirectToRefererOrHome($request);
     }

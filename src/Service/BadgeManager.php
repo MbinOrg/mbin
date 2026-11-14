@@ -7,8 +7,10 @@ namespace App\Service;
 use App\DTO\BadgeDto;
 use App\Entity\Badge;
 use App\Entity\Entry;
+use App\Entity\Magazine;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webmozart\Assert\Assert;
 
 class BadgeManager
@@ -29,7 +31,7 @@ class BadgeManager
 
     public function edit(Badge $badge, BadgeDto $dto): Badge
     {
-        Assert::same($badge->magazine->getId(), $badge->magazine->getId());
+        Assert::same($badge->magazine->getId(), $dto->magazine->getId());
 
         $badge->name = $dto->name;
 
@@ -39,8 +41,12 @@ class BadgeManager
         return $badge;
     }
 
-    public function delete(Badge $badge): void
+    public function delete(Badge $badge, Magazine $magazine): void
     {
+        if ($badge->magazine->getId() !== $magazine->getId()) {
+            throw new NotFoundHttpException('Badge not found on magazine');
+        }
+
         $this->purge($badge);
     }
 

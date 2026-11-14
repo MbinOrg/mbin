@@ -64,7 +64,7 @@ class MagazineModeratorController extends AbstractController
     ): Response {
         $this->validateCsrf('remove_moderator', $request->getPayload()->get('token'));
 
-        $this->manager->removeModerator($moderator, $this->getUser());
+        $this->manager->removeModerator($magazine, $moderator, $this->getUser());
 
         return $this->redirectToRefererOrHome($request);
     }

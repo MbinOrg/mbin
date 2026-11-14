@@ -84,18 +84,11 @@ class MagazineReportsAcceptApi extends MagazineBaseApi
         #[MapEntity(id: 'report_id')]
         Report $report,
         ReportManager $reportManager,
-        ContentManagerFactory $managerFactory,
         RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($magazine->getId() !== $report->magazine->getId()) {
-            throw new NotFoundHttpException('Report not found in magazine');
-        }
-
-        $manager = $managerFactory->createManager($report->getSubject());
-
-        $manager->delete($this->getUserOrThrow(), $report->getSubject());
+        $reportManager->accept($report, $this->getUserOrThrow(), $magazine, false);
 
         return new JsonResponse(
             $this->serializeReport($report),

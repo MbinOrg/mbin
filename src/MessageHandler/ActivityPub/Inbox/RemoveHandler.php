@@ -106,7 +106,7 @@ class RemoveHandler extends MbinMessageHandler
             'magName' => $targetMag->name,
             'magId' => $targetMag->getId(),
         ]);
-        $this->magazineManager->removeModerator($objectMod, $actor);
+        $this->magazineManager->removeModerator($targetMag, $objectMod, $actor);
 
         if (null === $targetMag->apId) {
             $activityToAnnounce = $messagePayload;

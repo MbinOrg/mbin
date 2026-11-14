@@ -67,7 +67,7 @@ class MagazineBadgeController extends AbstractController
     ): Response {
         $this->validateCsrf('badge_remove', $request->getPayload()->get('token'));
 
-        $manager->delete($badge);
+        $manager->delete($badge, $magazine);
 
         return $this->redirectToRefererOrHome($request);
     }

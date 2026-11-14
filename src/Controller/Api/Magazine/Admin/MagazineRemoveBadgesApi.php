@@ -86,10 +86,6 @@ class MagazineRemoveBadgesApi extends MagazineBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($badge->magazine->getId() !== $magazine->getId()) {
-            throw new NotFoundHttpException('Badge not found on magazine');
-        }
-
         $manager->delete($badge);
 
         return new JsonResponse(

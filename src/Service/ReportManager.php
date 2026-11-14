@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ReportDto;
+use App\Entity\Magazine;
 use App\Entity\Report;
 use App\Entity\User;
 use App\Event\Report\ReportApprovedEvent;
@@ -16,6 +17,7 @@ use App\Factory\ReportFactory;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ReportManager
 {
@@ -49,8 +51,15 @@ class ReportManager
         return $report;
     }
 
-    public function reject(Report $report, User $moderator): void
+    public function reject(Report $report, User $moderator, Magazine $magazine, bool $checkModerator = true): void
     {
+        if($magazine->getId() !== $report->magazine->getId()) {
+            throw new HttpException(404, 'report not found for this magazine');
+        }
+        if($checkModerator && !$magazine->userIsModerator($moderator)) {
+            throw new HttpException(403, 'you have no access to this report');
+        }
+
         $manager = $this->managerFactory->createManager($report->getSubject());
 
         $report->status = Report::STATUS_REJECTED;
@@ -66,8 +75,15 @@ class ReportManager
         $this->dispatcher->dispatch(new ReportRejectedEvent($report));
     }
 
-    public function accept(Report $report, User $moderator): void
+    public function accept(Report $report, User $moderator, Magazine $magazine, bool $checkModerator = true): void
     {
+        if($magazine->getId() !== $report->magazine->getId()) {
+            throw new HttpException(404, 'report not found for this magazine');
+        }
+        if($checkModerator && !$magazine->userIsModerator($moderator)) {
+            throw new HttpException(403, 'you have no access to this report');
+        }
+
         $manager = $this->managerFactory->createManager($report->getSubject());
 
         $report->status = Report::STATUS_APPROVED;
