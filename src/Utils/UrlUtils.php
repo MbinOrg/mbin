@@ -101,4 +101,28 @@ class UrlUtils
 
         return true;
     }
+
+    /**
+     * only for http / https URLs
+     */
+    public static function getOrigin(string $url): ?string {
+        $parsed = parse_url($url);
+        if(!$parsed) {
+            return null;
+        }
+
+        $host = $parsed['host'] ?? null;
+        if($host === null) {
+            return null;
+        }
+
+        $scheme = $parsed['scheme'] ?? 'http';
+        if($scheme !== 'http' && $scheme !== 'https') {
+            return null;
+        }
+
+        $port = $parsed['port'] ?? ($scheme === 'https' ? 443 : 80);
+
+        return $scheme.'://'.$host.':'.$port;
+    }
 }
