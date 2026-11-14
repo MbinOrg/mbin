@@ -9,14 +9,12 @@ use App\Controller\Traits\PrivateContentTrait;
 use App\DTO\ReportResponseDto;
 use App\Entity\Magazine;
 use App\Entity\Report;
-use App\Factory\ContentManagerFactory;
 use App\Service\ReportManager;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -84,18 +82,11 @@ class MagazineReportsAcceptApi extends MagazineBaseApi
         #[MapEntity(id: 'report_id')]
         Report $report,
         ReportManager $reportManager,
-        ContentManagerFactory $managerFactory,
         RateLimiterFactoryInterface $apiModerateLimiter,
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($magazine->getId() !== $report->magazine->getId()) {
-            throw new NotFoundHttpException('Report not found in magazine');
-        }
-
-        $manager = $managerFactory->createManager($report->getSubject());
-
-        $manager->delete($this->getUserOrThrow(), $report->getSubject());
+        $reportManager->accept($report, $this->getUserOrThrow(), $magazine, false);
 
         return new JsonResponse(
             $this->serializeReport($report),

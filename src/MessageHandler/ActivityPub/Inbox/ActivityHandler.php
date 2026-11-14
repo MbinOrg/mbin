@@ -8,6 +8,7 @@ use App\Entity\Instance;
 use App\Entity\Magazine;
 use App\Entity\User;
 use App\Exception\InboxForwardingException;
+use App\Exception\InvalidApObjectException;
 use App\Exception\InvalidUserPublicKeyException;
 use App\Message\ActivityPub\Inbox\ActivityMessage;
 use App\Message\ActivityPub\Inbox\AddMessage;
@@ -30,6 +31,7 @@ use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\RemoteInstanceManager;
 use App\Service\SettingsManager;
+use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -60,6 +62,7 @@ class ActivityHandler extends MbinMessageHandler
         $this->workWrapper($message);
     }
 
+    #[\Override]
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ActivityMessage)) {
@@ -119,6 +122,8 @@ class ActivityHandler extends MbinMessageHandler
             }
             $this->remoteInstanceManager->updateInstance($instance);
         }
+
+        $this->verifyActivityActorOrigin($payload);
 
         if (isset($payload['payload'])) {
             $payload = $payload['payload'];
@@ -296,5 +301,58 @@ class ActivityHandler extends MbinMessageHandler
         }
 
         return true;
+    }
+
+    private function verifyActivityActorOrigin(array $apObject)
+    {
+        $id = $apObject['id'] ?? null;
+        if (!$id) {
+            throw new InvalidApObjectException('AP Object is missing id', $apObject);
+        }
+        $objectOrigin = UrlUtils::getOrigin($id);
+        if (!$objectOrigin) {
+            throw new InvalidApObjectException('AP Object ID is an invalid URL', $apObject);
+        }
+
+        $actors = [];
+        if (isset($apObject['actor'])) {
+            $actors[] = $apObject['actor'];
+        }
+        if (isset($apObject['attributedTo'])) {
+            $actors = [...$actors, ...$this->activityPubManager->getActorFromAttributedTo($apObject['attributedTo'], false)];
+        }
+
+        foreach ($actors as $actor) {
+            if (\is_string($actor)) {
+                $id = $actor;
+            } elseif (\is_array($actor)) {
+                $id = $actor['id'] ?? null;
+            } else {
+                throw new InvalidApObjectException('AP Object actor/attributedTo is malformed', $apObject);
+            }
+
+            if (!$id) {
+                throw new InvalidApObjectException('AP Object actor/attributedTo is missing id', $apObject);
+            }
+            $actorOrigin = UrlUtils::getOrigin($id);
+            if (!$actorOrigin) {
+                throw new InvalidApObjectException('AP Object actor/attributedTo ID is an invalid URL', $apObject);
+            }
+
+            if ($actorOrigin !== $objectOrigin) {
+                throw new InvalidApObjectException('AP Object and its actor/attributedTo have different origins', $apObject);
+            }
+        }
+
+        $embeddedObjects = [];
+        if (isset($apObject['object'])) {
+            $embeddedObjects[] = $apObject['object'];
+        }
+        if (isset($apObject['payload'])) {
+            $embeddedObjects[] = $apObject['payload'];
+        }
+        foreach ($embeddedObjects as $child) {
+            $this->verifyActivityActorOrigin($child);
+        }
     }
 }

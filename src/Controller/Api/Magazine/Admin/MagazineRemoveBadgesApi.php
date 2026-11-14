@@ -15,7 +15,6 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -86,11 +85,7 @@ class MagazineRemoveBadgesApi extends MagazineBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        if ($badge->magazine->getId() !== $magazine->getId()) {
-            throw new NotFoundHttpException('Badge not found on magazine');
-        }
-
-        $manager->delete($badge);
+        $manager->delete($badge, $magazine);
 
         return new JsonResponse(
             $this->serializeMagazine($factory->createDto($magazine)),

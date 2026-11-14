@@ -7,6 +7,7 @@ use App\DTO\internal\EmbedDto;
 use App\Event\ActivityPub\CurlRequestBeginningEvent;
 use App\Event\ActivityPub\CurlRequestFinishedEvent;
 use App\Factory\WwwHttpClientFactory;
+use App\Utils\UrlUtils;
 use Embed\Embed as BaseEmbed;
 use Embed\Extractor;
 use League\Uri\Http;
@@ -35,7 +36,9 @@ readonly class EmbedService
     public function fetch(string $url): EmbedDto
     {
         if (!(str_starts_with($url, 'https://') || ('dev' === $this->kernelEnvironment && str_starts_with($url, 'http://')))) {
-            if (str_contains($url, '://')) {
+            if (!UrlUtils::checkValidUrl($url)) {
+                return $this->createUnsafeEmbed($url);
+            } elseif (str_contains($url, '://')) {
                 // only allow https protocol
                 return $this->createFallbackEmbed($url);
             } else {

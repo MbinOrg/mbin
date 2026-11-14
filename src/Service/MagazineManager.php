@@ -32,12 +32,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Webmozart\Assert\Assert;
 
 class MagazineManager
@@ -273,14 +275,19 @@ class MagazineManager
 
     private function clearCommentsCache(User $user)
     {
+        \assert($this->cache instanceof TagAwareCacheInterface);
         $this->cache->invalidateTags([
             'post_comments_user_'.$user->getId(),
             'entry_comments_user_'.$user->getId(),
         ]);
     }
 
-    public function removeModerator(Moderator $moderator, ?User $removedBy): void
+    public function removeModerator(Magazine $magazine, Moderator $moderator, ?User $removedBy): void
     {
+        if ($magazine->getId() !== $moderator->magazine->getId()) {
+            throw new HttpException(404, 'moderator not found for this magazine');
+        }
+
         $user = $moderator->user;
 
         $this->entityManager->remove($moderator);
@@ -388,7 +395,7 @@ class MagazineManager
     {
         $owner = $magazine->getOwnerModerator();
         if ($owner) {
-            $this->removeModerator($owner, $addedBy);
+            $this->removeModerator($magazine, $owner, $addedBy);
         }
 
         $this->addModerator(new ModeratorDto($magazine, $user, $addedBy), true);

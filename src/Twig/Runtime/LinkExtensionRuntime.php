@@ -7,6 +7,7 @@ namespace App\Twig\Runtime;
 use App\Entity\Contracts\ContentInterface;
 use App\Service\GenerateHtmlClassService;
 use App\Service\SettingsManager;
+use App\Utils\UrlUtils;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class LinkExtensionRuntime implements RuntimeExtensionInterface
@@ -37,10 +38,18 @@ class LinkExtensionRuntime implements RuntimeExtensionInterface
     {
         $domain = parse_url($url, PHP_URL_HOST);
 
-        if (null === $domain) {
+        if (null === $domain || false === $domain) {
             return $this->settingsManager->get('KBIN_DOMAIN');
         }
 
         return $domain;
+    }
+
+    public function isUrlSafe(?string $url): bool
+    {
+        if (null === $url) {
+            return true;
+        }
+        return UrlUtils::checkValidUrl($url);
     }
 }

@@ -26,14 +26,15 @@ use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use App\Service\ImageManager;
 use App\Service\SettingsManager;
+use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\Node\Node;
+use League\CommonMark\Node\StringContainerInterface;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Util\HtmlElement;
-use League\CommonMark\Util\RegexHelper;
 use League\Config\ConfigurationAwareInterface;
 use League\Config\ConfigurationInterface;
 use Psr\Log\LoggerInterface;
@@ -59,6 +60,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
     ) {
     }
 
+    #[\Override]
     public function setConfiguration(ConfigurationInterface $configuration): void
     {
         $this->config = $configuration;
@@ -110,6 +112,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         return null;
     }
 
+    #[\Override]
     public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement|string
     {
         /* @var Link $node */
@@ -118,6 +121,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         $renderTarget = $this->getRenderTarget();
         $isApRequest = RenderTarget::ActivityPub === $renderTarget;
         if (!$isApRequest && $node instanceof MentionLink && $this->isExistingMentionType($node)) {
+            /** @var CommunityLink|ActivityPubMentionLink|RoutedMentionLink $node */
             $this->logger->debug("Got node of class {c}: username: '{k}', title: '{t}', type: '{ty}', url: '{url}'", [
                 'c' => \get_class($node),
                 'k' => $node->getKbinUsername(),
@@ -140,6 +144,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         if ($node->hasChildren()) {
             $cnodes = [];
             foreach ($node->children() as $n) {
+                \assert($n instanceof StringContainerInterface);
                 if (!EmbedElement::checkForbiddenDescendantNodes($n, true)) {
                     $cnodes[] = new Text($n->getLiteral());
                 } else {
@@ -152,7 +157,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
 
         $url = $node->getUrl();
         $apLink = null;
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (UrlUtils::checkValidUrl($url, true)) {
             $apActivity = null;
             try {
                 $apActivity = $this->activityRepository->findByObjectId($url);
@@ -190,7 +195,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
         };
         $title = $childContent ?? htmlspecialchars($url);
 
-        if (RegexHelper::isLinkPotentiallyUnsafe($url)) {
+        if (!UrlUtils::checkValidUrl($url)) {
             return new HtmlElement(
                 'span',
                 ['class' => 'unsafe-link'],
@@ -324,7 +329,7 @@ final class ExternalLinkRenderer implements NodeRendererInterface, Configuration
             $embed = $entity->hasEmbed;
         }
 
-        return (bool) $embed;
+        return $embed;
     }
 
     private function isMentionType(Link $link): bool

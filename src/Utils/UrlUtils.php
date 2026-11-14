@@ -68,4 +68,62 @@ class UrlUtils
 
         return str_starts_with($absoluteUri, $baseUri);
     }
+
+    /**
+     * Checks if the given URL is a valid URL and has a scheme one would expect on links (so no js for example).
+     *
+     * @param string $url          URL to check
+     * @param bool   $allowNonHttp if false, only HTTP and HTTPS are allowed schemes; if true other web protocols are allowed too (e.g. FTP)
+     */
+    public static function checkValidUrl(string $url, bool $allowNonHttp = false): bool
+    {
+        if (0 === \strlen(trim($url)) || str_starts_with($url, '//')) {
+            return false;
+        }
+
+        $parsed = parse_url($url);
+        if (!$parsed) {
+            return false;
+        }
+
+        $allowedSchemes = ['http', 'https'];
+        if ($allowNonHttp) {
+            // TODO maybe add more
+            $allowedSchemes = [...$allowedSchemes, 'ftp'];
+        }
+        if (!\in_array($parsed['scheme'] ?? 'http', $allowedSchemes)) {
+            return false;
+        }
+
+        if (str_contains($url, "\t") || str_contains($url, "\n") || str_contains($url, "\r") || str_contains($url, "\0")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * only for http / https URLs.
+     */
+    public static function getOrigin(string $url): ?string
+    {
+        $parsed = parse_url($url);
+        if (!$parsed) {
+            return null;
+        }
+
+        $host = $parsed['host'] ?? null;
+        if (null === $host) {
+            return null;
+        }
+
+        $scheme = $parsed['scheme'] ?? 'http';
+        if ('http' !== $scheme && 'https' !== $scheme) {
+            return null;
+        }
+
+        $port = $parsed['port'] ?? ('https' === $scheme ? 443 : 80);
+
+        return $scheme.'://'.$host.':'.$port;
+    }
 }
