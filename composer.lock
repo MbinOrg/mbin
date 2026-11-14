@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a9544a70b2692dee35d209dd2d700125",
+    "content-hash": "284cdf6c77395422e5baa45465fd6611",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -10243,20 +10243,20 @@
         },
         {
             "name": "symfony/mercure",
-            "version": "v0.7.2",
+            "version": "v0.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mercure.git",
-                "reference": "3ba1d19c9792d6bf66cf6cb4412ea289e9a42565"
+                "reference": "b6d218603ddd14fa80fe3cad1361e40879514ca0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mercure/zipball/3ba1d19c9792d6bf66cf6cb4412ea289e9a42565",
-                "reference": "3ba1d19c9792d6bf66cf6cb4412ea289e9a42565",
+                "url": "https://api.github.com/repos/symfony/mercure/zipball/b6d218603ddd14fa80fe3cad1361e40879514ca0",
+                "reference": "b6d218603ddd14fa80fe3cad1361e40879514ca0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
+                "php": ">=8.2",
                 "symfony/deprecation-contracts": "^2.0|^3.0",
                 "symfony/http-client": "^6.4|^7.3|^8.0",
                 "symfony/http-foundation": "^6.4|^7.3|^8.0",
@@ -10268,10 +10268,12 @@
                 "symfony/http-kernel": "^6.4|^7.3|^8.0",
                 "symfony/phpunit-bridge": "^7.3.4|^8.0",
                 "symfony/stopwatch": "^6.4|^7.3|^8.0",
-                "twig/twig": "^2.0|^3.0|^4.0"
+                "twig/twig": "^2.0|^3.0|^4.0",
+                "web-token/jwt-library": "^4.1"
             },
             "suggest": {
-                "symfony/stopwatch": "Integration with the profiler performances"
+                "symfony/stopwatch": "Integration with the profiler performances",
+                "web-token/jwt-library": "To build Mercure protocol 1.0-compatible JSON Web Tokens with WebTokenFactory"
             },
             "type": "library",
             "extra": {
@@ -10280,7 +10282,7 @@
                     "name": "dunglas/mercure"
                 },
                 "branch-alias": {
-                    "dev-main": "0.6.x-dev"
+                    "dev-main": "0.10.x-dev"
                 }
             },
             "autoload": {
@@ -10312,7 +10314,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/mercure/issues",
-                "source": "https://github.com/symfony/mercure/tree/v0.7.2"
+                "source": "https://github.com/symfony/mercure/tree/v0.10.0"
             },
             "funding": [
                 {
@@ -10324,44 +10326,48 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-15T15:22:09+00:00"
+            "time": "2026-11-03T07:27:54+00:00"
         },
         {
             "name": "symfony/mercure-bundle",
-            "version": "v0.4.3",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mercure-bundle.git",
-                "reference": "90e269c68fa10088e0affb02a3708ffce3e35f4e"
+                "reference": "0433692370ab9cc01885fdc07e27b279399c3be8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mercure-bundle/zipball/90e269c68fa10088e0affb02a3708ffce3e35f4e",
-                "reference": "90e269c68fa10088e0affb02a3708ffce3e35f4e",
+                "url": "https://api.github.com/repos/symfony/mercure-bundle/zipball/0433692370ab9cc01885fdc07e27b279399c3be8",
+                "reference": "0433692370ab9cc01885fdc07e27b279399c3be8",
                 "shasum": ""
             },
             "require": {
                 "lcobucci/jwt": "^3.4|^4.0|^5.0",
-                "php": ">=8.1",
+                "php": ">=8.2",
                 "symfony/config": "^6.4|^7.3|^8.0",
                 "symfony/dependency-injection": "^6.4|^7.3|^8.0",
                 "symfony/http-kernel": "^6.4|^7.3|^8.0",
-                "symfony/mercure": "^0.6.1|^0.7",
+                "symfony/mercure": "^0.9|^0.10",
                 "symfony/web-link": "^6.4|^7.3|^8.0"
             },
             "require-dev": {
                 "symfony/phpunit-bridge": "^7.3.4|^8.0",
+                "symfony/security-http": "^6.4|^7.3|^8.0",
                 "symfony/stopwatch": "^6.4|^7.3|^8.0",
                 "symfony/ux-turbo": "*",
-                "symfony/var-dumper": "^6.4|^7.3|^8.0"
+                "symfony/var-dumper": "^6.4|^7.3|^8.0",
+                "web-token/jwt-library": "^4.1"
             },
             "suggest": {
-                "symfony/messenger": "To use the Messenger integration"
+                "symfony/messenger": "To use the Messenger integration",
+                "symfony/security-http": "To clear the subscriber authorization cookie on logout",
+                "web-token/jwt-library": "To build Mercure protocol 1.0-compatible JSON Web Tokens from a \"jwt.jwks_uri\" option"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "0.4.x-dev"
+                    "dev-main": "0.7.x-dev"
                 }
             },
             "autoload": {
@@ -10393,7 +10399,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/mercure-bundle/issues",
-                "source": "https://github.com/symfony/mercure-bundle/tree/v0.4.3"
+                "source": "https://github.com/symfony/mercure-bundle/tree/v0.7.0"
             },
             "funding": [
                 {
@@ -10405,7 +10411,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-11T10:28:59+00:00"
+            "time": "2026-11-03T07:28:05+00:00"
         },
         {
             "name": "symfony/messenger",
