@@ -62,6 +62,7 @@ class ActivityHandler extends MbinMessageHandler
         $this->workWrapper($message);
     }
 
+    #[\Override]
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ActivityMessage)) {

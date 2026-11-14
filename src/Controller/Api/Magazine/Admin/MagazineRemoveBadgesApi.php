@@ -85,7 +85,7 @@ class MagazineRemoveBadgesApi extends MagazineBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $manager->delete($badge);
+        $manager->delete($badge, $magazine);
 
         return new JsonResponse(
             $this->serializeMagazine($factory->createDto($magazine)),

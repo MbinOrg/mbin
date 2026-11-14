@@ -39,6 +39,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Webmozart\Assert\Assert;
 
 class MagazineManager
@@ -274,6 +275,7 @@ class MagazineManager
 
     private function clearCommentsCache(User $user)
     {
+        \assert($this->cache instanceof TagAwareCacheInterface);
         $this->cache->invalidateTags([
             'post_comments_user_'.$user->getId(),
             'entry_comments_user_'.$user->getId(),

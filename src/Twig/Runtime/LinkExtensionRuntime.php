@@ -38,7 +38,7 @@ class LinkExtensionRuntime implements RuntimeExtensionInterface
     {
         $domain = parse_url($url, PHP_URL_HOST);
 
-        if (null === $domain) {
+        if (null === $domain || false === $domain) {
             return $this->settingsManager->get('KBIN_DOMAIN');
         }
 

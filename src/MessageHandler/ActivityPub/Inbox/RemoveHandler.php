@@ -50,34 +50,40 @@ class RemoveHandler extends MbinMessageHandler
         $this->workWrapper($message);
     }
 
+    #[\Override]
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof RemoveMessage)) {
             throw new \LogicException("RemoveHandler called, but is wasn\'t a RemoveMessage. Type: ".\get_class($message));
         }
+
         $payload = $message->payload;
         $actor = $this->activityPubManager->findUserActorOrCreateOrThrow($payload['actor']);
+
         $targetMag = $this->magazineRepository->getMagazineFromModeratorsUrl($payload['target']);
         if ($targetMag) {
             $this->handleModeratorRemove($payload['object'], $targetMag, $actor, $payload);
 
             return;
         }
+
         $targetMag = $this->magazineRepository->getMagazineFromPinnedUrl($payload['target']);
         if ($targetMag) {
             $this->handlePinnedRemove($payload['object'], $targetMag, $actor, $payload);
 
             return;
         }
+
         throw new \LogicException("could not find a magazine with moderators url like: '{$payload['target']}'");
     }
 
-    public function handleModeratorRemove($object1, Magazine $targetMag, Magazine|User $actor, array $messagePayload): void
+    public function handleModeratorRemove($object1, Magazine $targetMag, User $actor, array $messagePayload): void
     {
         if (!$targetMag->userIsModerator($actor) && !$targetMag->hasSameHostAsUser($actor)) {
             throw new \LogicException("the user '$actor->username' ({$actor->getId()}) is not a moderator of $targetMag->name ({$targetMag->getId()}) and is not from the same instance. He can therefore not remove moderators");
         }
 
+        /** @var User $object */
         $object = $this->activityPubManager->findUserActorOrCreateOrThrow($object1);
         $objectMod = $targetMag->getUserAsModeratorOrNull($object);
 

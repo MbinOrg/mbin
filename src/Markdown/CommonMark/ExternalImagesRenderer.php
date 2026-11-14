@@ -24,6 +24,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
 {
     private ConfigurationInterface $config;
 
+    #[\Override]
     public function setConfiguration(ConfigurationInterface $configuration): void
     {
         $this->config = $configuration;
@@ -32,10 +33,12 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
     /**
      * @param Image $node
      */
+    #[\Override]
     public function render(
         Node $node,
         ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
+        /** @var Image $node */
         Image::assertInstanceOf($node);
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
@@ -61,6 +64,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
             if ($node->hasChildren()) {
                 $cnodes = [];
                 foreach ($node->children() as $n) {
+                    \assert($n instanceof StringContainerInterface);
                     if (!EmbedElement::checkForbiddenDescendantNodes($n, true)) {
                         $cnodes[] = new Text($n->getLiteral());
                     } else {
