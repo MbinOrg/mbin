@@ -31,7 +31,7 @@ class WwwHttpClientFactory implements ResetInterface
         if (null === $base && null === $clientOptions) {
             return $this->defaultClient;
         } elseif (null === $clientOptions) {
-            return $this->buildFilteredClient($this->buildConfiguredClient($base ?? $this->httpClientBase));
+            return $this->buildFilteredClient($this->buildConfiguredClient($base));
         } else {
             return $this->buildFilteredClient(($base ?? $this->httpClientBase)->withOptions($clientOptions));
         }
@@ -58,6 +58,7 @@ class WwwHttpClientFactory implements ResetInterface
         ]);
     }
 
+    #[\Override]
     public function reset(): void
     {
         $stillExistingClients = [];

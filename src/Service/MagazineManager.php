@@ -39,6 +39,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Webmozart\Assert\Assert;
 
 class MagazineManager
@@ -49,6 +50,7 @@ class MagazineManager
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('magazineLimiter')]
         private readonly RateLimiterFactoryInterface $magazineLimiter,
+        /** @var TagAwareCacheInterface $cache */
         private readonly CacheInterface $cache,
         private readonly MessageBusInterface $bus,
         private readonly EntityManagerInterface $entityManager,

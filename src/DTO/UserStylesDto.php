@@ -19,6 +19,7 @@ class UserStylesDto implements \JsonSerializable
     {
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

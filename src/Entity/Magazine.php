@@ -179,11 +179,13 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         return $this;
     }
 
+    #[\Override]
     public function getId(): int
     {
         return $this->id;
     }
 
+    #[\Override]
     public function getApId(): ?string
     {
         return $this->apId;
@@ -376,6 +378,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->where(Criteria::expr()->eq('user', $user));
 
         $subscription = $this->subscriptions->matching($criteria)->first();
+        assert($subscription instanceof MagazineSubscription);
 
         if ($this->subscriptions->removeElement($subscription)) {
             if ($subscription->magazine === $this) {
@@ -386,17 +389,20 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         $this->updateSubscriptionsCount();
     }
 
+    #[\Override]
     public function softDelete(): void
     {
         $this->markedForDeletionAt = new \DateTime('now + 30days');
         $this->visibility = VisibilityInterface::VISIBILITY_SOFT_DELETED;
     }
 
+    #[\Override]
     public function trash(): void
     {
         $this->visibility = VisibilityInterface::VISIBILITY_TRASHED;
     }
 
+    #[\Override]
     public function restore(): void
     {
         $this->markedForDeletionAt = null;
@@ -484,6 +490,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
         return [];
     }
 
+    #[\Override]
     public function getApName(): string
     {
         return $this->name;

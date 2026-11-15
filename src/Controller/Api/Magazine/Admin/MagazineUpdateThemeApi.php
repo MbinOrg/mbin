@@ -196,7 +196,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
 
         $dto = new MagazineThemeDto($magazine);
 
-        $dto->banner = $image ? $this->imageFactory->createDto($image) : $dto->banner;
+        $dto->banner = $this->imageFactory->createDto($image);
 
         $magazine = $manager->changeTheme($magazine, $dto, $this->getUserOrThrow());
         $iconDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;

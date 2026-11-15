@@ -26,10 +26,6 @@ class ReportController extends AbstractController
         Report $report,
         Request $request,
     ): Response {
-        if (!$report) {
-            throw new \InvalidArgumentException('there is no such report');
-        }
-
         $activity = $this->factory->build($report);
         $json = $this->activityJsonBuilder->buildActivityJson($activity);
 

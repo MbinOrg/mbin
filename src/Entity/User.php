@@ -343,11 +343,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->filterLists = new ArrayCollection();
     }
 
+    #[\Override]
     public function getId(): int
     {
         return $this->id;
     }
 
+    #[\Override]
     public function getApId(): ?string
     {
         return $this->apId;
@@ -390,9 +392,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this;
     }
 
+    #[\Override]
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
     public function setPassword(string $password): self
@@ -481,7 +484,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     {
         if (!$this->subscriptions->contains($subscription)) {
             $this->subscriptions->add($subscription);
-            $subscription->setUser($this);
+            $subscription->user = $this;
         }
 
         return $this;
@@ -587,9 +590,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
 
     public function toggleTheme(): self
     {
+        throw new \LogicException('invalid implementation');
+        /*
         $this->theme = self::THEME_LIGHT === $this->theme ? self::THEME_DARK : self::THEME_LIGHT;
 
         return $this;
+        */
     }
 
     public function isBlocker(User $user): bool
@@ -744,6 +750,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return \in_array('ROLE_MODERATOR', $this->getRoles());
     }
 
+    #[\Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -758,6 +765,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         return $this->isDeleted;
     }
 
+    #[\Override]
     public function getUserIdentifier(): string
     {
         return $this->username;
@@ -775,6 +783,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
      *
      * @see User::__serialize()
      */
+    #[\Override]
     public function isEqualTo(UserInterface $user): bool
     {
         $pa = PropertyAccess::createPropertyAccessor();
@@ -788,6 +797,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
             && ($theirTotpSecret === $this->totpSecret || $theirTotpSecret === hash('sha256', $this->totpSecret) || hash('sha256', $theirTotpSecret) === $this->totpSecret);
     }
 
+    #[\Override]
     public function getApName(): string
     {
         return $this->username;
@@ -870,16 +880,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->totpSecret = $totpSecret;
     }
 
+    #[\Override]
     public function isTotpAuthenticationEnabled(): bool
     {
         return (bool) $this->totpSecret;
     }
 
+    #[\Override]
     public function getTotpAuthenticationUsername(): string
     {
         return $this->username;
     }
 
+    #[\Override]
     public function getTotpAuthenticationConfiguration(): ?TotpConfigurationInterface
     {
         return new TotpConfiguration($this->totpSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
@@ -893,11 +906,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->totpBackupCodes = $codes;
     }
 
+    #[\Override]
     public function isBackupCode(string $code): bool
     {
         return \in_array($code, $this->totpBackupCodes);
     }
 
+    #[\Override]
     public function invalidateBackupCode(string $code): void
     {
         $this->totpBackupCodes = array_values(
@@ -907,6 +922,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         );
     }
 
+    #[\Override]
     public function softDelete(): void
     {
         $this->markedForDeletionAt = new \DateTime('now + 30days');
@@ -914,21 +930,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
         $this->isDeleted = true;
     }
 
+    #[\Override]
     public function isSoftDeleted(): bool
     {
         return self::VISIBILITY_SOFT_DELETED === $this->visibility;
     }
 
+    #[\Override]
     public function trash(): void
     {
         $this->visibility = self::VISIBILITY_TRASHED;
     }
 
+    #[\Override]
     public function isTrashed(): bool
     {
         return self::VISIBILITY_TRASHED === $this->visibility;
     }
 
+    #[\Override]
     public function restore(): void
     {
         $this->markedForDeletionAt = null;

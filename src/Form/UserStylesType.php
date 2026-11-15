@@ -15,6 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserStylesType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -45,6 +46,7 @@ class UserStylesType extends AbstractType
             ->add('submit', SubmitType::class);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(

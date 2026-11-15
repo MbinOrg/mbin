@@ -47,6 +47,7 @@ class UserSettingsDto implements \JsonSerializable
     ) {
     }
 
+    #[\Override]
     public function jsonSerialize(): mixed
     {
         return [

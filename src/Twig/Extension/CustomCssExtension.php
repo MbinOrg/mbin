@@ -11,6 +11,7 @@ use Twig\TwigFunction;
 
 class CustomCssExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFunctions(): array
     {
         return [
