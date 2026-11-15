@@ -5,12 +5,15 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Factory\ActivityPub\PersonFactory;
+use Sabberworm\CSS\CSSElement;
 use Sabberworm\CSS\CSSList\CSSList;
+use Sabberworm\CSS\CSSList\CSSListItem;
 use Sabberworm\CSS\CSSList\Document;
+use Sabberworm\CSS\CSSList\KeyFrame;
 use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\Position\Positionable;
 use Sabberworm\CSS\Property\Declaration;
-use Sabberworm\CSS\Property\Selector;
+use Sabberworm\CSS\Property\KeyframeSelector;
 use Sabberworm\CSS\Property\Selector\CompoundSelector;
 use Sabberworm\CSS\RuleSet\AtRuleSet;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
@@ -36,12 +39,12 @@ readonly class CustomCssService
     public function __construct(
         private PersonFactory $personFactory,
     ) {
-        $this->localUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD);
-        $this->remoteUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY);
-        $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->localMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->remoteMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->localUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, maxSizeKb: 128, allowKeyframes: true);
+        $this->remoteUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, maxSizeKb: 128, allowKeyframes: true);
+        $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->localMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
     }
 
     public function createConstraintSelector(User $user): string
@@ -59,10 +62,16 @@ readonly class CustomCssService
         $profile->checkNeedsUser($user);
 
         if ('' === $src) {
-            throw new \InvalidArgumentException('empty CSS src is invalid');
+            throw new \InvalidArgumentException('Empty CSS src is invalid');
         }
 
-        if (\strlen($src) > $profile->maxSize()) {
+        if (null === $user) {
+            $srcSize = \strlen($src);
+        } else {
+            // don't count size with selector prefix as it would result in inconsistencies when css is submitted without selector prefix (which might be added automatically later)
+            $srcSize = \strlen(str_replace($this->createConstraintSelector($user), '', $src));
+        }
+        if ($srcSize > $profile->maxSize()) {
             throw new BadRequestHttpException('The CSS is too big');
         }
 
@@ -97,9 +106,10 @@ readonly class CustomCssService
         foreach ($css->getContents() as $item) {
             if ($item instanceof DeclarationBlock) {
                 $this->validateCssDeclarationBlock($profile, $item);
+            } elseif ($item instanceof KeyFrame && $profile->allowKeyframes) {
+                $this->validateKeyframesDeclarationBlock($profile, $item);
             } else {
-                $lineText = ($item instanceof Positionable) ? ' at line '.$item->getLineNumber() : '';
-                throw new BadRequestHttpException('The CSS contained rules which are not allowed'.$lineText);
+                $this->throwInvalidCss($item);
             }
         }
     }
@@ -108,19 +118,19 @@ readonly class CustomCssService
     {
         foreach ($css->getSelectors() as $selector) {
             if (0 === \count($selector->getComponents())) {
-                throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
+                $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
             }
 
             if ($profile->requireSelectorStartsWithClass) {
                 if (!($selector->getComponents()[0] instanceof CompoundSelector) || !str_starts_with($selector->getComponents()[0]->getValue(), '.')) {
-                    throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
+                    $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
                 }
             }
 
             if (!$profile->allowSelectorStar) {
                 foreach ($selector->getComponents() as $component) {
-                    if (str_contains($component->getValue(), '*')) {// TODO maybe allow *
-                        throw new BadRequestHttpException('The CSS contained rules with disallowed selectors at line '.$css->getLineNumber());
+                    if (str_contains($component->getValue(), '*')) {
+                        $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
                     }
                 }
             }
@@ -130,13 +140,50 @@ readonly class CustomCssService
             return;
         }
 
-        // TODO maybe allow some at-rules like keyframes (possibly prefixed)
         if ($css->getRuleSet() instanceof AtRuleSet) {
-            throw new BadRequestHttpException('The CSS contained rules which are not allowed at line '.$css->getLineNumber());
+            $this->throwInvalidCss($css);
         }
 
         foreach ($css->getDeclarations() as $declaration) {
             $this->validateCssRuleValue($profile, $declaration, $declaration->getValue());
+        }
+    }
+
+    private function validateKeyframesDeclarationBlock(CustomCssProfile $profile, KeyFrame $css): void
+    {
+        if ($profile->allowAllDeclarations) {
+            return;
+        }
+
+        if ('' === $css->getAnimationName()) {
+            $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
+        }
+
+        foreach ($css->getContents() as $frameDeclaration) {
+            if (!$frameDeclaration instanceof DeclarationBlock) {
+                $this->throwInvalidCss($frameDeclaration);
+            }
+
+            $selectors = $frameDeclaration->getSelectors();
+            if (1 !== \count($selectors)) {
+                $this->throwInvalidCss($frameDeclaration);
+            }
+            $selector = $selectors[0];
+            if (
+                !$selector instanceof KeyframeSelector
+                || 1 !== \count($selector->getComponents())
+                || !str_ends_with($selector->getComponents()[0]->getValue(), '%')
+            ) {
+                $this->throwInvalidCss($frameDeclaration);
+            }
+
+            if ($frameDeclaration->getRuleSet() instanceof AtRuleSet) {
+                $this->throwInvalidCss($css);
+            }
+
+            foreach ($frameDeclaration->getDeclarations() as $declaration) {
+                $this->validateCssRuleValue($profile, $declaration, $declaration->getValue());
+            }
         }
     }
 
@@ -149,7 +196,7 @@ readonly class CustomCssService
         } else {
             if ($value instanceof URL && !$profile->allowNonInlineUrls) {
                 if (!str_starts_with($value->getURL()->getString(), 'data:image/')) {
-                    throw new BadRequestHttpException('The CSS contained rules which are not allowed at line '.$declaration->getLineNumber());
+                    $this->throwInvalidCss($declaration);
                 }
             }
         }
@@ -158,33 +205,67 @@ readonly class CustomCssService
     private function enforceSelectorConstraints(Document $css, User $user, bool $addMissingClasses): void
     {
         $constraintSelector = $this->createConstraintSelector($user);
+        $constrainKeyframePrefix = substr($this->userMarker($user), 1).'-';
 
-        foreach ($css->getAllDeclarationBlocks() as $block) {
-            foreach ($block->getSelectors() as $selector) {
-                $components = $selector->getComponents();
+        foreach ($css->getContents() as $item) {
+            if ($item instanceof DeclarationBlock) {
+                $this->enforceDeclarationSelectorConstraints($item, $user, $constraintSelector, $addMissingClasses);
+            } elseif ($item instanceof KeyFrame) {
+                $this->enforceKeyframeSelectorConstraints($item, $constrainKeyframePrefix, $addMissingClasses);
+            }
+        }
+    }
 
-                if (\count($components) >= 1 && (
+    private function enforceDeclarationSelectorConstraints(DeclarationBlock $css, User $user, string $constraintSelector, bool $addMissingClasses): void
+    {
+        foreach ($css->getSelectors() as $selector) {
+            $components = $selector->getComponents();
+
+            if (\count($components) >= 1 && (
                     $components[0]->getValue() === $constraintSelector
                     || $this->checkFediSelector($components[0]->getValue(), $user))
-                ) {
-                    continue;
-                }
+            ) {
+                continue;
+            }
 
-                // check if a partial fedi selector exists -> throw exception as it is malformed
-                foreach ($components as $component) {
-                    if (str_contains($component->getValue(), 'fediCustomCss')) {
-                        throw new BadRequestHttpException('The CSS has a block with invalid fediCustomCss selector at line '.$block->getLineNumber());
-                    }
-                }
-
-                // no fedi selector exists at all -> add or throw
-                if ($addMissingClasses) {
-                    array_unshift($components, new CompoundSelector($constraintSelector));
-                    $selector->setComponents($components);
-                } else {
-                    throw new BadRequestHttpException('The CSS has a block with missing fediCustomCss selector at line '.$block->getLineNumber());
+            // check if a partial fedi selector exists -> throw exception as it is malformed
+            foreach ($components as $component) {
+                if (str_contains($component->getValue(), 'fediCustomCss')) {
+                    $this->throwInvalidCss($css, 'The CSS has a block with invalid fediCustomCss selector');
                 }
             }
+
+            // no fedi selector exists at all -> add or throw
+            if ($addMissingClasses) {
+                array_unshift($components, new CompoundSelector($constraintSelector));
+                $selector->setComponents($components);
+            } else {
+                $this->throwInvalidCss($css, 'The CSS has a block with missing fediCustomCss selector');
+            }
+        }
+    }
+
+    private function enforceKeyframeSelectorConstraints(KeyFrame $css, string $constraintPrefix, bool $addMissingClasses): void
+    {
+        $name = $css->getAnimationName();
+
+        if ('' === $name) {
+            $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
+        }
+
+        if (\strlen($name) > \strlen($constraintPrefix) && str_starts_with($name, $constraintPrefix)) {
+            return;
+        }
+
+        if (str_starts_with($name, 'fediCustomCss')) {
+            $this->throwInvalidCss($css, 'The CSS has a block with invalid fediCustomCss selector');
+        }
+
+        // no fedi selector exists at all -> add or throw
+        if ($addMissingClasses) {
+            $css->setAnimationName($constraintPrefix.$name);
+        } else {
+            $this->throwInvalidCss($css, 'The CSS has a block with missing fediCustomCss selector');
         }
     }
 
@@ -222,6 +303,12 @@ readonly class CustomCssService
 
         return self::SELECTOR_MARKER_USER.$userId;
     }
+
+    private function throwInvalidCss(CSSListItem|CSSElement $item, string $msg = 'The CSS contained rules which are not allowed'): never
+    {
+        $lineText = ($item instanceof Positionable) ? \sprintf(' at line %d column %d', $item->getLineNumber() ?? -1, $item->getColumnNumber() ?? -1) : '';
+        throw new BadRequestHttpException($msg.$lineText);
+    }
 }
 
 readonly class CustomCssProfile
@@ -240,6 +327,7 @@ readonly class CustomCssProfile
         public bool $requireSelectorStartsWithClass = true,
         public bool $allowSelectorStar = false,
         public bool $allowNonInlineUrls = false,
+        public bool $allowKeyframes = false,
         public bool $allowAllRules = false,
         public bool $allowAllDeclarations = false,
     ) {

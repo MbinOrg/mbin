@@ -17,14 +17,20 @@ class CustomCssServiceTest extends TestCase
     private CustomCssProfile $testProfileNoVerify;
     private CustomCssProfile $testProfileSelectorVerify;
     private CustomCssProfile $testProfileSelectorAdd;
+    private CustomCssProfile $testProfileAllowKeyframesNoVerify;
+    private CustomCssProfile $testProfileAllowKeyframesVerify;
+    private CustomCssProfile $testProfileAllowKeyframesAdd;
 
     #[\Override]
     public function setUp(): void
     {
         // only test the strictest settings
-        $this->testProfileNoVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, 4, true, false, false, false, false);
-        $this->testProfileSelectorVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, 4, true, false, false, false, false);
-        $this->testProfileSelectorAdd = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, 4, true, false, false, false, false);
+        $this->testProfileNoVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, 4, true, false, false, false, false, false);
+        $this->testProfileSelectorVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, 4, true, false, false, false, false, false);
+        $this->testProfileSelectorAdd = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, 4, true, false, false, false, false, false);
+        $this->testProfileAllowKeyframesNoVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, 4, true, false, false, true, false, false);
+        $this->testProfileAllowKeyframesVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, 4, true, false, false, true, false, false);
+        $this->testProfileAllowKeyframesAdd = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, 4, true, false, false, true, false, false);
     }
 
     public function testDetectAtRules(): void
@@ -179,6 +185,75 @@ class CustomCssServiceTest extends TestCase
         self::assertSame(
             $user1Selector.'.cls, '.$user1Selector.'.cls a {}',
             $service->validatePublicCss('.cls, .cls a {}', $this->testProfileSelectorAdd, $user1)
+        );
+    }
+
+    public function testAllowsKeyframes(): void
+    {
+        $service = $this->createService();
+
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes{100% {transform: rotate(180deg);} 0% {transform: rotate(0deg);}}', $this->testProfileAllowKeyframesNoVerify, null));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes anim{100% {background-image: inherit;} 0% {background-image: url("https://example.com/img.jpg");}}', $this->testProfileAllowKeyframesNoVerify, null));
+
+        self::assertSame(
+            "@keyframes anim {100% {transform: rotate(180deg);}\n\t0% {transform: rotate(0deg);}}",
+            $service->validatePublicCss("@keyframes anim{\n100% { transform: rotate(180deg); }\n0% { transform: rotate(0deg); }\n}", $this->testProfileAllowKeyframesNoVerify, null)
+        );
+    }
+
+    public function testValidatesKeyframesName(): void
+    {
+        $service = $this->createService();
+        $user1 = new User('', '', '', EUserType::Person);
+        $user1->username = 'testuser';
+        $user2 = new User('', '', '', EUserType::Person);
+        $user2->apId = 'https://remote.local/u/test';
+
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes anim{100% {transform: rotate(180deg);}}', $this->testProfileAllowKeyframesVerify, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user2).'-anim{100% {transform: rotate(180deg);}}', $this->testProfileAllowKeyframesVerify, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-userr-'.$this->expectedUserIdCss($user1).'-anim{100% {transform: rotate(180deg);}}', $this->testProfileAllowKeyframesVerify, $user1));
+
+        // should not throw
+        $service->validatePublicCss('@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user1).'-anim{100% {transform: rotate(180deg);}}', $this->testProfileAllowKeyframesVerify, $user1);
+        $service->validatePublicCss('@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user2).'-anim{100% {transform: rotate(180deg);}}', $this->testProfileAllowKeyframesVerify, $user2);
+    }
+
+    public function testAddsKeyframesName(): void
+    {
+        $service = $this->createService();
+        $user1 = new User('', '', '', EUserType::Person);
+        $user1->username = 'testuser';
+        $user2 = new User('', '', '', EUserType::Person);
+        $user2->apId = 'https://remote.local/u/test';
+
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss {}', $this->testProfileAllowKeyframesAdd, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-user- {}', $this->testProfileAllowKeyframesAdd, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-user-a {}', $this->testProfileAllowKeyframesAdd, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user1).'- {}', $this->testProfileAllowKeyframesAdd, $user1));
+        self::assertThrows(BadRequestHttpException::class,
+            fn () => $service->validatePublicCss('@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user1).'-a {}', $this->testProfileAllowKeyframesAdd, $user2));
+
+        $user1Selector = '@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user1);
+        self::assertSame(
+            $user1Selector.'-anim {}',
+            $service->validatePublicCss(' @keyframes anim {}', $this->testProfileAllowKeyframesAdd, $user1)
+        );
+        self::assertSame(
+            '@keyframes fediCustomCss-user-'.$this->expectedUserIdCss($user2).'-anim {}',
+            $service->validatePublicCss('@keyframes anim {}', $this->testProfileAllowKeyframesAdd, $user2)
+        );
+        self::assertSame(
+            $user1Selector."-anim1 {}\n".$user1Selector.'-anim-2 {}',
+            $service->validatePublicCss("@keyframes anim1 {}\n@keyframes anim-2 {}", $this->testProfileAllowKeyframesAdd, $user1)
         );
     }
 
