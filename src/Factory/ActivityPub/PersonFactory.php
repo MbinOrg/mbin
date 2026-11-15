@@ -101,11 +101,13 @@ class PersonFactory
             );
         }
         if ($user->customPublicProfileCss) {
-            $person[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS] = $this->urlGenerator->generate(
+            $profileCssUrl = $this->urlGenerator->generate(
                 'custom_style',
                 ['profile' => $user->username, 'includeSiteStyles' => 'false'],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
+            $person[ActivityPubManager::AP_OBJECT_KEY_USER_PROFILE_CSS] = $profileCssUrl;
+            $person['_wafrn_customCSS'] = $profileCssUrl;
         }
 
         return $person;

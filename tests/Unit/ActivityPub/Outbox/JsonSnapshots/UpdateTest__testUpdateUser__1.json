@@ -31,6 +31,7 @@
         "publicKey": "SCRUBBED_KEY",
         "_fedi_custom_css_content": "https://kbin.test/custom-style?userNames=user&includeSiteStyles=false",
         "_fedi_custom_css_profile": "https://kbin.test/custom-style?profile=user&includeSiteStyles=false",
+        "_wafrn_customCSS": "https://kbin.test/custom-style?profile=user&includeSiteStyles=false",
         "endpoints": {
             "sharedInbox": "https://kbin.test/f/inbox"
         }
