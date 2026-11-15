@@ -12,6 +12,12 @@ trait PostCommentResponseTrait
 {
     private function getPostCommentJsonSuccessResponse(PostComment $comment): Response
     {
+        $twigAttrs = [
+            'comment' => $comment,
+            'showEntryTitle' => false,
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $comment->post, true);
+
         return new JsonResponse(
             [
                 'id' => $comment->getId(),
@@ -19,10 +25,7 @@ trait PostCommentResponseTrait
                     'ajax/component.html.twig',
                     [
                         'component' => 'post_comment',
-                        'attributes' => [
-                            'comment' => $comment,
-                            'showEntryTitle' => false,
-                        ],
+                        'attributes' => $twigAttrs,
                     ]
                 ),
             ]

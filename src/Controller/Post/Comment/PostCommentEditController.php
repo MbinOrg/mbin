@@ -75,15 +75,18 @@ class PostCommentEditController extends AbstractController
 
         $comments = $this->repository->findByCriteria($criteria);
 
+        $twigAttrs = [
+            'magazine' => $post->magazine,
+            'post' => $post,
+            'comments' => $comments,
+            'comment' => $comment,
+            'form' => $form->createView(),
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
         return $this->render(
             'post/comment/edit.html.twig',
-            [
-                'magazine' => $post->magazine,
-                'post' => $post,
-                'comments' => $comments,
-                'comment' => $comment,
-                'form' => $form->createView(),
-            ],
+            $twigAttrs,
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
     }

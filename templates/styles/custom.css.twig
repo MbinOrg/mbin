@@ -11,7 +11,7 @@
 {% if not app.user or not app.user.ignoreMagazinesCustomCss %}
 {% if magazine is defined and magazine and magazine.customCss %}
 /* magazine styles */
-{% if magazine.customCss starts with 'https://' %}
+{% if magazine.customCss starts with 'https://' or magazine.customCss starts with 'http://' %}
 /* remote CSS not included: {{ magazine.customCss|raw }} */
 {% else %}
 {{ magazine.customCss|raw }}
@@ -22,7 +22,7 @@
 {% if not app.user or not app.user.ignoreUserProfileCss %}
 {% if profile is not same as null and profile.customPublicProfileCss is not same as null %}
 /* {{ profile.username }} public profile styles */
-{% if profile.customPublicProfileCss starts with 'https://' %}
+{% if profile.customPublicProfileCss starts with 'https://' or profile.customPublicProfileCss starts with 'http://' %}
 /* remote CSS not included: {{ profile.customPublicProfileCss|raw }} */
 {% else %}
 {{ profile.customPublicProfileCss|raw }}
@@ -34,7 +34,7 @@
 {% for cssUser in cssUsers %}
 {% if cssUser.customPublicContentCss is not same as null %}
 /* {{ cssUser.username }} public content styles */
-{% if cssUser.customPublicContentCss starts with 'https://' %}
+{% if cssUser.customPublicContentCss starts with 'https://' or cssUser.customPublicContentCss starts with 'http://' %}
 /* remote CSS not included: {{ cssUser.customPublicContentCss|raw }} */
 {% else %}
 {{ cssUser.customPublicContentCss|raw }}

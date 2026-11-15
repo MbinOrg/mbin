@@ -51,11 +51,14 @@ class PostCommentModerateController extends AbstractController
             ]);
         }
 
-        return $this->render('post/comment/moderate.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'post' => $post,
             'comment' => $comment,
             'form' => $form->createView(),
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
+        return $this->render('post/comment/moderate.html.twig', $twigAttrs);
     }
 }

@@ -33,10 +33,13 @@ class PostVotersController extends AbstractController
             ]);
         }
 
-        return $this->render('post/voters.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'post' => $post,
             'votes' => $post->getUpVotes(),
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
+        return $this->render('post/voters.html.twig', $twigAttrs);
     }
 }

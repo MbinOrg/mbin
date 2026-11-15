@@ -245,11 +245,7 @@ class EntryFrontController extends AbstractController
             $baseData['user'] = $user;
         }
 
-        $cssUsers = [];
-        foreach ($data['results'] as $subject) {
-            $cssUsers[] = $subject->user;
-        }
-        $baseData['contentAuthors'] = ArrayUtils::uniqueBy($cssUsers, fn(User $user) => $user->getId());
+        $this->addContentAuthorsAttr($baseData, $data['results'], false);
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([

@@ -89,16 +89,19 @@ class PostCommentCreateController extends AbstractController
 
         $comments = $this->repository->findByCriteria($criteria);
 
+        $twigAttrs = [
+            'user' => $user,
+            'magazine' => $magazine,
+            'post' => $post,
+            'comments' => $comments,
+            'parent' => $parent,
+            'form' => $form->createView(),
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
         return $this->render(
             'post/comment/create.html.twig',
-            [
-                'user' => $user,
-                'magazine' => $magazine,
-                'post' => $post,
-                'comments' => $comments,
-                'parent' => $parent,
-                'form' => $form->createView(),
-            ],
+            $twigAttrs,
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
     }

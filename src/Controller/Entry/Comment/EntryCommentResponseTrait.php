@@ -30,17 +30,18 @@ trait EntryCommentResponseTrait
             $this->getJsonFormResponse($form, 'entry/comment/_form.html.twig');
         }
 
+        $twigAttrs = [
+            'user' => $user,
+            'magazine' => $criteria->entry->magazine,
+            'entry' => $criteria->entry,
+            'parent' => $parent,
+            'comment' => $parent,
+            'form' => $form->createView(),
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $criteria->entry, true);
+
         return $this->render(
-            $template,
-            [
-                'user' => $user,
-                'magazine' => $criteria->entry->magazine,
-                'entry' => $criteria->entry,
-                'parent' => $parent,
-                'comment' => $parent,
-                'form' => $form->createView(),
-            ],
-            new Response(null, $form->isSubmitted() && !$form->isValid() ? 322 : 200)
+            $template, $twigAttrs, new Response(null, $form->isSubmitted() && !$form->isValid() ? 322 : 200)
         );
     }
 

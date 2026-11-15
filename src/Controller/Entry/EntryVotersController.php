@@ -37,10 +37,13 @@ class EntryVotersController extends AbstractController
             );
         }
 
-        return $this->render('entry/voters.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'entry' => $entry,
             'votes' => $votes,
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        return $this->render('entry/voters.html.twig', $twigAttrs);
     }
 }
