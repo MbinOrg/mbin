@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use Embed\Http\Crawler;
-use Symfony\Component\HttpClient\DnsResolvingHttpClient;
 use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -77,7 +76,7 @@ class WwwHttpClientFactory implements ResetInterface
     private function buildFilteredClient(HttpClientInterface $client): HttpClientInterface
     {
         $ret = new NoPrivateNetworkHttpClient($client, allowList: array_values($this->exemptions));
-        if(\count($this->exemptions) > 0) {
+        if (\count($this->exemptions) > 0) {
             $ret = $ret->withOptions(['resolve' => $this->exemptions]);
         }
         $this->existingClients[] = \WeakReference::create($ret);

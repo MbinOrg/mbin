@@ -378,7 +378,7 @@ class Magazine implements VisibilityInterface, ActivityPubActorInterface, ApiRes
             ->where(Criteria::expr()->eq('user', $user));
 
         $subscription = $this->subscriptions->matching($criteria)->first();
-        assert($subscription instanceof MagazineSubscription);
+        \assert($subscription instanceof MagazineSubscription);
 
         if ($this->subscriptions->removeElement($subscription)) {
             if ($subscription->magazine === $this) {

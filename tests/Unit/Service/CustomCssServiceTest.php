@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
@@ -13,40 +14,43 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomCssServiceTest extends TestCase
 {
-
     private CustomCssProfile $testProfileNoVerify;
     private CustomCssProfile $testProfileSelectorVerify;
     private CustomCssProfile $testProfileSelectorAdd;
 
     #[\Override]
-    public function setUp(): void {
+    public function setUp(): void
+    {
         // only test the strictest settings
         $this->testProfileNoVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, 4, true, false, false, false, false);
         $this->testProfileSelectorVerify = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, 4, true, false, false, false, false);
         $this->testProfileSelectorAdd = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, 4, true, false, false, false, false);
     }
 
-    public function testDetectAtRules(): void {
+    public function testDetectAtRules(): void
+    {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@charset "UTF-8"', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('@charset "UTF-8"', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@import "../style.css"', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('@import "../style.css"', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@keyframes kf {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('@keyframes kf {}', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('@somerule r {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('@somerule r {}', $this->testProfileNoVerify, null));
     }
 
-    public function testDetectInvalidSyntax(): void {
+    public function testDetectInvalidSyntax(): void
+    {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('html {color: blue} .fail {invalid;}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('html {color: blue} .fail {invalid;}', $this->testProfileNoVerify, null));
     }
 
-    public function testSimplifiesCss(): void {
+    public function testSimplifiesCss(): void
+    {
         $service = $this->createService();
         $css = '
         .classA     >  .classB{
@@ -60,42 +64,46 @@ class CustomCssServiceTest extends TestCase
         self::assertSame(".classA > .classB {prop1: 0;prop2: #000;}\n.any h1 {}", $service->validatePublicCss($css, $this->testProfileNoVerify, null));
     }
 
-    public function testDetectsWildcardSelector(): void {
+    public function testDetectsWildcardSelector(): void
+    {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('* {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('* {}', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls * {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('.cls * {}', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('a, .cls * {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('a, .cls * {}', $this->testProfileNoVerify, null));
     }
 
-    public function testDetectsSelectorNotStartsWithClass(): void {
+    public function testDetectsSelectorNotStartsWithClass(): void
+    {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('div .cls {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('div .cls {}', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss(':hover {}', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss(':hover {}', $this->testProfileNoVerify, null));
     }
 
-    public function testDetectsUrlValues(): void {
+    public function testDetectsUrlValues(): void
+    {
         $service = $this->createService();
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls { background-image: url("/image.png") }', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('.cls { background-image: url("/image.png") }', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls { content: url("/image.png") }', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('.cls { content: url("/image.png") }', $this->testProfileNoVerify, null));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls { content: "a" url("/image.png")/"alt" }', $this->testProfileNoVerify, null));
+            fn () => $service->validatePublicCss('.cls { content: "a" url("/image.png")/"alt" }', $this->testProfileNoVerify, null));
 
         // should not throw
         $service->validatePublicCss('.cls { background-image: url("data:image/png;base64;......") }', $this->testProfileNoVerify, null);
         $service->validatePublicCss('.cls { content: "a" url("data:image/png;base64;......") }', $this->testProfileNoVerify, null);
     }
 
-    public function testDetectsFaultyConstraintSelector(): void {
+    public function testDetectsFaultyConstraintSelector(): void
+    {
         $service = $this->createService();
         $user1 = new User('', '', '', EUserType::Person);
         $user1->username = 'testuser';
@@ -103,17 +111,17 @@ class CustomCssServiceTest extends TestCase
         $user2->apId = 'https://remote.local/u/test';
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.cls {}', $this->testProfileSelectorVerify, $user1));
+            fn () => $service->validatePublicCss('.cls {}', $this->testProfileSelectorVerify, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss {}', $this->testProfileSelectorVerify, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss {}', $this->testProfileSelectorVerify, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $this->testProfileSelectorVerify, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $this->testProfileSelectorVerify, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $this->testProfileSelectorVerify, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $this->testProfileSelectorVerify, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $this->testProfileSelectorVerify, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $this->testProfileSelectorVerify, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $this->testProfileSelectorVerify, $user2));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $this->testProfileSelectorVerify, $user2));
 
         // should not throw
         $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $this->testProfileSelectorVerify, $user1);
@@ -122,20 +130,22 @@ class CustomCssServiceTest extends TestCase
         $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user2).' .abc {}', $this->testProfileSelectorVerify, $user2);
     }
 
-    public function testDetectsNonMbinSelector(): void {
+    public function testDetectsNonMbinSelector(): void
+    {
         $service = $this->createService();
         $user = new User('', '', '', EUserType::Person);
         $user->username = 'testuser';
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-soft-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $this->testProfileSelectorVerify, $user));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-soft-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $this->testProfileSelectorVerify, $user));
 
         // should not throw
         $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-lemmy.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $this->testProfileSelectorVerify, $user);
         $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-some123.fediCustomCss-user-'.$this->expectedUserIdCss($user).' {}', $this->testProfileSelectorVerify, $user);
     }
 
-    public function testAddsConstraintSelector(): void {
+    public function testAddsConstraintSelector(): void
+    {
         $service = $this->createService();
         $user1 = new User('', '', '', EUserType::Person);
         $user1->username = 'testuser';
@@ -143,15 +153,15 @@ class CustomCssServiceTest extends TestCase
         $user2->apId = 'https://remote.local/u/test';
 
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss {}', $this->testProfileSelectorAdd, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss {}', $this->testProfileSelectorAdd, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $this->testProfileSelectorAdd, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin {}', $this->testProfileSelectorAdd, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $this->testProfileSelectorAdd, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-a {}', $this->testProfileSelectorAdd, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $this->testProfileSelectorAdd, $user1));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-not_mbin.fediCustomCss-user-a {}', $this->testProfileSelectorAdd, $user1));
         self::assertThrows(BadRequestHttpException::class,
-            fn() => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $this->testProfileSelectorAdd, $user2));
+            fn () => $service->validatePublicCss('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1).' {}', $this->testProfileSelectorAdd, $user2));
 
         $user1Selector = '.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-'.$this->expectedUserIdCss($user1);
         self::assertSame(
@@ -182,17 +192,19 @@ class CustomCssServiceTest extends TestCase
         return new CustomCssService($personFactory);
     }
 
-    private function expectedUserIdCss(User $user): string {
+    private function expectedUserIdCss(User $user): string
+    {
         $userId = $user->apId ?? 'https://test.local/'.$user->username;
         return str_replace('=', '', str_replace('/', '_', str_replace('+', '-', base64_encode($userId))));
     }
 
-    private static function assertThrows(string $exceptionClass, callable $block): void {
+    private static function assertThrows(string $exceptionClass, callable $block): void
+    {
         try {
             $block();
             self::fail('Expected that exception '.$exceptionClass.' was thrown');
         } catch (\Throwable $e) {
-            if($e instanceof AssertionFailedError) {
+            if ($e instanceof AssertionFailedError) {
                 throw $e;
             }
             self::assertInstanceOf($exceptionClass, $e);

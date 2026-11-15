@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Entry;
-use App\Entity\EntryComment;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\User;
-use App\Pagination\Cursor\CursorPagination;
 use App\Utils\ArrayUtils;
 use App\Utils\Polyfills;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
@@ -118,11 +116,12 @@ abstract class AbstractController extends BaseAbstractController
         );
     }
 
-    protected function addContentAuthorsAttr(array& $twigData, Entry|Post|iterable $subject, bool $withComments): void {
+    protected function addContentAuthorsAttr(array &$twigData, Entry|Post|iterable $subject, bool $withComments): void
+    {
         $cssUsers = [];
 
-        if(is_iterable($subject)) {
-            if($withComments) {
+        if (is_iterable($subject)) {
+            if ($withComments) {
                 throw new \InvalidArgumentException('$withComments can only be used on a single subject');
             }
             foreach ($subject as $subj) {
@@ -131,13 +130,13 @@ abstract class AbstractController extends BaseAbstractController
         } else {
             $cssUsers[] = $subject->user;
 
-            if($withComments) {
-                foreach($subject->comments as $comment) {
+            if ($withComments) {
+                foreach ($subject->comments as $comment) {
                     $cssUsers[] = $comment->user;
                 }
             }
         }
 
-        $twigData['contentAuthors'] = ArrayUtils::uniqueBy($cssUsers, fn(User $user) => $user->getId());
+        $twigData['contentAuthors'] = ArrayUtils::uniqueBy($cssUsers, fn (User $user) => $user->getId());
     }
 }

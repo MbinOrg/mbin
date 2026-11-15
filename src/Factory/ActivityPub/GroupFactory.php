@@ -104,7 +104,7 @@ class GroupFactory
             ];
         }
 
-        if($magazine->customCss) {
+        if ($magazine->customCss) {
             $group[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS] = $this->urlGenerator->generate(
                 'custom_style',
                 ['magazine' => $magazine->name, 'includeSiteStyles' => 'false'],

@@ -74,7 +74,6 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypesInterface;

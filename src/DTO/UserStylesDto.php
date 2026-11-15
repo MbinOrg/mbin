@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\DTO;
 
@@ -7,7 +8,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema()]
 class UserStylesDto implements \JsonSerializable
 {
-
     public function __construct(
         public ?string $customCss = null,
         public ?string $customPublicContentCss = null,
@@ -15,8 +15,7 @@ class UserStylesDto implements \JsonSerializable
         public ?bool $ignoreMagazinesCustomCss = null,
         public ?bool $ignoreUserContentCss = null,
         public ?bool $ignoreUserProfileCss = null,
-    )
-    {
+    ) {
     }
 
     #[\Override]

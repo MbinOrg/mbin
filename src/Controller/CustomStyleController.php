@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CustomStyleController extends AbstractController
 {
-
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly SettingsManager $settings,
@@ -22,7 +21,7 @@ class CustomStyleController extends AbstractController
 
     public function __invoke(Request $request, MagazineRepository $repository): Response
     {
-        $includeSiteStyles = $request->query->get('includeSiteStyles', 'true') === 'true';
+        $includeSiteStyles = 'true' === $request->query->get('includeSiteStyles', 'true');
 
         $magazineName = $request->query->get('magazine');
         $magazine = $repository->findOneByName($magazineName);
@@ -32,7 +31,7 @@ class CustomStyleController extends AbstractController
 
         $profileName = $request->query->get('profile', '');
         $profile = $this->findUsers($profileName);
-        if(count($profile) > 0) {
+        if (\count($profile) > 0) {
             $profile = $profile[0];
         } else {
             $profile = null;
@@ -53,7 +52,7 @@ class CustomStyleController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', 'text/css');
 
-        if($private) {
+        if ($private) {
             $response->setPrivate();
         } else {
             $response->setPublic();
@@ -78,15 +77,15 @@ class CustomStyleController extends AbstractController
         $users = [];
 
         foreach ($names as $name) {
-            if(str_ends_with($name, $localPostfix)) {
-                $name = substr($name, 0, -strlen($localPostfix));
-                if(str_starts_with($name, '@')) {
+            if (str_ends_with($name, $localPostfix)) {
+                $name = substr($name, 0, -\strlen($localPostfix));
+                if (str_starts_with($name, '@')) {
                     $name = substr($name, 1);
                 }
             }
 
             $user = $this->userRepository->findOneBy(['username' => $name]);
-            if($user) {
+            if ($user) {
                 $users[] = $user;
             }
         }

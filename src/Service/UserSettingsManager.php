@@ -22,8 +22,7 @@ readonly class UserSettingsManager
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $dispatcher,
         private LoggerInterface $logger,
-    )
-    {
+    ) {
     }
 
     public function createDto(User $user): UserSettingsDto
@@ -91,7 +90,8 @@ readonly class UserSettingsManager
         $this->entityManager->flush();
     }
 
-    public function createStylesDto(User $user): UserStylesDto {
+    public function createStylesDto(User $user): UserStylesDto
+    {
         return new UserStylesDto(
             $user->customCss,
             $user->customPublicContentCss,
@@ -102,15 +102,16 @@ readonly class UserSettingsManager
         );
     }
 
-    public function updateStyles(User $user, UserStylesDto $dto) {
-        if($dto->customPublicContentCss === '') {
+    public function updateStyles(User $user, UserStylesDto $dto)
+    {
+        if ('' === $dto->customPublicContentCss) {
             $dto->customPublicContentCss = null;
-        } else if($dto->customPublicContentCss !== null) {
+        } elseif (null !== $dto->customPublicContentCss) {
             $dto->customPublicContentCss = $this->cssService->validatePublicCss($dto->customPublicContentCss, $this->cssService->localUserContentProfile, $user);
         }
-        if($dto->customPublicProfileCss === '') {
+        if ('' === $dto->customPublicProfileCss) {
             $dto->customPublicProfileCss = null;
-        } else if($dto->customPublicProfileCss !== null) {
+        } elseif (null !== $dto->customPublicProfileCss) {
             $dto->customPublicProfileCss = $this->cssService->validatePublicCss($dto->customPublicProfileCss, $this->cssService->localUserPageProfile, null);
         }
 
@@ -122,7 +123,7 @@ readonly class UserSettingsManager
             $user->ignoreUserProfileCss = $dto->ignoreUserProfileCss;
             $user->customCss = $dto->customCss;
 
-            if($user->customPublicContentCss !== $dto->customPublicContentCss
+            if ($user->customPublicContentCss !== $dto->customPublicContentCss
                 || $user->customPublicProfileCss !== $dto->customPublicProfileCss) {
                 $user->customPublicContentCss = $dto->customPublicContentCss;
                 $user->customPublicProfileCss = $dto->customPublicProfileCss;
@@ -131,7 +132,7 @@ readonly class UserSettingsManager
             }
 
             // integrity is only for remote user CSS via URL
-            if ($user->customPublicContentCssIntegrity !== null || $user->customPublicProfileCssIntegrity !== null) {
+            if (null !== $user->customPublicContentCssIntegrity || null !== $user->customPublicProfileCssIntegrity) {
                 $user->customPublicContentCssIntegrity = null;
                 $user->customPublicProfileCssIntegrity = null;
 
@@ -147,7 +148,7 @@ readonly class UserSettingsManager
             throw $e;
         }
 
-        if($needsFederation) {
+        if ($needsFederation) {
             $this->dispatcher->dispatch(new UserEditedEvent($user->getId()));
         }
     }

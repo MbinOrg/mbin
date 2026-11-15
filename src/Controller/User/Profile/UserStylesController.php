@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
-use App\Form\UserSettingsType;
 use App\Form\UserStylesType;
-use App\Service\CustomCssService;
 use App\Service\UserSettingsManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;

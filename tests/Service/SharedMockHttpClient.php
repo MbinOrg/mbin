@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use stdClass;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\HttpClientTrait;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -13,13 +13,13 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
- * Same as Symfony\Component\HttpClient\MockHttpClient but the $responseFactory is shared between all derived instances
+ * Same as Symfony\Component\HttpClient\MockHttpClient but the $responseFactory is shared between all derived instances.
  */
 class SharedMockHttpClient implements HttpClientInterface, ResetInterface
 {
     use HttpClientTrait;
 
-    private StdClass $responseFactoryHolder;
+    private \stdClass $responseFactoryHolder;
     private int $requestsCount = 0;
     private array $defaultOptions = [];
 

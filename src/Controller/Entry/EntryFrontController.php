@@ -15,7 +15,6 @@ use App\Pagination\Pagerfanta as MbinPagerfanta;
 use App\Repository\ContentRepository;
 use App\Repository\Criteria;
 use App\Repository\MagazineRepository;
-use App\Utils\ArrayUtils;
 use App\Utils\SqlHelpers;
 use Pagerfanta\PagerfantaInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;

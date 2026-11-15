@@ -535,7 +535,8 @@ class UserRetrieveApiTest extends WebTestCase
         self::assertArrayKeysMatch(self::USER_SETTINGS_KEYS, $jsonData);
     }
 
-    public function testApiCannotGetStylesWithoutScope(): void {
+    public function testApiCannotGetStylesWithoutScope(): void
+    {
         self::createOAuth2AuthCodeClient();
         $testUser = $this->getUserByUsername('JohnDoe');
 

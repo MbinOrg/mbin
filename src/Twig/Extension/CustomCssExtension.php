@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Twig\Extension;
 
 use App\Twig\Runtime\CustomCssRuntime;
-use App\Twig\Runtime\DomainExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

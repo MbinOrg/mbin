@@ -74,19 +74,20 @@ class ArrayUtils
     }
 
     /**
-     * @param iterable $arr
      * @param callable $keySelector fn($item) => key to be filtered by (must be a valid array key)
+     *
      * @return iterable array where all objects resulting in the same key were removed (except the first ocurrence)
      */
-    public static function uniqueBy(iterable $arr, callable $keySelector): iterable {
-        if(gettype($arr) !== 'array') {
+    public static function uniqueBy(iterable $arr, callable $keySelector): iterable
+    {
+        if ('array' !== \gettype($arr)) {
             $arr = iterator_to_array($arr);
         }
 
         $existingKeys = [];
-        return array_filter($arr, function($item) use (&$existingKeys, $keySelector) {
+        return array_filter($arr, function ($item) use (&$existingKeys, $keySelector) {
             $key = $keySelector($item);
-            if(isset($existingKeys[$key])) {
+            if (isset($existingKeys[$key])) {
                 return false;
             } else {
                 $existingKeys[$key] = true;

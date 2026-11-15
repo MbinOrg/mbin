@@ -52,16 +52,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ActivityPubManager
 {
-
     public const string AP_OBJECT_KEY_USER_CONTENT_CSS = '_fedi_custom_css_content';
     public const string AP_OBJECT_KEY_USER_PROFILE_CSS = '_fedi_custom_css_profile';
     public const string AP_OBJECT_KEY_MAGAZINE_CSS = '_fedi_custom_css_community';
@@ -485,20 +481,20 @@ class ActivityPubManager
                 $user->cover = null;
             }
 
-            if(isset($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS]) && $actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS] !== '') {
+            if (isset($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS]) && '' !== $actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS]) {
                 [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_CONTENT_CSS], $user, self::AP_OBJECT_KEY_USER_CONTENT_CSS);
                 $user->customPublicContentCss = $css;
                 $user->customPublicContentCssIntegrity = $integrity;
-            } elseif(null !== $user->customPublicContentCss) {
+            } elseif (null !== $user->customPublicContentCss) {
                 $user->customPublicContentCss = null;
                 $user->customPublicContentCssIntegrity = null;
             }
 
-            if(isset($actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS]) && $actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS] !== '') {
+            if (isset($actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS]) && '' !== $actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS]) {
                 [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_USER_PROFILE_CSS], $user, self::AP_OBJECT_KEY_USER_PROFILE_CSS);
                 $user->customPublicProfileCss = $css;
                 $user->customPublicProfileCssIntegrity = $integrity;
-            } elseif(null !== $user->customPublicProfileCss) {
+            } elseif (null !== $user->customPublicProfileCss) {
                 $user->customPublicProfileCss = null;
                 $user->customPublicProfileCssIntegrity = null;
             }
@@ -547,7 +543,7 @@ class ActivityPubManager
     {
         switch ($apObjKey) {
             case self::AP_OBJECT_KEY_USER_CONTENT_CSS:
-                if(!$owner instanceof User) {
+                if (!$owner instanceof User) {
                     throw new \LogicException('for AP_OBJECT_KEY_USER_CONTENT_CSS the owner must be a User');
                 }
                 $cssValidator = function (string $cssContent) use ($owner): string {
@@ -555,7 +551,7 @@ class ActivityPubManager
                 };
                 break;
             case self::AP_OBJECT_KEY_USER_PROFILE_CSS:
-                if(!$owner instanceof User) {
+                if (!$owner instanceof User) {
                     throw new \LogicException('for AP_OBJECT_KEY_USER_PROFILE_CSS the owner must be a User');
                 }
                 $cssValidator = function (string $cssContent): string {
@@ -563,7 +559,7 @@ class ActivityPubManager
                 };
                 break;
             case self::AP_OBJECT_KEY_MAGAZINE_CSS:
-                if(!$owner instanceof Magazine) {
+                if (!$owner instanceof Magazine) {
                     throw new \LogicException('for AP_OBJECT_KEY_MAGAZINE_CSS the owner must be a Magazine');
                 }
                 $cssValidator = function (string $cssContent): string {
@@ -575,8 +571,8 @@ class ActivityPubManager
         }
 
         try {
-            if(str_starts_with($css, 'https://')) {
-                if(filter_var($css, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) === false) {
+            if (str_starts_with($css, 'https://')) {
+                if (false === filter_var($css, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
                     $this->logger->info('[ActivityPubManager::processCustomCss()] remote user {apId} object contained invalid: property = {key}, error = invalid URL', [
                         'apId' => $owner->getApId(),
                         'key' => $apObjKey,
@@ -585,7 +581,7 @@ class ActivityPubManager
                 }
 
                 $cssResp = $this->generalHttpClient->request('GET', $css);
-                if($cssResp->getStatusCode() !== 200) {
+                if (200 !== $cssResp->getStatusCode()) {
                     $this->logger->warning('[ActivityPubManager::processCustomCss()] remote user {apId} object contained custom CSS as URL which could not be fetched: property = {key}, resp code = {code}', [
                         'apId' => $owner->getApId(),
                         'key' => $apObjKey,
@@ -799,11 +795,11 @@ class ActivityPubManager
                 $magazine->banner = null;
             }
 
-            if(isset($actor[self::AP_OBJECT_KEY_MAGAZINE_CSS]) && $actor[self::AP_OBJECT_KEY_MAGAZINE_CSS] !== '') {
+            if (isset($actor[self::AP_OBJECT_KEY_MAGAZINE_CSS]) && '' !== $actor[self::AP_OBJECT_KEY_MAGAZINE_CSS]) {
                 [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_MAGAZINE_CSS], $magazine, self::AP_OBJECT_KEY_MAGAZINE_CSS);
                 $magazine->customCss = $css;
                 $magazine->customCssIntegrity = $integrity;
-            } elseif(null !== $magazine->customCss) {
+            } elseif (null !== $magazine->customCss) {
                 $magazine->customCss = null;
                 $magazine->customCssIntegrity = null;
             }

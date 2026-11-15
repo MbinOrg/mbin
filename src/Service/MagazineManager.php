@@ -20,7 +20,6 @@ use App\Event\Magazine\MagazineModeratorAddedEvent;
 use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Event\Magazine\MagazineSubscribedEvent;
 use App\Event\Magazine\MagazineUpdatedEvent;
-use App\Event\User\UserEditedEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\MagazineFactory;
 use App\Message\DeleteImageMessage;
@@ -298,9 +297,9 @@ class MagazineManager
     {
         Assert::same($magazine->getId().' - '.$magazine->name, $dto->magazine->getId().' - '.$dto->magazine->name);
 
-        if($dto->customCss === '') {
+        if ('' === $dto->customCss) {
             $dto->customCss = null;
-        } else if($dto->customCss !== null) {
+        } elseif (null !== $dto->customCss) {
             $dto->customCss = $this->cssService->validatePublicCss($dto->customCss, $this->cssService->localMagazineProfile, null);
         }
 
@@ -330,7 +329,7 @@ class MagazineManager
                 }
             }
 
-            if($magazine->customCss !== $customCss) {
+            if ($magazine->customCss !== $customCss) {
                 $magazine->customCss = $customCss;
             }
 

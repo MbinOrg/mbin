@@ -13,7 +13,6 @@ use App\Service\ActivityPubManager;
 use App\Tests\Functional\ActivityPub\ActivityPubFunctionalTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Group(name: 'ActivityPub')]
@@ -245,11 +244,11 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $profileCssUrl = $this->urlGenerator->generate('custom_style', ['profile' => $this->remoteUser->username, 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->remoteUser->customPublicProfileCss = $profileCss;
 
-        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($contentCssUrl, $contentCss, $profileCssUrl, $profileCss) {
-            if($url === $contentCssUrl) {
+        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use ($contentCssUrl, $contentCss, $profileCssUrl, $profileCss) {
+            if ($url === $contentCssUrl) {
                 return new MockResponse($contentCss);
             }
-            if($url === $profileCssUrl) {
+            if ($url === $profileCssUrl) {
                 return new MockResponse($profileCss);
             }
             return null;
@@ -325,8 +324,8 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         $magazineCssUrl = $this->urlGenerator->generate('custom_style', ['magazine' => $this->remoteMagazine->getApName(), 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->remoteMagazine->customCss = $magazineCss;
 
-        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($magazineCssUrl, $magazineCss) {
-            if($url === $magazineCssUrl) {
+        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use ($magazineCssUrl, $magazineCss) {
+            if ($url === $magazineCssUrl) {
                 return new MockResponse($magazineCss);
             }
             return null;
