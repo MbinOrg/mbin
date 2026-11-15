@@ -328,6 +328,8 @@ class UserUpdateApiTest extends WebTestCase
             null,
             null,
             true,
+            true,
+            true,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -350,6 +352,8 @@ class UserUpdateApiTest extends WebTestCase
             '.content{}',
             '.profile{}',
             true,
+            true,
+            true,
         ))->jsonSerialize();
 
         $this->client->jsonRequest(
@@ -365,6 +369,8 @@ class UserUpdateApiTest extends WebTestCase
         self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
 
         self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
         self::assertSame('.page{}', $jsonData['customCss']);
         self::assertSame('.profile {}', $jsonData['customPublicProfileCss']);
         self::assertSame('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-aHR0cHM6Ly9rYmluLnRlc3QvdS9Kb2huRG9l.content {}', $jsonData['customPublicContentCss']);
@@ -378,6 +384,8 @@ class UserUpdateApiTest extends WebTestCase
         self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
 
         self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
         self::assertSame('.page{}', $jsonData['customCss']);
         self::assertSame('.profile {}', $jsonData['customPublicProfileCss']);
         self::assertSame('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-aHR0cHM6Ly9rYmluLnRlc3QvdS9Kb2huRG9l.content {}', $jsonData['customPublicContentCss']);
@@ -388,6 +396,8 @@ class UserUpdateApiTest extends WebTestCase
         $testUser = $this->getUserByUsername('JohnDoe');
 
         $testUser->ignoreMagazinesCustomCss = false;
+        $testUser->ignoreUserContentCss = false;
+        $testUser->ignoreUserProfileCss = false;
         $testUser->customCss = '1';
         $testUser->customPublicContentCss = '2';
         $testUser->customPublicProfileCss = '3';
@@ -402,6 +412,8 @@ class UserUpdateApiTest extends WebTestCase
             '.page{}',
             'div{}',
             '.profile{}',
+            true,
+            true,
             true,
         ))->jsonSerialize();
 
@@ -424,6 +436,8 @@ class UserUpdateApiTest extends WebTestCase
         self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
 
         self::assertFalse($jsonData['ignoreMagazinesCustomCss']);
+        self::assertFalse($jsonData['ignoreUserContentCss']);
+        self::assertFalse($jsonData['ignoreUserProfileCss']);
         self::assertSame('1', $jsonData['customCss']);
         self::assertSame('2', $jsonData['customPublicContentCss']);
         self::assertSame('3', $jsonData['customPublicProfileCss']);

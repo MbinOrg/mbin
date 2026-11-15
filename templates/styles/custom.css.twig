@@ -19,6 +19,7 @@
 {% endif %}
 {% endif %}
 
+{% if not app.user or not app.user.ignoreUserProfileCss %}
 {% if profile is not same as null and profile.customPublicProfileCss is not same as null %}
 /* {{ profile.username }} public profile styles */
 {% if profile.customPublicProfileCss starts with 'https://' %}
@@ -27,7 +28,9 @@
 {{ profile.customPublicProfileCss|raw }}
 {% endif %}
 {% endif %}
+{% endif %}
 
+{% if not app.user or not app.user.ignoreUserContentCss %}
 {% for cssUser in cssUsers %}
 {% if cssUser.customPublicContentCss is not same as null %}
 /* {{ cssUser.username }} public content styles */
@@ -38,6 +41,7 @@
 {% endif %}
 {% endif %}
 {% endfor %}
+{% endif %}
 
 {% if includeSiteStyles is same as true and app.user is defined and app.user and app.user.customCss %}
 /* user styles */

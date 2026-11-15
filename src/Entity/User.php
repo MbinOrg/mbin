@@ -199,6 +199,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Visibil
     public ?string $customPublicProfileCssIntegrity = null;
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public bool $ignoreMagazinesCustomCss = false;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $ignoreUserContentCss = false;
+    #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
+    public bool $ignoreUserProfileCss = false;
     #[OneToMany(mappedBy: 'user', targetEntity: Moderator::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $moderatorTokens;
     #[OneToMany(mappedBy: 'user', targetEntity: MagazineOwnershipRequest::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

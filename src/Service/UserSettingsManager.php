@@ -97,6 +97,8 @@ readonly class UserSettingsManager
             $user->customPublicContentCss,
             $user->customPublicProfileCss,
             $user->ignoreMagazinesCustomCss,
+            $user->ignoreUserContentCss,
+            $user->ignoreUserProfileCss,
         );
     }
 
@@ -115,8 +117,10 @@ readonly class UserSettingsManager
         $this->entityManager->beginTransaction();
         $needsFederation = false;
         try {
-            $user->customCss = $dto->customCss;
             $user->ignoreMagazinesCustomCss = $dto->ignoreMagazinesCustomCss;
+            $user->ignoreUserContentCss = $dto->ignoreUserContentCss;
+            $user->ignoreUserProfileCss = $dto->ignoreUserProfileCss;
+            $user->customCss = $dto->customCss;
 
             if($user->customPublicContentCss !== $dto->customPublicContentCss
                 || $user->customPublicProfileCss !== $dto->customPublicProfileCss) {
@@ -132,7 +136,7 @@ readonly class UserSettingsManager
                 $user->customPublicProfileCssIntegrity = null;
 
                 $this->logger->error('[UserSettingsManager::updateStyles()] user {name} had public css integrity set, which should not be possible for local users', [
-                    'name' => $user->getUsername()
+                    'name' => $user->getUsername(),
                 ]);
             }
 

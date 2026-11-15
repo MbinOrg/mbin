@@ -36,6 +36,8 @@ class UserRetrieveApiTest extends WebTestCase
         'customCss',
         'customPublicContentCss',
         'customPublicProfileCss',
+        'ignoreUserContentCss',
+        'ignoreUserProfileCss',
         'ignoreMagazinesCustomCss',
     ];
     public const NUM_USERS = 10;
@@ -550,6 +552,8 @@ class UserRetrieveApiTest extends WebTestCase
         $testUser = $this->getUserByUsername('JohnDoe');
 
         $testUser->ignoreMagazinesCustomCss = true;
+        $testUser->ignoreUserContentCss = true;
+        $testUser->ignoreUserProfileCss = true;
         $testUser->customPublicContentCss = 'content css';
         $testUser->customPublicProfileCss = 'profile css';
         $this->entityManager->persist($testUser);
@@ -566,6 +570,8 @@ class UserRetrieveApiTest extends WebTestCase
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_STYLES_KEYS, $jsonData);
         self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
         self::assertSame('content css', $jsonData['customPublicContentCss']);
         self::assertSame('profile css', $jsonData['customPublicProfileCss']);
     }

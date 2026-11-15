@@ -28,6 +28,16 @@ class UserStylesType extends AbstractType
                 'required' => false,
             ])
             ->add(
+                'ignoreUserContentCss',
+                CheckboxType::class,
+                ['required' => false]
+            )
+            ->add(
+                'ignoreUserProfileCss',
+                CheckboxType::class,
+                ['required' => false]
+            )
+            ->add(
                 'ignoreMagazinesCustomCss',
                 CheckboxType::class,
                 ['required' => false]
