@@ -12,7 +12,7 @@
     {% elseif type is same as 'image' %}
         {% set route = is_single ? uploaded_asset(image) : entry_url(entry) %}
     {% elseif type is same as 'link' %}
-        {% set route = is_single ? entry.url : entry_url(entry) %}
+        {% set route = (is_single and is_url_safe(entry.url)) ? entry.url : entry_url(entry) %}
     {% endif %}
 
     {% set is_single_image = is_single and type is same as 'image' %}

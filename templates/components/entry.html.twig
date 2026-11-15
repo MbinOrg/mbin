@@ -33,14 +33,14 @@
                         <h1>
                             {% if entry.isAdult %}<small class="badge danger">18+</small>{% endif %}
                             {% if entry.isOc %}<small class="badge kbin-bg">OC</small>{% endif %}
-                            {% if entry.url %}
+                            {% if entry.url and is_url_safe(entry.url) %}
                                 <a rel="{{ get_rel(entry.url) }}"
                                    href="{{ entry.url }}">{{ entry.title }}</a>
                             {% else %}
                                 {{ entry.title }}
                             {% endif %}
 
-                            {% if entry.url %}
+                            {% if entry.url and is_url_safe(entry.url) %}
                                 <span class="entry__domain">
                                     ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
                                         <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
@@ -58,7 +58,7 @@
                             {% if entry.isOc %}<small class="badge kbin-bg">OC</small>{% endif %}
                             <a href="{{ entry_url(entry) }}">{{ entry.title }}</a>
 
-                            {% if entry.url %}
+                            {% if entry.url and is_url_safe(entry.url) %}
                                 <span class="entry__domain">
                                     ( <a rel="{{ get_rel(entry.url) }}" href="{{ entry.url }}" target="_blank">
                                         <span>{{ get_url_domain(entry.url) }}</span> <i class="fa-solid fa-external-link" aria-hidden="true"></i>
@@ -122,8 +122,8 @@
                     {% endif %}
                 {% else %}
                     <div class="no-image-placeholder">
-                        <a href="{{ is_route_name('entry_single') ? entry.url : entry_url(entry) }}"
-                                {%- if entry.type is same as 'link' or entry.type is same as 'video' %} rel="{{ get_rel(is_route_name('entry_single') ? entry.url : entry_url(entry)) }}" {% endif -%}>
+                        <a href="{{ (is_route_name('entry_single') and is_url_safe(entry.url)) ? entry.url : entry_url(entry) }}"
+                                {%- if entry.type is same as 'link' or entry.type is same as 'video' %} rel="{{ get_rel((is_route_name('entry_single') and is_url_safe(entry.url)) ? entry.url : entry_url(entry)) }}" {% endif -%}>
                             <i class="fa-solid {% if entry.type is same as 'link' %}fa-link{% else %}fa-message{% endif %}"></i>
                         </a>
                     </div>
@@ -164,7 +164,7 @@
                                 <button class="show-preview"
                                         data-action="preview#show"
                                         aria-label="{{ 'preview'|trans }}"
-                                        data-preview-url-param="{{ preview_url }}"
+                                        data-preview-url-param="{{ is_url_safe(preview_url) ? preview_url : '' }}"
                                         data-preview-ratio-param="{{ entry.domain and entry.domain.shouldRatio ? true : false }}">
                                     <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
                                 </button>
