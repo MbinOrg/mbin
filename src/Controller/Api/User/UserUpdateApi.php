@@ -170,9 +170,8 @@ class UserUpdateApi extends UserBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiUpdateLimiter);
 
-        $settings = $manager->createStylesDto($this->getUserOrThrow());
-
-        $dto = $this->deserializeUserStyles($settings);
+        $dto = $manager->createStylesDto($this->getUserOrThrow());
+        $dto = $this->deserializeUserStyles($dto);
 
         $errors = $validator->validate($dto);
         if (\count($errors) > 0) {
