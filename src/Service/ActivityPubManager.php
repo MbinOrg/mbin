@@ -64,6 +64,7 @@ class ActivityPubManager
 
     public const string AP_OBJECT_KEY_USER_CONTENT_CSS = '_fedi_custom_css_content';
     public const string AP_OBJECT_KEY_USER_PROFILE_CSS = '_fedi_custom_css_profile';
+    public const string AP_OBJECT_KEY_MAGAZINE_CSS = '_fedi_custom_css_community';
 
     private readonly HttpClientInterface $generalHttpClient;
 
@@ -542,15 +543,42 @@ class ActivityPubManager
         return null;
     }
 
-    private function processCustomCss(string $css, User $user, string $apObjKey): array
+    private function processCustomCss(string $css, User|Magazine $owner, string $apObjKey): array
     {
-        $forProfile = $apObjKey === self::AP_OBJECT_KEY_USER_PROFILE_CSS;
+        switch ($apObjKey) {
+            case self::AP_OBJECT_KEY_USER_CONTENT_CSS:
+                if(!$owner instanceof User) {
+                    throw new \LogicException('for AP_OBJECT_KEY_USER_CONTENT_CSS the owner must be a User');
+                }
+                $cssValidator = function (string $cssContent) use ($owner): string {
+                    return $this->cssService->validatePublicCss($cssContent, $this->cssService->remoteUserContentProfile, $owner);
+                };
+                break;
+            case self::AP_OBJECT_KEY_USER_PROFILE_CSS:
+                if(!$owner instanceof User) {
+                    throw new \LogicException('for AP_OBJECT_KEY_USER_PROFILE_CSS the owner must be a User');
+                }
+                $cssValidator = function (string $cssContent): string {
+                    return $this->cssService->validatePublicCss($cssContent, $this->cssService->remoteUserPageProfile, null);
+                };
+                break;
+            case self::AP_OBJECT_KEY_MAGAZINE_CSS:
+                if(!$owner instanceof Magazine) {
+                    throw new \LogicException('for AP_OBJECT_KEY_MAGAZINE_CSS the owner must be a Magazine');
+                }
+                $cssValidator = function (string $cssContent): string {
+                    return $this->cssService->validatePublicCss($cssContent, $this->cssService->remoteMagazineProfile, null);
+                };
+                break;
+            default:
+                throw new \LogicException('unreachable');
+        }
 
         try {
             if(str_starts_with($css, 'https://')) {
                 if(filter_var($css, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) === false) {
                     $this->logger->info('[ActivityPubManager::processCustomCss()] remote user {apId} object contained invalid: property = {key}, error = invalid URL', [
-                        'apId' => $user->getApId(),
+                        'apId' => $owner->getApId(),
                         'key' => $apObjKey,
                     ]);
                     return [null, null];
@@ -559,7 +587,7 @@ class ActivityPubManager
                 $cssResp = $this->generalHttpClient->request('GET', $css);
                 if($cssResp->getStatusCode() !== 200) {
                     $this->logger->warning('[ActivityPubManager::processCustomCss()] remote user {apId} object contained custom CSS as URL which could not be fetched: property = {key}, resp code = {code}', [
-                        'apId' => $user->getApId(),
+                        'apId' => $owner->getApId(),
                         'key' => $apObjKey,
                         'code' => $cssResp->getStatusCode(),
                     ]);
@@ -567,25 +595,17 @@ class ActivityPubManager
                 }
                 $cssContent = $cssResp->getContent();
 
-                $this->cssService->validatePublicCss(
-                    $cssContent,
-                    $forProfile ? $this->cssService->remoteUserPageProfile : $this->cssService->remoteUserContentProfile,
-                    $forProfile ? null : $user
-                );
+                $cssValidator($cssContent);
 
                 $integrity = 'sha384-'.base64_encode(hash('sha384', $cssContent, true));
                 return [$css, $integrity];
             } else {
-                $css = $this->cssService->validatePublicCss(
-                    $css,
-                    $forProfile ? $this->cssService->remoteUserPageProfile : $this->cssService->remoteUserContentProfile,
-                    $forProfile ? null : $user
-                );
+                $css = $cssValidator($css);
                 return [$css, null];
             }
         } catch (\Exception|TransportExceptionInterface|HttpExceptionInterface $e) {
             $this->logger->info('[ActivityPubManager::processCustomCss()] remote user {apId} object contained invalid: property = {key}, error = {msg}', [
-                'apId' => $user->getApId(),
+                'apId' => $owner->getApId(),
                 'key' => $apObjKey,
                 'msg' => $e->getMessage(),
             ]);
@@ -777,6 +797,15 @@ class ActivityPubManager
             } elseif (null !== $magazine->banner) {
                 $this->bus->dispatch(new DeleteImageMessage($magazine->banner->getId()));
                 $magazine->banner = null;
+            }
+
+            if(isset($actor[self::AP_OBJECT_KEY_MAGAZINE_CSS]) && $actor[self::AP_OBJECT_KEY_MAGAZINE_CSS] !== '') {
+                [$css, $integrity] = $this->processCustomCss($actor[self::AP_OBJECT_KEY_MAGAZINE_CSS], $magazine, self::AP_OBJECT_KEY_MAGAZINE_CSS);
+                $magazine->customCss = $css;
+                $magazine->customCssIntegrity = $integrity;
+            } elseif(null !== $magazine->customCss) {
+                $magazine->customCss = null;
+                $magazine->customCssIntegrity = null;
             }
 
             if ($actor['name']) {

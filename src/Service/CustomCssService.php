@@ -35,6 +35,8 @@ readonly class CustomCssService
     public CustomCssProfile $remoteUserContentProfile;
     public CustomCssProfile $localUserPageProfile;
     public CustomCssProfile $remoteUserPageProfile;
+    public CustomCssProfile $localMagazineProfile;
+    public CustomCssProfile $remoteMagazineProfile;
 
     public function __construct(
         private PersonFactory $personFactory,
@@ -44,6 +46,8 @@ readonly class CustomCssService
         $this->remoteUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY);
         $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
         $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->localMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 32, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
     }
 
     public function createConstraintSelector(User $user): string

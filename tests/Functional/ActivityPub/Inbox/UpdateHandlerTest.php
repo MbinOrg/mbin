@@ -293,6 +293,64 @@ class UpdateHandlerTest extends ActivityPubFunctionalTestCase
         self::assertNotNull($magazine->lastKeyRotationDate);
     }
 
+    public function testUpdateRemoteMagazineCssInline(): void
+    {
+        // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
+        $magazineCss = '#content {color: red;}';
+
+        $object = $this->updateMagazine['object'];
+        $object[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS] = $magazineCss;
+        $this->testingApHttpClient->actorObjects[$this->updateMagazine['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateMagazine)));
+        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $this->updateMagazine['object']['id']]);
+        self::assertNotNull($magazine);
+        self::assertEquals($magazineCss, $magazine->customCss);
+        self::assertNull($magazine->customCssIntegrity);
+
+        $object = $this->updateMagazine['object'];
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS]);
+        $this->testingApHttpClient->actorObjects[$this->updateMagazine['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateMagazine)));
+        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $this->updateMagazine['object']['id']]);
+        self::assertNotNull($magazine);
+        self::assertNull($magazine->customCss);
+        self::assertNull($magazine->customCssIntegrity);
+    }
+
+    public function testUpdateRemoteMagazineCssUrl(): void
+    {
+        // an update activity forces to fetch the remote object again -> rewrite the actor id to the updated object from the activity
+
+        $magazineCss = '#content {color: red;}';
+        $magazineCssUrl = $this->urlGenerator->generate('custom_style', ['magazine' => $this->remoteMagazine->getApName(), 'includeSiteStyles' => 'false'], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->remoteMagazine->customCss = $magazineCss;
+
+        $this->mockWwwHttpClient->setResponseFactory(function (string $method, string $url) use($magazineCssUrl, $magazineCss) {
+            if($url === $magazineCssUrl) {
+                return new MockResponse($magazineCss);
+            }
+            return null;
+        });
+
+        $object = $this->updateMagazine['object'];
+        $object[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS] = $magazineCssUrl;
+        $this->testingApHttpClient->actorObjects[$this->updateMagazine['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateMagazine)));
+        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $this->updateMagazine['object']['id']]);
+        self::assertNotNull($magazine);
+        self::assertEquals($magazineCssUrl, $magazine->customCss);
+        self::assertEquals('sha384-RmtwMBXRehH8qKJFVIWdLHpOHOKzLZ4MLOjQJCJSwceINwNDpkrDraqWAnYT+cj8', $magazine->customCssIntegrity);
+
+        $object = $this->updateMagazine['object'];
+        unset($object[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS]);
+        $this->testingApHttpClient->actorObjects[$this->updateMagazine['object']['id']] = $object;
+        $this->bus->dispatch(new ActivityMessage(json_encode($this->updateMagazine)));
+        $magazine = $this->magazineRepository->findOneBy(['apPublicUrl' => $this->updateMagazine['object']['id']]);
+        self::assertNotNull($magazine);
+        self::assertNull($magazine->customCss);
+        self::assertNull($magazine->customCssIntegrity);
+    }
+
     public function setUpRemoteEntities(): void
     {
         $this->announceEntry = $this->createRemoteEntryInRemoteMagazine($this->remoteMagazine, $this->remoteUser, fn (Entry $entry) => $this->buildUpdateRemoteEntryInRemoteMagazine($entry));

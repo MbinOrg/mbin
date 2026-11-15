@@ -27,6 +27,10 @@ class UpdateTest extends ActivityPubTestCase
 
     public function testUpdateMagazine(): void
     {
+        $this->magazine->customCss = '.someclassA {color: red;}';
+        $this->entityManager->persist($this->magazine);
+        $this->entityManager->flush();
+
         $json = $this->activityJsonBuilder->buildActivityJson($this->getUpdateMagazineActivity());
 
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());

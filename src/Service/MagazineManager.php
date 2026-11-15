@@ -20,6 +20,7 @@ use App\Event\Magazine\MagazineModeratorAddedEvent;
 use App\Event\Magazine\MagazineModeratorRemovedEvent;
 use App\Event\Magazine\MagazineSubscribedEvent;
 use App\Event\Magazine\MagazineUpdatedEvent;
+use App\Event\User\UserEditedEvent;
 use App\Exception\UserCannotBeBanned;
 use App\Factory\MagazineFactory;
 use App\Message\DeleteImageMessage;
@@ -44,6 +45,7 @@ class MagazineManager
 {
     public function __construct(
         private readonly MagazineFactory $factory,
+        private readonly CustomCssService $cssService,
         private readonly EventDispatcherInterface $dispatcher,
        #[Target('magazineLimiter')]
         private readonly RateLimiterFactoryInterface $magazineLimiter,
@@ -290,39 +292,54 @@ class MagazineManager
         $this->dispatcher->dispatch(new MagazineModeratorRemovedEvent($moderator->magazine, $moderator->user, $removedBy));
     }
 
-    public function changeTheme(MagazineThemeDto $dto): Magazine
+    public function changeTheme(Magazine $magazine, MagazineThemeDto $dto, User $editedBy): Magazine
     {
-        $magazine = $dto->magazine;
+        Assert::same($magazine->getId().' - '.$magazine->name, $dto->magazine->getId().' - '.$dto->magazine->name);
 
-        if ($dto->icon && $magazine->icon?->getId() !== $dto->icon->id) {
-            $magazine->icon = $this->imageRepository->find($dto->icon->id);
+        if($dto->customCss === '') {
+            $dto->customCss = null;
+        } else if($dto->customCss !== null) {
+            $dto->customCss = $this->cssService->validatePublicCss($dto->customCss, $this->cssService->localMagazineProfile, null);
         }
 
-        if ($dto->banner && $magazine->banner?->getId() !== $dto->banner->id) {
-            $magazine->banner = $this->imageRepository->find($dto->banner->id);
-        }
-
-        // custom css
-        $customCss = $dto->customCss;
-
-        // add custom background to custom CSS if defined
-        $background = null;
-        if ($dto->backgroundImage) {
-            $background = match ($dto->backgroundImage) {
-                'shape1' => '/build/images/shape.png',
-                'shape2' => '/build/images/shape2.png',
-                default => null,
-            };
-
-            $background = $background ? "#middle { background: url($background); height: 100%; }" : null;
-            if ($background) {
-                $customCss = \sprintf('%s %s', $customCss, $background);
+        $this->entityManager->beginTransaction();
+        try {
+            if ($dto->icon && $magazine->icon?->getId() !== $dto->icon->id) {
+                $magazine->icon = $this->imageRepository->find($dto->icon->id);
             }
+
+            if ($dto->banner && $magazine->banner?->getId() !== $dto->banner->id) {
+                $magazine->banner = $this->imageRepository->find($dto->banner->id);
+            }
+
+            $customCss = $dto->customCss;
+
+            // add custom background to custom CSS if defined
+            if ($dto->backgroundImage) {
+                $background = match ($dto->backgroundImage) {
+                    'shape1' => '/build/images/shape.png',
+                    'shape2' => '/build/images/shape2.png',
+                    default => null,
+                };
+
+                $background = $background ? "#middle { background: url($background); height: 100%; }" : null;
+                if ($background) {
+                    $customCss = $customCss."\n\n".$background;
+                }
+            }
+
+            if($magazine->customCss !== $customCss) {
+                $magazine->customCss = $customCss;
+            }
+
+            $this->entityManager->commit();
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+            $this->entityManager->rollback();
+            throw $e;
         }
 
-        $magazine->customCss = $customCss;
-        $this->entityManager->persist($magazine);
-        $this->entityManager->flush();
+        $this->dispatcher->dispatch(new MagazineUpdatedEvent($magazine, $editedBy));
 
         return $magazine;
     }

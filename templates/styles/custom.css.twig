@@ -11,7 +11,11 @@
 {% if not app.user or not app.user.ignoreMagazinesCustomCss %}
 {% if magazine is defined and magazine and magazine.customCss %}
 /* magazine styles */
+{% if magazine.customCss starts with 'https://' %}
+/* remote CSS not included: {{ magazine.customCss|raw }} */
+{% else %}
 {{ magazine.customCss|raw }}
+{% endif %}
 {% endif %}
 {% endif %}
 
