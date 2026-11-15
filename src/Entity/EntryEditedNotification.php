@@ -38,7 +38,7 @@ class EntryEditedNotification extends Notification
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
         $message = \sprintf('%s %s - %s', $this->entry->user->username, $trans->trans('edited_thread'), $this->entry->getShortTitle());
-        $slash = $this->entry->user->avatar && !str_starts_with('/', $this->entry->user->avatar->filePath) ? '/' : '';
+        $slash = $this->entry->user->avatar && !str_starts_with($this->entry->user->avatar->filePath, '/') ? '/' : '';
         $avatarUrl = $this->entry->user->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->entry->user->avatar->filePath : null;
         $url = $urlGenerator->generate('entry_single', [
             'entry_id' => $this->entry->getId(),

@@ -683,7 +683,7 @@ class TagContentRetrieveApiController extends BaseApi
         if (null !== $sortBy) {
             $criteria->showSortOption($sortBy);
         } elseif ($user instanceof User) {
-            $criteria->showSortOption($user->frontDefaultSort);
+            $criteria->showSortOption($user->frontDefaultSort->value);
         } else {
             $criteria->showSortOption(Criteria::SORT_HOT);
         }

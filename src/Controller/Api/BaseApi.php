@@ -249,7 +249,7 @@ class BaseApi extends AbstractController
         ];
     }
 
-    public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): mixed
+    public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): array
     {
         $toReturn = null;
         if ($content instanceof Entry) {

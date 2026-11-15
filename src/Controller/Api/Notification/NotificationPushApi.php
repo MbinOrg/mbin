@@ -19,9 +19,9 @@ use Doctrine\DBAL\ParameterType;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -238,7 +238,7 @@ class NotificationPushApi extends NotificationBaseApi
                 return new JsonResponse(status: 500, headers: $headers);
             }
         } else {
-            throw new BadRequestException(message: 'PushSubscription not found', statusCode: 404);
+            throw new HttpException(statusCode: 404, message: 'PushSubscription not found');
         }
     }
 }

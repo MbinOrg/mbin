@@ -66,12 +66,13 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->loadUserByIdentifier($username);
     }
 
-    public function loadUserByIdentifier($val): ?User
+    #[\Override]
+    public function loadUserByIdentifier($identifier): ?User
     {
         return $this->createQueryBuilder('u')
             ->where('LOWER(u.username) = :email')
             ->orWhere('LOWER(u.email) = :email')
-            ->setParameter('email', mb_strtolower($val))
+            ->setParameter('email', mb_strtolower($identifier))
             ->getQuery()
             ->getOneOrNullResult();
     }

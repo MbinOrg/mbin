@@ -43,7 +43,7 @@ class PostCommentDeletedNotification extends Notification
     public function getMessage(TranslatorInterface $trans, string $locale, UrlGeneratorInterface $urlGenerator): PushNotification
     {
         $message = \sprintf('%s %s - %s', $trans->trans('comment'), $this->postComment->getShortTitle(), $this->postComment->isTrashed() ? $trans->trans('removed') : $trans->trans('deleted'));
-        $slash = $this->postComment->user->avatar && !str_starts_with('/', $this->postComment->user->avatar->filePath) ? '/' : '';
+        $slash = $this->postComment->user->avatar && !str_starts_with($this->postComment->user->avatar->filePath, '/') ? '/' : '';
         $avatarUrl = $this->postComment->user->avatar ? '/media/cache/resolve/avatar_thumb'.$this->postComment->user->avatar->filePath : null;
         $url = $urlGenerator->generate('post_single', [
             'magazine_name' => $this->postComment->post->magazine->name,

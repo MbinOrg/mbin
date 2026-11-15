@@ -16,12 +16,15 @@ use App\Entity\EntryComment;
 use App\Entity\EntryCommentFavourite;
 use App\Entity\HashtagLink;
 use App\Entity\Image;
+use App\Entity\InstanceBlock;
+use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
 use App\Entity\Moderator;
 use App\Entity\User;
 use App\Entity\UserBlock;
 use App\Entity\UserFollow;
+use App\PageView\EntryCommentPageView;
 use App\Service\SettingsManager;
 use App\Utils\DownvotesMode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -223,6 +226,37 @@ class EntryCommentRepository extends ServiceEntityRepository
                 'c.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker)'
             );
 
+            if (!$criteria->magazine) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = c.magazine AND ib1.user = :blocker'
+                    .') OR c.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = c.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
+                    .') OR c.user = :blocker'
+                );
+            }
+            if (!$criteria->user) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = c.user AND ib2.user = :blocker'
+                    .') OR c.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = c.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
+                    .') OR c.user = :blocker'
+                );
+            }
+
             if (!$criteria->domain) {
                 $qb->andWhere(
                     'ce.domain IS null OR ce.domain NOT IN (SELECT IDENTITY(db.domain) FROM '.DomainBlock::class.' db WHERE db.user = :blocker)'
@@ -317,11 +351,15 @@ class EntryCommentRepository extends ServiceEntityRepository
 
     public function hydrateChildren(EntryComment ...$comments): void
     {
-        $children = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->andWhere('c.root IN (:ids)')
-            ->setParameter('ids', $comments)
-            ->getQuery()->getResult();
+            ->setParameter('ids', $comments);
 
+        $criteria = new EntryCommentPageView(1, $this->security);
+        $criteria->onlyParents = false;
+        $this->filter($qb, $criteria);
+
+        $children = $qb->getQuery()->getResult();
         $this->hydrate(...$children);
     }
 

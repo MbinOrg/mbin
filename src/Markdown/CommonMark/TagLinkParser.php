@@ -17,17 +17,19 @@ class TagLinkParser implements InlineParserInterface
     {
     }
 
+    #[\Override]
     public function getMatchDefinition(): InlineParserMatch
     {
         return InlineParserMatch::regex(RegPatterns::LOCAL_TAG_REGEX);
     }
 
-    public function parse(InlineParserContext $ctx): bool
+    #[\Override]
+    public function parse(InlineParserContext $inlineContext): bool
     {
-        $cursor = $ctx->getCursor();
-        $cursor->advanceBy($ctx->getFullMatchLength());
+        $cursor = $inlineContext->getCursor();
+        $cursor->advanceBy($inlineContext->getFullMatchLength());
 
-        [$tag] = $ctx->getSubMatches();
+        [$tag] = $inlineContext->getSubMatches();
 
         $url = $this->urlGenerator->generate(
             'tag_overview',
@@ -35,7 +37,7 @@ class TagLinkParser implements InlineParserInterface
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
 
-        $ctx->getContainer()->appendChild(new TagLink($url, '#'.$tag));
+        $inlineContext->getContainer()->appendChild(new TagLink($url, '#'.$tag));
 
         return true;
     }

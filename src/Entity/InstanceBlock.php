@@ -31,7 +31,7 @@ class InstanceBlock
     #[Column, Id, GeneratedValue]
     private int $id;
 
-    #[ManyToOne(targetEntity: User::class)]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'blockedInstances')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public User $user;
 

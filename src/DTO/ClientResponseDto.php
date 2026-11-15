@@ -27,10 +27,15 @@ class ClientResponseDto implements \JsonSerializable
     #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
     public ?array $scopes = null;
 
-    public function __construct(?Client $client)
+    public function __construct(?Client $client, ?UserDto $user)
     {
+    if ((null !== $client?->getUser() && null === $user)
+            || (null === $client?->getUser() && null !== $user)
+            || $client?->getUser()?->getId() !== $user?->getId()) {
+            throw new \InvalidArgumentException('$user must be created from $client->user');
+        }
+
         if ($client) {
-            $user = $client->getUser();
             $this->identifier = $client->getIdentifier();
             $this->name = $client->getName();
             $this->contactEmail = $client->getContactEmail();

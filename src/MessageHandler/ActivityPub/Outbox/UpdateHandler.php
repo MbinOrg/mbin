@@ -82,10 +82,10 @@ class UpdateHandler extends MbinMessageHandler
                     $this->magazineRepository->findAudience($entity->magazine)
                 )));
             } elseif ($entity instanceof Message) {
-                if (null === $message->editedByUserId) {
+                if (null === $editedByUser) {
                     throw new \LogicException('a message has to be edited by someone');
                 }
-                $inboxes = array_unique(array_map(fn (User $u) => $u->apInboxUrl, $entity->thread->getOtherParticipants($message->editedByUserId)));
+                $inboxes = array_unique(array_map(fn (User $u) => $u->apInboxUrl, $entity->thread->getOtherParticipants($editedByUser)));
             } else {
                 throw new \LogicException('unknown activity type: '.\get_class($entity));
             }
