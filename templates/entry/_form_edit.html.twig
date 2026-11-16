@@ -25,7 +25,7 @@
     {{ form_row(form.body, {
         label: false, attr: {
             placeholder: 'body',
-            'data-controller': 'rich-textarea input-length autogrow',
+            'data-controller': 'rich-textarea input-length autogrow markdown-preview',
             'data-entry-link-create-target': 'description',
             'data-action' : 'input-length#updateDisplay',
             'data-input-length-max-value' : constant('App\\Entity\\Entry::MAX_BODY_LENGTH')
