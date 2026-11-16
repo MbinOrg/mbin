@@ -593,6 +593,7 @@ class ActivityPubManager
 
                 $cssValidator($cssContent);
 
+                // https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity
                 $integrity = 'sha384-'.base64_encode(hash('sha384', $cssContent, true));
                 return [$css, $integrity];
             } else {

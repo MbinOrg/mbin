@@ -36,7 +36,8 @@ experience on platform more enjoyable.
 So don't be afraid to experiment with the various options available in the sidebar. You might be surprised by how
 much you can change the appearance of the platform to suit your preferences.
 
-(pic1)
+For more advanced users, there are also options to write custom CSS rules for various parts of the UI.
+See [Custom Styles documentation](03-custom_css.md) for more info.
 
 ### Register account
 
@@ -48,13 +49,9 @@ you can use your social media login credentials to sign up, but you will need to
 username before you can take any actions on the platform. However, **you will have only up to an hour after registration
 ** to set up your default username before this option expires go to (Settings > Profile).
 
-(pic2)
-
 ### User settings
 
 You are now ready to start using /mbin to connect with others. You can access your account settings at any time by clicking on your username located in the header.
-
-(pic3)
 
 We've included a wide range of options that will allow you to customize your experience. Take your time to check all the
 options.
@@ -70,6 +67,8 @@ options.
   activation link.
 
 - **Password & 2FA:** In this section, you can change your account password and configure two-factor authentication.
+
+- **Styles:** read more on the [Custom Styles documentation](03-custom_css.md).
 
 - **Filter lists:** With custom filter lists you can hide content and users from every Magazine which matches the 
   defined words.

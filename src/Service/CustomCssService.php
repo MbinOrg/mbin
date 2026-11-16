@@ -281,7 +281,7 @@ readonly class CustomCssService
             return false;
         }
 
-        if (1 !== preg_match('/^fediCustomCss-software-[a-z0-9]{3,64}$/', $parts[2])) {
+        if (1 !== preg_match('/^fediCustomCss-software-[a-z0-9_]{3,64}$/', $parts[2])) {
             return false;
         }
 
