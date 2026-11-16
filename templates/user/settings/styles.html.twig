@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{%- block title -%}
+    {{- 'general'|trans }} - {{ app.user.username|username(false) }} - {{ parent() -}}
+{%- endblock -%}
+
+
+{% block mainClass %}page-settings page-settings-general{% endblock %}
+
+{% block header_nav %}
+{% endblock %}
+
+{% block sidebar_top %}
+{% endblock %}
+
+{% block body %}
+    {% include('user/settings/_options.html.twig') %}
+    {% include('user/_visibility_info.html.twig') %}
+    {% include 'layout/_flash.html.twig' %}
+<div id="content" class="section">
+    <div class="container">
+        <h1 hidden>{{ 'general'|trans }}</h1>
+        {{ form_start(form) }}
+        <h2>{{ 'appearance'|trans }}</h2>
+
+        {% if cssError is not same as null %}
+            <div class="alert alert__danger">
+                {{ cssError }}
+            </div>
+        {% endif %}
+
+        {{ form_row(form.customCss, {label: 'custom_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.customPublicProfileCss, {label: 'custom_public_profile_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.customPublicContentCss, {label: 'custom_public_content_css', row_attr: {class: 'textarea'}}) }}
+        {{ form_row(form.ignoreUserContentCss, {label: 'ignore_users_content_custom_css', row_attr: {class: 'checkbox'}}) }}
+        {{ form_row(form.ignoreUserProfileCss, {label: 'ignore_users_profile_custom_css', row_attr: {class: 'checkbox'}}) }}
+        {{ form_row(form.ignoreMagazinesCustomCss, {label: 'ignore_magazines_custom_css', row_attr: {class: 'checkbox'}}) }}
+
+        <div class="row actions">
+            {{ form_row(form.submit, {label: 'save', attr: {class: 'btn btn__primary'}}) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+{% endblock %}

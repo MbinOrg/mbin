@@ -100,38 +100,39 @@ class PostSingleController extends AbstractController
             $dto->body = $this->mentionManager->addHandle([$post->user->username])[0];
         }
 
+        $twigAttrs = [
+            'magazine' => $magazine,
+            'post' => $post,
+            'comments' => $comments,
+            'criteria' => $criteria,
+            'form' => $this->createForm(
+                PostCommentType::class,
+                $dto,
+                [
+                    'parentLanguage' => $post->lang,
+                ]
+            )->createView(),
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
         return $this->render(
-            'post/single.html.twig',
-            [
-                'magazine' => $magazine,
-                'post' => $post,
-                'comments' => $comments,
-                'criteria' => $criteria,
-                'form' => $this->createForm(
-                    PostCommentType::class,
-                    $dto,
-                    [
-                        'parentLanguage' => $post->lang,
-                    ]
-                )->createView(),
-            ],
-            $response
+            'post/single.html.twig', $twigAttrs, $response
         );
     }
 
     private function getJsonResponse(Magazine $magazine, Post $post, Criteria $criteria, PagerfantaInterface $comments): JsonResponse
     {
+        $twigAttrs = [
+            'magazine' => $magazine,
+            'post' => $post,
+            'comments' => $comments,
+            'criteria' => $criteria,
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
         return new JsonResponse(
             [
-                'html' => $this->renderView(
-                    'post/comments_json.html.twig',
-                    [
-                        'magazine' => $magazine,
-                        'post' => $post,
-                        'comments' => $comments,
-                        'criteria' => $criteria,
-                    ]
-                ),
+                'html' => $this->renderView('post/comments_json.html.twig', $twigAttrs),
             ]
         );
     }

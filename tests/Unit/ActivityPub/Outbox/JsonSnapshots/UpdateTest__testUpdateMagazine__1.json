@@ -35,6 +35,7 @@
         "postingRestrictedToMods": false,
         "discoverable": true,
         "indexable": true,
+        "_fedi_custom_css_community": "https://kbin.test/custom-style?magazine=test&includeSiteStyles=false",
         "endpoints": {
             "sharedInbox": "https://kbin.test/f/inbox"
         },

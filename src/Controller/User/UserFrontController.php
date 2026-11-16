@@ -86,6 +86,7 @@ class UserFrontController extends AbstractController
             [
                 'standaloneComments' => false,
                 'user' => $user,
+                'profileUser' => $user,
                 'results' => $results,
                 'pagination' => $activity,
             ],

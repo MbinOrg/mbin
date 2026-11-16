@@ -124,7 +124,7 @@ class DocumentationGenerateFederationCommand extends Command
         $context->setHost('mbin.example');
 
         $io = new SymfonyStyle($input, $output);
-        $file = './docs/05-fediverse_developers/README.md';
+        $file = './docs/05-fediverse_developers/01-ap_data.md';
         if (!file_exists($file)) {
             $io->error('File "'.$file.'" not found');
 

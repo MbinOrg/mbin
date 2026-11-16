@@ -19,6 +19,7 @@ class WwwHttpClientFactory implements ResetInterface
 
     public function __construct(
         private readonly HttpClientInterface $httpClientBase,
+        private readonly array $exemptions = [],
     ) {
         $this->existingClients = [];
         $this->defaultClient = $this->buildFilteredClient($this->buildConfiguredClient($this->httpClientBase));
@@ -29,7 +30,7 @@ class WwwHttpClientFactory implements ResetInterface
         if (null === $base && null === $clientOptions) {
             return $this->defaultClient;
         } elseif (null === $clientOptions) {
-            return $this->buildFilteredClient($this->buildConfiguredClient($base ?? $this->httpClientBase));
+            return $this->buildFilteredClient($this->buildConfiguredClient($base));
         } else {
             return $this->buildFilteredClient(($base ?? $this->httpClientBase)->withOptions($clientOptions));
         }
@@ -56,6 +57,7 @@ class WwwHttpClientFactory implements ResetInterface
         ]);
     }
 
+    #[\Override]
     public function reset(): void
     {
         $stillExistingClients = [];
@@ -73,7 +75,10 @@ class WwwHttpClientFactory implements ResetInterface
 
     private function buildFilteredClient(HttpClientInterface $client): HttpClientInterface
     {
-        $ret = new NoPrivateNetworkHttpClient($client);
+        $ret = new NoPrivateNetworkHttpClient($client, allowList: array_values($this->exemptions));
+        if (\count($this->exemptions) > 0) {
+            $ret = $ret->withOptions(['resolve' => $this->exemptions]);
+        }
         $this->existingClients[] = \WeakReference::create($ret);
         return $ret;
     }

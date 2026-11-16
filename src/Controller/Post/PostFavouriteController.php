@@ -20,10 +20,13 @@ class PostFavouriteController extends AbstractController
         Post $post,
         Request $request,
     ): Response {
-        return $this->render('post/favourites.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'post' => $post,
             'favourites' => $post->favourites,
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
+        return $this->render('post/favourites.html.twig', $twigAttrs);
     }
 }

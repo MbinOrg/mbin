@@ -89,15 +89,18 @@ class PostEditController extends AbstractController
             );
         }
 
+        $twigAttrs = [
+            'magazine' => $magazine,
+            'post' => $post,
+            'comments' => $repository->findByCriteria($criteria),
+            'form' => $form->createView(),
+            'criteria' => $criteria,
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
         return $this->render(
             'post/edit.html.twig',
-            [
-                'magazine' => $magazine,
-                'post' => $post,
-                'comments' => $repository->findByCriteria($criteria),
-                'form' => $form->createView(),
-                'criteria' => $criteria,
-            ],
+            $twigAttrs,
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
     }

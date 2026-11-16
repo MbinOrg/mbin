@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\User;
 
 use App\DTO\UserSettingsDto;
+use App\DTO\UserStylesDto;
 use App\Entity\User;
 use App\Enums\EDirectMessageSettings;
 use App\Enums\EFrontContentOptions;
@@ -313,5 +314,132 @@ class UserUpdateApiTest extends WebTestCase
         self::assertEquals(EDirectMessageSettings::FollowersOnly->value, $jsonData['directMessageSetting']);
         self::assertEquals(EFrontContentOptions::Threads->value, $jsonData['frontDefaultContent']);
         self::assertFalse($jsonData['indexable']);
+    }
+
+    public function testApiCannotUpdateCurrentUserStylesWithoutScope(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
+
+        $settings = (new UserStylesDto(
+            '',
+            null,
+            null,
+            true,
+            true,
+            true,
+        ))->jsonSerialize();
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/styles',
+            parameters: $settings,
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCanUpdateCurrentUserStyles(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
+
+        $settings = (new UserStylesDto(
+            '.page{}',
+            '.content{}',
+            '.profile{}',
+            true,
+            true,
+            true,
+        ))->jsonSerialize();
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/styles',
+            parameters: $settings,
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
+
+        self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
+        self::assertSame('.page{}', $jsonData['customCss']);
+        self::assertSame('.profile {}', $jsonData['customPublicProfileCss']);
+        self::assertSame('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-aHR0cHM6Ly9rYmluLnRlc3QvdS9Kb2huRG9l.content {}', $jsonData['customPublicContentCss']);
+
+        $this->client->request('GET', '/api/users/styles', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
+
+        self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
+        self::assertSame('.page{}', $jsonData['customCss']);
+        self::assertSame('.profile {}', $jsonData['customPublicProfileCss']);
+        self::assertSame('.fediCustomCss.fediCustomCss-software-mbin.fediCustomCss-user-aHR0cHM6Ly9rYmluLnRlc3QvdS9Kb2huRG9l.content {}', $jsonData['customPublicContentCss']);
+    }
+
+    public function testApiCannotUpdateCurrentUserContentStylesInvalid(): void
+    {
+        $testUser = $this->getUserByUsername('JohnDoe');
+
+        $testUser->ignoreMagazinesCustomCss = false;
+        $testUser->ignoreUserContentCss = false;
+        $testUser->ignoreUserProfileCss = false;
+        $testUser->customCss = '1';
+        $testUser->customPublicContentCss = '2';
+        $testUser->customPublicProfileCss = '3';
+        $this->entityManager->persist($testUser);
+        $this->entityManager->flush();
+
+        self::createOAuth2AuthCodeClient();
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:edit user:profile:read');
+
+        $settings = (new UserStylesDto(
+            '.page{}',
+            'div{}',
+            '.profile{}',
+            true,
+            true,
+            true,
+        ))->jsonSerialize();
+
+        $this->client->jsonRequest(
+            'PUT', '/api/users/styles',
+            parameters: $settings,
+            server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]
+        );
+        self::assertResponseStatusCodeSame(400);
+
+        $respData = $this->client->getResponse()->getContent();
+        self::assertStringContainsString('The CSS contained rules with disallowed selectors at line 1', $respData);
+
+        $this->client->request('GET', '/api/users/styles', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(UserRetrieveApiTest::USER_STYLES_KEYS, $jsonData);
+
+        self::assertFalse($jsonData['ignoreMagazinesCustomCss']);
+        self::assertFalse($jsonData['ignoreUserContentCss']);
+        self::assertFalse($jsonData['ignoreUserProfileCss']);
+        self::assertSame('1', $jsonData['customCss']);
+        self::assertSame('2', $jsonData['customPublicContentCss']);
+        self::assertSame('3', $jsonData['customPublicProfileCss']);
     }
 }

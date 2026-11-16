@@ -32,11 +32,11 @@ class MagazineThemeController extends AbstractController
         $form = $this->createForm(MagazineThemeType::class, $dto);
 
         try {
-            // Could thrown an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
+            // Could throw an error on event handlers (eg. onPostSubmit if a user upload an incorrect image)
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $magazine = $this->manager->changeTheme($dto);
+                $magazine = $this->manager->changeTheme($magazine, $dto, $this->getUserOrThrow());
 
                 $this->addFlash('success', 'flash_magazine_theme_changed_success');
                 $this->redirectToRefererOrHome($request);

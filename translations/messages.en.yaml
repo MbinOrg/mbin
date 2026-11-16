@@ -511,8 +511,13 @@ resend_account_activation_email_success: If an account associated with that
   email exists, we will send out a new activation email.
 resend_account_activation_email_description: Enter the email address associated
   with your account. We will send out another activation email for you.
-custom_css: Custom CSS
+custom_styles: Styles
+custom_css: Custom Page CSS (applies to the whole page, visible to only you)
+custom_public_content_css: Public Content CSS (applies to your content, visible to everyone)
+custom_public_profile_css: Public Profile CSS (applies to your profile page, visible to everyone)
 ignore_magazines_custom_css: Ignore magazines custom CSS
+ignore_users_content_custom_css: Ignore users custom content CSS
+ignore_users_profile_custom_css: Ignore users custom profile CSS
 oauth.consent.title: OAuth2 Consent Form
 oauth.consent.grant_permissions: Grant Permissions
 oauth.consent.app_requesting_permissions: would like to perform the following

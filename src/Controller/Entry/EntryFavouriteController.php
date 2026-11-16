@@ -20,10 +20,13 @@ class EntryFavouriteController extends AbstractController
         Entry $entry,
         Request $request,
     ): Response {
-        return $this->render('entry/favourites.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'entry' => $entry,
             'favourites' => $entry->favourites,
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        return $this->render('entry/favourites.html.twig', $twigAttrs);
     }
 }

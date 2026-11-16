@@ -39,22 +39,20 @@ class EntryCommentModerateController extends AbstractController
         $form->get('lang')
             ->setData($comment->lang);
 
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse([
-                'html' => $this->renderView('entry/comment/_moderate_panel.html.twig', [
-                    'magazine' => $magazine,
-                    'entry' => $entry,
-                    'comment' => $comment,
-                    'form' => $form->createView(),
-                ]),
-            ]);
-        }
-
-        return $this->render('entry/comment/moderate.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'entry' => $entry,
             'comment' => $comment,
             'form' => $form->createView(),
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('entry/comment/_moderate_panel.html.twig', $twigAttrs),
+            ]);
+        }
+
+        return $this->render('entry/comment/moderate.html.twig', $twigAttrs);
     }
 }

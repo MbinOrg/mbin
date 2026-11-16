@@ -76,6 +76,18 @@ api_user_update_settings:
   methods: [ PUT ]
   format: json
 
+api_user_retrieve_styles:
+  controller: App\Controller\Api\User\UserRetrieveApi::styles
+  path: /api/users/styles
+  methods: [ GET ]
+  format: json
+
+api_user_update_styles:
+  controller: App\Controller\Api\User\UserUpdateApi::styles
+  path: /api/users/styles
+  methods: [ PUT ]
+  format: json
+
 api_user_retrieve_filter_lists:
     controller: App\Controller\Api\User\UserFilterListApi::retrieve
     path: /api/users/filterLists

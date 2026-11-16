@@ -118,7 +118,7 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
             throw new BadRequestHttpException((string) $errors);
         }
 
-        $manager->changeTheme($dto);
+        $manager->changeTheme($magazine, $dto, $this->getUserOrThrow());
 
         $imageDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
         $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
@@ -196,9 +196,9 @@ class MagazineUpdateThemeApi extends MagazineBaseApi
 
         $dto = new MagazineThemeDto($magazine);
 
-        $dto->banner = $image ? $this->imageFactory->createDto($image) : $dto->banner;
+        $dto->banner = $this->imageFactory->createDto($image);
 
-        $magazine = $manager->changeTheme($dto);
+        $magazine = $manager->changeTheme($magazine, $dto, $this->getUserOrThrow());
         $iconDto = $magazine->icon ? $this->imageFactory->createDto($magazine->icon) : null;
         $bannerDto = $magazine->banner ? $this->imageFactory->createDto($magazine->banner) : null;
 
