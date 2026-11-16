@@ -4088,16 +4088,16 @@
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "2.18.1",
+            "version": "2.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "3c799cf7c56b87166f82c6c48c082cd95977cf6c"
+                "reference": "023c0949165ef42a903db9f3644d4834a2c3519b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/3c799cf7c56b87166f82c6c48c082cd95977cf6c",
-                "reference": "3c799cf7c56b87166f82c6c48c082cd95977cf6c",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/023c0949165ef42a903db9f3644d4834a2c3519b",
+                "reference": "023c0949165ef42a903db9f3644d4834a2c3519b",
                 "shasum": ""
             },
             "require": {
@@ -4190,9 +4190,9 @@
             ],
             "support": {
                 "issues": "https://github.com/liip/LiipImagineBundle/issues",
-                "source": "https://github.com/liip/LiipImagineBundle/tree/2.18.1"
+                "source": "https://github.com/liip/LiipImagineBundle/tree/2.18.2"
             },
-            "time": "2026-10-07T20:50:10+00:00"
+            "time": "2026-11-08T10:46:27+00:00"
         },
         {
             "name": "meteo-concept/hcaptcha-bundle",
