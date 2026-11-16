@@ -31,6 +31,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
     'entry_comment_reply' => 'EntryCommentReplyNotification',
     'entry_comment_deleted' => 'EntryCommentDeletedNotification',
     'entry_comment_mentioned' => 'EntryCommentMentionedNotification',
+    'poll_ended' => 'PollEndedNotification',
+    'poll_edited' => 'PollEditedNotification',
     'post_created' => 'PostCreatedNotification',
     'post_edited' => 'PostEditedNotification',
     'post_deleted' => 'PostDeletedNotification',

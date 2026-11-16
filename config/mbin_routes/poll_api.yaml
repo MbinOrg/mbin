@@ -1,0 +1,19 @@
+api_poll_vote_entry:
+  controller: App\Controller\Api\Poll\PollVoteController::voteOnEntry
+  path: /api/entry/{entryId}/poll/vote
+  methods: [ PUT ]
+
+api_poll_vote_entry_comment:
+  controller: App\Controller\Api\Poll\PollVoteController::voteOnEntryComment
+  path: /api/entry/{entryId}/comments/{commentId}/poll/vote
+  methods: [ PUT ]
+
+api_poll_vote_post:
+    controller: App\Controller\Api\Poll\PollVoteController::voteOnPost
+    path: /api/post/{postId}/poll/vote
+    methods: [ PUT ]
+
+api_poll_vote_post_comment:
+    controller: App\Controller\Api\Poll\PollVoteController::voteOnPostComment
+    path: /api/post/{postId}/comments/{commentId}/poll/vote
+    methods: [ PUT ]

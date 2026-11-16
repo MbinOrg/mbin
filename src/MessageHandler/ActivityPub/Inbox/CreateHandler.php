@@ -12,7 +12,9 @@ use App\Entity\User;
 use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
+use App\Exception\InvalidPollChoiceException;
 use App\Exception\InvalidWebfingerException;
+use App\Exception\PollHasEndedException;
 use App\Exception\PostingRestrictedException;
 use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
@@ -80,22 +82,19 @@ class CreateHandler extends MbinMessageHandler
         try {
             if ('ChatMessage' === $object['type']) {
                 $this->handlePrivateMessage($object);
+            } elseif ('Question' === $object['type']) {
+                if (isset($object['name'])) {
+                    $this->handlePage($object, $stickyIt, $message->fullCreatePayload);
+                } else {
+                    $this->handleChain($object, $stickyIt, $message->fullCreatePayload);
+                }
+                $this->invalidateTagsOfId($object['id']);
             } elseif (\in_array($object['type'], $postTypes)) {
                 $this->handleChain($object, $stickyIt, $message->fullCreatePayload);
-                if (method_exists($this->cache, 'invalidateTags')) {
-                    // clear markdown renders that are tagged with the id of the post
-                    $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
-                    $this->cache->invalidateTags([$tag]);
-                    $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
-                }
+                $this->invalidateTagsOfId($object['id']);
             } elseif (\in_array($object['type'], $entryTypes)) {
                 $this->handlePage($object, $stickyIt, $message->fullCreatePayload);
-                if (method_exists($this->cache, 'invalidateTags')) {
-                    // clear markdown renders that are tagged with the id of the entry
-                    $tag = UrlUtils::getCacheKeyForMarkdownUrl($object['id']);
-                    $this->cache->invalidateTags([$tag]);
-                    $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
-                }
+                $this->invalidateTagsOfId($object['id']);
             } else {
                 $this->logger->warning('received Create activity for unknown type {t} of object {o}; ignoring', [
                     't' => $object['type'],
@@ -121,6 +120,10 @@ class CreateHandler extends MbinMessageHandler
             $this->logger->info('[CreateHandler::doWork] Did not create the message, because the user is blocked by one of the receivers');
         } catch (EntryLockedException|PostLockedException) {
             $this->logger->info('[CreateHandler::doWork] Did not create the comment, because the entry/post is locked');
+        } catch (PollHasEndedException) {
+            $this->logger->info('[CreateHandler::doWork] Did not create the vote ({vId}), because the poll ({pId}) has already ended', ['vId' => $object['id'], 'pId' => $object['inReplyTo']]);
+        } catch (InvalidPollChoiceException $ex) {
+            $this->logger->info('[CreateHandler::doWork] Did not create the poll vote ({vId}), because the choice "{choice}" does not exist', ['vId' => $object['id'], 'choice' => $ex->pollChoice]);
         }
     }
 
@@ -131,6 +134,8 @@ class CreateHandler extends MbinMessageHandler
      * @throws InstanceBannedException
      * @throws EntryLockedException
      * @throws PostLockedException
+     * @throws PollHasEndedException
+     * @throws InvalidPollChoiceException
      */
     private function handleChain(array $object, bool $stickyIt, ?array $fullCreatePayload): void
     {
@@ -202,5 +207,15 @@ class CreateHandler extends MbinMessageHandler
     private function handlePrivateMentions(): void
     {
         // TODO implement private mentions
+    }
+
+    private function invalidateTagsOfId(string $id): void
+    {
+        if (method_exists($this->cache, 'invalidateTags')) {
+            // clear markdown renders that are tagged with the id
+            $tag = UrlUtils::getCacheKeyForMarkdownUrl($id);
+            $this->cache->invalidateTags([$tag]);
+            $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
+        }
     }
 }

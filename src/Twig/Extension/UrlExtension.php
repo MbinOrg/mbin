@@ -41,6 +41,7 @@ final class UrlExtension extends AbstractExtension
             new TwigFunction('options_url', [UrlExtensionRuntime::class, 'optionsUrl']),
             new TwigFunction('mention_url', [UrlExtensionRuntime::class, 'mentionUrl']),
             new TwigFunction('get_cursor_url_value', [UrlExtensionRuntime::class, 'getCursorUrlValue']),
+            new TwigFunction('content_url', [UrlExtensionRuntime::class, 'contentUrl']),
         ];
     }
 }

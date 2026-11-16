@@ -11,8 +11,10 @@ use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\DisableFieldsOnEntryEdit;
 use App\Form\EventListener\ImageListener;
 // use App\Form\Type\BadgesType;
+use App\Form\EventListener\RemovePollFieldsOnEntryEdit;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
+use App\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -29,6 +31,7 @@ class EntryEditType extends AbstractType
         private readonly ImageListener $imageListener,
         private readonly DefaultLanguage $defaultLanguage,
         private readonly DisableFieldsOnEntryEdit $disableFieldsOnEntryEdit,
+        private readonly RemovePollFieldsOnEntryEdit $removePollFieldsOnEntryEdit,
     ) {
     }
 
@@ -84,8 +87,9 @@ class EntryEditType extends AbstractType
             ->add('lang', LanguageType::class)
             ->add('isOc', CheckboxType::class, [
                 'required' => false,
-            ])
-            ->add('submit', SubmitType::class);
+            ]);
+        FormUtils::addPollFieldsToType($builder, addAddPollField: false);
+        $builder->add('submit', SubmitType::class);
 
         $builder->get('tags')->addModelTransformer(
             new TagTransformer()
@@ -94,6 +98,7 @@ class EntryEditType extends AbstractType
         $builder->addEventSubscriber($this->defaultLanguage);
         $builder->addEventSubscriber($this->disableFieldsOnEntryEdit);
         $builder->addEventSubscriber($this->imageListener);
+        $builder->addEventSubscriber($this->removePollFieldsOnEntryEdit);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
