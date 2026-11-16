@@ -41,10 +41,10 @@ readonly class CustomCssService
     ) {
         $this->localUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_ADD, maxSizeKb: 128, allowKeyframes: true);
         $this->remoteUserContentProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_VERIFY, maxSizeKb: 128, allowKeyframes: true);
-        $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->localMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
-        $this->remoteMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->localUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, allowKeyframes: true, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteUserPageProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, allowKeyframes: true, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->localMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, allowKeyframes: true, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
+        $this->remoteMagazineProfile = new CustomCssProfile(CustomCssProfile::ENFORCE_SELECTOR_MODE_NONE, maxSizeKb: 512, allowKeyframes: true, requireSelectorStartsWithClass: false, allowSelectorStar: true, allowNonInlineUrls: true);
     }
 
     public function createConstraintSelector(User $user): string
