@@ -96,7 +96,9 @@ class AjaxController extends AbstractController
         $srcUrl = Polyfills::requestParam($request, 'url');
         $data = $this->embedService->fetch($srcUrl);
         // only wrap embed link for image embed as it doesn't make much sense for any other type for embed
-        if (!$data->isValid()) {
+        if (!$data->synthetic && null === $data->embedUrl && (null === $data->html || '' === $data->html)) {
+            $html = '';
+        } elseif (!$data->isValid() && null === $data->embedUrl) {
             if ($data->synthetic) {
                 // just return the generated placeholder
                 $html = $data->html;
