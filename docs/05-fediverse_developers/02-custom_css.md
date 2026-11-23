@@ -30,8 +30,8 @@ As Profiles and Magazines are only visible when a user actively opens them, the 
 
 ### Rules for User Content
 
-As content of random users can show up without the viewer actively opening it, the rules are more string and
-require a confinement on only the HTML elements representing the authors content.
+As content of random users can show up without the viewer actively opening it, the rules are stricter and
+require a confinement to only the HTML elements representing the authors content.
 
 - max 128 KiB
 - no special declarations (at-rules), except `@keyframes`
@@ -115,4 +115,4 @@ Example for a URL value:
 ```
 
 For **Content CSS** every HTML element containing user content needs to set the classes as described in [The fediCustomCss selector](#the-fedicustomcss-selector).
-Only the other most container element of an individual pice of content needs to set these classes.
+Only the outermost container element of an individual piece of content needs to set these classes.
