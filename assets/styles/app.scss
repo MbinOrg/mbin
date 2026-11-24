@@ -37,7 +37,6 @@
 @use 'components/modlog';
 @use 'components/monitoring';
 @use 'components/notification_switch';
-@use 'components/notifications';
 @use 'components/messages';
 @use 'components/dropdown';
 @use 'components/pagination';
@@ -62,5 +61,6 @@
 @use 'themes/solarized';
 @use 'themes/tokyo-night';
 @use 'components/tag';
+@use 'widgets/boosted_by';
 
 @import 'glightbox/dist/css/glightbox.min.css';

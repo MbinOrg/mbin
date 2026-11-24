@@ -21,7 +21,7 @@ abstract class ActivityPubContent
     protected function getVisibility(array $object, User $actor): string
     {
         $toAndCC = array_merge(JsonldUtils::getArrayValue($object, 'to'), JsonldUtils::getArrayValue($object, 'cc'));
-        if (!\in_array(ActivityPubActivityInterface::PUBLIC_URL, $toAndCC)) {
+        if (!$this->containsPublicTarget($toAndCC)) {
             if (!\in_array($actor->apFollowersUrl, $toAndCC)) {
                 throw new \LogicException('PM: not implemented.');
             }
@@ -30,6 +30,13 @@ abstract class ActivityPubContent
         }
 
         return VisibilityInterface::VISIBILITY_VISIBLE;
+    }
+
+    protected function containsPublicTarget(array $toAndCC): bool
+    {
+        return \in_array(ActivityPubActivityInterface::PUBLIC_URL, $toAndCC)
+            || \in_array(ActivityPubActivityInterface::PUBLIC_URL_NS, $toAndCC)
+            || \in_array(ActivityPubActivityInterface::PUBLIC_URL_SHORT, $toAndCC);
     }
 
     protected function handleDate(PostDto|PostCommentDto|EntryCommentDto|EntryDto $dto, string $date): void

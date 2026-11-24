@@ -46,7 +46,7 @@ class ModlogController extends AbstractController
         );
     }
 
-    public function magazine(#[MapEntity] ?Magazine $magazine, Request $request): Response
+    public function magazine(#[MapEntity(mapping: ['name' => 'name'])] ?Magazine $magazine, Request $request): Response
     {
         $dto = new ModlogFilterDto();
         $dto->magazine = $magazine;

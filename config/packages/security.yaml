@@ -24,6 +24,7 @@ security:
             security: true
             stateless: true
             oauth2: true
+            user_checker: App\Security\UserChecker
         image_resolver:
             pattern: ^/media/cache/resolve
             security: false

@@ -14,6 +14,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\RankingTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
@@ -40,6 +41,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['comment_count'], name: 'post_comment_count_idx')]
 #[Index(columns: ['created_at'], name: 'post_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'post_last_active_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'post_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_body_ts_idx')]
 class Post implements VotableInterface, CommentInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -51,6 +53,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -85,7 +88,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public ?string $ip = null;
     #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
-    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(mappedBy: 'post', targetEntity: PostComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'post', targetEntity: PostVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
@@ -127,6 +130,8 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
@@ -134,7 +139,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         $this->comments->get(-1);
 
         $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => \SortDirection::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -159,7 +164,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getBestComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
-            ->orderBy(['upVotes' => 'DESC', 'createdAt' => 'ASC']);
+            ->orderBy(['upVotes' => \SortDirection::Descending, 'createdAt' => \SortDirection::Ascending]);
 
         $comments = $this->comments->matching($criteria);
         $comments = $this->handlePrivateComments($comments, $user);
@@ -177,7 +182,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return new ArrayCollection(iterator_to_array($iterator));
     }
 
-    private function handlePrivateComments(ArrayCollection $comments, ?User $user): ArrayCollection
+    private function handlePrivateComments(Collection $comments, ?User $user): Collection
     {
         return $comments->filter(function (PostComment $val) use ($user) {
             if ($user && VisibilityInterface::VISIBILITY_PRIVATE === $val->visibility) {
@@ -191,7 +196,7 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
     public function getLastComments(?User $user = null): Collection
     {
         $criteria = Criteria::create()
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['createdAt' => \SortDirection::Ascending]);
 
         $comments = $this->comments->matching($criteria);
 
@@ -262,13 +267,14 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
-    public function addVote(Vote $vote): self
+    #[\Override]
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostVote::class);
+        Assert::isInstanceOf($votable, PostVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->post = $this;
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->post = $this;
         }
 
         $this->updateScore();
@@ -277,13 +283,14 @@ class Post implements VotableInterface, CommentInterface, VisibilityInterface, R
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    #[\Override]
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostVote::class);
+        Assert::isInstanceOf($votable, PostVote::class);
 
-        if ($this->votes->removeElement($vote)) {
-            if ($vote->getPost() === $this) {
-                $vote->setPost(null);
+        if ($this->votes->removeElement($votable)) {
+            if ($votable->post === $this) {
+                $votable->post = null;
             }
         }
 

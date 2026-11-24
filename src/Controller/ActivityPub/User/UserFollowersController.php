@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Service\ActivityPub\Wrapper\CollectionInfoWrapper;
 use App\Service\ActivityPub\Wrapper\CollectionItemsWrapper;
 use App\Service\ActivityPubManager;
+use App\Utils\Polyfills;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +32,10 @@ class UserFollowersController
 
     public function get(User $user, Request $request, string $type): JsonResponse
     {
-        if (!$request->get('page')) {
+        if (!Polyfills::requestParam($request, 'page')) {
             $data = $this->getCollectionInfo($user, $type);
         } else {
-            $data = $this->getCollectionItems($user, (int) $request->get('page'), $type);
+            $data = $this->getCollectionItems($user, (int) Polyfills::requestParam($request, 'page'), $type);
         }
 
         $response = new JsonResponse($data);

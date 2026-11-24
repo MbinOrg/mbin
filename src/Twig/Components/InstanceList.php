@@ -13,10 +13,19 @@ class InstanceList
     /** @var Instance[] */
     public array $instances;
 
+    /** @var Instance[] */
+    public ?array $blockedInstances = null;
+
+    /** @var Instance[] */
+    public ?array $globallyBlockedInstances = null;
+
     public bool $showUnBanButton = false;
+
     public bool $showBanButton = false;
 
     public bool $showDenyButton = false;
 
     public bool $showAllowButton = false;
+
+    public bool $showAdminBlockButton = false;
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Markdown\CommonMark;
 
-use App\Markdown\CommonMark\Node\UnresolvableLink;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
@@ -44,14 +43,20 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
         $label = null;
 
         if (RenderTarget::Page === $renderTarget) {
-            // skip rendering links inside the label (not allowed)
+            // self destructs rendering if parent is a link
+            // because while commonmark permits putting image inside link label,
+            // html does not allow nested interactive contents inside <a>
+            // see: https://spec.commonmark.org/0.30/#example-516
+            // and: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary
+            if ($node->parent() && $node->parent() instanceof Link) {
+                return EmbedElement::buildDestructed(htmlspecialchars($node->getUrl()), htmlspecialchars($this->getAltText($node)));
+            }
+
+            // skip rendering links inside the label (not allowed) and skip potentially harmful elements
             if ($node->hasChildren()) {
                 $cnodes = [];
                 foreach ($node->children() as $n) {
-                    if (
-                        ($n instanceof Link && $n instanceof StringContainerInterface)
-                        || $n instanceof UnresolvableLink
-                    ) {
+                    if (!EmbedElement::checkForbiddenDescendantNodes($n, true)) {
                         $cnodes[] = new Text($n->getLiteral());
                     } else {
                         $cnodes[] = $n;
@@ -60,16 +65,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
                 $label = $childRenderer->renderNodes($cnodes);
             }
 
-            // self destructs rendering if parent is a link
-            // because while commonmark permits putting image inside link label,
-            // html does not allow nested interactive contents inside <a>
-            // see: https://spec.commonmark.org/0.30/#example-516
-            // and: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary
-            if ($node->parent() && $node->parent() instanceof Link) {
-                return EmbedElement::buildDestructed($node->getUrl(), $this->getAltText($node));
-            }
-
-            return EmbedElement::buildEmbed($url, $label ?? $url);
+            return EmbedElement::buildEmbed($url, $label ?? htmlspecialchars($url));
         }
 
         return new HtmlElement(

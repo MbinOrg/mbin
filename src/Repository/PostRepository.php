@@ -10,6 +10,7 @@ namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
+use App\Entity\InstanceBlock;
 use App\Entity\Magazine;
 use App\Entity\MagazineBlock;
 use App\Entity\MagazineSubscription;
@@ -124,7 +125,7 @@ class PostRepository extends ServiceEntityRepository
     {
         if ($criteria->stickiesFirst) {
             if (1 === $criteria->page) {
-                $qb->addOrderBy('p.sticky', 'DESC');
+                $qb->addOrderBy('p.sticky', \SortDirection::Descending);
             } else {
                 $qb->andWhere($qb->expr()->eq('p.sticky', 'false'));
             }
@@ -211,6 +212,37 @@ class PostRepository extends ServiceEntityRepository
                 'NOT EXISTS (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :magazineBlocker AND mb.magazine = p.magazine)'
             );
             $qb->setParameter('magazineBlocker', $user);
+
+            if (!$criteria->magazine) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = p.magazine AND ib1.user = :blocker'
+                    .') OR p.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = p.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
+                    .') OR p.user = :blocker'
+                );
+            }
+            if (!$criteria->user) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = p.user AND ib2.user = :blocker'
+                    .') OR p.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = p.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
+                    .') OR p.user = :blocker'
+                );
+            }
         }
 
         if (!$user || $user->hideAdult) {
@@ -221,22 +253,22 @@ class PostRepository extends ServiceEntityRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_HOT:
-                $qb->addOrderBy('p.ranking', 'DESC');
+                $qb->addOrderBy('p.ranking', \SortDirection::Descending);
                 break;
             case Criteria::SORT_TOP:
-                $qb->addOrderBy('p.score', 'DESC');
+                $qb->addOrderBy('p.score', \SortDirection::Descending);
                 break;
             case Criteria::SORT_COMMENTED:
-                $qb->addOrderBy('p.commentCount', 'DESC');
+                $qb->addOrderBy('p.commentCount', \SortDirection::Descending);
                 break;
             case Criteria::SORT_ACTIVE:
-                $qb->addOrderBy('p.lastActive', 'DESC');
+                $qb->addOrderBy('p.lastActive', \SortDirection::Descending);
                 break;
             default:
         }
 
-        $qb->addOrderBy('p.createdAt', Criteria::SORT_OLD === $criteria->sortOption ? 'ASC' : 'DESC');
-        $qb->addOrderBy('p.id', 'DESC');
+        $qb->addOrderBy('p.createdAt', Criteria::SORT_OLD === $criteria->sortOption ? \SortDirection::Ascending : \SortDirection::Descending);
+        $qb->addOrderBy('p.id', \SortDirection::Descending);
 
         return $qb;
     }
@@ -309,7 +341,7 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('p.user = :user')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
             ->setParameter('user', $user)
-            ->orderBy('p.id', 'DESC')
+            ->orderBy('p.id', \SortDirection::Descending)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
@@ -332,7 +364,7 @@ class PostRepository extends ServiceEntityRepository
             ->join('p.user', 'u')
             ->join('p.hashtags', 'hl')
             ->join('hl.hashtag', 'h')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.createdAt', \SortDirection::Descending)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('name', $tag)
             ->setMaxResults($limit);
@@ -360,7 +392,7 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('m.isAdult = false')
             ->join('p.magazine', 'm')
             ->join('p.user', 'u')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.createdAt', \SortDirection::Descending)
             ->setParameter('name', "%{$name}%")
             ->setParameter('title', "%{$name}%")
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
@@ -402,7 +434,7 @@ class PostRepository extends ServiceEntityRepository
 
         return $qb->join('p.magazine', 'm')
             ->join('p.user', 'u')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.createdAt', \SortDirection::Descending)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setMaxResults($limit)
             ->getQuery()
@@ -414,7 +446,7 @@ class PostRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->andWhere('p.apId IS NOT NULL')
             ->andWhere('p.visibility = :visibility')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.createdAt', \SortDirection::Descending)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->getQuery()
             ->getResult();
@@ -427,7 +459,7 @@ class PostRepository extends ServiceEntityRepository
             ->andWhere('m.name = :magazine')
             ->andWhere('p.apId IS NOT NULL')
             ->andWhere('p.visibility = :visibility')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.createdAt', \SortDirection::Descending)
             ->setParameter('magazine', 'random')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->getQuery()
@@ -453,7 +485,7 @@ class PostRepository extends ServiceEntityRepository
             $qb->andWhere('u.apId IS NULL');
         }
 
-        return $qb->orderBy('count', 'DESC')
+        return $qb->orderBy('count', \SortDirection::Descending)
             ->setParameter('magazine', $magazine)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('emptyString', '')

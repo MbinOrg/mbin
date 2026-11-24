@@ -16,6 +16,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\RankingTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
@@ -43,6 +44,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['comment_count'], name: 'entry_comment_count_idx')]
 #[Index(columns: ['created_at'], name: 'entry_created_at_idx')]
 #[Index(columns: ['last_active'], name: 'entry_last_active_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'entry_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_body_ts_idx')]
 #[Index(columns: ['title_ts'], name: 'entry_title_ts_idx')]
 class Entry implements VotableInterface, CommentInterface, DomainInterface, VisibilityInterface, RankingInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface, ContentVisibilityInterface
@@ -55,6 +57,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     public const ENTRY_TYPE_ARTICLE = 'article';
     public const ENTRY_TYPE_LINK = 'link';
@@ -118,12 +121,12 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $comments;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $votes;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryReport::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $reports;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryFavourite::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Descending])]
     public Collection $favourites;
     #[OneToMany(mappedBy: 'entry', targetEntity: EntryCreatedNotification::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $notifications;
@@ -173,8 +176,10 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         $user->addEntry($this);
 
         $this->createdAtTraitConstruct();
-
         $this->updateLastActive();
+
+        /* @psalm-suppress UninitializedProperty */
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
@@ -183,7 +188,7 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
 
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->eq('visibility', VisibilityInterface::VISIBILITY_VISIBLE))
-            ->orderBy(['createdAt' => 'DESC'])
+            ->orderBy(['createdAt' => \SortDirection::Descending])
             ->setMaxResults(1);
 
         $lastComment = $this->comments->matching($criteria)->first();
@@ -269,13 +274,14 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
-    public function addVote(Vote $vote): self
+    #[\Override]
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryVote::class);
+        Assert::isInstanceOf($votable, EntryVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->entry = $this;
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->entry = $this;
         }
 
         $this->updateScore();
@@ -291,13 +297,14 @@ class Entry implements VotableInterface, CommentInterface, DomainInterface, Visi
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    #[\Override]
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryVote::class);
+        Assert::isInstanceOf($votable, EntryVote::class);
 
-        if ($this->votes->removeElement($vote)) {
-            if ($vote->entry === $this) {
-                $vote->entry = null;
+        if ($this->votes->removeElement($votable)) {
+            if ($votable->entry === $this) {
+                $votable->entry = null;
             }
         }
 

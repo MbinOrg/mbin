@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'mbin:post:remove-duplicates',
+    name: 'mbin:maintenance:remove-posts-and-users-duplicates',
     description: 'This command removes post and user duplicates by their ActivityPub ID.',
 )]
 class RemoveDuplicatesCommand extends Command

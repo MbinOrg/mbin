@@ -126,6 +126,9 @@ parameters:
     mbin_new_users_need_approval: '%env(bool:default::MBIN_NEW_USERS_NEED_APPROVAL)%'
     mbin_use_federation_allow_list: '%env(bool:default::MBIN_USE_FEDERATION_ALLOW_LIST)%'
 
+    mbin_search_lang_default: 'english'
+    mbin_search_lang: '%env(string:default:mbin_search_lang_default:MBIN_SEARCH_LANGUAGE)%'
+
     trueVal: 'true'
     mbin_monitoring_enabled: '%env(bool:default::MBIN_MONITORING_ENABLED)%'
     mbin_monitoring_query_parameters_enabled: '%env(bool:default::MBIN_MONITORING_QUERY_PARAMETERS_ENABLED)%'
@@ -159,6 +162,7 @@ services:
             $monitoringCurlRequestsEnabled: '%mbin_monitoring_curl_requests_enabled%'
             $monitoringCurlRequestPersistingEnabled: '%mbin_monitoring_curl_request_persisting_enabled%'
             $imageCompressionQuality: '%mbin_image_compression_quality%'
+            $kernelEnvironment: '%kernel.environment%'
 
     kbin.s3_client:
         class: Aws\S3\S3Client
@@ -216,6 +220,8 @@ services:
             $mbinDownvotesMode: '%mbin_downvotes_mode%'
             $mbinNewUsersNeedApproval: '%mbin_new_users_need_approval%'
             $mbinUseFederationAllowList: '%mbin_use_federation_allow_list%'
+            $mbinSearchLang: '%mbin_search_lang%'
+            $kbinStorageUrl: '%kbin_storage_url%'
 
     # Markdown
     App\Markdown\Factory\EnvironmentFactory:
@@ -273,11 +279,6 @@ services:
       class: App\Service\MonologFilterHandler
       public: false
 
-    # Feeds
-    debril.rss_atom.provider:
-        class: App\Feed\Provider
-        arguments: ['@App\Service\FeedManager']
-
     messenger.failure.add_error_details_stamp_listener:
         class: App\Utils\AddErrorDetailsStampListener
 
@@ -285,3 +286,7 @@ services:
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - '%env(DATABASE_URL)%'
+
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+        arguments:
+            - '@cache.default_redis_provider'

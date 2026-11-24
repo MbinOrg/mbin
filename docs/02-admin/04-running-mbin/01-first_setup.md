@@ -4,7 +4,7 @@
 > If you are running docker, then you have to prefix the following commands with
 > `docker compose exec php`.
 
-Create new admin user (without email verification), please change the `username`, `email` and `password` below:
+Create new admin user (without email verification). Please change the `username`, `email` and `password` below:
 
 ```bash
 php bin/console mbin:user:create <username> <email@example.com> <password>
@@ -26,10 +26,26 @@ php bin/console mbin:magazine:create random
 
 ### Manual user activation
 
-Activate a user account (bypassing email verification), please change the `username` below:
+If you need to activate a user account manually (bypassing email verification) run the following command.
+Please change the `username` below:
 
 ```bash
 php bin/console mbin:user:verify <username> -a
+```
+
+### Setup of search language
+
+If you want your instance to use a language different from English for indexing content for the search,
+then you need to adjust the `MBIN_SEARCH_LANGUAGE` environment variable in the `.env` file.
+
+After changing the setting, the server needs to be restarted and also the following command to be run:
+```bash
+php bin/console mbin:db:migrate-search-lang
+```
+
+To see which languages are supported by your database, run the following SQL query:
+```sql
+SELECT cfgname FROM pg_ts_config;
 ```
 
 ### Mercure

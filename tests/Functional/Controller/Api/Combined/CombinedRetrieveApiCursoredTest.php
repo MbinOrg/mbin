@@ -58,11 +58,12 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
 
     public function testCombinedCursoredAnonymous(): void
     {
-        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=newest');
+        $url = '/api/combined/v2?perPage=2&sort=newest';
+        $this->client->request('GET', $url);
 
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
-        $this->assertCursorDataShape($data);
+        $this->assertCursorDataShape($data, $url, null);
     }
 
     public function testUserCombinedCursored(): void
@@ -71,11 +72,13 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::createOAuth2PublicAuthCodeClient();
         $codes = self::getPublicAuthorizationCodeTokenResponse($this->client, scopes: 'read');
         $token = $codes['token_type'].' '.$codes['access_token'];
-        $this->client->request('GET', '/api/combined/v2/subscribed?perPage=2&sort=newest', server: ['HTTP_AUTHORIZATION' => $token]);
+
+        $url = '/api/combined/v2/subscribed?perPage=2&sort=newest';
+        $this->client->request('GET', $url, server: ['HTTP_AUTHORIZATION' => $token]);
 
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
-        $this->assertCursorDataShape($data);
+        $this->assertCursorDataShape($data, $url, $token);
     }
 
     public function testCombinedCursoredPagination(): void
@@ -126,7 +129,17 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::assertEquals($data1['items'][1]['post']['postId'], $data3['items'][1]['post']['postId']);
     }
 
-    private function assertCursorDataShape(array $data): void
+    public function testMagazineCombinedCursored(): void
+    {
+        $url = '/api/magazine/'.$this->magazine->getId().'/combined/v2?perPage=2&sort=newest';
+        $this->client->request('GET', $url);
+
+        self::assertResponseIsSuccessful();
+        $data = self::getJsonResponse($this->client);
+        $this->assertCursorDataShape($data, $url, null);
+    }
+
+    private function assertCursorDataShape(array $data, string $url, ?string $token): void
     {
         self::assertArrayKeysMatch(WebTestCase::PAGINATED_KEYS, $data);
 
@@ -146,7 +159,8 @@ class CombinedRetrieveApiCursoredTest extends WebTestCase
         self::assertNull($data['items'][1]['entry']);
         assertEquals($this->generatedPosts[0]->getId(), $data['items'][1]['post']['postId']);
 
-        $this->client->request('GET', '/api/combined/v2?perPage=2&sort=newest&cursor='.urlencode($data['pagination']['nextCursor']));
+        $this->client->request('GET', $url.'&cursor='.urlencode($data['pagination']['nextCursor']),
+            server: null !== $token ? ['HTTP_AUTHORIZATION' => $token] : []);
         self::assertResponseIsSuccessful();
         $data = self::getJsonResponse($this->client);
 

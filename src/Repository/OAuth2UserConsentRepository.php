@@ -49,7 +49,7 @@ class OAuth2UserConsentRepository extends ServiceEntityRepository
     //        return $this->createQueryBuilder('o')
     //            ->andWhere('o.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('o.id', 'ASC')
+    //            ->orderBy('o.id', \SortDirection::Ascending)
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()

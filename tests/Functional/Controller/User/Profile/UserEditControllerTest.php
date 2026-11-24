@@ -11,14 +11,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class UserEditControllerTest extends WebTestCase
 {
-    public string $kibbyPath;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->kibbyPath = \dirname(__FILE__, 5).'/assets/kibby_emoji.png';
-    }
-
     public function testUserCanSeeSettingsLink(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -104,7 +96,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertStringContainsString('/dev/random', $user->avatar->filePath);
 
         $form = $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form();
-        $form['user_basic[avatar]']->upload($this->kibbyPath);
+        $form['user_basic[avatar]']->upload($this->getKibbyImageUpload()->getPathname());
         $this->client->submit($form);
 
         $user = $repository->find($user->getId());
@@ -123,7 +115,7 @@ class UserEditControllerTest extends WebTestCase
         $this->assertNull($user->cover);
 
         $form = $crawler->filter('#main form[name=user_basic]')->selectButton('Save')->form();
-        $form['user_basic[cover]']->upload($this->kibbyPath);
+        $form['user_basic[cover]']->upload($this->getKibbyImageUpload()->getPathname());
         $this->client->submit($form);
 
         $user = $repository->find($user->getId());

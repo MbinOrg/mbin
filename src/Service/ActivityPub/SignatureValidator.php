@@ -180,7 +180,9 @@ readonly class SignatureValidator
 
         $verified = openssl_verify($signingString, base64_decode($signature['signature']), $pkey, OPENSSL_ALGO_SHA256);
 
-        if (!$verified) {
+        // openssl_verify() returns 1 for a valid signature, 0 for an invalid signature, and -1 on error.
+        // -1 is truthy, so a loose "!$verified" check would treat an errored verification as valid.
+        if (1 !== $verified) {
             throw new InvalidApSignatureException('Signature of request could not be verified.');
         }
 

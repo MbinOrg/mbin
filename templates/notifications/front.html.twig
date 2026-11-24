@@ -5,8 +5,6 @@
     {{- 'notifications'|trans }} - {{ parent() -}}
 {%- endblock -%}
 
-{% block mainClass %}page-notifications{% endblock %}
-
 {% block header_nav %}
 {% endblock %}
 
@@ -46,7 +44,7 @@
     </div>
 
     {% for notification in notifications %}
-        <div class="{{ html_classes('section section--small notification', {'opacity-50': notification.status is not same as 'new' }) }}">
+        <div data-notification-id="{{ notification.id }}" data-notification-status="{{ notification.status }}" class="{{ html_classes('section section--small flex gap-2 justify-between', {'opacity-50': notification.status is not same as 'new' }) }}">
             <div>
                 {%- with {
                     notification: notification,

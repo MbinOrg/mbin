@@ -9,6 +9,7 @@ use App\DTO\MessageDto;
 use App\Entity\Message;
 use App\Entity\MessageThread;
 use App\Factory\MessageFactory;
+use App\Utils\Polyfills;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class MessageBaseApi extends BaseApi
@@ -44,11 +45,11 @@ class MessageBaseApi extends BaseApi
      *
      * @param MessageThread $thread The thread to serialize
      *
-     * @return array An associative array representation of the message's safe fields, to be used as JSON
+     * @return \App\DTO\MessageThreadResponseDto
      */
     protected function serializeMessageThread(MessageThread $thread)
     {
-        $depth = $this->constrainPerPage($this->request->getCurrentRequest()->get('d', self::REPLY_DEPTH), self::MIN_REPLY_DEPTH, self::MAX_REPLY_DEPTH);
+        $depth = $this->constrainPerPage(Polyfills::requestParam($this->request->getCurrentRequest(), 'd', self::REPLY_DEPTH), self::MIN_REPLY_DEPTH, self::MAX_REPLY_DEPTH);
         $response = $this->messageFactory->createThreadResponseDto($thread, $depth);
 
         return $response;

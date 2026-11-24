@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\User\Profile;
 
 use App\Controller\AbstractController;
+use App\Entity\InstanceBlock;
 use App\Repository\DomainRepository;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\MagazineRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +54,26 @@ class UserBlockController extends AbstractController
             [
                 'user' => $user,
                 'domains' => $repository->findBlockedDomains($this->getPageNb($request), $user),
+            ]
+        );
+    }
+
+    #[IsGranted('ROLE_USER')]
+    public function instances(InstanceBlockRepository $repository, Request $request): Response
+    {
+        $user = $this->getUserOrThrow();
+
+        $blocks = $repository->findBlocksForUser($user);
+        $instances = array_map(function (InstanceBlock $block) {
+            return $block->instance;
+        }, $blocks);
+
+        return $this->render(
+            'user/settings/block_instances.html.twig',
+            [
+                'user' => $user,
+                'blocks' => $blocks,
+                'instances' => $instances,
             ]
         );
     }

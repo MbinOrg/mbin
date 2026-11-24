@@ -53,8 +53,6 @@ Read more below about AMQProxy.
 
 ## What is AMQProxy?
 
-AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol) most used with message brokers like RabbitMQ. It allows for channel pooling and reusing, hence reducing the AMQP protocol (TCP packages) overhead.
-
 AMQProxy is a proxy service for AMQP (Advanced Message Queuing Protocol), most often used with message brokers like RabbitMQ. It allows for channel pooling and reuse, significantly reducing AMQP protocol overhead and TCP connection.  
 By maintaining persistent connections to the broker, AMQProxy minimizes connection setup latency and resource consumption, improving throughput and scalability for high-load applications. It also simplifies client configuration and load balancing by acting as a single entry point between multiple clients and one (or more) RabbitMQ instances.
 
@@ -187,7 +185,7 @@ Followed by restarting the services that are depending on the (new) configuratio
 
 ```bash
 # Clear PHP Opcache by restarting the PHP FPM service
-sudo systemctl restart php8.4-fpm.service
+sudo systemctl restart php8.5-fpm.service
 
 # Restarting the PHP messenger jobs and Mercure service (also reread the latest configuration)
 sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl restart all

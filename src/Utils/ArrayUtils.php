@@ -42,4 +42,34 @@ class ArrayUtils
 
         return $result;
     }
+
+    public static function filter(iterable $arr, callable $callback, int $mode = 0): array
+    {
+        if ('array' !== \gettype($arr)) {
+            $arr = iterator_to_array($arr);
+        }
+        /** @var array $arr */
+        return array_filter($arr, $callback, $mode);
+    }
+
+    public static function map(iterable $arr, callable $callback): array
+    {
+        if ('array' !== \gettype($arr)) {
+            $arr = iterator_to_array($arr);
+        }
+        /** @var array $arr */
+        return array_map($callback, $arr);
+    }
+
+    public static function foreach(iterable $arr, callable $callback): void
+    {
+        foreach ($arr as $item) {
+            $callback($item);
+        }
+    }
+
+    public static function count(iterable $arr): int
+    {
+        return iterator_count($arr);
+    }
 }

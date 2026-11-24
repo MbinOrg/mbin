@@ -50,6 +50,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Repository\ImageRepository;
+use App\Repository\InstanceBlockRepository;
 use App\Repository\InstanceRepository;
 use App\Repository\NotificationSettingsRepository;
 use App\Repository\OAuth2ClientAccessRepository;
@@ -66,6 +67,7 @@ use App\Service\IpResolver;
 use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
@@ -74,6 +76,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -126,6 +129,7 @@ class BaseApi extends AbstractController
         protected readonly UserFactory $userFactory,
         protected readonly ReputationRepository $reputationRepository,
         protected readonly InstanceRepository $instanceRepository,
+        protected readonly InstanceBlockRepository $instanceBlockRepository,
         protected readonly InstanceManager $instanceManager,
         protected readonly TranslatorInterface $translator,
     ) {
@@ -194,7 +198,7 @@ class BaseApi extends AbstractController
             $access = new OAuth2ClientAccess();
             $access->setClient($client);
             $access->setCreatedAt(new \DateTimeImmutable());
-            $access->setPath($this->request->getCurrentRequest()->get('_route'));
+            $access->setPath(Polyfills::requestParam($this->request->getCurrentRequest(), '_route'));
             $this->clientAccessRepository->save($access, flush: true);
         }
     }
@@ -245,7 +249,7 @@ class BaseApi extends AbstractController
         ];
     }
 
-    public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): mixed
+    public function serializeContentInterface(ContentInterface $content, bool $forceVisible = false): array
     {
         $toReturn = null;
         if ($content instanceof Entry) {
@@ -355,16 +359,21 @@ class BaseApi extends AbstractController
         return self::constrainPerPage($value, $min, $max);
     }
 
+    public function getPerPage(Request $request, int $default): int
+    {
+        return self::constrainPerPage(Polyfills::requestParam($request, 'perPage', $default));
+    }
+
     public function handleLanguageCriteria(Criteria $criteria): void
     {
-        $usePreferred = filter_var($this->request->getCurrentRequest()->get('usePreferredLangs', false), FILTER_VALIDATE_BOOL);
+        $usePreferred = filter_var(Polyfills::requestParam($this->request->getCurrentRequest(), 'usePreferredLangs', false), FILTER_VALIDATE_BOOL);
 
         if ($usePreferred && null === $this->getUser()) {
             // Debating between AccessDenied and BadRequest exceptions for this
             throw new AccessDeniedHttpException('You must be logged in to use your preferred languages');
         }
 
-        $languages = $usePreferred ? $this->getUserOrThrow()->preferredLanguages : $this->request->getCurrentRequest()->get('lang');
+        $languages = $usePreferred ? $this->getUserOrThrow()->preferredLanguages : Polyfills::requestParam($this->request->getCurrentRequest(), 'lang');
         if (null !== $languages) {
             if (\is_string($languages)) {
                 $languages = explode(',', $languages);
@@ -420,7 +429,7 @@ class BaseApi extends AbstractController
                 throw new BadRequestHttpException('Failed to create file');
             }
 
-            $image->altText = $this->request->getCurrentRequest()->get('alt', null);
+            $image->altText = Polyfills::requestParam($this->request->getCurrentRequest(), 'alt', null);
         } catch (\Exception $e) {
             if (null !== $uploaded && file_exists($uploaded->getPathname())) {
                 unlink($uploaded->getPathname());

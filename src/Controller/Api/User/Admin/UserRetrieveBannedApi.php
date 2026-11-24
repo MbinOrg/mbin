@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Repository\UserRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -93,12 +94,12 @@ class UserRetrieveBannedApi extends UserBaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $request = $this->request->getCurrentRequest();
-        $group = $request->get('group', UserRepository::USERS_ALL);
+        $group = Polyfills::requestParam($request, 'group', UserRepository::USERS_ALL);
 
         $users = $userRepository->findBannedPaginated(
             $this->getPageNb($request),
             $group,
-            $this->constrainPerPage($request->get('perPage', UserRepository::PER_PAGE))
+            $this->constrainPerPage(Polyfills::requestParam($request, 'perPage', UserRepository::PER_PAGE))
         );
 
         $dtos = [];

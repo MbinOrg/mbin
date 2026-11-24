@@ -13,6 +13,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
 use App\Repository\Criteria as MbinCriteria;
@@ -22,6 +23,7 @@ use App\Utils\DownvotesMode;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -37,6 +39,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['up_votes'], name: 'entry_comment_up_votes_idx')]
 #[Index(columns: ['last_active'], name: 'entry_comment_last_active_at_idx')]
 #[Index(columns: ['created_at'], name: 'entry_comment_created_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'entry_comment_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'entry_comment_body_ts_idx')]
 class EntryComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -47,6 +50,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'entryComments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -78,13 +82,13 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
     public ?\DateTime $lastActive = null;
     #[Column(type: 'string', nullable: true)]
     public ?string $ip = null;
-    #[Column(type: 'json', nullable: true)]
+    #[Column(type: Types::JSONB, nullable: true)]
     public ?array $mentions = null;
     #[OneToMany(mappedBy: 'parent', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $children;
     #[OneToMany(mappedBy: 'root', targetEntity: EntryComment::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $nested;
     #[OneToMany(mappedBy: 'comment', targetEntity: EntryCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
@@ -120,6 +124,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
 
         if ($parent) {
             $this->root = $parent->root ?? $parent;
@@ -127,6 +132,9 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        /* @psalm-suppress UninitializedProperty */
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
@@ -150,26 +158,28 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         return $this->apId;
     }
 
-    public function addVote(Vote $vote): self
+    #[\Override]
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryCommentVote::class);
+        Assert::isInstanceOf($votable, EntryCommentVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->setComment($this);
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->setComment($this);
         }
 
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    #[\Override]
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, EntryCommentVote::class);
+        Assert::isInstanceOf($votable, EntryCommentVote::class);
 
-        if ($this->votes->removeElement($vote)) {
+        if ($this->votes->removeElement($votable)) {
             // set the owning side to null (unless already changed)
-            if ($vote->comment === $this) {
-                $vote->setComment(null);
+            if ($votable->comment === $this) {
+                $votable->setComment(null);
             }
         }
 
@@ -316,7 +326,7 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (EntryComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
+            ->filter(fn (EntryComment $comment) => $comment->canShow($loggedInUser, $filterRealm, $entryCommentCriteria))
             ->toArray();
 
         switch ($entryCommentCriteria->sortOption) {
@@ -347,5 +357,30 @@ class EntryComment implements VotableInterface, VisibilityInterface, ReportInter
         }
 
         return $children;
+    }
+
+    public function canShow(?User $user, string $filterRealm, MbinCriteria $criteria): bool
+    {
+        if ($user === $this->user) {
+            return true;
+        }
+
+        if ($criteria->moderated && null !== $user
+            && ($user->isAdmin() || $user->isModerator() || $this->magazine->userIsModerator($user))) {
+            return true;
+        }
+
+        if ($this->containsBannedHashtags()) {
+            return false;
+        }
+
+        if ($user) {
+            $blockedInstances = $user->blockedInstances->map(fn ($instance) => $instance->instanceDomain);
+            return !$this->containsFilteredWords($user, $filterRealm)
+                && !$blockedInstances->contains($this->user->apDomain)
+                && !$blockedInstances->contains($this->magazine->apDomain);
+        }
+
+        return true;
     }
 }

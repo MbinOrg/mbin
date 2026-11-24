@@ -30,6 +30,7 @@ class SettingsManager
         private readonly KernelInterface $kernel,
         private readonly InstanceRepository $instanceRepository,
         private readonly string $kbinDomain,
+        private readonly string $kbinStorageUrl,
         private readonly string $kbinTitle,
         private readonly string $kbinMetaTitle,
         private readonly string $kbinMetaDescription,
@@ -51,6 +52,7 @@ class SettingsManager
         private readonly bool $mbinNewUsersNeedApproval,
         private readonly LoggerInterface $logger,
         private readonly bool $mbinUseFederationAllowList,
+        private readonly string $mbinSearchLang,
     ) {
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
             $results = $this->repository->findAll();
@@ -101,6 +103,8 @@ class SettingsManager
                 $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
                 $newUsersNeedApprovalEdited,
                 $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
+                $this->find($results, 'MBIN_FEED_ALLOW_ENTRY_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
+                $this->find($results, 'MBIN_FEED_ALLOW_POST_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
             );
             $this->instanceDto = $dto;
         } else {
@@ -162,7 +166,17 @@ class SettingsManager
     #[Pure]
     public function isLocalUrl(string $url): bool
     {
-        return parse_url($url, PHP_URL_HOST) === $this->get('KBIN_DOMAIN');
+        $prefix = $this->get('KBIN_DOMAIN');
+        if (!str_starts_with($prefix, 'https://') && !str_starts_with($prefix, 'http://')) {
+            $prefix = 'https://'.$prefix;
+        }
+        return str_starts_with($url, $prefix);
+    }
+
+    #[Pure]
+    public function isLocalMediaUrl(string $url): bool
+    {
+        return str_starts_with($url, $this->kbinStorageUrl);
     }
 
     /**
@@ -258,6 +272,11 @@ class SettingsManager
         $megaBytes = round($bytes / pow(1000, 2), 2);
 
         return $megaBytes.' MB';
+    }
+
+    public function getSearchLang(): string
+    {
+        return $this->mbinSearchLang;
     }
 
     /**

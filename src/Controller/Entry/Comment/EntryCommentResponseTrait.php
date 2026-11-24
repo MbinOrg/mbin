@@ -50,7 +50,7 @@ trait EntryCommentResponseTrait
             [
                 'id' => $comment->getId(),
                 'html' => $this->renderView(
-                    'components/_ajax.html.twig',
+                    'ajax/component.html.twig',
                     [
                         'component' => 'entry_comment',
                         'attributes' => [

@@ -32,7 +32,7 @@ class MagazineOwnershipRequestRepository extends ServiceEntityRepository
     public function findAllPaginated(?int $page): PagerfantaInterface
     {
         $qb = $this->createQueryBuilder('r')
-            ->orderBy('r.createdAt', 'ASC');
+            ->orderBy('r.createdAt', \SortDirection::Ascending);
 
         $pagerfanta = new Pagerfanta(
             new QueryAdapter(

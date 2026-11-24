@@ -33,7 +33,7 @@ class NewSignupNotification extends Notification
         $message = str_replace('%u%', $this->newUser->username, $trans->trans('notification_body_new_signup', locale: $locale));
         $title = $trans->trans('notification_title_new_signup', locale: $locale);
         $url = $urlGenerator->generate('user_overview', ['username' => $this->newUser->username]);
-        $slash = $this->newUser->avatar && !str_starts_with('/', $this->newUser->avatar->filePath) ? '/' : '';
+        $slash = $this->newUser->avatar && !str_starts_with($this->newUser->avatar->filePath, '/') ? '/' : '';
         $avatarUrl = $this->newUser->avatar ? '/media/cache/resolve/avatar_thumb'.$slash.$this->newUser->avatar->filePath : null;
 
         return new PushNotification($this->getId(), $message, $title, actionUrl: $url, avatarUrl: $avatarUrl);

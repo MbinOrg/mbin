@@ -187,7 +187,7 @@ class UserContentApi extends UserBaseApi
         }
     }
 
-    private function serializeResults(array $results): array
+    private function serializeResults(iterable $results): array
     {
         $result = [];
         foreach ($results as $item) {

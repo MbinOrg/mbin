@@ -8,7 +8,7 @@ use App\Tests\WebTestCase;
 
 class InstanceSettingsRetrieveApiTest extends WebTestCase
 {
-    public const INSTANCE_SETTINGS_RESPONSE_KEYS = [
+    public const array INSTANCE_SETTINGS_RESPONSE_KEYS = [
         'KBIN_DOMAIN',
         'KBIN_TITLE',
         'KBIN_META_TITLE',
@@ -37,6 +37,8 @@ class InstanceSettingsRetrieveApiTest extends WebTestCase
         'MBIN_SSO_SHOW_FIRST',
         'MBIN_NEW_USERS_NEED_APPROVAL',
         'MBIN_USE_FEDERATION_ALLOW_LIST',
+        'MBIN_FEED_ALLOW_ENTRY_COMMENTS',
+        'MBIN_FEED_ALLOW_POST_COMMENTS',
     ];
 
     public function testApiCannotRetrieveInstanceSettingsAnonymous(): void

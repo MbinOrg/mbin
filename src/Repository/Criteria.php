@@ -121,6 +121,9 @@ abstract class Criteria
     /** @var int[]|null */
     public ?array $cachedUserBlockedDomains = null;
 
+    /** @var string[]|null */
+    public ?array $cachedUserBlockedInstances = null;
+
     public const THEME_MBIN = 'mbin';
     public const THEME_KBIN = 'kbin';
     public const THEME_AUTO = 'default';
@@ -224,7 +227,7 @@ abstract class Criteria
         return $routes[$value] ?? $routes['hot'];
     }
 
-    // resolveTime() converts our internal values into ones for human presenation
+    // resolveTime() converts our internal values into ones for human presentation
     // $reverse = true indicates converting back, from human values to internal ones
 
     // This whole approach is a mess; this translation layer is temporary until
@@ -255,7 +258,7 @@ abstract class Criteria
 
             return $reversedRoutes[$value] ?? '∞';
         } else {
-            return $routes[$value] ?? null;
+            return $routes[$value ?? ''] ?? null;
         }
     }
 
@@ -360,5 +363,6 @@ abstract class Criteria
         $this->cachedUserBlocks = $sqlHelpers->getCachedUserBlocks($loggedInUser);
         $this->cachedUserBlockedDomains = $sqlHelpers->getCachedUserDomainBlocks($loggedInUser);
         $this->cachedUserBlockedMagazines = $sqlHelpers->getCachedUserMagazineBlocks($loggedInUser);
+        $this->cachedUserBlockedInstances = $sqlHelpers->getCachedUserInstanceBlocks($loggedInUser);
     }
 }

@@ -166,8 +166,8 @@ class ActivityRepository extends ServiceEntityRepository
             ->setParameter('visible', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('user', $user)
             ->setParameter('types', ['Create', 'Announce'])
-            ->orderBy('a.createdAt', 'DESC')
-            ->addOrderBy('a.uuid', 'DESC');
+            ->orderBy('a.createdAt', \SortDirection::Descending)
+            ->addOrderBy('a.uuid', \SortDirection::Descending);
 
         return new Pagerfanta(new QueryAdapter($qb));
     }

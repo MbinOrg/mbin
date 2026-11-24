@@ -7,7 +7,7 @@ namespace App\Controller\ActivityPub;
 use App\Controller\AbstractController;
 use App\Entity\Report;
 use App\Factory\ActivityPub\FlagFactory;
-use GraphQL\Exception\ArgumentException;
+use App\Service\ActivityPub\ActivityJsonBuilder;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +17,7 @@ class ReportController extends AbstractController
 {
     public function __construct(
         private readonly FlagFactory $factory,
+        private readonly ActivityJsonBuilder $activityJsonBuilder,
     ) {
     }
 
@@ -26,10 +27,11 @@ class ReportController extends AbstractController
         Request $request,
     ): Response {
         if (!$report) {
-            throw new ArgumentException('there is no such report');
+            throw new \InvalidArgumentException('there is no such report');
         }
 
-        $json = $this->factory->build($report, $this->factory->getPublicUrl($report->getSubject()));
+        $activity = $this->factory->build($report);
+        $json = $this->activityJsonBuilder->buildActivityJson($activity);
 
         $response = new JsonResponse($json);
         $response->headers->set('Content-Type', 'application/activity+json');

@@ -44,6 +44,7 @@ class EntryFrontController extends AbstractController
         ?string $type,
         Request $request,
         #[MapQueryParameter] ?string $cursor = null,
+        #[MapQueryParameter] ?string $cursor2 = null,
     ): Response {
         $user = $this->getUser();
 
@@ -64,7 +65,9 @@ class EntryFrontController extends AbstractController
             $criteria->fetchCachedItems($this->sqlHelpers, $user);
         }
 
-        $entities = $this->contentRepository->findByCriteriaCursored($criteria, $this->getCursorByCriteria($criteria->sortOption, $cursor));
+        $cursorValue = $this->getCursorByCriteria($criteria->sortOption, $cursor);
+        $cursor2Value = $cursor2 ? $this->getCursorByCriteria(Criteria::SORT_NEW, $cursor2) : null;
+        $entities = $this->contentRepository->findByCriteriaCursored($criteria, $cursorValue, $cursor2Value);
         $templatePath = 'content/';
         $dataKey = 'results';
 
@@ -175,7 +178,7 @@ class EntryFrontController extends AbstractController
     private function createCriteria(string $content, Request $request, ?User $user): Criteria
     {
         if ('default' === $content) {
-            $content = $user?->frontDefaultContent ?? 'threads';
+            $content = $user?->frontDefaultContent?->value ?? 'threads';
         }
 
         if ('threads' === $content || 'combined' === $content) {

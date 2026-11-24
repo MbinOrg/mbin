@@ -18,5 +18,11 @@
                 {{ 'domains'|trans }}
             </a>
         </li>
+        <li>
+            <a href="{{ path('user_settings_instance_blocks') }}"
+               class="{{ html_classes({'active': is_route_name('user_settings_instance_blocks')}) }}">
+                {{ 'instances'|trans }}
+            </a>
+        </li>
     </menu>
 </div>

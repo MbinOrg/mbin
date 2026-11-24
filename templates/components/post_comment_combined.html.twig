@@ -31,17 +31,18 @@
                 {% set hasLang = comment.lang is not same as app.request.locale and comment.lang is not same as kbin_default_lang() %}
                 {% set isModDeleted = comment.visibility is same as 'trashed' %}
                 {% set isUserDeleted = comment.visibility is same as 'soft_deleted' %}
-                {% set needsHeader = (hasTitle and (isAdult or hasLang)) or isModDeleted or isUserDeleted %}
 
-                <header {% if not needsHeader %} style="margin: 0 0 var(--kbin-entry-element-spacing) 0;" {% endif %}>
+                <header>
                     {% if hasTitle %}
-                        <h2>
+                        <small>
                             {% if isAdult %}<small class="badge danger">18+</small>{% endif %}
 
                             {% if hasLang %}
                                 <small class="badge-lang kbin-bg">{{ comment.lang|language_name }}</small>
                             {% endif %}
-                        </h2>
+
+                            {% include 'post/comment/context.html.twig' %}
+                        </small>
                     {% elseif isModDeleted %}
                         <p class="text-muted">&lsqb;<i>{{ 'deleted_by_moderator'|trans }}</i>&rsqb;</p>
                     {% elseif isUserDeleted %}
@@ -49,6 +50,7 @@
                     {% endif %}
                 </header>
             {% endwith %}
+
             {% if comment.visibility in ['visible', 'private'] or (comment.visibility is same as 'trashed' and this.canSeeTrashed) %}
                 {% if comment.body %}
                     <div class="content short-desc">
@@ -56,6 +58,7 @@
                     </div>
                 {% endif %}
             {% endif %}
+
             <aside class="meta entry__meta">
                 <span>{{ component('user_inline', {user: comment.user, showAvatar: SHOW_USER_AVATARS is same as V_TRUE, showNewIcon: true, fullName: SHOW_USER_FULLNAME is same as V_TRUE}) -}}</span>
 
@@ -68,10 +71,12 @@
                 {% elseif comment.user.moderator() %}
                     <span class="user-badge">{{ 'user_badge_global_moderator'|trans }}</span>
                 {% endif %}
+
                 <span>, </span>
                 <span>{{ component('date', {date: comment.createdAt}) }}</span>
                 <span>{{ component('date_edited', {createdAt: comment.createdAt, editedAt: comment.editedAt}) }}</span>
             </aside>
+
             {% if SHOW_THUMBNAILS is same as V_TRUE %}
                 {% if comment.image %}
                     {{ include('components/_figure_entry.html.twig', {entry: comment, type: 'image'}) }}
@@ -90,13 +95,14 @@
                 }) }}
             {% endif %}
             <aside class="entry__preview hidden" data-preview-target="container"></aside>
+
             <footer>
                 {% if comment.visibility in ['visible', 'private'] %}
                     <menu>
                         <li class="meta-link">
-                                <span aria-label="{{ 'comment'|trans }}">
-                                    <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
-                                </span>
+                            <span aria-label="{{ 'comment'|trans }}">
+                                <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                            </span>
                         </li>
 
                         {% if comment.image %}
@@ -165,6 +171,9 @@
                         </li>
                     </menu>
                 {% endif %}
+
+                {{ include('widget/boosted_by.html.twig', {subject: comment}) }}
+
                 <div data-subject-target="container" class="js-container">
                 </div>
             </footer>

@@ -203,6 +203,8 @@
                             </div>
                         </li>
                     </menu>
+
+                    {{ include('widget/boosted_by.html.twig', {subject: entry}) }}
                 {% elseif (entry.visibility is same as 'trashed' and this.canSeeTrashed) %}
                     <menu>
                         <li>

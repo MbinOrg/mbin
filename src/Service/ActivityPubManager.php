@@ -18,6 +18,7 @@ use App\Entity\Moderator;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Exception\InstanceBannedException;
 use App\Exception\InvalidApPostException;
 use App\Exception\InvalidWebfingerException;
@@ -45,6 +46,7 @@ use League\HTMLToMarkdown\HtmlConverter;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Exception\CacheException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -71,6 +73,7 @@ class ActivityPubManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageBusInterface $bus,
         private readonly LoggerInterface $logger,
+       #[Target('apUpdateActorLimiter')]
         private readonly RateLimiterFactoryInterface $apUpdateActorLimiter,
         private readonly EntryRepository $entryRepository,
         private readonly EntryManager $entryManager,
@@ -396,7 +399,7 @@ class ActivityPubManager
         // Check if actor isn't empty (not set/null/empty array/etc.)
         if (isset($actor['endpoints']['sharedInbox']) || isset($actor['inbox'])) {
             // Update the following user columns
-            $user->type = $actor['type'] ?? 'Person';
+            $user->type = EUserType::getFromString($actor['type']) ?? EUserType::Person;
             $user->apInboxUrl = $actor['endpoints']['sharedInbox'] ?? $actor['inbox'];
             $user->apDomain = parse_url($actor['id'], PHP_URL_HOST);
             if ($actor['preferredUsername']) {
@@ -413,26 +416,7 @@ class ActivityPubManager
             $user->apDiscoverable = $actor['discoverable'] ?? null;
             $user->apIndexable = $actor['indexable'] ?? null;
             $user->apManuallyApprovesFollowers = $actor['manuallyApprovesFollowers'] ?? false;
-            $actorUrlValue = $actor['url'] ?? $actorUrl;
-            if (\is_array($actorUrlValue)) {
-                // Pick the link with the fewest path segments as the most canonical profile URL.
-                // Fall back to $actorUrl if no valid href is found.
-                $best = null;
-                $bestCount = PHP_INT_MAX;
-                foreach ($actorUrlValue as $link) {
-                    $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
-                    if (null === $href) {
-                        continue;
-                    }
-                    $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
-                    if ($pathSegments < $bestCount) {
-                        $bestCount = $pathSegments;
-                        $best = $href;
-                    }
-                }
-                $actorUrlValue = $best ?? $actorUrl;
-            }
-            $user->apPublicUrl = \is_string($actorUrlValue) ? $actorUrlValue : $actorUrl;
+            $user->apPublicUrl = $this->findBestActorUrl($actorUrl, $actor['url'] ?? null);
             $user->apDeletedAt = null;
             $user->apTimeoutAt = null;
             $user->apFetchedAt = new \DateTime();
@@ -524,34 +508,71 @@ class ActivityPubManager
         return null;
     }
 
-    public function handleImages(array $attachment): ?Image
+    public function handleImages(array|string $attachment): ?Image
     {
+        if (\is_string($attachment)) {
+            if (!filter_var($attachment, FILTER_VALIDATE_URL)) {
+                return null;
+            }
+
+            $path = parse_url($attachment, PHP_URL_PATH);
+            $query = parse_url($attachment, PHP_URL_QUERY) ?? '';
+            $attachment = [
+                [
+                    'url' => $attachment,
+                    'type' => 'Image',
+                ],
+            ];
+
+            if (null === $path) {
+                return null;
+            }
+
+            if (str_contains($path, 'jpg') || str_contains($path, 'jpeg') || str_contains($query, 'jpg') || str_contains($query, 'jpeg')) {
+                $attachment[0]['mediaType'] = 'image/jpeg';
+            } elseif (str_contains($path, 'png') || str_contains($query, 'png')) {
+                $attachment[0]['mediaType'] = 'image/png';
+            }
+        }
+
         $images = array_filter(
             $attachment,
             fn ($val) => $this->isImageAttachment($val)
         ); // @todo multiple images
 
         if (\count($images)) {
+            $persistingImage = false;
             try {
                 $imageObject = $images[array_key_first($images)];
                 if (isset($imageObject['height'])) {
-                    // determine the highest resolution image
+                    // determine the highest resolution image for the same image (equality is ducktyped by comparing the alt text)
                     foreach ($images as $i) {
-                        if (isset($i['height']) && $i['height'] ?? 0 > $imageObject['height'] ?? 0) {
+                        if (isset($i['height']) && $i['height'] > ($imageObject['height'] ?? 0) && ($i['name'] ?? '') === ($imageObject['name'] ?? '')) {
                             $imageObject = $i;
                         }
                     }
                 }
+
                 if ($tempFile = $this->imageManager->download($imageObject['url'])) {
                     $image = $this->imageRepository->findOrCreateFromPath($tempFile);
                     $image->sourceUrl = $imageObject['url'];
                     if ($image && isset($imageObject['name'])) {
                         $image->altText = $imageObject['name'];
                     }
+
+                    $persistingImage = true;
                     $this->entityManager->persist($image);
                     $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
+                $this->logger->error('[ActivityPubManager::handleImages()] unable to store image: url = {url}, during persist = {fromDoctrine}', [
+                    'url' => null !== $imageObject ? $imageObject['url'] : '<no image obj>',
+                    'fromDoctrine' => $persistingImage,
+                ]);
+                if ($persistingImage) {
+                    // exceptions coming from doctrine have to be rethrown as the EntityManager will be closed on error
+                    throw $e;
+                }
                 return null;
             }
 
@@ -697,7 +718,7 @@ class ActivityPubManager
             $magazine->apFeaturedUrl = $actor['featured'] ?? null;
             $magazine->apPreferredUsername = $actor['preferredUsername'] ?? null;
             $magazine->apDiscoverable = $actor['discoverable'] ?? null;
-            $magazine->apPublicUrl = $actor['url'] ?? $actorUrl;
+            $magazine->apPublicUrl = $this->findBestActorUrl($actorUrl, $actor['url'] ?? null);
             $magazine->apDeletedAt = null;
             $magazine->apTimeoutAt = null;
             $magazine->apFetchedAt = new \DateTime();
@@ -937,7 +958,7 @@ class ActivityPubManager
                     \App\Utils\JsonldUtils::getArrayValue($activity, 'cc'),
                     \App\Utils\JsonldUtils::getArrayValue($activity, 'to'),
                 ),
-                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, $followersUrl, []])
+                fn ($val) => !\in_array($val, [ActivityPubActivityInterface::PUBLIC_URL, ActivityPubActivityInterface::PUBLIC_URL_NS, ActivityPubActivityInterface::PUBLIC_URL_SHORT, $followersUrl, []])
             )
         );
 
@@ -969,14 +990,12 @@ class ActivityPubManager
         return null;
     }
 
-    public function handleExternalImages(array $attachment): ?array
+    public function handleExternalImages(array $attachment, ?\App\DTO\ImageDto $consumedImage): ?array
     {
         $images = array_filter(
             $attachment,
-            fn ($val) => $this->isImageAttachment($val)
+            fn ($val) => $this->isImageAttachment($val) && !$this->describeSameImage($val, $consumedImage)
         );
-
-        array_shift($images);
 
         if (\count($images)) {
             return array_map(fn ($val) => (new ImageDto())->create(
@@ -993,7 +1012,7 @@ class ActivityPubManager
     {
         $videos = array_filter(
             $attachment,
-            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && VideoManager::isVideoUrl($val['url'])
+            fn ($val) => \in_array($val['type'], ['Document', 'Video']) && (VideoManager::isSupportedVideoMimeType($val['mediaType']) || VideoManager::isVideoUrl($val['url']))
         );
 
         if (\count($videos)) {
@@ -1076,7 +1095,7 @@ class ActivityPubManager
             $res = array_merge($res, array_map(fn ($item) => $item['id'], $groups));
         }
 
-        $res = array_filter($res, fn ($i) => null !== $i and ActivityPubActivityInterface::PUBLIC_URL !== $i);
+        $res = array_filter($res, fn ($i) => null !== $i && ActivityPubActivityInterface::PUBLIC_URL !== $i && ActivityPubActivityInterface::PUBLIC_URL_NS !== $i && ActivityPubActivityInterface::PUBLIC_URL_SHORT !== $i);
 
         return array_unique($res);
     }
@@ -1084,7 +1103,7 @@ class ActivityPubManager
     private function isImageAttachment(array $object): bool
     {
         // attachment object has acceptable object type
-        if (!\in_array($object['type'], ['Document', 'Image'])) {
+        if (!\in_array($object['type'], ['Document', 'Image']) || !isset($object['url']) || !\is_string($object['url'])) {
             return false;
         }
 
@@ -1093,6 +1112,21 @@ class ActivityPubManager
         // - image url looks like a link to image
         return (!empty($object['mediaType']) && ImageManager::isImageType($object['mediaType']))
             || ImageManager::isImageUrl($object['url']);
+    }
+
+    private function describeSameImage(array $imgA, ?\App\DTO\ImageDto $imgB): bool
+    {
+        if (null === $imgB) {
+            return false;
+        }
+
+        if ($imgA['url'] === $imgB->sourceUrl) {
+            return true;
+        }
+
+        $altTextA = $imgA['name'] ?? null;
+        $altTextB = $imgB->altText ?? null;
+        return null !== $altTextA && '' !== $altTextA && $altTextA === $altTextB;
     }
 
     /**
@@ -1229,7 +1263,7 @@ class ActivityPubManager
         } elseif (\is_array($attributedTo)) {
             $actors = array_filter($attributedTo, fn ($item) => \is_string($item) || (\is_array($item) && !empty($item['type']) && (!$filterForPerson || 'Person' === $item['type'])));
 
-            return array_map(fn ($item) => $item['id'], $actors);
+            return array_map(fn ($item) => \is_string($item) ? $item : $item['id'], $actors);
         }
 
         return [];
@@ -1304,5 +1338,38 @@ class ActivityPubManager
         }
 
         return null;
+    }
+
+    private function findBestActorUrl(string $actorUrl, mixed $actorUrlValue): string
+    {
+        if (null === $actorUrlValue) {
+            return $actorUrl;
+        }
+
+        if (\is_string($actorUrlValue)) {
+            return $actorUrlValue;
+        }
+
+        if (\is_array($actorUrlValue)) {
+            // Pick the link with the fewest path segments as the most canonical profile URL.
+            // Fall back to $actorUrl if no valid href is found.
+            $best = null;
+            $bestCount = PHP_INT_MAX;
+            foreach ($actorUrlValue as $link) {
+                $href = \is_array($link) ? ($link['href'] ?? null) : (string) $link;
+                if (null === $href) {
+                    continue;
+                }
+                $pathSegments = \count(array_filter(explode('/', parse_url($href, PHP_URL_PATH) ?? '')));
+                if ($pathSegments > 0 && $pathSegments < $bestCount) {
+                    $bestCount = $pathSegments;
+                    $best = $href;
+                }
+            }
+            return $best ?? $actorUrl;
+        }
+
+        $this->logger->warning('[ActivityPubManager::getEntityObject] got an actorUrlValue which was neither a string, array nor null: {o}', ['o' => $actorUrlValue]);
+        return $actorUrl;
     }
 }

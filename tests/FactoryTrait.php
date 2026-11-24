@@ -27,6 +27,7 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\Site;
 use App\Entity\User;
+use App\Enums\EUserType;
 use App\Service\UserManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -34,6 +35,8 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -84,7 +87,7 @@ trait FactoryTrait
         ];
     }
 
-    private function createUser(string $username, ?string $email = null, ?string $password = null, string $type = 'Person', $active = true, $hideAdult = true, $about = null, $addImage = true): User
+    private function createUser(string $username, ?string $email = null, ?string $password = null, EUserType $type = EUserType::Person, $active = true, $hideAdult = true, $about = null, $addImage = true): User
     {
         $user = new User($email ?: $username.'@example.com', $username, $password ?: 'secret', $type);
 
@@ -135,8 +138,10 @@ trait FactoryTrait
     {
         /** @var ClientManagerInterface $manager */
         $manager = self::getContainer()->get(ClientManagerInterface::class);
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = new NativePasswordHasher();
 
-        $client = new Client('/kbin Test Client', 'testclient', 'testsecret');
+        $client = new Client('/kbin Test Client', 'testclient', $hasher->hash('testsecret'));
         $client->setDescription('An OAuth2 client for testing purposes');
         $client->setContactEmail('test@kbin.test');
         $client->setScopes(...array_map(fn (string $scope) => new Scope($scope), OAuth2ClientDto::AVAILABLE_SCOPES));
@@ -165,11 +170,12 @@ trait FactoryTrait
     {
         /** @var ClientManagerInterface $clientManager */
         $clientManager = self::getContainer()->get(ClientManagerInterface::class);
-
         /** @var UserManager $userManager */
         $userManager = self::getContainer()->get(UserManager::class);
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = new NativePasswordHasher();
 
-        $client = new Client('/kbin Test Client', 'testclient', 'testsecret');
+        $client = new Client('/kbin Test Client', 'testclient', $hasher->hash('testsecret'));
 
         $userDto = new UserDto();
         $userDto->username = 'test_bot';
@@ -609,26 +615,43 @@ trait FactoryTrait
         return $this->getKibbyImageVariantDto('_flipped');
     }
 
-    private function getKibbyImageVariantDto(string $suffix): ImageDto
+    public function getKibbyImageUpload(): UploadedFile
     {
-        $imageRepository = $this->imageRepository;
-        $imageFactory = $this->imageFactory;
+        return $this->getKibbyImageVariantUpload('');
+    }
 
-        if (!file_exists(\dirname($this->kibbyPath).'/copy')) {
-            if (!mkdir(\dirname($this->kibbyPath).'/copy')) {
+    public function getKibbyFlippedImageUpload(): UploadedFile
+    {
+        return $this->getKibbyImageVariantUpload('_flipped');
+    }
+
+    private function getKibbyImageVariantUpload(string $suffix): UploadedFile
+    {
+        if (!file_exists($this->imageUploadTmpDir)) {
+            if (!mkdir($this->imageUploadTmpDir)) {
                 throw new \Exception('The copy dir could not be created');
             }
         }
 
         // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = \dirname($this->kibbyPath).'/copy/'.bin2hex(random_bytes(32)).'.png';
+        $tmpPath = $this->imageUploadTmpDir.bin2hex(random_bytes(32)).'.png';
         $srcPath = \dirname($this->kibbyPath).'/'.basename($this->kibbyPath, '.png').$suffix.'.png';
         if (!file_exists($srcPath)) {
             throw new \Exception('For some reason the kibby image got deleted');
         }
         copy($srcPath, $tmpPath);
+
+        return new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png');
+    }
+
+    private function getKibbyImageVariantDto(string $suffix): ImageDto
+    {
+        $imageRepository = $this->imageRepository;
+        $imageFactory = $this->imageFactory;
+
+        $imgUpload = $this->getKibbyImageVariantUpload($suffix);
         /** @var Image $image */
-        $image = $imageRepository->findOrCreateFromUpload(new UploadedFile($tmpPath, 'kibby_emoji.png', 'image/png'));
+        $image = $imageRepository->findOrCreateFromUpload($imgUpload);
         self::assertNotNull($image);
         $image->altText = 'kibby';
         $this->entityManager->persist($image);

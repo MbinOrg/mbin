@@ -57,17 +57,22 @@ class UserFilterListApi extends UserBaseApi
     #[OA\Tag(name: 'user')]
     #[Security(name: 'oauth2', scopes: ['user:profile:edit'])]
     #[IsGranted('ROLE_OAUTH2_USER:PROFILE:EDIT')]
-    public function retrieve(): JsonResponse
-    {
+    public function retrieve(
+        RateLimiterFactoryInterface $apiReadLimiter,
+        RateLimiterFactoryInterface $anonymousApiReadLimiter,
+    ): JsonResponse {
+        $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
+
         $user = $this->getUserOrThrow();
         $items = [];
         foreach ($user->filterLists as $list) {
             $items[] = $this->serializeFilterList($list);
         }
 
-        return new JsonResponse([
-            'items' => $items,
-        ]);
+        return new JsonResponse(
+            ['items' => $items],
+            headers: $headers
+        );
     }
 
     #[OA\Response(

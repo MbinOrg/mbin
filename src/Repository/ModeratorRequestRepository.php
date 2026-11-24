@@ -34,7 +34,7 @@ class ModeratorRequestRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->where('r.magazine = :magazine')
-            ->orderBy('r.createdAt', 'ASC')
+            ->orderBy('r.createdAt', \SortDirection::Ascending)
             ->setParameter('magazine', $magazine);
 
         $pagerfanta = new Pagerfanta(

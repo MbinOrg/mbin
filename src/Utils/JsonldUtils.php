@@ -17,4 +17,19 @@ class JsonldUtils
 
         return [$object[$key]];
     }
+
+    public static function getApId(string|array $value): string
+    {
+        if (\is_string($value)) {
+            return $value;
+        } elseif (\is_array($value)) {
+            $value = $value['id'] ?? null;
+            if (!\is_string($value)) {
+                throw new \LogicException('JsonldUtils::getApId(): value is array but did not contain valid `id` element');
+            }
+            return $value;
+        } else {
+            throw new \LogicException('JsonldUtils::getApId(): value is neither a string nor an array');
+        }
+    }
 }

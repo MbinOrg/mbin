@@ -9,12 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 class PostCreateControllerTest extends WebTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->kibbyPath = \dirname(__FILE__, 4).'/assets/kibby_emoji.png';
-    }
-
     public function testUserCanCreatePost(): void
     {
         $this->client->loginUser($this->getUserByUsername('JohnDoe'));
@@ -48,7 +42,7 @@ class PostCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name=post]')->selectButton('Add post')->form();
         $form->get('post[body]')->setValue('test post 1');
-        $form->get('post[image]')->upload($this->kibbyPath);
+        $form->get('post[image]')->upload($this->getKibbyImageUpload()->getPathname());
         // Needed since we require this global to be set when validating entries but the client doesn't actually set it
         $_FILES = $form->getPhpFiles();
         $this->client->submit($form);

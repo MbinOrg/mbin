@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Image as MbinImage;
 use App\Exception\CorruptedFileException;
 use App\Exception\ImageDownloadTooLargeException;
+use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
@@ -18,6 +19,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Constraints\Image;
@@ -33,10 +35,12 @@ class ImageManager implements ImageManagerInterface
     ];
     public const string IMAGE_MIMETYPE_STR = 'image/jpeg, image/jpg, image/gif, image/png, image/jxl, image/heic, image/heif, image/webp, image/avif';
 
+    private readonly HttpClientInterface $httpClient;
+
     public function __construct(
         private readonly string $storageUrl,
+        #[Target('publicUploadsFilesystem')]
         private readonly FilesystemOperator $publicUploadsFilesystem,
-        private readonly HttpClientInterface $httpClient,
         private readonly MimeTypesInterface $mimeTypeGuesser,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -45,12 +49,18 @@ class ImageManager implements ImageManagerInterface
         private readonly float $imageCompressionQuality,
         private readonly CacheManager $imagineCacheManager,
         private readonly EntityManagerInterface $entityManager,
+        WwwHttpClientFactory $httpClientFactory,
     ) {
+        $this->httpClient = $httpClientFactory->getClient();
     }
 
     public static function isImageUrl(string $url): bool
     {
-        $urlExt = mb_strtolower(pathinfo($url, PATHINFO_EXTENSION));
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (!$urlPath) {
+            return false;
+        }
+        $urlExt = mb_strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         $types = array_map(fn ($type) => str_replace('image/', '', $type), self::IMAGE_MIMETYPES);
 
@@ -95,7 +105,7 @@ class ImageManager implements ImageManagerInterface
      */
     public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
     {
-        if (-1 === $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
+        if (-1 === (int) $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
             // don't compress images if disabled or smaller than max bytes
             return false;
         }
@@ -103,13 +113,14 @@ class ImageManager implements ImageManagerInterface
         $image = $imagine->open($filePath);
         $bytes = filesize($filePath);
         $initialBytes = $bytes;
+        $lastBytes = $bytes;
         $tempPath = "{$filePath}_temp_compress.$extension";
         $compressed = false;
         $quality = 0.9;
-        if (0.1 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
+        if (0.3 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
             $quality = $this->imageCompressionQuality;
         }
-        while ($bytes > $maxBytes && $quality > 0.1) {
+        while ($bytes > $maxBytes && $quality > 0.3) {
             $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100]);
             $image->save($tempPath, [
                 'jpeg_quality' => $quality * 100, // jpeg max value is 100
@@ -117,11 +128,12 @@ class ImageManager implements ImageManagerInterface
                 'webp_quality' => $quality * 100, // webp quality max is 100
             ]);
             $bytes = filesize($tempPath);
-            if ($initialBytes === $bytes) {
+            if ($lastBytes === $bytes) {
                 // there were no changes, so maybe it is in a format that cannot be compressed...
                 break;
             }
             $compressed = true;
+            $lastBytes = $bytes;
             $quality -= 0.05;
         }
         $copied = false;

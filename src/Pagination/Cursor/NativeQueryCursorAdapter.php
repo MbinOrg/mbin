@@ -94,6 +94,9 @@ class NativeQueryCursorAdapter implements CursorAdapterInterface
             $statement->bindValue('cursor2', $cursor2, SqlHelpers::getSqlType($cursor2));
         }
         $statement->bindValue('limit', $length);
+        if (str_contains($sql, ':innerLimit')) {
+            $statement->bindValue('innerLimit', $length * 3);
+        }
 
         return $this->transformer->transform($statement->executeQuery()->fetchAllAssociative());
     }

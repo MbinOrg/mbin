@@ -16,6 +16,7 @@ use App\Entity\PostComment;
 use App\Entity\User;
 use App\Exception\EntryLockedException;
 use App\Exception\InstanceBannedException;
+use App\Exception\InvalidApObjectException;
 use App\Exception\PostLockedException;
 use App\Exception\TagBannedException;
 use App\Exception\UserBannedException;
@@ -27,6 +28,7 @@ use App\Service\EntryCommentManager;
 use App\Service\PostCommentManager;
 use App\Service\PostManager;
 use App\Service\SettingsManager;
+use App\Utils\JsonldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -54,6 +56,7 @@ class Note extends ActivityPubContent
      * @throws InstanceBannedException
      * @throws EntryLockedException
      * @throws PostLockedException
+     * @throws InvalidApObjectException
      * @throws \Exception
      */
     public function create(array $object, ?array $root = null, bool $stickyIt = false): EntryComment|PostComment|Post
@@ -61,7 +64,11 @@ class Note extends ActivityPubContent
         // First try to find the activity object in the database
         $current = $this->repository->findByObjectId($object['id']);
         if ($current) {
-            return $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            $existing = $this->entityManager->getRepository($current['type'])->find((int) $current['id']);
+            if (!($existing instanceof EntryComment) && !($existing instanceof PostComment) && !($existing instanceof Post)) {
+                throw new InvalidApObjectException('[Note::create()] expected a Note type but DB contained '.\get_class($existing).' (the ID is likely not unique)', $object);
+            }
+            return $existing;
         }
         if ($this->settingsManager->isBannedInstance($object['id'])) {
             throw new InstanceBannedException();
@@ -79,6 +86,7 @@ class Note extends ActivityPubContent
 
         if (isset($object['inReplyTo']) && $replyTo = $object['inReplyTo']) {
             // Create post or entry comment
+            $replyTo = JsonldUtils::getApId($replyTo);
             $parentObjectId = $this->repository->findByObjectId($replyTo);
             $parent = $this->entityManager->getRepository($parentObjectId['type'])->find((int) $parentObjectId['id']);
 
@@ -140,7 +148,7 @@ class Note extends ActivityPubContent
                 throw new UserDeletedException();
             }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
-            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+            if ($media = $this->objectExtractor->getExternalMediaBody($object, $dto->image)) {
                 $dto->body .= $media;
             }
 
@@ -196,7 +204,7 @@ class Note extends ActivityPubContent
             }
 
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
-            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+            if ($media = $this->objectExtractor->getExternalMediaBody($object, $dto->image)) {
                 $dto->body .= $media;
             }
 
@@ -261,7 +269,7 @@ class Note extends ActivityPubContent
                 throw new UserDeletedException();
             }
             $dto->body = $this->objectExtractor->getMarkdownBody($object);
-            if ($media = $this->objectExtractor->getExternalMediaBody($object)) {
+            if ($media = $this->objectExtractor->getExternalMediaBody($object, $dto->image)) {
                 $dto->body .= $media;
             }
 

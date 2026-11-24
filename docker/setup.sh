@@ -126,7 +126,7 @@ EOF
 fi
 
 echo "Setting up storage directories..."
-mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs}
+mkdir -p storage/{caddy_config,caddy_data,media,messenger_logs,oauth,php_logs,postgres,rabbitmq_data,rabbitmq_logs,valkey}
 echo "Configuring OAuth2 keys..."
 openssl genrsa -des3 -out ./storage/oauth/private.pem -passout "pass:$OAUTH_PASS" 4096
 openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage/oauth/public.pem -passin "pass:$OAUTH_PASS"
@@ -134,3 +134,4 @@ openssl rsa -in ./storage/oauth/private.pem --outform PEM -pubout -out ./storage
 echo
 echo "Mbin environment setup complete!"
 echo "Please refer back to the documentation for finishing touches."
+echo "If you use rootless Podman, you have to run 'chmod 777 storage/* && chmod 666 storage/oauth/*'!"

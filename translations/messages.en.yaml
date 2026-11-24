@@ -249,6 +249,7 @@ solarized_auto: Solarized (Auto Detect)
 font_size: Font size
 size: Size
 boosts: Boosts
+boosted_by: Boosted by
 show_users_avatars: 'Show users’ avatars'
 yes: Yes
 no: No
@@ -305,6 +306,7 @@ mentioned_you: Mentioned you
 comment: Comment
 post: Post
 parent_post: Parent Post
+parent_entry: Parent Thread
 ban_expired: Ban expired
 ban_expires: Ban expires
 purge: Purge
@@ -1114,6 +1116,9 @@ combined: Combined
 sidebar_sections_random_local_only: Restrict "Random Threads/Posts" sidebar sections to local only
 sidebar_sections_users_local_only: Restrict "Active people" sidebar section to local only
 random_local_only_performance_warning: Enabling "Random local only" may cause SQL performance impact.
+feed_allow_entry_comments: Include comments of threads in Combined feed
+feed_allow_post_comments: Include comments of posts in Combined feed
+feed_allow_comments_hint: (might result in slow loading)
 discoverable: Discoverable
 user_discoverable_help: If this is enabled, your profile, threads, microblogs and comments can be found
   through search and the random panels. Your profile might also appear in the active user panel and on the people page.
@@ -1175,7 +1180,7 @@ monitoring_route_overview_description: This graph shows the summed milliseconds 
   being computed
 monitoring_duration_overall: Other
 monitoring_duration_query: Query
-monitoring_duration_twig_render: Twit Render
+monitoring_duration_twig_render: Twig Render
 monitoring_duration_curl_request: Curl Request
 monitoring_duration_sending_response: Sending Response
 monitoring_dont_format_query: don't format query
@@ -1226,3 +1231,14 @@ filter_lists_feeds_help: Filter words in threads, microblogs and comments in fee
 filter_lists_comments_help: Filter words while viewing a thread or microblog in the comment tree.
 filter_lists_profile_help: Filter words while viewing a users' profile in their content.
 expired: Expired
+block_unblock_instance: Block / Unblock Instance
+block_instance: Block Instance
+unblock_instance: Unblock Instance
+block_instance_globally_short: Block Globally
+block_instance_globally_long: Block Instance for all Users
+unblock_instance_globally_short: Unblock Globally
+unblock_instance_globally_long: Unblock Instance for all Users
+in_reply_to: in reply to
+original_image: Original image
+invisible_or_deleted: invisible or deleted
+malicious_embed: "Embedding content (warning: potentially malicious)"

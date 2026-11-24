@@ -1141,3 +1141,118 @@ confirm_defederation: Confirmar la desfederación
 flash_error_defederation_must_confirm: Tienes que confirmar la desfederación
 allowed_instances: Instancias permitidas
 btn_deny: Denegar
+displayname: Nombre para mostrar
+parent_post: Publicación superior
+posts_harmonize_combined: Usar disposición nueva en la vista combinada
+posts_harmonize_combined_help: Las publicaciones tendrán una disposición similar
+  a la de los hilos.
+show_boost_following_label: Mostrar contenido destacado en las vistas de 
+  microblog y combinada
+show_boost_following_help: Si esta opción está activada, los hilos, las 
+  publicaciones y los comentarios que usted o los usuarios a los que sigue 
+  hayáis destacado aparecerán en la vista combinada de sus suscripciones y en la
+  vista de microblog. Esto solo se aplicará cuando la ordenación esté 
+  configurada en «Más recientes».
+btn_allow: Permitir
+default_content_threads: Hilos
+default_content_microblog: Microblog
+combined: Combinada
+discoverable: Descubrible
+flash_thread_lock_success: Hilo bloqueado correctamente
+flash_thread_unlock_success: Hilo desbloqueado correctamente
+flash_post_lock_success: Microblog bloqueado correctamente
+flash_post_unlock_success: Microblog desbloqueado correctamente
+lock: Bloquear
+unlock: Desbloquear
+comments_locked: Los comentarios están bloqueados.
+magazine_log_entry_locked: bloqueó los comentarios de
+magazine_log_entry_unlocked: desbloqueó los comentarios de
+modlog_type_entry_lock: Hilo bloqueado
+modlog_type_entry_unlock: Hilo desbloqueado
+modlog_type_post_lock: Microblog bloqueado
+modlog_type_post_unlock: Microblog desbloqueado
+contentnotification.muted: Silenciar | no recibir notificaciones
+contentnotification.default: Predeterminado | se reciben notificaciones según 
+  conf. predeterminada
+contentnotification.loud: Ruidoso | se reciben todas las notificaciones
+indexable_by_search_engines: Indizable por buscadores
+user_indexable_by_search_engines_help: Si esta configuración está desactivada, 
+  se indica a los buscadores que no indicen ninguno de sus hilos ni microblogs; 
+  sin embargo, esto no afecta a sus comentarios y es posible que actores 
+  malintencionados lo ignoren. Esta configuración también se sincroniza con 
+  otros servidores.
+magazine_indexable_by_search_engines_help: Si esta configuración está 
+  desactivada, se indica a los buscadores que no indicen ninguno de los hilos ni
+  microblogs de esta revista. Esto incluye la página de inicio y todas las 
+  páginas de comentarios. Esta configuración también se sincroniza con otros 
+  servidores.
+magazine_name_as_tag: Usar el nombre de la revista como etiqueta
+magazine_name_as_tag_help: Las etiquetas de una revista se utilizan para asociar
+  las publicaciones de microblog a dicha revista. Por ejemplo, si el nombre es 
+  «fediverso» y las etiquetas de la revista contienen «fediverso», todas las 
+  publicaciones de microblog que incluyan «#fediverso» se incluirán en esta 
+  revista.
+magazine_rules_deprecated: el campo de reglas está en desuso y se eliminará en 
+  el futuro. Introduzca sus reglas en el cuadro de descripción.
+monitoring_duration_min: mín.
+monitoring_duration_max: máx.
+monitoring_query_count: recuento
+monitoring_query_total: total
+monitoring_duration: Duración
+monitoring_dont_group_similar: no agrupar consultas similares
+monitoring_group_similar: agrupar consultas similares
+monitoring_http_method: Método HTTP
+monitoring_url: URL
+monitoring_request_successful: Exitoso
+monitoring_user_type: Tipo de usuario
+monitoring_show_parameters: mostrar parámetros
+monitoring_dont_show_parameters: no mostrar parámetros
+monitoring_execution_type: Tipo de ejecución
+monitoring_request: Petición HTTP
+monitoring_anonymous: Anónimo
+monitoring_user: Usuario
+monitoring_activity_pub: ActivityPub
+monitoring_ajax: AJAX
+monitoring_duration_minimum: Duración mínima
+monitoring_submit: Filtro
+monitoring_has_exception: Tiene excepción
+monitoring_total_duration: Duración total
+monitoring_twig_compare_to_total: Comparar con duración total
+reached_end: Ha llegado al final
+first_page: Primera página
+next_page: Página siguiente
+previous_page: Página anterior
+filter_list_create: Crear lista de filtros
+filter_lists: Listas de filtros
+filter_lists_where_to_filter: Dónde aplicar el filtro
+filter_lists_filter_words: Palabras filtradas
+expiration_date: Fecha de caducidad
+filter_lists_filter_location: Activo en
+filter_lists_word_exact_match: Coincidencia exacta
+feeds: Suministros
+expired: Caducado
+default_content_combined: Hilos + microblog
+front_default_content: Vista predeterminada de página principal
+default_content_default: Predeterminada del servidor (hilos)
+random_local_only_performance_warning: Si se activa «Solo local aleatorio», el 
+  rendimiento de SQL podría verse afectado.
+sidebar_sections_random_local_only: Limitar secciones de la barra lateral 
+  «Hilos/publicaciones aleatorias» a contenido local únicamente
+sidebar_sections_users_local_only: Limitar sección de la barra lateral «Personas
+  activas» a contenido local únicamente
+monitoring_duration_query: Consulta
+monitoring_duration_curl_request: Petición de Curl
+monitoring_dont_format_query: no formatear consulta
+monitoring_format_query: formatear consulta
+monitoring_curl_requests: Peticiones de Curl
+user_discoverable_help: Si esta opción está activada, su perfil, hilos, 
+  microblogs y comentarios podrán encontrarse mediante la búsqueda y en los 
+  paneles Aleatorio. Su perfil también podría aparecer en el panel de usuarios 
+  activos y en la página de personas. Si esta opción está desactivada, sus 
+  publicaciones seguirán siendo visibles para otros usuarios, pero no aparecerán
+  en el suministro general.
+magazine_discoverable_help: Si esta opción está activada, esta revista, así como
+  sus hilos, microblogs y comentarios, podrán encontrarse mediante la búsqueda y
+  en los paneles Aleatorio. Si está desactivada, la revista seguirá apareciendo 
+  en la lista de revistas, pero los hilos y los microblogs no aparecerán en el 
+  suministro general.

@@ -13,6 +13,7 @@ use App\Repository\Criteria;
 use App\Repository\EntryCommentRepository;
 use App\Repository\EntryRepository;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -141,14 +142,14 @@ class DomainEntryCommentsRetrieveApi extends EntriesBaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiReadLimiter, $anonymousApiReadLimiter);
 
-        $criteria = new EntryCommentPageView((int) $request->getCurrentRequest()->get('p', 1), $security);
-        $criteria->sortOption = $request->getCurrentRequest()->get('sort', Criteria::SORT_HOT);
+        $criteria = new EntryCommentPageView((int) Polyfills::requestParam($request->getCurrentRequest(), 'p', 1), $security);
+        $criteria->sortOption = Polyfills::requestParam($request->getCurrentRequest(), 'sort', Criteria::SORT_HOT);
         $criteria->time = $criteria->resolveTime(
-            $request->getCurrentRequest()->get('time', Criteria::TIME_ALL)
+            Polyfills::requestParam($request->getCurrentRequest(), 'time', Criteria::TIME_ALL)
         );
         $this->handleLanguageCriteria($criteria);
 
-        $criteria->perPage = self::constrainPerPage($request->getCurrentRequest()->get('perPage', EntryRepository::PER_PAGE));
+        $criteria->perPage = self::constrainPerPage(Polyfills::requestParam($request->getCurrentRequest(), 'perPage', EntryRepository::PER_PAGE));
 
         $criteria->domain = $domain->name;
 

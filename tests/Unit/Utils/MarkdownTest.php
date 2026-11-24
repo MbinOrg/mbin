@@ -152,4 +152,31 @@ class MarkdownTest extends WebTestCase
         $markdown = $this->markdownConverter->convertToHtml($text, context: [MarkdownConverter::RENDER_TARGET => RenderTarget::Page]);
         assertStringContainsString("https://kbin.test/m/test@kbin.test2/t/{$entry->getId()}/some-slug/favourites", $markdown);
     }
+
+    public function testImageAltAndSrcEscaped(): void
+    {
+        foreach (RenderTarget::cases() as $renderTarget) {
+            $options = [MarkdownConverter::RENDER_TARGET => $renderTarget];
+
+            $html = $this->markdownConverter->convertToHtml('<img src=x onerror=alert(1)> hi', '', $options);
+            self::assertSame('<p>&lt;img src=x onerror=alert(1)&gt; hi</p>'."\n", $html);
+            self::assertStringNotContainsString('<img', $html);
+
+            $html = $this->markdownConverter->convertToHtml('![\<img src=x onerror=alert(1)\>](https://example.com/a.png)', '', $options);
+            self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+            self::assertStringNotContainsString('<img src=x', $html);
+
+            $html = $this->markdownConverter->convertToHtml('[![\<img src=x onerror=alert(1)\>](https://example.com/a.png)](https://example.com/)', '', $options);
+            self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+            self::assertStringNotContainsString('<img src=x', $html);
+
+            $html = $this->markdownConverter->convertToHtml('[![a](https://example.com/a.png?<img src=x onerror=alert(1)>)](https://example.com/)', '', $options);
+            self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+            self::assertStringNotContainsString('<img', $html);
+
+            $html = $this->markdownConverter->convertToHtml('[a](https://example.com/a.png?<img src=x onerror=alert(1)>)', '', $options);
+            self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+            self::assertStringNotContainsString('<img', $html);
+        }
+    }
 }

@@ -290,7 +290,7 @@ edit_post: Editar publicação
 show_profile_subscriptions: Mostrar assinaturas de revistas
 featured_magazines: Revistas em destaque
 votes: Votos
-boosts: Boosts
+boosts: Impulsos
 show_magazines_icons: Mostrar ícones das revistas
 flash_magazine_new_success: A revista foi criada com sucesso. Você pode 
   adicionar novo conteúdo ou explorar o painel de administração da revista.
@@ -1194,3 +1194,30 @@ everyone: Todo mundo
 nobody: Ninguém
 followers_only: Apenas seguidores
 direct_message_setting_label: Quem pode enviar uma mensagem direta
+created_since: Criado a partir de
+displayname: Nome de exibição
+boosted_by: Impulsionado por
+posts_harmonize_combined: Usar o novo formato na visualização Combinada
+show_boost_following_label: Mostrar impulsionamentos nas visualizações de 
+  Micropublicações e Combinada
+feed_allow_comments_hint: (pode causar carregamento lento)
+magazine_rules_deprecated: O campo de regras foi descontinuado e será removido 
+  futuramente. Por favor coloque suas regras na área de descrição.
+reached_end: Você chegou ao fim
+first_page: Primeira página
+next_page: Próxima página
+previous_page: Página anterior
+filter_list_create: Criar Lista de Filtros
+filter_lists: Listas de filtros
+filter_lists_where_to_filter: Onde aplicar o filtro
+filter_lists_filter_words: Palavras filtradas
+block_unblock_instance: Bloquear / Desbloquear Instância
+block_instance: Bloquear Instância
+unblock_instance: Desbloquear Instância
+block_instance_globally_short: Bloquear Globalmente
+block_instance_globally_long: Bloquear Instância para todos os usuários
+unblock_instance_globally_short: Desbloquear Globalmente
+unblock_instance_globally_long: Desbloquear Instância para todos os Usuários
+in_reply_to: em resposta a
+original_image: Imagem original
+invisible_or_deleted: invisivel ou deletado

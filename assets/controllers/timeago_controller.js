@@ -30,7 +30,25 @@ export default class extends Controller {
         }
 
         const lang = document.documentElement.lang;
-        const languages = { bg, da, de, el, en, es, fr, gl, it, ja, nl, pl, pt_BR, ru, tr, uk, zh_TW };
+        const languages = {
+            bg: bg,
+            da: da,
+            de: de,
+            el: el,
+            en: en,
+            es: es,
+            fr: fr,
+            gl: gl,
+            it: it,
+            ja: ja,
+            nl: nl,
+            pl: pl,
+            pt_BR: pt_BR,
+            ru: ru,
+            tr: tr,
+            uk: uk,
+            zh_TW: zh_TW,
+        };
 
         if (languages[lang]) {
             timeago.register(lang, languages[lang]);

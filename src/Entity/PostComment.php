@@ -13,6 +13,7 @@ use App\Entity\Contracts\VotableInterface;
 use App\Entity\Traits\ActivityPubActivityTrait;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\EditedAtTrait;
+use App\Entity\Traits\ExtendedContentTrait;
 use App\Entity\Traits\VisibilityTrait;
 use App\Entity\Traits\VotableTrait;
 use App\Repository\Criteria as MbinCriteria;
@@ -37,6 +38,7 @@ use Webmozart\Assert\Assert;
 #[Index(columns: ['up_votes'], name: 'post_comment_up_votes_idx')]
 #[Index(columns: ['last_active'], name: 'post_comment_last_active_at_idx')]
 #[Index(columns: ['created_at'], name: 'post_comment_created_at_idx')]
+#[Index(columns: ['last_boosted_at'], name: 'post_comment_last_boosted_at_idx')]
 #[Index(columns: ['body_ts'], name: 'post_comment_body_ts_idx')]
 class PostComment implements VotableInterface, VisibilityInterface, ReportInterface, FavouriteInterface, ActivityPubActivityInterface
 {
@@ -47,6 +49,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     use CreatedAtTrait {
         CreatedAtTrait::__construct as createdAtTraitConstruct;
     }
+    use ExtendedContentTrait;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'postComments')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -83,10 +86,10 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
     #[Column(type: 'boolean', nullable: false, options: ['default' => false])]
     public ?bool $updateMark = false;
     #[OneToMany(mappedBy: 'parent', targetEntity: PostComment::class, orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $children;
     #[OneToMany(mappedBy: 'root', targetEntity: PostComment::class, orphanRemoval: true)]
-    #[OrderBy(['createdAt' => 'ASC'])]
+    #[OrderBy(['createdAt' => \SortDirection::Ascending])]
     public Collection $nested;
     #[OneToMany(mappedBy: 'comment', targetEntity: PostCommentVote::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     public Collection $votes;
@@ -116,6 +119,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         $this->children = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->favourites = new ArrayCollection();
+        $this->hashtags = new ArrayCollection();
 
         if ($parent) {
             $this->root = $parent->root ?? $parent;
@@ -123,6 +127,8 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $this->createdAtTraitConstruct();
         $this->updateLastActive();
+
+        $this->lastBoostedAt = $this->createdAt;
     }
 
     public function updateLastActive(): void
@@ -142,26 +148,28 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         return $this->apId;
     }
 
-    public function addVote(Vote $vote): self
+    #[\Override]
+    public function addVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostCommentVote::class);
+        Assert::isInstanceOf($votable, PostCommentVote::class);
 
-        if (!$this->votes->contains($vote)) {
-            $this->votes->add($vote);
-            $vote->setComment($this);
+        if (!$this->votes->contains($votable)) {
+            $this->votes->add($votable);
+            $votable->setComment($this);
         }
 
         return $this;
     }
 
-    public function removeVote(Vote $vote): self
+    #[\Override]
+    public function removeVote(Vote $votable): self
     {
-        Assert::isInstanceOf($vote, PostCommentVote::class);
+        Assert::isInstanceOf($votable, PostCommentVote::class);
 
-        if ($this->votes->removeElement($vote)) {
+        if ($this->votes->removeElement($votable)) {
             // set the owning side to null (unless already changed)
-            if ($vote->getComment() === $this) {
-                $vote->setComment(null);
+            if ($votable->getComment() === $this) {
+                $votable->setComment(null);
             }
         }
 
@@ -313,7 +321,7 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
 
         $children = $this->children
             ->matching($criteria)
-            ->filter(fn (PostComment $comment) => !$comment->containsBannedHashtags() && (!$loggedInUser || !$comment->containsFilteredWords($loggedInUser, $filterRealm)))
+            ->filter(fn (PostComment $comment) => $comment->canShow($loggedInUser, $filterRealm, $postCommentCriteria))
             ->toArray();
 
         // id sort
@@ -341,5 +349,30 @@ class PostComment implements VotableInterface, VisibilityInterface, ReportInterf
         }
 
         return $children;
+    }
+
+    public function canShow(?User $user, string $filterRealm, MbinCriteria $criteria): bool
+    {
+        if ($user === $this->user) {
+            return true;
+        }
+
+        if ($criteria->moderated && null !== $user
+            && ($user->isAdmin() || $user->isModerator() || $this->magazine->userIsModerator($user))) {
+            return true;
+        }
+
+        if ($this->containsBannedHashtags()) {
+            return false;
+        }
+
+        if ($user) {
+            $blockedInstances = $user->blockedInstances->map(fn ($instance) => $instance->instanceDomain);
+            return !$this->containsFilteredWords($user, $filterRealm)
+                && !$blockedInstances->contains($this->user->apDomain)
+                && !$blockedInstances->contains($this->magazine->apDomain);
+        }
+
+        return true;
     }
 }

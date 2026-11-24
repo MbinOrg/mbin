@@ -117,14 +117,14 @@ class MagazineRepository extends ServiceEntityRepository
         };
 
         match ($criteria->sortOption) {
-            default => $qb->addOrderBy('m.subscriptionsCount', 'DESC'),
-            $criteria::SORT_ACTIVE => $qb->addOrderBy('m.lastActive', 'DESC'),
-            $criteria::SORT_NEW => $qb->addOrderBy('m.createdAt', 'DESC'),
-            $criteria::SORT_THREADS => $qb->addOrderBy('m.entryCount', 'DESC'),
-            $criteria::SORT_COMMENTS => $qb->addOrderBy('m.entryCommentCount', 'DESC'),
-            $criteria::SORT_POSTS => $qb->addOrderBy('m.postCount + m.postCommentCount', 'DESC'),
+            default => $qb->addOrderBy('m.subscriptionsCount', \SortDirection::Descending),
+            $criteria::SORT_ACTIVE => $qb->addOrderBy('m.lastActive', \SortDirection::Descending),
+            $criteria::SORT_NEW => $qb->addOrderBy('m.createdAt', \SortDirection::Descending),
+            $criteria::SORT_THREADS => $qb->addOrderBy('m.entryCount', \SortDirection::Descending),
+            $criteria::SORT_COMMENTS => $qb->addOrderBy('m.entryCommentCount', \SortDirection::Descending),
+            $criteria::SORT_POSTS => $qb->addOrderBy('m.postCount + m.postCommentCount', \SortDirection::Descending),
             $criteria::SORT_OWNER_LAST_ACTIVE => $criteria->abandoned ?
-                $qb->orderBy('modUser.lastActive', 'ASC')
+                $qb->orderBy('modUser.lastActive', \SortDirection::Ascending)
                 : throw new \InvalidArgumentException($criteria::SORT_OWNER_LAST_ACTIVE.' requires abandoned filter'),
         };
 
@@ -171,7 +171,7 @@ class MagazineRepository extends ServiceEntityRepository
 
         if (SubscriptionSort::LastActive === $sort) {
             $query = $query
-                ->orderBy('m.lastActive', 'DESC')
+                ->orderBy('m.lastActive', \SortDirection::Descending)
                 ->andWhere('m.lastActive IS NOT NULL');
         } elseif (SubscriptionSort::Alphabetically === $sort) {
             $query = $query->orderBy('m.name');
@@ -221,8 +221,8 @@ class MagazineRepository extends ServiceEntityRepository
         int $perPage = self::PER_PAGE,
     ): PagerfantaInterface {
         $criteria = Criteria::create()
-            ->orderBy(['isOwner' => 'DESC'])
-            ->orderBy(['createdAt' => 'ASC']);
+            ->orderBy(['isOwner' => \SortDirection::Descending])
+            ->orderBy(['createdAt' => \SortDirection::Ascending]);
 
         $moderators = new Pagerfanta(new SelectableAdapter($magazine->moderators, $criteria));
         try {
@@ -240,7 +240,7 @@ class MagazineRepository extends ServiceEntityRepository
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->gt('expiredAt', new \DateTimeImmutable()))
             ->orWhere(Criteria::expr()->isNull('expiredAt'))
-            ->orderBy(['createdAt' => 'DESC']);
+            ->orderBy(['createdAt' => \SortDirection::Descending]);
 
         $bans = new Pagerfanta(new SelectableAdapter($magazine->bans, $criteria));
         try {
@@ -383,7 +383,7 @@ class MagazineRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->andWhere('m.tags IS NOT NULL AND JSONB_CONTAINS(m.tags, :tag) = true')
-            ->orderBy('m.lastActive', 'DESC')
+            ->orderBy('m.lastActive', \SortDirection::Descending)
             ->setMaxResults(1)
             ->setParameter('tag', "\"$tag\"")
             ->getQuery()
@@ -401,7 +401,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->setMaxResults(50)
             ->setParameter('date', new \DateTime('-5 months'))
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
-            ->orderBy('m.entryCount', 'DESC')
+            ->orderBy('m.entryCount', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }
@@ -423,8 +423,8 @@ class MagazineRepository extends ServiceEntityRepository
             ->andWhere(
                 'LOWER(m.name) LIKE LOWER(:q) OR LOWER(m.title) LIKE LOWER(:q) OR LOWER(m.description) LIKE LOWER(:q)'
             )
-            ->orderBy('m.apId', 'DESC')
-            ->orderBy('m.subscriptionsCount', 'DESC')
+            ->orderBy('m.apId', \SortDirection::Descending)
+            ->orderBy('m.subscriptionsCount', \SortDirection::Descending)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
             ->setParameter('q', '%'.$magazine.'%');
 
@@ -504,7 +504,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->andWhere('m.apDomain IS NULL')
             ->andWhere('m.apDeletedAt IS NULL')
             ->andWhere('m.apTimeoutAt IS NULL')
-            ->addOrderBy('m.apFetchedAt', 'ASC')
+            ->addOrderBy('m.apFetchedAt', \SortDirection::Ascending)
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
@@ -515,7 +515,7 @@ class MagazineRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('m')
             ->where('m.apId IS NULL')
             ->andWhere('m.visibility = :visibility')
-            ->orderBy('m.markedForDeletionAt', 'ASC')
+            ->orderBy('m.markedForDeletionAt', \SortDirection::Ascending)
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED)
             ->getQuery();
 
@@ -545,7 +545,7 @@ class MagazineRepository extends ServiceEntityRepository
             ->join('m.moderators', 'mod')
             ->join('mod.user', 'u')
             ->setParameter('date', new \DateTime('-1 month'))
-            ->orderBy('u.lastActive', 'ASC')
+            ->orderBy('u.lastActive', \SortDirection::Ascending)
             ->getQuery();
 
         $pagerfanta = new Pagerfanta(

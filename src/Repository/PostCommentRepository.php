@@ -11,6 +11,9 @@ namespace App\Repository;
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\HashtagLink;
 use App\Entity\Image;
+use App\Entity\InstanceBlock;
+use App\Entity\Magazine;
+use App\Entity\MagazineBlock;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
@@ -49,7 +52,7 @@ class PostCommentRepository extends ServiceEntityRepository
     public function findByCriteria(PostCommentPageView $criteria)
     {
         //        return $this->createQueryBuilder('pc')
-        //            ->orderBy('pc.createdAt', 'DESC')
+        //            ->orderBy('pc.createdAt', \SortDirection::Descending)
         //            ->setMaxResults(10)
         //            ->getQuery()
         //            ->getResult();
@@ -155,7 +158,7 @@ class PostCommentRepository extends ServiceEntityRepository
 
         if ($criteria->tag) {
             $qb->andWhere('t.tag = :tag')
-                ->join('p.hashtags', 'h')
+                ->join('c.hashtags', 'h')
                 ->join('h.hashtag', 't')
                 ->setParameter('tag', $criteria->tag);
         }
@@ -165,6 +168,41 @@ class PostCommentRepository extends ServiceEntityRepository
             $qb->andWhere(
                 'c.user NOT IN (SELECT IDENTITY(ub.blocked) FROM '.UserBlock::class.' ub WHERE ub.blocker = :blocker)'
             );
+
+            $qb->andWhere(
+                'c.magazine NOT IN (SELECT IDENTITY(mb.magazine) FROM '.MagazineBlock::class.' mb WHERE mb.user = :blocker)'
+            );
+
+            if (!$criteria->magazine) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = c.magazine AND ib1.user = :blocker'
+                    .') OR c.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib1 INNER JOIN '.Magazine::class.' ibm ON ib1.instanceDomain = ibm.apDomain '
+                    .'WHERE ibm = c.magazine AND ib1.user = :blocker AND ibm.id != '.$criteria->magazine->getId()
+                    .') OR c.user = :blocker'
+                );
+            }
+            if (!$criteria->user) {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = c.user AND ib2.user = :blocker'
+                    .') OR c.user = :blocker'
+                );
+            } else {
+                $qb->andWhere(
+                    'NOT EXISTS ('
+                    .'SELECT 1 FROM '.InstanceBlock::class.' ib2 INNER JOIN '.User::class.' ibu ON ib2.instanceDomain = ibu.apDomain '
+                    .'WHERE ibu = c.user AND ib2.user = :blocker AND ibu.id != '.$criteria->user->getId()
+                    .') OR c.user = :blocker'
+                );
+            }
 
             $qb->setParameter('blocker', $user);
         }
@@ -176,23 +214,23 @@ class PostCommentRepository extends ServiceEntityRepository
         switch ($criteria->sortOption) {
             case Criteria::SORT_HOT:
             case Criteria::SORT_TOP:
-                $qb->orderBy('c.upVotes + c.favouriteCount', 'DESC');
+                $qb->orderBy('c.upVotes + c.favouriteCount', \SortDirection::Descending);
                 break;
             case Criteria::SORT_ACTIVE:
-                $qb->orderBy('c.lastActive', 'DESC');
+                $qb->orderBy('c.lastActive', \SortDirection::Descending);
                 break;
             case Criteria::SORT_NEW:
-                $qb->orderBy('c.createdAt', 'DESC');
+                $qb->orderBy('c.createdAt', \SortDirection::Descending);
                 break;
             case Criteria::SORT_OLD:
-                $qb->orderBy('c.createdAt', 'ASC');
+                $qb->orderBy('c.createdAt', \SortDirection::Ascending);
                 break;
             default:
-                $qb->addOrderBy('c.lastActive', 'DESC');
+                $qb->addOrderBy('c.lastActive', \SortDirection::Descending);
         }
 
-        $qb->addOrderBy('c.createdAt', 'DESC');
-        $qb->addOrderBy('c.id', 'DESC');
+        $qb->addOrderBy('c.createdAt', \SortDirection::Descending);
+        $qb->addOrderBy('c.id', \SortDirection::Descending);
     }
 
     private function filterWords(QueryBuilder $qb, User $user): QueryBuilder

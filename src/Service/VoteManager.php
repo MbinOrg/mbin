@@ -11,11 +11,13 @@ use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Entity\User;
 use App\Entity\Vote;
+use App\Enums\EUserType;
 use App\Event\VoteEvent;
 use App\Factory\VoteFactory;
 use App\Utils\DownvotesMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -24,6 +26,7 @@ class VoteManager
 {
     public function __construct(
         private readonly VoteFactory $factory,
+        #[Target('voteLimiter')]
         private readonly RateLimiterFactoryInterface $voteLimiter,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly EntityManagerInterface $entityManager,
@@ -44,7 +47,7 @@ class VoteManager
         if (DownvotesMode::Disabled === $downVotesMode && VotableInterface::VOTE_DOWN === $choice) {
             throw new \LogicException('cannot downvote, because that is disabled');
         }
-        if (VotableInterface::VOTE_DOWN === $choice && 'Service' === $user->type) {
+        if (VotableInterface::VOTE_DOWN === $choice && EUserType::Service === $user->type) {
             throw new AccessDeniedHttpException('Bots are not allowed to vote on items!');
         }
 
@@ -64,6 +67,7 @@ class VoteManager
 
                 if (VotableInterface::VOTE_UP === $choice && null !== $votable->apShareCount) {
                     ++$votable->apShareCount;
+                    $votable->updateLastBoostDate();
                 } elseif (VotableInterface::VOTE_DOWN === $choice && null !== $votable->apDislikeCount) {
                     ++$votable->apDislikeCount;
                 }
@@ -132,6 +136,7 @@ class VoteManager
 
         $votable->updateVoteCounts();
 
+        $votable->updateLastBoostDate();
         $votable->lastActive = new \DateTime();
 
         if ($votable instanceof PostComment) {

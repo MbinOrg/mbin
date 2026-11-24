@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import router from '../utils/routing';
+import router from '@app/utils/routing';
 
 const KBIN_SUBSCRIPTIONS_IN_SEPARATE_SIDEBAR = 'kbin_subscriptions_in_separate_sidebar';
 const KBIN_SUBSCRIPTIONS_SIDEBARS_SAME_SIDE = 'kbin_subscriptions_sidebars_same_side';

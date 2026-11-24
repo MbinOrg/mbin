@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Hashtag;
+use App\Entity\User;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Transformation\ContentPopulationTransformer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -34,7 +35,7 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Hashtag::class);
     }
 
-    public function findOverall(int $page, string $tag): PagerfantaInterface
+    public function findOverall(int $page, string $tag, ?User $user): PagerfantaInterface
     {
         $hashtag = $this->findBy(['tag' => $tag]);
         $countAll = $this->tagLinkRepository->createQueryBuilder('link')
@@ -48,26 +49,34 @@ class TagRepository extends ServiceEntityRepository
         $sql = "SELECT e.id, e.created_at, 'entry' AS type FROM entry e
                 INNER JOIN hashtag_link l ON e.id = l.entry_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
-            WHERE visibility = :visibility
+                INNER JOIN magazine m ON e.magazine_id = m.id
+            WHERE :visibilityBypass = TRUE OR (e.visibility = :visibility AND m.visibility = :visibility)
         UNION ALL
         SELECT ec.id, ec.created_at, 'entry_comment' AS type FROM entry_comment ec
                 INNER JOIN hashtag_link l ON ec.id = l.entry_comment_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
-            WHERE visibility = :visibility
+                INNER JOIN magazine m ON ec.magazine_id = m.id
+            WHERE :visibilityBypass = TRUE OR (ec.visibility = :visibility AND m.visibility = :visibility)
         UNION ALL
         SELECT p.id, p.created_at, 'post' AS type FROM post p
                 INNER JOIN hashtag_link l ON p.id = l.post_id
                 INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
-            WHERE visibility = :visibility
+                INNER JOIN magazine m ON p.magazine_id = m.id
+            WHERE :visibilityBypass = TRUE OR (p.visibility = :visibility AND m.visibility = :visibility)
         UNION ALL
-        SELECT pc.id, created_at, 'post_comment' AS type FROM post_comment pc
+        SELECT pc.id, pc.created_at, 'post_comment' AS type FROM post_comment pc
                 INNER JOIN hashtag_link l ON pc.id = l.post_comment_id
-                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag WHERE visibility = :visibility
+                INNER JOIN hashtag h ON l.hashtag_id = h.id AND h.tag = :tag
+                INNER JOIN magazine m ON pc.magazine_id = m.id
+            WHERE :visibilityBypass = TRUE OR (pc.visibility = :visibility AND m.visibility = :visibility)
         ORDER BY created_at DESC";
+
+        $visibilityBypass = null !== $user && ($user->isAdmin() || $user->isModerator());
 
         $adapter = new NativeQueryAdapter($conn, $sql, [
             'tag' => $tag,
             'visibility' => VisibilityInterface::VISIBILITY_VISIBLE,
+            'visibilityBypass' => $visibilityBypass,
         ], $countAll, $this->populationTransformer);
 
         $pagerfanta = new Pagerfanta($adapter);

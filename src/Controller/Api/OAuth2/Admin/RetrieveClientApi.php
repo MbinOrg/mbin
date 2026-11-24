@@ -8,6 +8,7 @@ use App\Controller\Api\BaseApi;
 use App\DTO\ClientResponseDto;
 use App\Entity\Client;
 use App\Schema\PaginationSchema;
+use App\Utils\Polyfills;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -79,7 +80,7 @@ class RetrieveClientApi extends BaseApi
     ): JsonResponse {
         $headers = $this->rateLimit($apiModerateLimiter);
 
-        $dto = new ClientResponseDto($client);
+        $dto = $this->createClientResponseDto($client);
 
         return new JsonResponse(
             $dto,
@@ -159,7 +160,7 @@ class RetrieveClientApi extends BaseApi
         $headers = $this->rateLimit($apiModerateLimiter);
 
         $page = $this->getPageNb($request);
-        $perPage = self::constrainPerPage($request->get('perPage', self::PER_PAGE));
+        $perPage = self::constrainPerPage(Polyfills::requestParam($request, 'perPage', self::PER_PAGE));
 
         /** @var EntityRepository $repository */
         $repository = $manager->getRepository(Client::class);
@@ -182,12 +183,19 @@ class RetrieveClientApi extends BaseApi
         $dtos = [];
         foreach ($pagerfanta->getCurrentPageResults() as $client) {
             \assert($client instanceof Client);
-            array_push($dtos, new ClientResponseDto($client));
+            $dtos[] = $this->createClientResponseDto($client);
         }
 
         return new JsonResponse(
             $this->serializePaginated($dtos, $pagerfanta),
             headers: $headers
         );
+    }
+
+    private function createClientResponseDto(Client $client): ClientResponseDto
+    {
+        $user = $client->getUser();
+        $userDto = null !== $user ? $this->userFactory->createDto($user) : null;
+        return new ClientResponseDto($client, $userDto);
     }
 }

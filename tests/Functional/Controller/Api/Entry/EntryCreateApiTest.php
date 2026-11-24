@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api\Entry;
 
 use App\Tests\WebTestCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class EntryCreateApiTest extends WebTestCase
 {
@@ -223,9 +222,7 @@ class EntryCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $image = $this->getKibbyImageUpload();
 
         $this->client->request(
             'POST', "/api/magazine/{$magazine->getId()}/image",
@@ -246,9 +243,7 @@ class EntryCreateApiTest extends WebTestCase
             'isAdult' => false,
         ];
 
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        copy($this->kibbyPath, $this->kibbyPath.'.tmp');
-        $image = new UploadedFile($this->kibbyPath.'.tmp', 'kibby_emoji.png', 'image/png');
+        $image = $this->getKibbyImageUpload();
 
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($this->getUserByUsername('user'));
@@ -280,13 +275,10 @@ class EntryCreateApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
 
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = bin2hex(random_bytes(32));
-        copy($this->kibbyPath, $tmpPath.'.png');
-        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+        $image = $this->getKibbyImageUpload();
 
         $imageManager = $this->imageManager;
-        $expectedPath = $imageManager->getFilePath($image->getFilename());
+        $expectedPath = $imageManager->getFilePath($this->imageUploadTmpDir.$image->getFilename());
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];
@@ -356,13 +348,10 @@ class EntryCreateApiTest extends WebTestCase
         self::createOAuth2AuthCodeClient();
         $this->client->loginUser($user);
 
-        // Uploading a file appears to delete the file at the given path, so make a copy before upload
-        $tmpPath = bin2hex(random_bytes(32));
-        copy($this->kibbyPath, $tmpPath.'.png');
-        $image = new UploadedFile($tmpPath.'.png', 'kibby_emoji.png', 'image/png');
+        $image = $this->getKibbyImageUpload();
 
         $imageManager = $this->imageManager;
-        $expectedPath = $imageManager->getFilePath($image->getFilename());
+        $expectedPath = $imageManager->getFilePath($this->imageUploadTmpDir.$image->getFilename());
 
         $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read entry:create');
         $token = $codes['token_type'].' '.$codes['access_token'];

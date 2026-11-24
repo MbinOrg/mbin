@@ -8,17 +8,18 @@ use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Post;
 use App\Entity\PostComment;
+use App\Utils\ArrayUtils;
 use Pagerfanta\PagerfantaInterface;
 
 class SubjectOverviewManager
 {
     public function buildList(PagerfantaInterface $activity): array
     {
-        $postsAndEntries = array_filter(
+        $postsAndEntries = ArrayUtils::filter(
             $activity->getCurrentPageResults(),
             fn ($val) => $val instanceof Entry || $val instanceof Post
         );
-        $comments = array_filter(
+        $comments = ArrayUtils::filter(
             $activity->getCurrentPageResults(),
             fn ($val) => $val instanceof EntryComment || $val instanceof PostComment
         );

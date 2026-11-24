@@ -15,7 +15,7 @@
                 {{ list.getRealmStrings()|map(location => location|trans)|join(', ') }}
             </span>
         </div>
-        <div class="flex flex-reverse">
+        <div class="flex flex-reverse gap-4">
             <div class="flex-item flex-item-auto">
                 <a href="{{ path('user_settings_filter_lists_delete', {id: list.id}) }}">
                     <i class="fas fa-trash"></i>

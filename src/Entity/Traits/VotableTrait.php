@@ -28,6 +28,9 @@ trait VotableTrait
     #[Column(type: 'integer', nullable: true)]
     public ?int $apShareCount = null;
 
+    #[Column(type: 'datetimetz_immutable', nullable: false)]
+    public ?\DateTimeImmutable $lastBoostedAt;
+
     public function countUpVotes(): int
     {
         return $this->apShareCount ?? $this->upVotes;
@@ -62,6 +65,13 @@ trait VotableTrait
     {
         $this->upVotes = $this->getUpVotes()->count();
         $this->downVotes = $this->getDownVotes()->count();
+
+        return $this;
+    }
+
+    public function updateLastBoostDate(): self
+    {
+        $this->lastBoostedAt = new \DateTimeImmutable();
 
         return $this;
     }

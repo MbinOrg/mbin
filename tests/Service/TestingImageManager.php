@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Entity\Image;
+use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Service\ImageManager;
 use App\Service\ImageManagerInterface;
@@ -14,10 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[When(env: 'test')]
 class TestingImageManager implements ImageManagerInterface
@@ -27,8 +28,8 @@ class TestingImageManager implements ImageManagerInterface
 
     public function __construct(
         string $storageUrl,
+        #[Target('publicUploadsFilesystem')]
         FilesystemOperator $publicUploadsFilesystem,
-        HttpClientInterface $httpClient,
         MimeTypesInterface $mimeTypeGuesser,
         ValidatorInterface $validator,
         LoggerInterface $logger,
@@ -37,8 +38,9 @@ class TestingImageManager implements ImageManagerInterface
         float $imageCompressionQuality,
         CacheManager $imagineCacheManager,
         EntityManagerInterface $entityManager,
+        WwwHttpClientFactory $wwwHttpClientFactory,
     ) {
-        $this->innerImageManager = new ImageManager($storageUrl, $publicUploadsFilesystem, $httpClient, $mimeTypeGuesser, $validator, $logger, $settings, $formattingExtensionRuntime, $imageCompressionQuality, $imagineCacheManager, $entityManager);
+        $this->innerImageManager = new ImageManager($storageUrl, $publicUploadsFilesystem, $mimeTypeGuesser, $validator, $logger, $settings, $formattingExtensionRuntime, $imageCompressionQuality, $imagineCacheManager, $entityManager, $wwwHttpClientFactory);
     }
 
     public function setKibbyPath(string $kibbyPath): void

@@ -35,10 +35,10 @@ use App\Service\Contracts\ContentManagerInterface;
 use App\Utils\Slugger;
 use App\Utils\UrlCleaner;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -60,6 +60,7 @@ class EntryManager implements ContentManagerInterface
         private readonly BadgeManager $badgeManager,
         private readonly EntryFactory $factory,
         private readonly EventDispatcherInterface $dispatcher,
+       #[Target('entryLimiter')]
         private readonly RateLimiterFactoryInterface $entryLimiter,
         private readonly MessageBusInterface $bus,
         private readonly TranslatorInterface $translator,
@@ -165,6 +166,9 @@ class EntryManager implements ContentManagerInterface
             if (ImageManager::isImageUrl($dto->url)) {
                 $entry->type = Entry::ENTRY_TYPE_IMAGE;
                 $entry->hasEmbed = true;
+            } elseif (VideoManager::isVideoUrl($dto->url)) {
+                $entry->type = Entry::ENTRY_TYPE_VIDEO;
+                $entry->hasEmbed = true;
             } else {
                 $entry->type = Entry::ENTRY_TYPE_LINK;
             }
@@ -174,8 +178,6 @@ class EntryManager implements ContentManagerInterface
             $this->logger->warning('entry has neither image nor url nor body; defaulting to article');
             $entry->type = Entry::ENTRY_TYPE_ARTICLE;
         }
-
-        // TODO handle ENTRY_TYPE_VIDEO
 
         return $entry;
     }
@@ -282,7 +284,7 @@ class EntryManager implements ContentManagerInterface
 
         $image = $entry->image?->getId();
 
-        $sort = new Criteria(null, ['createdAt' => Order::Descending]);
+        $sort = new Criteria(expression: null, orderings: ['createdAt' => \SortDirection::Descending]);
         foreach ($entry->comments->matching($sort) as $comment) {
             $this->entryCommentManager->purge($user, $comment);
         }

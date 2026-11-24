@@ -12,7 +12,6 @@ use App\Enums\EApplicationStatus;
 use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
@@ -67,12 +66,13 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $this->loadUserByIdentifier($username);
     }
 
-    public function loadUserByIdentifier($val): ?User
+    #[\Override]
+    public function loadUserByIdentifier($identifier): ?User
     {
         return $this->createQueryBuilder('u')
             ->where('LOWER(u.username) = :email')
             ->orWhere('LOWER(u.email) = :email')
-            ->setParameter('email', mb_strtolower($val))
+            ->setParameter('email', mb_strtolower($identifier))
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -146,6 +146,40 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $pagerfanta;
     }
 
+    public function findAllPaginated(
+        int $page,
+        bool $onlyLocal = false,
+        bool $onlyVerified = true,
+        bool $onlyApproved = true,
+        bool $onlyVisible = true,
+        bool $excludeBanned = true,
+        bool $excludeDeleted = true,
+        ?string $searchTerm = null,
+        ?OrderBy $orderBy = null,
+    ): PagerfantaInterface {
+        $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm, $onlyVerified);
+
+        if ($onlyApproved) {
+            $builder->andWhere('u.applicationStatus = :status')
+                ->setParameter('status', EApplicationStatus::Approved->value);
+        }
+
+        if ($excludeBanned) {
+            $builder->andWhere('u.isBanned = false');
+        }
+
+        if ($excludeDeleted) {
+            $builder->andWhere('u.isDeleted = false');
+        }
+
+        if ($onlyVisible) {
+            $builder->andWhere('u.visibility = :visibility')
+                ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE);
+        }
+
+        return $this->executeBasicQueryBuilder($builder, $page, $orderBy);
+    }
+
     public function findAllActivePaginated(int $page, bool $onlyLocal, ?string $searchTerm = null, ?OrderBy $orderBy = null): PagerfantaInterface
     {
         $builder = $this->createBasicQueryBuilder($onlyLocal, $searchTerm);
@@ -203,7 +237,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.visibility = :visibility')
             ->setParameter('visibility', VisibilityInterface::VISIBILITY_SOFT_DELETED);
 
-        return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', 'ASC'));
+        return $this->executeBasicQueryBuilder($builder, $page, new OrderBy('u.markedForDeletionAt', \SortDirection::Ascending));
     }
 
     /**
@@ -233,7 +267,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     private function executeBasicQueryBuilder(QueryBuilder $builder, int $page, ?OrderBy $orderBy = null): Pagerfanta
     {
         if (null === $orderBy) {
-            $orderBy = new OrderBy('u.createdAt', 'ASC');
+            $orderBy = new OrderBy('u.createdAt', \SortDirection::Ascending);
         }
 
         $query = $builder
@@ -264,10 +298,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         $this->getEntityManager()->flush();
     }
 
-    public function findOneByUsername(string $username): ?User
+    public function findOneByUsername(string $username, bool $caseInsensitive = false): ?User
     {
         return $this->createQueryBuilder('u')
-            ->Where('LOWER(u.username) = LOWER(:username)')
+            ->Where($caseInsensitive ? 'LOWER(u.username) = LOWER(:username)' : 'u.username = :username')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
             ->setParameter('username', $username)
@@ -313,7 +347,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.apDomain IS NULL')
             ->andWhere('u.apDeletedAt IS NULL')
             ->andWhere('u.apTimeoutAt IS NULL')
-            ->addOrderBy('u.apFetchedAt', 'ASC')
+            ->addOrderBy('u.apFetchedAt', \SortDirection::Ascending)
             ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
@@ -346,7 +380,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere('u.apDiscoverable = true')
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
-            ->orderBy('u.lastActive', 'DESC');
+            ->orderBy('u.lastActive', \SortDirection::Descending);
     }
 
     public function findPaginated(int $page, bool $needsAbout, string $group = self::USERS_ALL, int $perPage = self::PER_PAGE, ?string $query = null): PagerfantaInterface
@@ -396,7 +430,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         return $qb
             ->andWhere('u.applicationStatus = :status')
             ->setParameter('status', EApplicationStatus::Approved->value)
-            ->orderBy('u.lastActive', 'DESC');
+            ->orderBy('u.lastActive', \SortDirection::Descending);
     }
 
     public function findUsersForGroup(string $group = self::USERS_ALL, ?bool $recentlyActive = true): array
@@ -419,7 +453,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 break;
         }
 
-        return $qb->orderBy('u.lastActive', 'DESC');
+        return $qb->orderBy('u.lastActive', \SortDirection::Descending);
     }
 
     public function findBannedPaginated(
@@ -552,7 +586,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             }
 
             $queryResult = $qb->join('u.avatar', 'a')
-                ->orderBy('u.lastActive', 'DESC')
+                ->orderBy('u.lastActive', \SortDirection::Descending)
                 ->setParameter('lastActive', (new \DateTime())->modify('-7 days'))
                 ->setParameter('visibility', VisibilityInterface::VISIBILITY_VISIBLE)
                 ->setParameter('status', EApplicationStatus::Approved->value)
@@ -701,7 +735,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     {
         $qb = $this->createQueryBuilder('u')
             ->where('u.apId IS NULL')
-            ->orderBy('u.createdAt', Order::Ascending->value);
+            ->orderBy('u.createdAt', \SortDirection::Ascending);
 
         $result = $qb->setMaxResults(1)
             ->getQuery()

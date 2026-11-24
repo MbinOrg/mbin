@@ -44,7 +44,7 @@ class RemoveOldImagesCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this
             ->addArgument('type', InputArgument::OPTIONAL, 'Type of images to delete either: "all" (except for users), "threads", "thread_comments", "posts", "post_comments" or "users"', 'all')
@@ -135,7 +135,7 @@ class RemoveOldImagesCommand extends Command
                 )
             )
             ->innerJoin('e.image', 'i')
-            ->orderBy('e.id', 'ASC')
+            ->orderBy('e.id', \SortDirection::Ascending)
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
@@ -176,7 +176,7 @@ class RemoveOldImagesCommand extends Command
                 )
             )
             ->innerJoin('c.image', 'i')
-            ->orderBy('c.id', 'ASC')
+            ->orderBy('c.id', \SortDirection::Ascending)
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
@@ -218,7 +218,7 @@ class RemoveOldImagesCommand extends Command
                 )
             )
             ->innerJoin('p.image', 'i')
-            ->orderBy('p.id', 'ASC')
+            ->orderBy('p.id', \SortDirection::Ascending)
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
@@ -259,7 +259,7 @@ class RemoveOldImagesCommand extends Command
                 )
             )
             ->innerJoin('c.image', 'i')
-            ->orderBy('c.id', 'ASC')
+            ->orderBy('c.id', \SortDirection::Ascending)
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();
@@ -300,7 +300,7 @@ class RemoveOldImagesCommand extends Command
                     $queryBuilder->expr()->isNotNull('u.apId')
                 )
             )
-            ->orderBy('u.apFetchedAt', 'ASC')
+            ->orderBy('u.apFetchedAt', \SortDirection::Ascending)
             ->setParameter('timeAgo', $timeAgo)
             ->setMaxResults($this->batchSize)
             ->getQuery();

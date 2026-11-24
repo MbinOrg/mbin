@@ -8,12 +8,13 @@ use App\Entity\Contracts\VisibilityInterface;
 use App\Entity\Entry;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Factory\ExtendedContentPopulationTransformerFactory;
 use App\Pagination\Cursor\CursorPagination;
 use App\Pagination\Cursor\CursorPaginationInterface;
 use App\Pagination\Cursor\NativeQueryCursorAdapter;
 use App\Pagination\NativeQueryAdapter;
 use App\Pagination\Pagerfanta;
-use App\Pagination\Transformation\ContentPopulationTransformer;
+use App\Service\SettingsManager;
 use App\Utils\SqlHelpers;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +31,8 @@ class ContentRepository
     public function __construct(
         private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ContentPopulationTransformer $contentPopulationTransformer,
+        private readonly ExtendedContentPopulationTransformerFactory $contentPopulationTransformerFactory,
+        private readonly SettingsManager $settingsManager,
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly KernelInterface $kernel,
@@ -47,7 +49,14 @@ class ContentRepository
             // pre-set the results to 1000 pages for queries not very limited by the parameters so the count query is not being executed
             $numResults = 1000 * ($criteria->perPage ?? self::PER_PAGE);
         }
-        $fanta = new Pagerfanta(new NativeQueryAdapter($conn, $query['sql'], $query['parameters'], numOfResults: $numResults, transformer: $this->contentPopulationTransformer, cache: $this->cache));
+        $fanta = new Pagerfanta(new NativeQueryAdapter(
+            $conn,
+            $query['sql'],
+            $query['parameters'],
+            numOfResults: $numResults,
+            transformer: $this->contentPopulationTransformerFactory->create($criteria, $this->security->getUser()),
+            cache: $this->cache
+        ));
         $fanta->setMaxPerPage($criteria->perPage ?? self::PER_PAGE);
         $fanta->setCurrentPage($criteria->page);
 
@@ -84,7 +93,7 @@ class ContentRepository
                 $this->getSecondaryCursorWhereFromCriteriaInverted($criteria),
                 'c.created_at DESC',
                 'c.created_at',
-                transformer: $this->contentPopulationTransformer,
+                transformer: $this->contentPopulationTransformerFactory->create($criteria, $this->security->getUser()),
             ),
             $this->getCursorFieldFromCriteria($criteria),
             $criteria->perPage ?? self::PER_PAGE,
@@ -102,8 +111,8 @@ class ContentRepository
     private function getQueryAndParameters(Criteria $criteria, bool $addCursor): array
     {
         $includeEntries = Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_THREADS === $criteria->content;
-        $includeEntryComments = Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
-        $includePostComments = (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
+        $includeEntryComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_ENTRY_COMMENTS && $criteria->subscribed && Criteria::CONTENT_COMBINED === $criteria->content && $criteria->includeBoosts;
+        $includePostComments = $this->settingsManager->getDto()->MBIN_FEED_ALLOW_POST_COMMENTS && $criteria->subscribed && (Criteria::CONTENT_COMBINED === $criteria->content || Criteria::CONTENT_MICROBLOG === $criteria->content) && $criteria->includeBoosts;
 
         $parameters = [
             'visible' => VisibilityInterface::VISIBILITY_VISIBLE,
@@ -194,11 +203,15 @@ class ContentRepository
         $subClauseEntry = '';
         $subClauseEntryComment = '';
         $subClausePostComment = '';
+        $selectPostBoosted = '';
+        $selectEntryBoosted = '';
+        $selectPostCommentBoosted = '';
+        $selectEntryCommentBoosted = '';
         if ($user && $criteria->subscribed) {
             $subClausePost = 'c.user_id = :loggedInUser'
                 .(null === $criteria->cachedUserSubscribedMagazines ?
-                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = m.id)' :
-                    ' OR m.id IN (:cachedUserSubscribedMagazines)')
+                    ' OR EXISTS (SELECT 1 FROM magazine_subscription ms WHERE ms.user_id = :loggedInUser AND ms.magazine_id = c.magazine_id)' :
+                    ' OR c.magazine_id IN (:cachedUserSubscribedMagazines)')
                 .(null === $criteria->cachedUserFollows ?
                     ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                     ' OR c.user_id IN (:cachedUserFollows)');
@@ -213,23 +226,20 @@ class ContentRepository
                         ' OR EXISTS (SELECT 1 FROM user_follow uf WHERE uf.follower_id = :loggedInUser AND uf.following_id = c.user_id)' :
                         ' OR c.user_id IN (:cachedUserFollows)');
 
-                $subClauseEntryComment = $repliesCommonWhere.
-                    (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
-                $subClausePostComment = $repliesCommonWhere.
-                    (null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_comment_vote v ON uf.following_id = v.user_id WHERE c.id = v.comment_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_comment_vote v WHERE c.id = v.comment_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+                $boostCheckTpl = null === $criteria->cachedUserFollows ?
+                    'EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN %v_type%_vote v ON uf.following_id = v.user_id WHERE c.id = v.%fk_type%_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
+                    'EXISTS (SELECT 1 FROM %v_type%_vote v WHERE c.id = v.%fk_type%_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)';
 
-                $subClausePost = $subClausePost
-                    .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN post_vote v ON uf.following_id = v.user_id WHERE c.id = v.post_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM post_vote v WHERE c.id = v.post_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
-                $subClauseEntry = $subClauseEntry
-                    .(null === $criteria->cachedUserFollows ?
-                        ' OR EXISTS (SELECT 1 FROM user_follow uf RIGHT OUTER JOIN entry_vote v ON uf.following_id = v.user_id WHERE c.id = v.entry_id AND (uf.follower_id = :loggedInUser OR v.user_id = :loggedInUser) AND v.choice = 1)' :
-                        ' OR EXISTS (SELECT 1 FROM entry_vote v WHERE c.id = v.entry_id AND (v.user_id IN (:cachedUserFollows) OR v.user_id = :loggedInUser) AND v.choice = 1)');
+                $subClauseEntryComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'entry_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
+                $subClausePostComment = $repliesCommonWhere.' OR '.str_replace('%v_type%', 'post_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl));
+
+                $subClausePost = $subClausePost.' OR '.str_replace('%v_type%', 'post', str_replace('%fk_type%', 'post', $boostCheckTpl));
+                $subClauseEntry = $subClauseEntry.' OR '.str_replace('%v_type%', 'entry', str_replace('%fk_type%', 'entry', $boostCheckTpl));
+
+                $selectPostBoosted = ', '.str_replace('%v_type%', 'post', str_replace('%fk_type%', 'post', $boostCheckTpl)).' AS was_boosted';
+                $selectEntryBoosted = ', '.str_replace('%v_type%', 'entry', str_replace('%fk_type%', 'entry', $boostCheckTpl)).' AS was_boosted';
+                $selectPostCommentBoosted = ', '.str_replace('%v_type%', 'post_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl)).' AS was_boosted';
+                $selectEntryCommentBoosted = ', '.str_replace('%v_type%', 'entry_comment', str_replace('%fk_type%', 'comment', $boostCheckTpl)).' AS was_boosted';
             }
 
             if (null !== $criteria->cachedUserSubscribedMagazines) {
@@ -243,9 +253,9 @@ class ContentRepository
         $modClause = '';
         if ($user && $criteria->moderated) {
             if (null === $criteria->cachedUserModeratedMagazines) {
-                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = m.id AND mod.user_id = :loggedInUser)';
+                $modClause = 'EXISTS (SELECT * FROM moderator mod WHERE mod.magazine_id = c.magazine_id AND mod.user_id = :loggedInUser)';
             } else {
-                $modClause = 'm.id IN (:cachedUserModeratedMagazines)';
+                $modClause = 'c.magazine_id IN (:cachedUserModeratedMagazines)';
                 $parameters['cachedUserModeratedMagazines'] = $criteria->cachedUserModeratedMagazines;
             }
         }
@@ -271,6 +281,8 @@ class ContentRepository
 
         $blockingClausePost = '';
         $blockingClauseEntry = '';
+        $instanceBlockClauseUser = '';
+        $instanceBlockClauseMagazine = '';
         if ($user && (!$criteria->magazine || !$criteria->magazine->userIsModerator($user)) && !$criteria->moderated) {
             if (null === $criteria->cachedUserBlocks) {
                 $blockingClausePost = 'NOT EXISTS (SELECT * FROM user_block ub WHERE ub.blocker_id = :loggedInUser AND ub.blocked_id = c.user_id)';
@@ -281,9 +293,9 @@ class ContentRepository
 
             if (!$criteria->domain) {
                 if (null === $criteria->cachedUserBlockedMagazines) {
-                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = m.id AND mb.user_id = :loggedInUser)';
+                    $blockingClausePost .= ' AND NOT EXISTS (SELECT * FROM magazine_block mb WHERE mb.magazine_id = c.magazine_id AND mb.user_id = :loggedInUser)';
                 } else {
-                    $blockingClausePost .= ' AND (m IS NULL OR m.id NOT IN (:cachedUserBlockedMagazines))';
+                    $blockingClausePost .= ' AND (m IS NULL OR c.magazine_id NOT IN (:cachedUserBlockedMagazines))';
                     $parameters['cachedUserBlockedMagazines'] = $criteria->cachedUserBlockedMagazines;
                 }
             }
@@ -294,6 +306,28 @@ class ContentRepository
                 $blockingClauseEntry = $blockingClausePost.' AND (c.domain_id IS NULL OR c.domain_id NOT IN (:cachedUserBlockedDomains))';
                 if ($includeEntries) {
                     $parameters['cachedUserBlockedDomains'] = $criteria->cachedUserBlockedDomains;
+                }
+            }
+
+            if (null === $criteria->cachedUserBlockedInstances) {
+                if (!$criteria->user) {
+                    $instanceBlockClauseUser = 'u.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = u.ap_domain)';
+                }
+                if (!$criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR NOT EXISTS (SELECT id FROM instance_block ib WHERE ib.user_id = :loggedInUser AND ib.instance_domain = m.ap_domain)';
+                }
+            } else {
+                $instanceBlocksParamNeeded = false;
+                if (!$criteria->user) {
+                    $instanceBlockClauseUser = 'u.ap_domain IS NULL OR u.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                    $instanceBlocksParamNeeded = true;
+                }
+                if (!$criteria->magazine) {
+                    $instanceBlockClauseMagazine = 'm.ap_domain IS NULL OR m.ap_domain NOT IN (:cachedUserBlockedInstances)';
+                    $instanceBlocksParamNeeded = true;
+                }
+                if ($instanceBlocksParamNeeded) {
+                    $parameters['cachedUserBlockedInstances'] = $criteria->cachedUserBlockedInstances;
                 }
             }
         }
@@ -375,6 +409,7 @@ class ContentRepository
             $modClause,
             $favClauseEntry,
             $blockingClauseEntry,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -397,6 +432,7 @@ class ContentRepository
             $modClause,
             $favClausePost,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
@@ -418,10 +454,12 @@ class ContentRepository
             $modClause,
             $favClauseEntryComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
@@ -439,10 +477,12 @@ class ContentRepository
             $modClause,
             $favClausePostComment,
             $blockingClausePost,
+            $instanceBlockClauseMagazine,
             $hideAdultClause,
             $visibilityClauseM,
             $visibilityClauseC,
             $allClause,
+            $addCursor ? '%cursor% OR (%cursor2%)' : '',
             $filterClauseComments,
         ]);
 
@@ -450,6 +490,7 @@ class ContentRepository
             $visibilityClauseU,
             $deletedClause,
             $allClauseU,
+            $instanceBlockClauseUser,
             $addCursor ? '%cursor% OR (%cursor2%)' : '',
         ]);
 
@@ -459,21 +500,21 @@ class ContentRepository
         // only join domain if we are explicitly looking at one
         $domainJoin = $criteria->domain ? 'LEFT JOIN domain d ON d.id = c.domain_id' : '';
 
-        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM entry c
+        $entrySql = "SELECT c.id, 'entry' as type, c.type as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id $selectEntryBoosted FROM entry c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $domainJoin
             $entryWhere";
-        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id FROM post c
+        $postSql = "SELECT c.id, 'post' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, c.ranking, c.score, c.comment_count, c.sticky, c.last_active, c.user_id $selectPostBoosted FROM post c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postWhere";
-        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM entry_comment c
+        $entryCommentSql = "SELECT c.id, 'entry_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id $selectEntryCommentBoosted FROM entry_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $entryCommentWhere";
-        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id FROM post_comment c
+        $postCommentSql = "SELECT c.id, 'post_comment' as type, 'microblog' as content_type, c.created_at, c.last_boosted_at, 0 as ranking, 0 as score, 0 as comment_count, false as sticky, c.last_active, c.user_id $selectPostCommentBoosted FROM post_comment c
             LEFT JOIN magazine m ON c.magazine_id = m.id
             $postCommentWhere";
 
-        $innerLimit = $addCursor ? 'LIMIT :limit' : '';
+        $innerLimit = $addCursor ? 'LIMIT :innerLimit' : '';
         $innerSql = '';
         if (Criteria::CONTENT_THREADS === $criteria->content) {
             if ($includeEntryComments) {
@@ -521,7 +562,7 @@ class ContentRepository
             Criteria::SORT_HOT => 'ranking',
             Criteria::SORT_COMMENTED => 'commentCount',
             Criteria::SORT_ACTIVE => 'lastActive',
-            default => 'createdAt',
+            default => $criteria->includeBoosts ? 'lastBoostedAt' : 'createdAt',
         };
     }
 
@@ -532,8 +573,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking < :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count < :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active < :cursor',
-            Criteria::SORT_OLD => 'c.created_at > :cursor',
-            default => 'c.created_at < :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at > :cursor' : 'c.created_at > :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
         };
     }
 
@@ -544,8 +585,8 @@ class ContentRepository
             Criteria::SORT_HOT => 'c.ranking > :cursor',
             Criteria::SORT_COMMENTED => 'c.comment_count > :cursor',
             Criteria::SORT_ACTIVE => 'c.last_active > :cursor',
-            Criteria::SORT_OLD => 'c.created_at < :cursor',
-            default => 'c.created_at >= :cursor',
+            Criteria::SORT_OLD => $criteria->includeBoosts ? 'c.last_boosted_at < :cursor' : 'c.created_at < :cursor',
+            default => $criteria->includeBoosts ? 'c.last_boosted_at >= :cursor' : 'c.created_at >= :cursor',
         };
     }
 
@@ -606,11 +647,11 @@ class ContentRepository
 
         switch ($criteria->sortOption) {
             case Criteria::SORT_OLD:
-                $orderings[] = 'created_at ASC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at ASC' : 'created_at ASC';
                 break;
             case Criteria::SORT_NEW:
             default:
-                $orderings[] = 'created_at DESC';
+                $orderings[] = $criteria->includeBoosts ? 'last_boosted_at DESC' : 'created_at DESC';
         }
 
         return $orderings;
