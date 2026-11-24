@@ -37,6 +37,8 @@
                 <div>
                     {{ request.applicationText }}
                 </div>
+                <h4>{{ 'stopforumspam_title'|trans }}</h4>
+                {% include 'admin/_registration_screening.html.twig' with {screening: request.registrationScreening} %}
                 <div class="actions">
                     <form method="post"
                           action="{{ path('admin_signup_requests_reject', { page: page, id: request.id }) }}"
