@@ -114,11 +114,11 @@ readonly class CustomCssService
         }
     }
 
+    /** @psalm-suppress TypeDoesNotContainType */
     private function validateCssDeclarationBlock(CustomCssProfile $profile, DeclarationBlock $css): void
     {
         foreach ($css->getSelectors() as $selector) {
             // The parser guarantees non-empty selector components, but keep this guard for malformed selector objects.
-            /* @psalm-suppress TypeDoesNotContainType */
             if (0 === \count($selector->getComponents())) {
                 $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
             }
@@ -151,13 +151,13 @@ readonly class CustomCssService
         }
     }
 
+    /** @psalm-suppress TypeDoesNotContainType */
     private function validateKeyframesDeclarationBlock(CustomCssProfile $profile, KeyFrame $css): void
     {
         if ($profile->allowAllDeclarations) {
             return;
         }
 
-        /* @psalm-suppress TypeDoesNotContainType */
         if ('' === $css->getAnimationName()) {
             $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
         }
@@ -247,11 +247,11 @@ readonly class CustomCssService
         }
     }
 
+    /** @psalm-suppress TypeDoesNotContainType */
     private function enforceKeyframeSelectorConstraints(KeyFrame $css, string $constraintPrefix, bool $addMissingClasses): void
     {
         $name = $css->getAnimationName();
 
-        /* @psalm-suppress TypeDoesNotContainType */
         if ('' === $name) {
             $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
         }
