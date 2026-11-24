@@ -117,6 +117,8 @@ readonly class CustomCssService
     private function validateCssDeclarationBlock(CustomCssProfile $profile, DeclarationBlock $css): void
     {
         foreach ($css->getSelectors() as $selector) {
+            // The parser guarantees non-empty selector components, but keep this guard for malformed selector objects.
+            /* @psalm-suppress TypeDoesNotContainType */
             if (0 === \count($selector->getComponents())) {
                 $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
             }
@@ -155,6 +157,7 @@ readonly class CustomCssService
             return;
         }
 
+        /* @psalm-suppress TypeDoesNotContainType */
         if ('' === $css->getAnimationName()) {
             $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
         }
@@ -221,9 +224,8 @@ readonly class CustomCssService
         foreach ($css->getSelectors() as $selector) {
             $components = $selector->getComponents();
 
-            if (\count($components) >= 1 && (
-                    $components[0]->getValue() === $constraintSelector
-                    || $this->checkFediSelector($components[0]->getValue(), $user))
+            if ($components[0]->getValue() === $constraintSelector
+                || $this->checkFediSelector($components[0]->getValue(), $user)
             ) {
                 continue;
             }
@@ -249,6 +251,7 @@ readonly class CustomCssService
     {
         $name = $css->getAnimationName();
 
+        /* @psalm-suppress TypeDoesNotContainType */
         if ('' === $name) {
             $this->throwInvalidCss($css, 'The CSS contained rules with disallowed selectors');
         }
