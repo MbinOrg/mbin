@@ -1147,3 +1147,171 @@ sidebar_sections_users_local_only: Ограничаване на секцият�
   „Активни хора“ само до местни
 random_local_only_performance_warning: Включването на „Случайни (само местни)“ 
   може да повлияе на производителността на SQL.
+created_since: Създадено от
+displayname: Показвано име
+boosted_by: Подсилено от
+parent_post: Родителска публикация
+parent_entry: Родителска нишка
+ban_expires: Забраната изтича
+oauth2.grant.moderate.entry.lock: Заключване на нишки в модерираните от теб 
+  общности, така че никой да не може да ги коментира
+oauth2.grant.moderate.post.lock: Заключване на микроблогове в модерираните от 
+  теб общности, така че никой да не може да ги коментира
+posts_harmonize_combined: Използване на ново оформление в обединения изглед
+posts_harmonize_combined_help: Публикациите ще имат оформление, подобно на това 
+  на нишките.
+show_boost_following_label: Показване на подсилено съдържание в изгледите 
+  „Микроблог“ и „Обединено“
+show_boost_following_help: Ако това е включено, нишки, публикации и коментари, 
+  подсилени от теб или от потребители, които следваш, ще се показват в изгледа 
+  „Обединено“ на твоите абонаменти и в изгледа „Микроблог“. Това ще има ефект 
+  само когато подреждането е зададено на „Най-нови“.
+you_have_been_banned_from_magazine: Наложена ти е забрана в общността %m.
+you_have_been_banned_from_magazine_permanently: Наложена ти е постоянна забрана 
+  в общността %m.
+you_are_no_longer_banned_from_magazine: Вече нямаш забрана в общността %m.
+feed_allow_entry_comments: Включване на коментарите към нишки в емисията 
+  „Обединено“
+feed_allow_post_comments: Включване на коментарите към публикации в емисията 
+  „Обединено“
+feed_allow_comments_hint: (може да доведе до бавно зареждане)
+discoverable: Откриваемост
+user_discoverable_help: Ако това е включено, профилът ти, нишките, 
+  микроблоговете и коментарите ти могат да бъдат намирани чрез търсенето и 
+  панелите за случайно съдържание. Профилът ти може също да се появява в панела 
+  с активни потребители и на страницата „Хора“. Ако това е изключено, 
+  публикациите ти пак ще бъдат видими за другите потребители, но няма да се 
+  появяват в емисията „Всички“.
+magazine_discoverable_help: Ако това е включено, тази общност, както и нишките, 
+  микроблоговете и коментарите в нея, могат да бъдат намирани чрез търсенето и 
+  панелите за случайно съдържание. Ако това е изключено, общността пак ще се 
+  появява в списъка с общности, но нишките и микроблоговете няма да се появяват 
+  в емисията „Всички“.
+flash_thread_lock_success: Нишката е заключена успешно
+flash_thread_unlock_success: Нишката е отключена успешно
+flash_post_lock_success: Микроблогът е заключен успешно
+flash_post_unlock_success: Микроблогът е отключен успешно
+lock: Заключване
+unlock: Отключване
+comments_locked: Коментарите са заключени.
+magazine_log_entry_locked: заключи коментарите на
+magazine_log_entry_unlocked: отключи коментарите на
+modlog_type_entry_lock: Нишка е заключена
+modlog_type_entry_unlock: Нишка е отключена
+modlog_type_post_lock: Микроблог е заключен
+modlog_type_post_unlock: Микроблог е отключен
+contentnotification.muted: Заглушени | не получаваш известия
+contentnotification.default: По подразбиране | получаваш известия според 
+  настройките си по подразбиране
+contentnotification.loud: Пълни | получаваш всички известия
+indexable_by_search_engines: Индексиране от търсачки
+user_indexable_by_search_engines_help: Ако тази настройка е изключена, на 
+  търсачките се препоръчва да не индексират никои от твоите нишки и 
+  микроблогове, но коментарите ти не са засегнати от това и злонамерени лица 
+  може да го игнорират. Тази настройка също се федерира към други сървъри.
+magazine_indexable_by_search_engines_help: Ако тази настройка е изключена, на 
+  търсачките се препоръчва да не индексират никои от нишките и микроблоговете в 
+  тази общност. Това включва началната страница и всички страници с коментари. 
+  Тази настройка също се федерира към други сървъри.
+magazine_name_as_tag: Използване на името на общността като етикет
+magazine_name_as_tag_help: Етикетите на общността се използват за съпоставяне на
+  микроблог публикации с тази общност. Например, ако името е „fediverse“ и 
+  етикетите на общността съдържат „fediverse“, тогава всяка микроблог 
+  публикация, съдържаща „#fediverse“, ще бъде поставена в тази общност.
+magazine_rules_deprecated: полето за правила е остаряло и ще бъде премахнато в 
+  бъдеще. Моля, постави правилата в полето за описание.
+monitoring: Мониторинг
+monitoring_queries: '{0}SQL заявки|{1}SQL заявка|]1,Inf[ SQL заявки'
+monitoring_duration_min: мин
+monitoring_duration_mean: средно
+monitoring_duration_max: макс
+monitoring_query_count: брой
+monitoring_query_total: общо
+monitoring_duration: Продължителност
+monitoring_dont_group_similar: без групиране на подобни заявки
+monitoring_group_similar: групиране на подобни заявки
+monitoring_http_method: HTTP метод
+monitoring_url: URL адрес
+monitoring_request_successful: Успешно
+monitoring_user_type: Тип потребител
+monitoring_path: Маршрут/Клас на съобщението
+monitoring_handler: Контролер/Транспорт
+monitoring_started: Стартирано
+monitoring_twig_renders: Twig рендерирания
+monitoring_curl_requests: Curl заявки
+monitoring_route_overview: Сумирано време за изпълнение по маршрут
+monitoring_route_overview_description: Тази графика показва сумата на 
+  изразходваните милисекунди, групирани по изчислявания маршрут/съобщение
+monitoring_duration_overall: Друго
+monitoring_duration_query: Заявка
+monitoring_duration_twig_render: Twig рендериране
+monitoring_duration_curl_request: Curl заявка
+monitoring_duration_sending_response: Изпращане на отговор
+monitoring_dont_format_query: без форматиране на заявката
+monitoring_format_query: форматиране на заявката
+monitoring_dont_show_parameters: без показване на параметрите
+monitoring_show_parameters: показване на параметрите
+monitoring_execution_type: Тип изпълнение
+monitoring_request: HTTP заявка
+monitoring_messenger: Messenger
+monitoring_anonymous: Анонимен
+monitoring_user: Потребител
+monitoring_activity_pub: ActivityPub
+monitoring_ajax: AJAX
+monitoring_created_from: Стартирано след
+monitoring_created_to: Стартирано преди
+monitoring_duration_minimum: Минимална продължителност
+monitoring_submit: Филтриране
+monitoring_has_exception: Има изключение
+monitoring_chart_ordering: Подреждане на графиката
+monitoring_total_duration: Обща продължителност
+monitoring_mean_duration: Средна продължителност
+monitoring_twig_compare_to_total: Сравняване с общата продължителност
+monitoring_twig_compare_to_parent: Сравняване с родителската продължителност
+monitoring_disabled: Мониторингът е изключен.
+monitoring_queries_enabled_persisted: Мониторингът на заявките е включен.
+monitoring_queries_enabled_not_persisted: Мониторингът на заявките е включен, но
+  само за времето за изпълнение.
+monitoring_queries_disabled: Мониторингът на заявките е изключен.
+monitoring_twig_renders_enabled_persisted: Мониторингът на Twig рендерирането е 
+  включен.
+monitoring_twig_renders_enabled_not_persisted: Мониторингът на Twig 
+  рендерирането е включен, но само за времето за изпълнение.
+monitoring_twig_renders_disabled: Мониторингът на Twig рендерирането е изключен.
+monitoring_curl_requests_enabled_persisted: Мониторингът на Curl заявките е 
+  включен.
+monitoring_curl_requests_enabled_not_persisted: Мониторингът на Curl заявките е 
+  включен, но само за времето за изпълнение.
+monitoring_curl_requests_disabled: Мониторингът на Curl заявките е изключен.
+reached_end: Достигна до края
+first_page: Първа страница
+next_page: Следваща страница
+previous_page: Предишна страница
+filter_list_create: Създаване на списък с филтри
+filter_lists: Списъци с филтри
+filter_lists_where_to_filter: Къде да се прилага филтърът
+filter_lists_filter_words: Филтрирани думи
+expiration_date: Дата на изтичане
+filter_lists_filter_location: Активен в
+filter_lists_word_exact_match: Точно съвпадение
+filter_lists_word_exact_match_help: Ако точното съвпадение е включено, търсенето
+  ще различава малки и главни букви
+feeds: Емисии
+filter_lists_feeds_help: Филтриране на думи в нишки, микроблогове и коментари в 
+  емисии, като /all, /sub, емисии на общности и др.
+filter_lists_comments_help: Филтриране на думи при преглед на нишка или 
+  микроблог в дървото с коментари.
+filter_lists_profile_help: Филтриране на думи в съдържанието на потребител при 
+  преглед на неговия профил.
+expired: Изтекъл
+block_unblock_instance: Блокиране / Отблокиране на инстанция
+block_instance: Блокиране на инстанцията
+unblock_instance: Отблокиране на инстанцията
+block_instance_globally_short: Глобално блокиране
+block_instance_globally_long: Блокиране на инстанцията за всички потребители
+unblock_instance_globally_short: Глобално отблокиране
+unblock_instance_globally_long: Отблокиране на инстанцията за всички потребители
+in_reply_to: в отговор на
+original_image: Оригинално изображение
+invisible_or_deleted: невидимо или изтрито
+malicious_embed: 'Вграждане на съдържание (предупреждение: потенциално злонамерено)'
