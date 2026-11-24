@@ -52,7 +52,7 @@ class RegistrationScreening
         }
     }
 
-    /** @param array{status: string, confidence: int|float|null, frequency: ?int} $result */
+    /** @param array{status: string, confidence: int|float|null, frequency: ?int, ...} $result */
     public function shouldReject(array $result, SettingsDto $settings): bool
     {
         return true === $settings->MBIN_STOPFORUMSPAM_ENABLED
