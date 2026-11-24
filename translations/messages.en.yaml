@@ -74,7 +74,9 @@ federated_user_info: This profile is from a federated server and may be
 go_to_original_instance: View on remote instance
 empty: Empty
 subscribe: Subscribe
+subscribe_short: Sub
 unsubscribe: Unsubscribe
+unsubscribe_short: Unsub
 follow: Follow
 unfollow: Unfollow
 reply: Reply
