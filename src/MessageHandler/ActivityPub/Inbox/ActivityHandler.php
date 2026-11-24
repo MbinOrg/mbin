@@ -124,8 +124,8 @@ class ActivityHandler extends MbinMessageHandler
 
         // Incoming activities can contain private messages. Inspect $payload in a local debugger if needed.
         $logContext = [
-            'activity_type' => LogContext::type($payload['type'] ?? null),
-            'activity_id' => LogContext::identifier($payload['id'] ?? null),
+            'activity_type' => LogContext::type($payload['type'] ?? null) ?? 'untyped',
+            'activity_id' => LogContext::identifier($payload['id'] ?? null) ?? 'unknown',
             'sender_host' => LogContext::host($payload['id'] ?? null) ?? $senderHost ?? 'unknown host',
         ];
 
@@ -142,7 +142,7 @@ class ActivityHandler extends MbinMessageHandler
                 $user = $this->activityPubManager->findActorOrCreate($payload['id']);
             }
         } catch (\Exception $e) {
-            $this->logger->error('[ActivityHandler::doWork] Could not resolve federation actor for activity from {sender_host} ({exception_type})', $logContext + ['exception_type' => $e::class]);
+            $this->logger->error('[ActivityHandler::doWork] Could not resolve actor for {activity_type} activity {activity_id} from {sender_host} ({exception_type})', $logContext + ['exception_type' => $e::class]);
 
             return;
         }
@@ -152,7 +152,7 @@ class ActivityHandler extends MbinMessageHandler
         }
 
         if (null === $user) {
-            $this->logger->warning('[ActivityHandler::doWork] Discarded federation activity from {sender_host}: no matching actor', $logContext);
+            $this->logger->warning('[ActivityHandler::doWork] Discarded {activity_type} activity {activity_id} from {sender_host}: no matching actor', $logContext);
 
             return;
         }

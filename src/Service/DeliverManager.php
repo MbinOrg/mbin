@@ -45,9 +45,9 @@ readonly class DeliverManager
         }
 
         if ($skipped > 0) {
-            $this->logger->warning('[DeliverManager::deliver] Skipped {skipped} local inboxes during federation delivery', [
-                'activity_type' => LogContext::type($activity['type'] ?? null),
-                'activity_id' => LogContext::identifier($activity['id'] ?? null),
+            $this->logger->warning('[DeliverManager::deliver] Skipped {skipped} local inboxes for {activity_type} activity {activity_id}', [
+                'activity_type' => LogContext::type($activity['type'] ?? null) ?? 'untyped',
+                'activity_id' => LogContext::identifier($activity['id'] ?? null) ?? 'unknown',
                 'skipped' => $skipped,
             ]);
         }

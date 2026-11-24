@@ -41,7 +41,7 @@ class EmbedRepository extends ServiceEntityRepository
             } catch (\Exception $e) {
                 // The database error and embed URL can both expose URL tokens. SQLSTATE identifies the database failure.
                 $sqlState = $e instanceof DriverException ? $e->getSQLState() : null;
-                $message = '[EmbedRepository::add] Could not save embed from {host} ({url_bytes}-byte URL';
+                $message = '[EmbedRepository::add] Could not save embed from {host} ({url_bytes}-byte URL, {exception_type}';
                 if (null !== $sqlState) {
                     $message .= ', SQLSTATE {sqlstate}';
                 }

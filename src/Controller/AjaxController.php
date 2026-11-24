@@ -351,7 +351,7 @@ class AjaxController extends AbstractController
 
             return new JsonResponse();
         } catch (\ErrorException $e) {
-            $this->logger->error('[AjaxController::registerPushNotifications] Could not send push test after registration ({exception_type})', ['exception_type' => $e::class]);
+            $this->logger->error('[AjaxController::registerPushNotifications] Could not send push test after registration for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }
@@ -359,16 +359,22 @@ class AjaxController extends AbstractController
 
     public function unregisterPushNotifications(#[MapRequestPayload] UnRegisterPushRequestPayload $payload): JsonResponse
     {
+        $userId = null;
         try {
             $conn = $this->entityManager->getConnection();
             $stmt = $conn->prepare('DELETE FROM user_push_subscription WHERE user_id = :user AND device_key = :device');
-            $stmt->bindValue('user', $this->getUserOrThrow()->getId(), ParameterType::INTEGER);
+            $userId = $this->getUserOrThrow()->getId();
+            $stmt->bindValue('user', $userId, ParameterType::INTEGER);
             $stmt->bindValue('device', $payload->deviceKey, ParameterType::STRING);
             $stmt->executeQuery();
 
             return new JsonResponse();
         } catch (\Exception $e) {
-            $this->logger->error('[AjaxController::unregisterPushNotifications] Could not delete push subscription ({exception_type})', ['exception_type' => $e::class]);
+            $message = '[AjaxController::unregisterPushNotifications] Could not delete push subscription';
+            if (null !== $userId) {
+                $message .= ' for user {user_id}';
+            }
+            $this->logger->error($message.' ({exception_type})', ['user_id' => $userId, 'exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }
@@ -382,7 +388,7 @@ class AjaxController extends AbstractController
 
             return new JsonResponse();
         } catch (\ErrorException $e) {
-            $this->logger->error('[AjaxController::testPushNotification] Could not send push test ({exception_type})', ['exception_type' => $e::class]);
+            $this->logger->error('[AjaxController::testPushNotification] Could not send push test for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }

@@ -168,7 +168,16 @@ class EntryCreateController extends AbstractController
                 $maxBytes
             );
         } catch (\Exception $e) {
-            $this->logger->error('[EntryCreateController::__invoke] Could not create thread ({exception_type})', ['exception_type' => $e::class, 'magazine_id' => $magazine?->getId()]);
+            $magazineId = $dto->magazine?->getId();
+            $message = '[EntryCreateController::__invoke] Could not create thread';
+            if (null !== $magazineId) {
+                $message .= ' in magazine {magazine_id}';
+            }
+            $this->logger->error($message.' for user {user_id} ({exception_type})', [
+                'user_id' => $user->getId(),
+                'magazine_id' => $magazineId,
+                'exception_type' => $e::class,
+            ]);
 
             return $this->showFailure('flash_thread_new_error', 422, $magazine, $user, $form, $maxBytes);
         }

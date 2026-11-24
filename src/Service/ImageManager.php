@@ -210,8 +210,8 @@ class ImageManager implements ImageManagerInterface
             }
             unlink($tempFile);
             $message = 'download' === $failure
-                ? '[ImageManager::download] Could not download remote image from {host}'
-                : '[ImageManager::download] Remote image from {host} failed validation';
+                ? '[ImageManager::download] Could not download remote image from {host} ({exception_type})'
+                : '[ImageManager::download] Remote image from {host} failed validation ({exception_type})';
             $this->logger->warning($message, ['host' => LogContext::host($url) ?? 'unknown host', 'stage' => $failure, 'exception_type' => $e::class]);
 
             return null;

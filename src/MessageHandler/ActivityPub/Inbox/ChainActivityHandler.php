@@ -66,18 +66,24 @@ class ChainActivityHandler extends MbinMessageHandler
         }
         $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
+        $objectId = $object['id'] ?? null;
         $context = [
-            'object_id' => LogContext::identifier($object['id'] ?? null),
+            'object_id' => LogContext::identifier($objectId),
             'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
         ];
-        if (!\in_array($object['type'], $validObjectTypes, true)) {
-            $this->logger->error('[ChainActivityHandler::doWork] Unsupported federation dependency type {object_type}', $context);
+        if (!\in_array($object['type'] ?? null, $validObjectTypes, true)) {
+            $this->logger->error('[ChainActivityHandler::doWork] Unsupported federation dependency type {object_type} for {object_id}', ['object_id' => $context['object_id'] ?? 'unknown object'] + $context);
+
+            return;
+        }
+        if (!\is_string($objectId) || '' === $objectId) {
+            $this->logger->error('[ChainActivityHandler::doWork] Discarded federation dependency with missing or invalid root object ID', $context);
 
             return;
         }
         $failure = null;
         try {
-            $entity = $this->retrieveObject($object['id'], $failure);
+            $entity = $this->retrieveObject($objectId, $failure);
         } catch (InstanceBannedException) {
             $entity = null;
         }
@@ -156,17 +162,16 @@ class ChainActivityHandler extends MbinMessageHandler
                 $failure = null;
             }
 
-            switch ($object['type']) {
-                case 'Question':
-                case 'Note':
-                    return $this->note->create($object);
-                case 'Page':
-                case 'Article':
-                case 'Video':
-                    return $this->page->create($object);
-                default:
-                    $failure = $context + ['reason' => 'Unsupported federation dependency type', 'level' => 'error'];
+            $entity = match ($object['type'] ?? null) {
+                'Question', 'Note' => $this->note->create($object),
+                'Page', 'Article', 'Video' => $this->page->create($object),
+                default => null,
+            };
+            if (null === $entity) {
+                $failure = $context + ['reason' => 'Unsupported federation dependency type', 'level' => 'error'];
             }
+
+            return $entity;
         } catch (UserBannedException|UserDeletedException|TagBannedException|EntryLockedException|PostLockedException $e) {
             $failure = $context + ['reason' => 'Federation dependency rejected by moderation', 'level' => 'info', 'exception_type' => $e::class];
         } catch (InstanceBannedException $e) {

@@ -103,7 +103,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
 
                 $tags = array_unique(array_merge($urls, $mentions, $magazineMentions));
 
-                $this->logger->debug('[CacheMarkdownListener::postConvertMarkdown] Tagged Markdown cache entry ({tag_count} tags, {markdown_bytes} bytes)', ['tag_count' => \count($tags), 'markdown_bytes' => \strlen($md)]);
+                $this->logger->debug('[CacheMarkdownListener::postConvertMarkdown] Tagged Markdown cache entry (tag count {tag_count}, {markdown_bytes} B)', ['tag_count' => \count($tags), 'markdown_bytes' => \strlen($md)]);
 
                 $item->tag($tags);
             }

@@ -429,9 +429,9 @@ class ApHttpClient implements ApHttpClientInterface
         if (null !== $response) {
             try {
                 $content = $response->getContent(false);
-            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $e) {
-                $class = \get_class($e);
-                $content = "there was an exception while getting the content, $class: {$e->getMessage()}";
+            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $bodyError) {
+                $class = $bodyError::class;
+                $content = "there was an exception while getting the content, $class: {$bodyError->getMessage()}";
             }
         }
 
@@ -447,6 +447,11 @@ class ApHttpClient implements ApHttpClientInterface
             $context['object_id'] = LogContext::identifier($requestUrl);
         }
         $message = '[ApHttpClient::logRequestException] Federation {operation} failed at {host}';
+        if (isset($context['activity_id'])) {
+            $message .= ' for activity {activity_id}';
+        } elseif (isset($context['object_id'])) {
+            $message .= ' for object {object_id}';
+        }
         $message .= $failedHttpStatus ? ' (HTTP {status})' : ' ({exception_type})';
         $this->logger->error($message, $context);
 
@@ -454,7 +459,7 @@ class ApHttpClient implements ApHttpClientInterface
         // $this->logger->debug('[ApHttpClient::logRequestException] Response body', ['body' => $content ?? null]);
         try {
             $this->dispatcher->dispatch(new CurlRequestFinishedEvent($requestUrl, false, $content ?? null, $e));
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
         }
 
         throw $e; // re-throw the exception

@@ -1142,38 +1142,39 @@ class ActivityPubManager
      */
     public function getEntityObject(string|array $apObject, array $fullPayload, callable $chainDispatch): Entry|EntryComment|Post|PostComment|null
     {
+        $requestedId = \is_string($apObject) ? $apObject : ($apObject['id'] ?? null);
         $context = [
             'activity_type' => LogContext::type($fullPayload['type'] ?? null) ?? 'untyped',
             'activity_id' => LogContext::identifier($fullPayload['id'] ?? null),
-            'object_id' => LogContext::identifier(\is_string($apObject) ? $apObject : ($apObject['id'] ?? null)),
+            'object_id' => LogContext::identifier($requestedId),
         ];
+        if (!\is_string($requestedId) || '' === $requestedId || (\is_string($apObject) && false === filter_var($requestedId, FILTER_VALIDATE_URL))) {
+            $this->logger->error('[ActivityPubManager::getEntityObject] Discarded {activity_type} activity: invalid object URL', $context);
+
+            return null;
+        }
         $object = null;
         $activity = null;
         $calledUrl = null;
         if (\is_string($apObject)) {
-            if (false === filter_var($apObject, FILTER_VALIDATE_URL)) {
-                $this->logger->error('[ActivityPubManager::getEntityObject] Discarded {activity_type} activity: invalid object URL', $context);
-
-                return null;
-            }
             // First try to find the activity object in our database
             $activity = $this->activityRepository->findByObjectId($apObject);
             $calledUrl = $apObject;
             if (!$activity) {
                 if (!$this->settingsManager->isBannedInstance($apObject)) {
-                    $this->logger->debug('[ActivityPubManager::getEntityObject] Object is fetched from {url} because it is a string and could not be found in our repo', ['url' => $apObject]);
+                    $this->logger->debug('[ActivityPubManager::getEntityObject] Fetching remote object {object_id}', ['object_id' => $context['object_id'] ?? 'with unknown ID']);
                     $object = $this->apHttpClient->getActivityObject($apObject);
                 } else {
-                    $this->logger->info('[ActivityPubManager::getEntityObject] The instance is banned, url: {url}', ['url' => $apObject]);
+                    $this->logger->info('[ActivityPubManager::getEntityObject] Skipped object from banned instance {host}', ['host' => LogContext::host($apObject) ?? 'unknown host']);
 
                     return null;
                 }
             }
         } else {
-            $activity = $this->activityRepository->findByObjectId($apObject['id']);
-            $calledUrl = $apObject['id'];
+            $activity = $this->activityRepository->findByObjectId($requestedId);
+            $calledUrl = $requestedId;
             if (!$activity) {
-                $this->logger->debug('[ActivityPubManager::getEntityObject] Object is fetched from {url} because it is not a string and could not be found in our repo', ['url' => $apObject['id']]);
+                $this->logger->debug('[ActivityPubManager::getEntityObject] Using supplied object {object_id}', ['object_id' => $context['object_id'] ?? 'with unknown ID']);
                 $object = $apObject;
             }
         }
@@ -1185,14 +1186,28 @@ class ActivityPubManager
         }
 
         if ($object) {
+            if (!\is_array($object) || !\is_string($object['id'] ?? null) || '' === $object['id']) {
+                $this->logger->error('[ActivityPubManager::getEntityObject] Discarded {activity_type} activity: invalid object response', $context);
+
+                return null;
+            }
             $adjustedUrl = null;
             if ($object['id'] !== $calledUrl) {
-                $this->logger->warning('[ActivityPubManager::getEntityObject] The url {url} returned a different object id: {id}', ['url' => $calledUrl, 'id' => $object['id']]);
+                $this->logger->warning('[ActivityPubManager::getEntityObject] Object lookup for {object_id} returned {returned_id}', [
+                    'object_id' => $context['object_id'] ?? 'unknown object',
+                    'returned_id' => LogContext::identifier($object['id']) ?? 'an unknown object',
+                ]);
                 $adjustedUrl = $object['id'];
             }
 
-            $this->logger->debug('[ActivityPubManager::getEntityObject] Queued dependency resolution for {activity_type} activity', $context);
             $chainDispatch($object, $adjustedUrl);
+            $this->logger->debug(
+                '[ActivityPubManager::getEntityObject] Queued dependency resolution for {activity_type} activity {activity_id}, object {object_id}',
+                [
+                    'activity_id' => $context['activity_id'] ?? 'unknown',
+                    'object_id' => LogContext::identifier($object['id']) ?? 'unknown',
+                ] + $context,
+            );
 
             return null;
         }

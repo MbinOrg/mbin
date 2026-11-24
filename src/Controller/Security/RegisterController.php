@@ -64,8 +64,9 @@ class RegisterController extends AbstractController
 
         if ($submitted) {
             // Validation details can include submitted values.
-            $this->logger->warning('[RegisterController::__invoke] Registration form failed validation ({error_count} errors)', [
-                'error_count' => \count($form->getErrors(true)),
+            $errorCount = \count($form->getErrors(true));
+            $this->logger->warning('[RegisterController::__invoke] Registration form failed validation ({error_count} '.(1 === $errorCount ? 'error' : 'errors').')', [
+                'error_count' => $errorCount,
             ]);
         }
 

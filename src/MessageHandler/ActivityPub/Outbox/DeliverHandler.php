@@ -64,10 +64,10 @@ class DeliverHandler extends MbinMessageHandler
         } catch (InvalidApPostException $e) {
             if (400 <= $e->responseCode && 500 > $e->responseCode && self::HTTP_RESPONSE_CODE_RATE_LIMITED !== $e->responseCode) {
                 $conn->rollBack();
-                $this->logger->debug('[DeliverHandler::workWrapper] Federation inbox at {host} rejected delivery (HTTP {status})', [
+                $this->logger->debug('[DeliverHandler::workWrapper] Federation inbox at {host} rejected activity {activity_id} (HTTP {status})', [
                     'host' => LogContext::host($e->url) ?? 'unknown host',
                     'status' => $e->responseCode,
-                    'activity_id' => LogContext::identifier($e->payload['id'] ?? null),
+                    'activity_id' => LogContext::identifier($e->payload['id'] ?? null) ?? 'unknown',
                 ]);
                 throw new UnrecoverableMessageHandlingException('There is a problem with the request which will stay the same, so discarding', previous: $e);
             } elseif (self::HTTP_RESPONSE_CODE_RATE_LIMITED === $e->responseCode) {

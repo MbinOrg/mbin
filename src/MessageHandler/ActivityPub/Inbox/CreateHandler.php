@@ -73,6 +73,7 @@ class CreateHandler extends MbinMessageHandler
             throw new \LogicException("CreateHandler called, but is wasn\'t a CreateMessage. Type: ".\get_class($message));
         }
         $object = $message->payload;
+        $objectType = $object['type'] ?? null;
         $stickyIt = $message->stickyIt;
         $this->logger->debug('[CreateHandler::doWork] Handling federation Create for {object_type} {object_id}', [
             'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
@@ -82,9 +83,9 @@ class CreateHandler extends MbinMessageHandler
         $postTypes = ['Question', 'Note'];
 
         try {
-            if ('ChatMessage' === $object['type']) {
+            if ('ChatMessage' === $objectType) {
                 $this->handlePrivateMessage($object);
-            } elseif (\in_array($object['type'], $postTypes)) {
+            } elseif (\in_array($objectType, $postTypes, true)) {
                 $this->handleChain($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the post
@@ -92,7 +93,7 @@ class CreateHandler extends MbinMessageHandler
                     $this->cache->invalidateTags([$tag]);
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
-            } elseif (\in_array($object['type'], $entryTypes)) {
+            } elseif (\in_array($objectType, $entryTypes, true)) {
                 $this->handlePage($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the entry
@@ -101,9 +102,9 @@ class CreateHandler extends MbinMessageHandler
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
             } else {
-                $this->logger->warning('[CreateHandler::doWork] Skipped federation Create with unsupported object type {object_type}', [
+                $this->logger->warning('[CreateHandler::doWork] Skipped federation Create for {object_id}: unsupported type {object_type}', [
                     'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
-                    'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'with unknown ID',
+                    'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'unknown object',
                 ]);
             }
         } catch (UserBannedException) {
