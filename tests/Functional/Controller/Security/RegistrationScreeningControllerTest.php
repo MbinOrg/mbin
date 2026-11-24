@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -148,14 +149,27 @@ class RegistrationScreeningControllerTest extends WebTestCase
         $em->flush();
         $this->register(true);
         self::assertResponseRedirects('/login');
-        self::assertEmailCount(2);
+        self::assertEmailCount(1);
+        $confirmation = $this->getMailerMessage();
+        self::assertEmailHeaderSame($confirmation, 'To', 'screened@example.org');
+        $verificationLink = (new Crawler($confirmation->getHtmlBody()))->filter('a.btn.btn__primary')->attr('href');
+        self::getClient()->request('GET', $verificationLink.'&signature=invalid');
+        self::assertResponseRedirects('/register');
+        self::assertEmailCount(0);
+        self::getClient()->request('GET', $verificationLink);
+        self::assertResponseRedirects('/login');
+        self::assertEmailCount(1);
         $email = $this->getMailerMessage();
         self::assertEmailHeaderSame($email, 'To', 'admin@example.org');
         self::assertStringContainsString('91.186.18.61', $email->getHtmlBody());
         self::assertStringContainsString('95%', $email->getHtmlBody());
         $user = $em->getRepository(User::class)->findOneBy(['username' => 'ScreenedUser']);
+        self::assertTrue($user->isVerified);
         self::assertSame(EApplicationStatus::Pending, $user->getApplicationStatus());
         self::assertSame('matched', $user->getRegistrationScreening()['status']);
+        self::getClient()->request('GET', $verificationLink);
+        self::assertResponseRedirects('/login');
+        self::assertEmailCount(0);
         self::getClient()->loginUser($em->getRepository(User::class)->findOneBy(['username' => 'admin']));
         self::getClient()->request('GET', '/admin/signup_requests');
         self::assertResponseIsSuccessful();
@@ -168,6 +182,56 @@ class RegistrationScreeningControllerTest extends WebTestCase
             $manager->$decision($user);
         }
         self::assertNull($user->getRegistrationScreening());
+    }
+
+    public function testSsoSignupNotifiesAfterVerificationIsPersisted(): void
+    {
+        $this->setupScreening();
+        $container = self::getContainer();
+        $container->get(SettingsManager::class)->set('MBIN_NEW_USERS_NEED_APPROVAL', true);
+        $em = $container->get(EntityManagerInterface::class);
+        $admin = new User('admin@example.org', 'admin', 'password', \App\Enums\EUserType::Person);
+        $admin->roles = ['ROLE_ADMIN'];
+        $admin->notifyOnUserSignup = true;
+        $em->persist($admin);
+        $em->flush();
+
+        $stack = $container->get(RequestStack::class);
+        $stack->push(Request::create('/oauth/callback', server: ['REMOTE_ADDR' => '91.186.18.61']));
+        try {
+            $dto = UserDto::create('SsoUser', 'sso@example.org');
+            $dto->plainPassword = 'secret';
+            $manager = $container->get(UserManager::class);
+            $user = $manager->create($dto, false, publicRegistration: true);
+            self::assertEmailCount(0);
+
+            $user->oauthGithubId = '123';
+            $manager->verifySsoSignup($user);
+
+            self::assertEmailCount(1);
+            self::assertEmailHeaderSame($this->getMailerMessage(), 'To', 'admin@example.org');
+            $em->refresh($user);
+            self::assertTrue($user->isVerified);
+            self::assertSame('123', $user->oauthGithubId);
+            self::assertSame(EApplicationStatus::Pending, $user->getApplicationStatus());
+        } finally {
+            $stack->pop();
+        }
+    }
+
+    public function testSettingsRefreshReadsCurrentDatabaseValues(): void
+    {
+        $this->setupScreening();
+        $settings = self::getContainer()->get(SettingsManager::class);
+        $settings->set('MBIN_NEW_USERS_NEED_APPROVAL', true);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $storedApproval = $em->getRepository(\App\Entity\Settings::class)->findOneBy(['name' => 'MBIN_NEW_USERS_NEED_APPROVAL']);
+        $em->getConnection()->update('settings', ['value' => 'false'], ['name' => 'MBIN_NEW_USERS_NEED_APPROVAL']);
+
+        self::assertSame('true', $storedApproval->value);
+        self::assertTrue($settings->getNewUsersNeedApproval());
+        $settings->refresh();
+        self::assertFalse($settings->getNewUsersNeedApproval());
     }
 
     public static function decisions(): iterable

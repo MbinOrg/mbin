@@ -9,8 +9,8 @@ use App\Message\Contracts\MessageInterface;
 use App\Message\RegistrationApprovalEmailMessage;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -28,7 +28,7 @@ class RegistrationApprovalEmailHandler extends MbinMessageHandler
         private readonly SettingsManager $settings,
         private readonly MailerInterface $mailer,
         private readonly TranslatorInterface $translator,
-        private readonly Connection $connection,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($entityManager, $kernel);
     }
@@ -43,12 +43,8 @@ class RegistrationApprovalEmailHandler extends MbinMessageHandler
         if (!$message instanceof RegistrationApprovalEmailMessage) {
             throw new \LogicException();
         }
-        // Workers may have an older SettingsManager instance; read the enable switch from storage.
-        if ('true' !== $this->connection->fetchOne('SELECT value FROM settings WHERE name = :name', ['name' => 'MBIN_STOPFORUMSPAM_ENABLED'])) {
-            return;
-        }
-        $approval = $this->connection->fetchOne('SELECT value FROM settings WHERE name = :name', ['name' => 'MBIN_NEW_USERS_NEED_APPROVAL']);
-        if (false !== $approval && 'true' !== $approval) {
+        $this->settings->refresh();
+        if (!$this->settings->getDto()->MBIN_STOPFORUMSPAM_ENABLED || !$this->settings->getNewUsersNeedApproval()) {
             return;
         }
         $user = $this->repository->find($message->userId);
@@ -56,9 +52,13 @@ class RegistrationApprovalEmailHandler extends MbinMessageHandler
         if (!$user || !$admin || !$admin->isAdmin() || !$admin->notifyOnUserSignup
             || $admin->isAccountDeleted() || $admin->isSoftDeleted() || null !== $admin->markedForDeletionAt
             || $user->isAccountDeleted() || $user->isSoftDeleted() || null !== $user->markedForDeletionAt
-            || EApplicationStatus::Pending !== $user->getApplicationStatus()
-            || null === $user->getRegistrationScreening()
-            || (false === $approval && !$this->settings->getNewUsersNeedApproval())) {
+            || EApplicationStatus::Pending !== $user->getApplicationStatus() || !$user->isVerified) {
+            return;
+        }
+        $screening = $user->getRegistrationScreening();
+        if (null === $screening) {
+            $this->logger->warning('Skipping registration approval email for pending user {userId} without a screening result.', ['userId' => $message->userId]);
+
             return;
         }
         $this->mailer->send((new TemplatedEmail())
@@ -66,6 +66,6 @@ class RegistrationApprovalEmailHandler extends MbinMessageHandler
             ->to($admin->email)
             ->subject($this->translator->trans('stopforumspam_approval_email_title'))
             ->htmlTemplate('_email/registration_approval.html.twig')
-            ->context(['user' => $user, 'screening' => $user->getRegistrationScreening()]));
+            ->context(['user' => $user, 'screening' => $screening]));
     }
 }

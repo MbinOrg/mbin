@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
+use App\DTO\SettingsDto;
 use App\Entity\User;
 use App\Enums\EApplicationStatus;
 use App\Enums\EUserType;
@@ -11,10 +12,10 @@ use App\Message\RegistrationApprovalEmailMessage;
 use App\MessageHandler\RegistrationApprovalEmailHandler;
 use App\Repository\UserRepository;
 use App\Service\SettingsManager;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -34,18 +35,25 @@ class RegistrationApprovalEmailHandlerTest extends TestCase
     }
 
     #[DataProvider('deliveryCases')]
-    public function testDeliveryChecksCurrentEligibility(bool $enabled, bool $approvalEnabled, bool $adminRole, bool $notify, EApplicationStatus $status, bool $send): void
+    public function testDeliveryChecksCurrentEligibility(bool $enabled, bool $approvalEnabled, bool $adminRole, bool $notify, EApplicationStatus $status, bool $send, bool $verified = true, bool $hasScreening = true): void
     {
         $user = new User('user@example.org', 'applicant', 'password', EUserType::Person, applicationStatus: $status);
-        $user->setRegistrationScreening(['ip' => '91.186.18.61', 'status' => 'matched']);
+        $user->isVerified = $verified;
+        if ($hasScreening) {
+            $user->setRegistrationScreening(['ip' => '91.186.18.61', 'status' => 'matched']);
+        }
         $admin = new User('admin@example.org', 'admin', 'password', EUserType::Person);
         $admin->roles = $adminRole ? ['ROLE_ADMIN'] : ['ROLE_MODERATOR'];
         $admin->notifyOnUserSignup = $notify;
         $repository = $this->createStub(UserRepository::class);
         $repository->method('find')->willReturnCallback(fn ($id): User => 1 === $id ? $user : $admin);
-        $connection = $this->createStub(Connection::class);
-        $connection->method('fetchOne')->willReturnCallback(fn (string $sql, array $params): string => ('MBIN_STOPFORUMSPAM_ENABLED' === $params['name'] ? $enabled : $approvalEnabled) ? 'true' : 'false');
-        $settings = $this->createStub(SettingsManager::class);
+        $dto = (new \ReflectionClass(SettingsDto::class))->newInstanceWithoutConstructor();
+        $settings = $this->createMock(SettingsManager::class);
+        $settings->expects(self::once())->method('refresh')->willReturnCallback(function () use ($dto, $enabled): void {
+            $dto->MBIN_STOPFORUMSPAM_ENABLED = $enabled;
+        });
+        $settings->method('getDto')->willReturn($dto);
+        $settings->method('getNewUsersNeedApproval')->willReturn($approvalEnabled);
         $settings->method('get')->willReturnCallback(fn (string $name): string => 'KBIN_SENDER_EMAIL' === $name ? 'noreply@example.org' : 'example.org');
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturn('Registration awaiting approval');
@@ -56,7 +64,9 @@ class RegistrationApprovalEmailHandlerTest extends TestCase
 
             return true;
         }));
-        $handler = new RegistrationApprovalEmailHandler($this->createStub(EntityManagerInterface::class), $this->createStub(KernelInterface::class), $repository, $settings, $mailer, $translator, $connection);
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($hasScreening ? self::never() : self::once())->method('warning');
+        $handler = new RegistrationApprovalEmailHandler($this->createStub(EntityManagerInterface::class), $this->createStub(KernelInterface::class), $repository, $settings, $mailer, $translator, $logger);
         $handler->doWork(new RegistrationApprovalEmailMessage(1, 2));
     }
 
@@ -69,5 +79,7 @@ class RegistrationApprovalEmailHandlerTest extends TestCase
         yield 'opted out' => [true, true, true, false, EApplicationStatus::Pending, false];
         yield 'already approved' => [true, true, true, true, EApplicationStatus::Approved, false];
         yield 'already rejected' => [true, true, true, true, EApplicationStatus::Rejected, false];
+        yield 'unverified applicant' => [true, true, true, true, EApplicationStatus::Pending, false, false];
+        yield 'missing snapshot' => [true, true, true, true, EApplicationStatus::Pending, false, true, false];
     }
 }

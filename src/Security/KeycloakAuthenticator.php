@@ -98,10 +98,7 @@ class KeycloakAuthenticator extends MbinOAuthAuthenticatorBase
 
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthKeycloakId = $keycloakUser->getId();
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 return $user;
             }),

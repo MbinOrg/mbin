@@ -22,4 +22,13 @@ class SettingsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Settings::class);
     }
+
+    /** @return list<array{name: string, value: ?string, json: array<array-key, mixed>|null}> */
+    public function findAllValues(): array
+    {
+        return $this->createQueryBuilder('setting')
+            ->select('setting.name', 'setting.value', 'setting.json')
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

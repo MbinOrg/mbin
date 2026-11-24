@@ -107,10 +107,7 @@ class FacebookAuthenticator extends MbinOAuthAuthenticatorBase
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthFacebookId = $facebookUser->getId();
                 $user->avatar = $this->getAvatar($facebookUser->getPictureUrl());
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 $request->getSession()->set('is_newly_created', true);
 

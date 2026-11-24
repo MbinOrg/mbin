@@ -83,10 +83,7 @@ class GithubAuthenticator extends MbinOAuthAuthenticatorBase
 
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthGithubId = \strval($githubUser->getId());
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 $request->getSession()->set('is_newly_created', true);
 

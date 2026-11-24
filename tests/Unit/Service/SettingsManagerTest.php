@@ -31,7 +31,7 @@ class SettingsManagerTest extends WebTestCase
         $setMaxImagesBytes = 1500000;
 
         $settingsRepository = $this->createStub(SettingsRepository::class);
-        $settingsRepository->method('findAll')->willReturn([]);
+        $settingsRepository->method('findAllValues')->willReturn([]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $requestStack = $this->createStub(RequestStack::class);
         $kernel = $this->createStub(KernelInterface::class);
@@ -88,7 +88,7 @@ class SettingsManagerTest extends WebTestCase
         $setMaxImagesBytes = 1572864;
 
         $settingsRepository = $this->createStub(SettingsRepository::class);
-        $settingsRepository->method('findAll')->willReturn([]);
+        $settingsRepository->method('findAllValues')->willReturn([]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $requestStack = $this->createStub(RequestStack::class);
         $kernel = $this->createStub(KernelInterface::class);

@@ -120,10 +120,7 @@ class SimpleLoginAuthenticator extends MbinOAuthAuthenticatorBase
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthSimpleLoginId = $simpleloginUser->getId();
                 $user->avatar = $this->getAvatar($simpleloginUser->getPictureUrl());
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 return $user;
             }),

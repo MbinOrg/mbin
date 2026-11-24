@@ -55,73 +55,77 @@ class SettingsManager
         private readonly string $mbinSearchLang,
     ) {
         if (!self::$dto || 'test' === $this->kernel->getEnvironment()) {
-            $results = $this->repository->findAll();
-
-            $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
-            if ('true' === $newUsersNeedApprovalDb) {
-                $newUsersNeedApprovalEdited = true;
-            } elseif ('false' === $newUsersNeedApprovalDb) {
-                $newUsersNeedApprovalEdited = false;
-            } else {
-                $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
-            }
-
-            $dto = new SettingsDto(
-                $this->kbinDomain,
-                $this->find($results, 'KBIN_TITLE') ?? $this->kbinTitle,
-                $this->find($results, 'KBIN_META_TITLE') ?? $this->kbinMetaTitle,
-                $this->find($results, 'KBIN_META_KEYWORDS') ?? $this->kbinMetaKeywords,
-                $this->find($results, 'KBIN_META_DESCRIPTION') ?? $this->kbinMetaDescription,
-                $this->find($results, 'KBIN_DEFAULT_LANG') ?? $this->kbinDefaultLang,
-                $this->find($results, 'KBIN_CONTACT_EMAIL') ?? $this->kbinContactEmail,
-                $this->find($results, 'KBIN_SENDER_EMAIL') ?? $this->kbinSenderEmail,
-                $this->find($results, 'MBIN_DEFAULT_THEME') ?? $this->mbinDefaultTheme,
-                $this->find($results, 'KBIN_JS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinJsEnabled,
-                $this->find(
-                    $results,
-                    'KBIN_FEDERATION_ENABLED',
-                    FILTER_VALIDATE_BOOLEAN
-                ) ?? $this->kbinFederationEnabled,
-                $this->find(
-                    $results,
-                    'KBIN_REGISTRATIONS_ENABLED',
-                    FILTER_VALIDATE_BOOLEAN
-                ) ?? $this->kbinRegistrationsEnabled,
-                $this->find($results, 'KBIN_HEADER_LOGO', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinHeaderLogo,
-                $this->find($results, 'KBIN_CAPTCHA_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinCaptchaEnabled,
-                $this->find($results, 'KBIN_MERCURE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'KBIN_FEDERATION_PAGE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinFederationPageEnabled,
-                $this->find($results, 'KBIN_ADMIN_ONLY_OAUTH_CLIENTS', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinAdminOnlyOauthClients,
-                $this->find($results, 'MBIN_SSO_ONLY_MODE', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinSsoOnlyMode,
-                $this->find($results, 'MBIN_PRIVATE_INSTANCE', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
-                $newUsersNeedApprovalEdited,
-                $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
-                $this->find($results, 'MBIN_FEED_ALLOW_ENTRY_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_FEED_ALLOW_POST_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
-                $this->find($results, 'MBIN_STOPFORUMSPAM_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
-                $this->find($results, 'MBIN_STOPFORUMSPAM_AUTO_REJECT', FILTER_VALIDATE_BOOLEAN) ?? false,
-                (float) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE') ?? 95),
-                (int) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_FREQUENCY') ?? 5),
-            );
-            $this->instanceDto = $dto;
+            $this->refresh();
         } else {
             $this->instanceDto = self::$dto;
         }
     }
 
+    public function refresh(): void
+    {
+        $results = $this->repository->findAllValues();
+
+        $newUsersNeedApprovalDb = $this->find($results, 'MBIN_NEW_USERS_NEED_APPROVAL');
+        if ('true' === $newUsersNeedApprovalDb) {
+            $newUsersNeedApprovalEdited = true;
+        } elseif ('false' === $newUsersNeedApprovalDb) {
+            $newUsersNeedApprovalEdited = false;
+        } else {
+            $newUsersNeedApprovalEdited = $this->mbinNewUsersNeedApproval;
+        }
+
+        $this->instanceDto = new SettingsDto(
+            $this->kbinDomain,
+            $this->find($results, 'KBIN_TITLE') ?? $this->kbinTitle,
+            $this->find($results, 'KBIN_META_TITLE') ?? $this->kbinMetaTitle,
+            $this->find($results, 'KBIN_META_KEYWORDS') ?? $this->kbinMetaKeywords,
+            $this->find($results, 'KBIN_META_DESCRIPTION') ?? $this->kbinMetaDescription,
+            $this->find($results, 'KBIN_DEFAULT_LANG') ?? $this->kbinDefaultLang,
+            $this->find($results, 'KBIN_CONTACT_EMAIL') ?? $this->kbinContactEmail,
+            $this->find($results, 'KBIN_SENDER_EMAIL') ?? $this->kbinSenderEmail,
+            $this->find($results, 'MBIN_DEFAULT_THEME') ?? $this->mbinDefaultTheme,
+            $this->find($results, 'KBIN_JS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinJsEnabled,
+            $this->find(
+                $results,
+                'KBIN_FEDERATION_ENABLED',
+                FILTER_VALIDATE_BOOLEAN
+            ) ?? $this->kbinFederationEnabled,
+            $this->find(
+                $results,
+                'KBIN_REGISTRATIONS_ENABLED',
+                FILTER_VALIDATE_BOOLEAN
+            ) ?? $this->kbinRegistrationsEnabled,
+            $this->find($results, 'KBIN_HEADER_LOGO', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinHeaderLogo,
+            $this->find($results, 'KBIN_CAPTCHA_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinCaptchaEnabled,
+            $this->find($results, 'KBIN_MERCURE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'KBIN_FEDERATION_PAGE_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinFederationPageEnabled,
+            $this->find($results, 'KBIN_ADMIN_ONLY_OAUTH_CLIENTS', FILTER_VALIDATE_BOOLEAN) ?? $this->kbinAdminOnlyOauthClients,
+            $this->find($results, 'MBIN_SSO_ONLY_MODE', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinSsoOnlyMode,
+            $this->find($results, 'MBIN_PRIVATE_INSTANCE', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'KBIN_FEDERATED_SEARCH_ONLY_LOGGEDIN', FILTER_VALIDATE_BOOLEAN) ?? true,
+            $this->find($results, 'MBIN_SIDEBAR_SECTIONS_RANDOM_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'MBIN_SIDEBAR_SECTIONS_USERS_LOCAL_ONLY', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'MBIN_SSO_REGISTRATIONS_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? true,
+            $this->find($results, 'MBIN_RESTRICT_MAGAZINE_CREATION', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'MBIN_SSO_SHOW_FIRST', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'MBIN_DOWNVOTES_MODE') ?? $this->mbinDownvotesMode->value,
+            $newUsersNeedApprovalEdited,
+            $this->find($results, 'MBIN_USE_FEDERATION_ALLOW_LIST', FILTER_VALIDATE_BOOLEAN) ?? $this->mbinUseFederationAllowList,
+            $this->find($results, 'MBIN_FEED_ALLOW_ENTRY_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
+            $this->find($results, 'MBIN_FEED_ALLOW_POST_COMMENTS', FILTER_VALIDATE_BOOLEAN) ?? true,
+            $this->find($results, 'MBIN_STOPFORUMSPAM_ENABLED', FILTER_VALIDATE_BOOLEAN) ?? false,
+            $this->find($results, 'MBIN_STOPFORUMSPAM_AUTO_REJECT', FILTER_VALIDATE_BOOLEAN) ?? false,
+            (float) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_CONFIDENCE') ?? 95),
+            (int) ($this->find($results, 'MBIN_STOPFORUMSPAM_MIN_FREQUENCY') ?? 5),
+        );
+    }
+
     private function find(array $results, string $name, ?int $filter = null)
     {
-        $res = array_values(array_filter($results, fn ($s) => $s->name === $name));
+        $res = array_values(array_filter($results, fn ($s) => $s['name'] === $name));
 
         if (\count($res)) {
-            $res = $res[0]->value ?? $res[0]->json;
+            $res = $res[0]['value'] ?? $res[0]['json'];
 
             if ($filter) {
                 $res = filter_var($res, $filter);

@@ -23,6 +23,7 @@ use App\Message\ClearDeletedUserMessage;
 use App\Message\DeleteImageV2Message;
 use App\Message\DeleteUserMessage;
 use App\Message\Notification\SentNewSignupNotificationMessage;
+use App\Message\RegistrationApprovalEmailMessage;
 use App\Message\UserCreatedMessage;
 use App\Message\UserSetupMessage;
 use App\Message\UserUpdatedMessage;
@@ -35,6 +36,7 @@ use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\ActivityPub\KeysGenerator;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -212,25 +214,6 @@ readonly class UserManager
             }
         }
 
-        if (null !== $screening && EApplicationStatus::Pending === $status) {
-            $admins = [];
-            try {
-                $admins = $this->userRepository->findAllAdmins();
-            } catch (\Throwable) {
-                $this->logger->error('Unable to find registration approval email recipients.');
-            }
-            foreach ($admins as $admin) {
-                if (!$admin->notifyOnUserSignup) {
-                    continue;
-                }
-                try {
-                    $this->bus->dispatch(new \App\Message\RegistrationApprovalEmailMessage($user->getId(), $admin->getId()));
-                } catch (\Throwable) {
-                    $this->logger->error('Unable to enqueue registration approval email.');
-                }
-            }
-        }
-
         if ($verifyUserEmail) {
             try {
                 $this->bus->dispatch(new UserCreatedMessage($user->getId()));
@@ -338,7 +321,59 @@ readonly class UserManager
 
     public function verify(Request $request, User $user): void
     {
-        $this->verifier->handleEmailConfirmation($request, $user);
+        if ($user->isVerified || null === $user->getRegistrationScreening()) {
+            $this->verifier->handleEmailConfirmation($request, $user);
+
+            return;
+        }
+
+        // Serialize the verification transition so concurrent clicks only enqueue one notification per admin.
+        $newlyVerified = $this->entityManager->getConnection()->transactional(function () use ($request, $user): bool {
+            $this->entityManager->refresh($user, LockMode::PESSIMISTIC_WRITE);
+            $wasVerified = $user->isVerified;
+            $this->verifier->handleEmailConfirmation($request, $user);
+
+            return !$wasVerified;
+        });
+        if ($newlyVerified) {
+            $this->enqueueRegistrationApprovalEmails($user);
+        }
+    }
+
+    public function verifySsoSignup(User $user): void
+    {
+        $user->isVerified = true;
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->enqueueRegistrationApprovalEmails($user);
+    }
+
+    private function enqueueRegistrationApprovalEmails(User $user): void
+    {
+        if (EApplicationStatus::Pending !== $user->getApplicationStatus()
+            || null === $user->getRegistrationScreening()
+            || !$this->settingsManager->getDto()->MBIN_STOPFORUMSPAM_ENABLED
+            || !$this->settingsManager->getNewUsersNeedApproval()) {
+            return;
+        }
+
+        $admins = [];
+        try {
+            $admins = $this->userRepository->findAllAdmins();
+        } catch (\Throwable) {
+            $this->logger->error('Unable to find registration approval email recipients.');
+        }
+        foreach ($admins as $admin) {
+            if (!$admin->notifyOnUserSignup) {
+                continue;
+            }
+            try {
+                $this->bus->dispatch(new RegistrationApprovalEmailMessage($user->getId(), $admin->getId()));
+            } catch (\Throwable) {
+                $this->logger->error('Unable to enqueue registration approval email.');
+            }
+        }
     }
 
     public function adminUserVerify(User $user): void

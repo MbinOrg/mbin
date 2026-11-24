@@ -98,10 +98,7 @@ class AzureAuthenticator extends MbinOAuthAuthenticatorBase
 
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthAzureId = $azureUser->getUpn();
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 return $user;
             }),

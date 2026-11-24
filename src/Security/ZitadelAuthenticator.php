@@ -113,10 +113,7 @@ class ZitadelAuthenticator extends MbinOAuthAuthenticatorBase
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthZitadelId = $zitadelUser->getId();
                 $user->avatar = $this->getAvatar($zitadelUser->getPictureUrl());
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 return $user;
             }),

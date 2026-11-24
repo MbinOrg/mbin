@@ -112,10 +112,7 @@ class AuthentikAuthenticator extends MbinOAuthAuthenticatorBase
                 $user = $this->userManager->create($dto, false, publicRegistration: true);
                 $user->oauthAuthentikId = $authentikUser->getId();
                 $user->avatar = $this->getAvatar($authentikUser->getPictureUrl());
-                $user->isVerified = true;
-
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                $this->userManager->verifySsoSignup($user);
 
                 return $user;
             }),
