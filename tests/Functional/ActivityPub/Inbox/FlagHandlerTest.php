@@ -198,6 +198,7 @@ class FlagHandlerTest extends ActivityPubFunctionalTestCase
         $report = $this->reportManager->report($dto, $user);
         $flagActivity = $this->flagFactory->build($report);
         $flagActivityJson = $this->activityJsonBuilder->buildActivityJson($flagActivity);
+        $flagActivityJson['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $flagActivityJson['id']);
         $flagActivityJson['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $flagActivityJson['actor']);
 
         $this->testingApHttpClient->activityObjects[$flagActivityJson['id']] = $flagActivityJson;
