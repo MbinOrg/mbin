@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Repository;
 
 use App\Repository\VoteRepository;
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result as DriverResult;
 use Doctrine\DBAL\Driver\Statement as DriverStatement;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Statement;
+use Doctrine\DBAL\Types\DateTimeImmutableType;
+use Doctrine\DBAL\Types\TypeRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class VoteRepositoryTest extends TestCase
@@ -22,6 +26,14 @@ class VoteRepositoryTest extends TestCase
     {
         $connection = $this->createMock(Connection::class);
         $connection->expects(self::exactly(5))->method('getDatabasePlatform')->willReturn(new PostgreSQLPlatform());
+
+        /** @var Stub&Configuration $stubConnConfig */
+        $stubConnConfig = $connection->getConfiguration();
+        $connection->method('getConfiguration')->willReturn($stubConnConfig);
+        /** @var Stub $stubTypeProvider */
+        $stubTypeProvider = $stubConnConfig->getTypeProvider();
+        $stubConnConfig->method('getTypeProvider')->willReturn($stubTypeProvider);
+        $stubTypeProvider->method('get')->willReturnStrictMap([['datetime_immutable', new DateTimeImmutableType()]]);
 
         $result = $this->createMock(DriverResult::class);
         $result->expects(self::exactly(5))->method('fetchAllAssociative')->willReturn([['cnt' => 2]]);
