@@ -144,20 +144,20 @@ class EntryCreateController extends AbstractController
                 ],
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
-        } catch (TagBannedException $e) {
-            $this->logger->error($e);
+        } catch (TagBannedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread tag is banned');
 
             return $this->showFailure('flash_thread_tag_banned_error', 422, $magazine, $user, $form, $maxBytes);
-        } catch (InstanceBannedException $e) {
-            $this->logger->error($e);
+        } catch (InstanceBannedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread links to a banned instance');
 
             return $this->showFailure('flash_thread_instance_banned', 422, $magazine, $user, $form, $maxBytes);
-        } catch (PostingRestrictedException $e) {
-            $this->logger->error($e);
+        } catch (PostingRestrictedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread posting is restricted');
 
             return $this->showFailure('flash_posting_restricted_error', 422, $magazine, $user, $form, $maxBytes);
-        } catch (ImageDownloadTooLargeException $e) {
-            $this->logger->error($e);
+        } catch (ImageDownloadTooLargeException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread image exceeds download size limit');
 
             return $this->showFailure(
                 $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $maxBytes]),
@@ -168,7 +168,7 @@ class EntryCreateController extends AbstractController
                 $maxBytes
             );
         } catch (\Exception $e) {
-            $this->logger->error($e);
+            $this->logger->error('[EntryCreateController::__invoke] Could not create thread ({exception_type})', ['exception_type' => $e::class, 'magazine_id' => $magazine?->getId()]);
 
             return $this->showFailure('flash_thread_new_error', 422, $magazine, $user, $form, $maxBytes);
         }

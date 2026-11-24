@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Embed;
+use App\Utils\LogContext;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -30,7 +32,6 @@ class EmbedRepository extends ServiceEntityRepository
         // Check if embed url does not exist yet (null),
         // before we try to insert a new DB record
         if (null === $this->findOneByUrl($entity->url)) {
-            // Do not exceed URL length limit defined by db schema
             try {
                 $this->getEntityManager()->persist($entity);
 
@@ -38,11 +39,17 @@ class EmbedRepository extends ServiceEntityRepository
                     $this->getEntityManager()->flush();
                 }
             } catch (\Exception $e) {
-                $this->logger->warning('Failed to store Embed URL in DB: url = {url} (length = {length}); exception = {ex}; msg = {msg}', [
-                    'url' => $entity->url,
-                    'length' => \strlen($entity->url),
-                    'ex' => get_class($e),
-                    'msg' => $e->getMessage(),
+                // The database error and embed URL can both expose URL tokens. SQLSTATE identifies the database failure.
+                $sqlState = $e instanceof DriverException ? $e->getSQLState() : null;
+                $message = '[EmbedRepository::add] Could not save embed from {host} ({url_bytes}-byte URL';
+                if (null !== $sqlState) {
+                    $message .= ', SQLSTATE {sqlstate}';
+                }
+                $this->logger->warning($message.')', [
+                    'host' => LogContext::host($entity->url) ?? 'unknown host',
+                    'url_bytes' => \strlen($entity->url),
+                    'exception_type' => $e::class,
+                    'sqlstate' => $sqlState,
                 ]);
             }
         }

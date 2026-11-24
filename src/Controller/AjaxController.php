@@ -351,11 +351,7 @@ class AjaxController extends AbstractController
 
             return new JsonResponse();
         } catch (\ErrorException $e) {
-            $this->logger->error('[AjaxController::handle] There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                'e' => \get_class($e),
-                'm' => $e->getMessage(),
-                'o' => json_encode($e),
-            ]);
+            $this->logger->error('[AjaxController::registerPushNotifications] Could not send push test after registration ({exception_type})', ['exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }
@@ -372,11 +368,7 @@ class AjaxController extends AbstractController
 
             return new JsonResponse();
         } catch (\Exception $e) {
-            $this->logger->error('[AjaxController::unregisterPushNotifications] There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                'e' => \get_class($e),
-                'm' => $e->getMessage(),
-                'o' => json_encode($e),
-            ]);
+            $this->logger->error('[AjaxController::unregisterPushNotifications] Could not delete push subscription ({exception_type})', ['exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }
@@ -390,11 +382,7 @@ class AjaxController extends AbstractController
 
             return new JsonResponse();
         } catch (\ErrorException $e) {
-            $this->logger->error('[AjaxController::testPushNotification] There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                'e' => \get_class($e),
-                'm' => $e->getMessage(),
-                'o' => json_encode($e),
-            ]);
+            $this->logger->error('[AjaxController::testPushNotification] Could not send push test ({exception_type})', ['exception_type' => $e::class]);
 
             return new JsonResponse(status: 500);
         }

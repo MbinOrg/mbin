@@ -30,6 +30,7 @@ use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\MessageManager;
 use App\Utils\JsonldUtils;
+use App\Utils\LogContext;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,7 +74,10 @@ class CreateHandler extends MbinMessageHandler
         }
         $object = $message->payload;
         $stickyIt = $message->stickyIt;
-        $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
+        $this->logger->debug('[CreateHandler::doWork] Handling federation Create for {object_type} {object_id}', [
+            'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
+            'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'with unknown ID',
+        ]);
         $entryTypes = ['Page', 'Article', 'Video'];
         $postTypes = ['Question', 'Note'];
 
@@ -97,9 +101,9 @@ class CreateHandler extends MbinMessageHandler
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
             } else {
-                $this->logger->warning('received Create activity for unknown type {t} of object {o}; ignoring', [
-                    't' => $object['type'],
-                    'o' => $object['id'] ?? '<no id>',
+                $this->logger->warning('[CreateHandler::doWork] Skipped federation Create with unsupported object type {object_type}', [
+                    'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
+                    'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'with unknown ID',
                 ]);
             }
         } catch (UserBannedException) {
@@ -151,7 +155,10 @@ class CreateHandler extends MbinMessageHandler
                     if (null !== $fullCreatePayload) {
                         $this->activityRepository->createForRemoteActivity($fullCreatePayload, $note);
                     } else {
-                        $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
+                        $this->logger->warning('[CreateHandler::handleChain] Remote Create activity missing for object {object_id} in magazine {magazine_id}', [
+                            'object_id' => LogContext::identifier($note->apId) ?? 'with unknown ID',
+                            'magazine_id' => $note->magazine->getId(),
+                        ]);
                     }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
@@ -178,7 +185,10 @@ class CreateHandler extends MbinMessageHandler
                     if (null !== $createPayload) {
                         $this->activityRepository->createForRemoteActivity($createPayload, $page);
                     } else {
-                        $this->logger->warning('[CreateHandler::handlePage] Could not create the activity with the full create payload because it was just missing...');
+                        $this->logger->warning('[CreateHandler::handlePage] Remote Create activity missing for object {object_id} in magazine {magazine_id}', [
+                            'object_id' => LogContext::identifier($page->apId) ?? 'with unknown ID',
+                            'magazine_id' => $page->magazine->getId(),
+                        ]);
                     }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all

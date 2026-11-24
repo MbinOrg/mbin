@@ -15,6 +15,7 @@ use App\Repository\InstanceRepository;
 use App\Service\ActivityPub\ApHttpClientInterface;
 use App\Service\ActivityPubManager;
 use App\Service\SettingsManager;
+use App\Utils\LogContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -63,10 +64,10 @@ class DeliverHandler extends MbinMessageHandler
         } catch (InvalidApPostException $e) {
             if (400 <= $e->responseCode && 500 > $e->responseCode && self::HTTP_RESPONSE_CODE_RATE_LIMITED !== $e->responseCode) {
                 $conn->rollBack();
-                $this->logger->debug('{domain} responded with {code} for our request, rolling back the changes and not trying again, request: {body}', [
-                    'domain' => $e->url,
-                    'code' => $e->responseCode,
-                    'body' => $e->payload,
+                $this->logger->debug('[DeliverHandler::workWrapper] Federation inbox at {host} rejected delivery (HTTP {status})', [
+                    'host' => LogContext::host($e->url) ?? 'unknown host',
+                    'status' => $e->responseCode,
+                    'activity_id' => LogContext::identifier($e->payload['id'] ?? null),
                 ]);
                 throw new UnrecoverableMessageHandlingException('There is a problem with the request which will stay the same, so discarding', previous: $e);
             } elseif (self::HTTP_RESPONSE_CODE_RATE_LIMITED === $e->responseCode) {

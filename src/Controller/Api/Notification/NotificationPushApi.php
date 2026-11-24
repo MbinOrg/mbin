@@ -98,11 +98,7 @@ class NotificationPushApi extends NotificationBaseApi
 
             return new JsonResponse(headers: $headers);
         } catch (\ErrorException $e) {
-            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                'e' => \get_class($e),
-                'm' => $e->getMessage(),
-                'o' => json_encode($e),
-            ]);
+            $this->logger->error('[NotificationPushApi::createSubscription] Could not send push test after registration ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $e::class]);
 
             return new JsonResponse(status: 500, headers: $headers);
         }
@@ -165,11 +161,7 @@ class NotificationPushApi extends NotificationBaseApi
 
             return new JsonResponse(headers: $headers);
         } catch (\Exception $e) {
-            $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                'e' => \get_class($e),
-                'm' => $e->getMessage(),
-                'o' => json_encode($e),
-            ]);
+            $this->logger->error('[NotificationPushApi::deleteSubscription] Could not delete push subscription ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $e::class]);
 
             return new JsonResponse(status: 500, headers: $headers);
         }
@@ -229,11 +221,7 @@ class NotificationPushApi extends NotificationBaseApi
 
                 return new JsonResponse(headers: $headers);
             } catch (\ErrorException $e) {
-                $this->logger->error('There was an exception while deleting a UserPushSubscription: {e} - {m}. {o}', [
-                    'e' => \get_class($e),
-                    'm' => $e->getMessage(),
-                    'o' => json_encode($e),
-                ]);
+                $this->logger->error('[NotificationPushApi::testSubscription] Could not send push test ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $e::class]);
 
                 return new JsonResponse(status: 500, headers: $headers);
             }

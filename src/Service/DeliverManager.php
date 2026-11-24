@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Traits\ActivityPubActorTrait;
 use App\Message\ActivityPub\Outbox\DeliverMessage;
+use App\Utils\LogContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -23,6 +24,7 @@ readonly class DeliverManager
      */
     public function deliver(array $inboxes, array $activity, bool $useOldPrivateKey = false): void
     {
+        $skipped = 0;
         foreach ($inboxes as $inbox) {
             if (!$inbox) {
                 continue;
@@ -35,11 +37,19 @@ readonly class DeliverManager
             }
 
             if ($this->settingsManager->isLocalUrl($inboxUrl)) {
-                $this->logger->warning('tried delivering to a local url, {payload}', ['payload' => $activity]);
+                ++$skipped;
                 continue;
             }
 
             $this->bus->dispatch(new DeliverMessage($inboxUrl, $activity, $useOldPrivateKey));
+        }
+
+        if ($skipped > 0) {
+            $this->logger->warning('[DeliverManager::deliver] Skipped {skipped} local inboxes during federation delivery', [
+                'activity_type' => LogContext::type($activity['type'] ?? null),
+                'activity_id' => LogContext::identifier($activity['id'] ?? null),
+                'skipped' => $skipped,
+            ]);
         }
     }
 }
