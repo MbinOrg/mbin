@@ -46,6 +46,8 @@ class UrlUtilsTest extends TestCase
     public function testGetOrigin(): void
     {
         self::assertSame('https://example.com:443', UrlUtils::getOrigin('https://example.com/abc'));
+        self::assertSame('https://example.com:443', UrlUtils::getOrigin('https://EXAMPLe.com/abc'));
+        self::assertSame('https://example.com:443', UrlUtils::getOrigin('HTTPS://example.com/abc'));
         self::assertSame('http://example.com:80', UrlUtils::getOrigin('http://example.com/abc'));
         self::assertSame('https://example.com:8080', UrlUtils::getOrigin('https://example.com:8080/abc'));
         self::assertSame(null, UrlUtils::getOrigin('example.com/abc'));

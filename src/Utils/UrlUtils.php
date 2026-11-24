@@ -117,13 +117,13 @@ class UrlUtils
             return null;
         }
 
-        $scheme = $parsed['scheme'] ?? 'http';
+        $scheme = strtolower($parsed['scheme'] ?? 'http');
         if ('http' !== $scheme && 'https' !== $scheme) {
             return null;
         }
 
         $port = $parsed['port'] ?? ('https' === $scheme ? 443 : 80);
 
-        return $scheme.'://'.$host.':'.$port;
+        return $scheme.'://'.strtolower($host).':'.$port;
     }
 }
