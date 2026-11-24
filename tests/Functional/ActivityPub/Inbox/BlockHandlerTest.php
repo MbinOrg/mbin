@@ -189,12 +189,14 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
 
         $activity = $this->blockFactory->createActivityFromMagazineBan($ban);
         $this->blockLocalUserLocalMagazine = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->blockLocalUserLocalMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockLocalUserLocalMagazine['id']);
         $this->blockLocalUserLocalMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockLocalUserLocalMagazine['actor']);
         $this->blockLocalUserLocalMagazine['object'] = str_replace($this->remoteDomain, $this->localDomain, $this->blockLocalUserLocalMagazine['object']);
         $this->blockLocalUserLocalMagazine['target'] = str_replace($this->remoteDomain, $this->localDomain, $this->blockLocalUserLocalMagazine['target']);
 
         $undoActivity = $this->undoWrapper->build($activity);
         $this->undoBlockLocalUserLocalMagazine = $this->activityJsonBuilder->buildActivityJson($undoActivity);
+        $this->undoBlockLocalUserLocalMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockLocalUserLocalMagazine['id']);
         $this->undoBlockLocalUserLocalMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockLocalUserLocalMagazine['actor']);
         $this->undoBlockLocalUserLocalMagazine['object'] = $this->blockLocalUserLocalMagazine;
 
@@ -210,11 +212,13 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
 
         $activity = $this->blockFactory->createActivityFromMagazineBan($ban);
         $this->blockRemoteUserLocalMagazine = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->blockRemoteUserLocalMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockRemoteUserLocalMagazine['id']);
         $this->blockRemoteUserLocalMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockRemoteUserLocalMagazine['actor']);
         $this->blockRemoteUserLocalMagazine['target'] = str_replace($this->remoteDomain, $this->localDomain, $this->blockRemoteUserLocalMagazine['target']);
 
         $undoActivity = $this->undoWrapper->build($activity);
         $this->undoBlockRemoteUserLocalMagazine = $this->activityJsonBuilder->buildActivityJson($undoActivity);
+        $this->undoBlockRemoteUserLocalMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockRemoteUserLocalMagazine['id']);
         $this->undoBlockRemoteUserLocalMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockRemoteUserLocalMagazine['actor']);
         $this->undoBlockRemoteUserLocalMagazine['object'] = $this->blockRemoteUserLocalMagazine;
 
@@ -230,11 +234,13 @@ class BlockHandlerTest extends ActivityPubFunctionalTestCase
 
         $activity = $this->blockFactory->createActivityFromMagazineBan($ban);
         $this->blockLocalUserRemoteMagazine = $this->activityJsonBuilder->buildActivityJson($activity);
+        $this->blockLocalUserRemoteMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockLocalUserRemoteMagazine['id']);
         $this->blockLocalUserRemoteMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->blockLocalUserRemoteMagazine['actor']);
         $this->blockLocalUserRemoteMagazine['object'] = str_replace($this->remoteDomain, $this->localDomain, $this->blockLocalUserRemoteMagazine['object']);
 
         $undoActivity = $this->undoWrapper->build($activity);
         $this->undoBlockLocalUserRemoteMagazine = $this->activityJsonBuilder->buildActivityJson($undoActivity);
+        $this->undoBlockLocalUserRemoteMagazine['id'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockLocalUserRemoteMagazine['id']);
         $this->undoBlockLocalUserRemoteMagazine['actor'] = str_replace($this->remoteDomain, $this->remoteSubDomain, $this->undoBlockLocalUserRemoteMagazine['actor']);
         $this->undoBlockLocalUserRemoteMagazine['object'] = $this->blockLocalUserRemoteMagazine;
 

@@ -98,7 +98,7 @@ class MagazineRemoveModeratorsApi extends MagazineBaseApi
             throw new BadRequestHttpException('Given user is not a moderator of this magazine');
         }
 
-        $manager->removeModerator($moderator, $this->getUserOrThrow());
+        $manager->removeModerator($magazine, $moderator, $this->getUserOrThrow());
 
         return new JsonResponse(
             $this->serializeMagazine($factory->createDto($magazine)),

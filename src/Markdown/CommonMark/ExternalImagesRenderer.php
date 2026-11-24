@@ -6,6 +6,7 @@ namespace App\Markdown\CommonMark;
 
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
+use App\Utils\UrlUtils;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Node\Inline\Newline;
@@ -23,6 +24,7 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
 {
     private ConfigurationInterface $config;
 
+    #[\Override]
     public function setConfiguration(ConfigurationInterface $configuration): void
     {
         $this->config = $configuration;
@@ -31,16 +33,22 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
     /**
      * @param Image $node
      */
+    #[\Override]
     public function render(
         Node $node,
         ChildNodeRendererInterface $childRenderer,
     ): HtmlElement {
+        /** @var Image $node */
         Image::assertInstanceOf($node);
 
         $renderTarget = $this->config->get('kbin')[MarkdownConverter::RENDER_TARGET];
 
         $url = $node->getUrl();
         $label = null;
+
+        if (!UrlUtils::checkValidUrl($url, true)) {
+            return EmbedElement::buildDestructed(htmlspecialchars($url), htmlspecialchars($this->getAltText($node)));
+        }
 
         if (RenderTarget::Page === $renderTarget) {
             // self destructs rendering if parent is a link
@@ -49,13 +57,14 @@ final class ExternalImagesRenderer implements NodeRendererInterface, Configurati
             // see: https://spec.commonmark.org/0.30/#example-516
             // and: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary
             if ($node->parent() && $node->parent() instanceof Link) {
-                return EmbedElement::buildDestructed(htmlspecialchars($node->getUrl()), htmlspecialchars($this->getAltText($node)));
+                return EmbedElement::buildDestructed(htmlspecialchars($url), htmlspecialchars($this->getAltText($node)));
             }
 
             // skip rendering links inside the label (not allowed) and skip potentially harmful elements
             if ($node->hasChildren()) {
                 $cnodes = [];
                 foreach ($node->children() as $n) {
+                    \assert($n instanceof StringContainerInterface);
                     if (!EmbedElement::checkForbiddenDescendantNodes($n, true)) {
                         $cnodes[] = new Text($n->getLiteral());
                     } else {

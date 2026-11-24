@@ -91,7 +91,7 @@ class MagazineReportsRejectApi extends MagazineBaseApi
             throw new NotFoundHttpException('Report not found in magazine');
         }
 
-        $manager->reject($report, $this->getUserOrThrow());
+        $manager->reject($report, $this->getUserOrThrow(), $magazine, false);
 
         return new JsonResponse(
             $this->serializeReport($report),
