@@ -19,6 +19,7 @@ use App\Repository\ApActivityRepository;
 use App\Repository\InstanceRepository;
 use App\Service\ActivityPubManager;
 use App\Service\EntryManager;
+use App\Service\PollManager;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -35,6 +36,7 @@ class Page extends ActivityPubContent
         private readonly ApObjectExtractor $objectExtractor,
         private readonly LoggerInterface $logger,
         private readonly InstanceRepository $instanceRepository,
+        private readonly PollManager $pollManager,
     ) {
     }
 
@@ -135,7 +137,15 @@ class Page extends ActivityPubContent
 
             $this->logger->debug('creating page');
 
-            return $this->entryManager->create($dto, $actor, false, $stickyIt);
+            $entry = $this->entryManager->create($dto, $actor, false, $stickyIt);
+
+            if ($this->pollManager->hasPollProperties($object)) {
+                $poll = $this->pollManager->createFromApObject($object);
+                $entry->poll = $poll;
+                $this->entityManager->flush();
+            }
+
+            return $entry;
         } else {
             throw new EntityNotFoundException('Actor could not be found for entry.');
         }

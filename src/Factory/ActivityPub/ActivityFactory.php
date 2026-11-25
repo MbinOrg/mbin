@@ -8,6 +8,7 @@ use App\Entity\Contracts\ActivityPubActivityInterface;
 use App\Entity\Entry;
 use App\Entity\EntryComment;
 use App\Entity\Message;
+use App\Entity\PollVote;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Repository\TagLinkRepository;
@@ -21,6 +22,7 @@ class ActivityFactory
         private readonly PostNoteFactory $postNoteFactory,
         private readonly PostCommentNoteFactory $postCommentNoteFactory,
         private readonly MessageFactory $messageFactory,
+        private readonly PollVoteFactory $pollVoteFactory,
     ) {
     }
 
@@ -32,6 +34,7 @@ class ActivityFactory
             $activity instanceof Post => $this->postNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
             $activity instanceof PostComment => $this->postCommentNoteFactory->create($activity, $this->tagLinkRepository->getTagsOfContent($activity), $context),
             $activity instanceof Message => $this->messageFactory->build($activity, $context),
+            $activity instanceof PollVote => $this->pollVoteFactory->build($activity, $context),
             default => throw new \LogicException('Cannot handle activity of type '.\get_class($activity)),
         };
     }

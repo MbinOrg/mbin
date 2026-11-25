@@ -6,6 +6,7 @@ namespace App\MessageHandler\ActivityPub\Inbox;
 
 use App\Entity\Entry;
 use App\Entity\EntryComment;
+use App\Entity\PollVote;
 use App\Entity\Post;
 use App\Entity\PostComment;
 use App\Exception\EntityNotFoundException;
@@ -101,7 +102,7 @@ class ChainActivityHandler extends MbinMessageHandler
     /**
      * @throws \Exception if there was an unexpected exception
      */
-    private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
+    private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|PollVote|null
     {
         if ($this->settingsManager->isBannedInstance($apUrl)) {
             throw new InstanceBannedException();
@@ -135,6 +136,12 @@ class ChainActivityHandler extends MbinMessageHandler
 
             switch ($object['type']) {
                 case 'Question':
+                    if (isset($object['title'])) {
+                        return $this->page->create($object);
+                    } else {
+                        return $this->note->create($object);
+                    }
+                    break;
                 case 'Note':
                     $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating note {o}', ['o' => $object]);
 

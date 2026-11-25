@@ -38,9 +38,13 @@ class EntryCommentFactory
         );
     }
 
-    public function createResponseDto(EntryCommentDto|EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
+    public function createResponseDto(EntryComment $comment, array $tags, int $childCount = 0): EntryCommentResponseDto
     {
-        $dto = $comment instanceof EntryComment ? $this->createDto($comment) : $comment;
+        $dto = $this->createDto($comment);
+        $pollDto = null;
+        if ($dto->addPoll) {
+            $pollDto = $dto->getPollResponseDto($comment->poll, $this->security->getUser());
+        }
 
         return EntryCommentResponseDto::create(
             $dto->getId(),
@@ -66,13 +70,14 @@ class EntryCommentFactory
             $childCount,
             bookmarks: $this->bookmarkListRepository->getBookmarksOfContentInterface($comment),
             isAuthorModeratorInMagazine: $dto->magazine->userIsModerator($dto->user),
+            poll: $pollDto,
         );
     }
 
     public function createResponseTree(EntryComment $comment, EntryCommentPageView $commentPageView, int $depth = -1, ?bool $canModerate = null): EntryCommentResponseDto
     {
         $commentDto = $this->createDto($comment);
-        $toReturn = $this->createResponseDto($commentDto, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
+        $toReturn = $this->createResponseDto($comment, $this->tagLinkRepository->getTagsOfContent($comment), array_reduce($comment->children->toArray(), EntryCommentResponseDto::class.'::recursiveChildCount', 0));
         $toReturn->isFavourited = $commentDto->isFavourited;
         $toReturn->userVote = $commentDto->userVote;
         $toReturn->canAuthUserModerate = $canModerate;
@@ -120,6 +125,10 @@ class EntryCommentFactory
         $dto->apDislikeCount = $comment->apDislikeCount;
         $dto->apShareCount = $comment->apShareCount;
         $dto->setId($comment->getId());
+
+        if ($comment->poll) {
+            $dto->mergePollIntoDto($comment->poll);
+        }
 
         $currentUser = $this->security->getUser();
         // Only return the user's vote if permission to control voting has been given

@@ -10,6 +10,7 @@ use App\Form\EventListener\DefaultLanguage;
 use App\Form\EventListener\ImageListener;
 use App\Form\Type\LanguageType;
 use App\Form\Type\MagazineAutocompleteType;
+use App\Utils\FormUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -44,8 +45,11 @@ class PostType extends AbstractType
             ->add('lang', LanguageType::class)
             ->add('imageUrl', UrlType::class, ['required' => false, 'default_protocol' => 'https'])
             ->add('imageAlt', TextareaType::class, ['required' => false])
-            ->add('isAdult', CheckboxType::class, ['required' => false])
-            ->add('submit', SubmitType::class);
+            ->add('isAdult', CheckboxType::class, ['required' => false]);
+
+        FormUtils::addPollFieldsToType($builder, checkboxRowClass: 'checkbox');
+
+        $builder->add('submit', SubmitType::class);
 
         $builder->addEventSubscriber($this->defaultLanguage);
         $builder->addEventSubscriber($this->imageListener);

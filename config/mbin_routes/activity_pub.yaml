@@ -162,3 +162,9 @@ ap_contexts:
     path: /contexts.{_format}
     methods: [GET]
     format: jsonld
+
+ap_poll_vote:
+    controller: App\Controller\ActivityPub\PollVoteController
+    path: /u/{username}/votes/{uuid}
+    methods: [GET]
+    condition: '%kbin_ap_route_condition%'

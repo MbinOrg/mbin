@@ -168,16 +168,43 @@ class ApActivityRepository extends ServiceEntityRepository
         return $this->getLocalUrlOfEntity($entity);
     }
 
-    public function getLocalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity): ?string
+    public function getLocalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity, bool $absoluteUrl = false): ?string
     {
+        return self::s_getLocalUrlOfEntity($this->urlGenerator, $entity, $absoluteUrl);
+    }
+
+    public function getGlobalUrlOfEntity(Entry|EntryComment|Post|PostComment $entity): ?string
+    {
+        return self::s_getGlobalUrlOfEntity($this->urlGenerator, $entity);
+    }
+
+    public static function s_getLocalUrlOfEntity(UrlGeneratorInterface $urlGenerator, Entry|EntryComment|Post|PostComment $entity, bool $absoluteUrl = false): ?string
+    {
+        $reference = $absoluteUrl ? UrlGeneratorInterface::ABSOLUTE_URL : UrlGeneratorInterface::ABSOLUTE_PATH;
         if ($entity instanceof Entry) {
-            return $this->urlGenerator->generate('entry_single', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('entry_single', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof EntryComment) {
-            return $this->urlGenerator->generate('entry_comment_view', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('entry_comment_view', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof Post) {
-            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name]);
+            return $urlGenerator->generate('post_single', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
         } elseif ($entity instanceof PostComment) {
-            return $this->urlGenerator->generate('post_single', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name])."#post-comment-{$entity->getId()}";
+            return $urlGenerator->generate('post_single', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name], $reference)."#post-comment-{$entity->getId()}";
+        }
+
+        return null;
+    }
+
+    public static function s_getGlobalUrlOfEntity(UrlGeneratorInterface $urlGenerator, Entry|EntryComment|Post|PostComment $entity): ?string
+    {
+        $reference = UrlGeneratorInterface::ABSOLUTE_URL;
+        if ($entity instanceof Entry) {
+            return $urlGenerator->generate('ap_entry', ['entry_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
+        } elseif ($entity instanceof EntryComment) {
+            return $urlGenerator->generate('ap_entry_comment', ['comment_id' => $entity->getId(), 'entry_id' => $entity->entry->getId(), 'magazine_name' => $entity->magazine->name], $reference);
+        } elseif ($entity instanceof Post) {
+            return $urlGenerator->generate('ap_post', ['post_id' => $entity->getId(), 'magazine_name' => $entity->magazine->name], $reference);
+        } elseif ($entity instanceof PostComment) {
+            return $urlGenerator->generate('ap_post_comment', ['post_id' => $entity->post->getId(), 'magazine_name' => $entity->magazine->name, 'comment_id' => $entity->getId()], $reference);
         }
 
         return null;

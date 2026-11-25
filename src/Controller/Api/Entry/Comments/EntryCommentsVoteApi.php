@@ -98,7 +98,7 @@ class EntryCommentsVoteApi extends EntriesBaseApi
         $manager->vote($choice, $comment, $this->getUserOrThrow(), rateLimit: false);
 
         return new JsonResponse(
-            $this->serializeEntryComment($factory->createDto($comment), $this->tagLinkRepository->getTagsOfContent($comment)),
+            $this->serializeEntryComment($comment, $this->tagLinkRepository->getTagsOfContent($comment)),
             headers: $headers
         );
     }

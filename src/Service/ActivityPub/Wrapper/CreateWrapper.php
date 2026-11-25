@@ -28,6 +28,8 @@ class CreateWrapper
             $activity->userActor = $item->getUser();
         } elseif ($item instanceof Message) {
             $activity->userActor = $item->sender;
+        } else {
+            $activity->userActor = $item->getUser();
         }
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
