@@ -103,7 +103,7 @@ final class CacheMarkdownListener implements EventSubscriberInterface
 
                 $tags = array_unique(array_merge($urls, $mentions, $magazineMentions));
 
-                $this->logger->debug('added tags {t} to markdown "{m}"', ['t' => join(', ', $tags), 'm' => $md]);
+                $this->logger->debug('[CacheMarkdownListener::postConvertMarkdown] Tagged Markdown cache entry (tag count {tag_count}, {markdown_bytes} B)', ['tag_count' => \count($tags), 'markdown_bytes' => \strlen($md)]);
 
                 $item->tag($tags);
             }
@@ -155,10 +155,8 @@ final class CacheMarkdownListener implements EventSubscriberInterface
             // Remove newline (\n), tab (\t), carriage return (\r), etc.
             $word2 = preg_replace('/[[:cntrl:]]/', '', $word);
             if (preg_match('/'.RegPatterns::COMMUNITY_REGEX.'/', $word2, $matches)) {
-                // Check if the required matched array keys exist
-                if (!isset($matches[1]) || !isset($matches[2])) {
-                    $this->logger->warning('Invalid community mention format: {word}', ['word' => $word2]);
-                    // Just skip and continue
+                // A mention without a domain is local and needs no remote cache tag.
+                if (!isset($matches[1], $matches[2])) {
                     continue;
                 }
 

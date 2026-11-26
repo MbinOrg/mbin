@@ -27,6 +27,7 @@ use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\SettingsManager;
 use App\Utils\JsonldUtils;
+use App\Utils\LogContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -60,27 +61,51 @@ class ChainActivityHandler extends MbinMessageHandler
         if (!($message instanceof ChainActivityMessage)) {
             throw new \LogicException("ChainActivityHandler called, but is wasn\'t a ChainActivityMessage. Type: ".\get_class($message));
         }
-        $this->logger->debug('Got chain activity message: {m}', ['m' => $message]);
         if (!$message->chain || 0 === \sizeof($message->chain)) {
             return;
         }
         $validObjectTypes = ['Page', 'Note', 'Article', 'Question', 'Video'];
         $object = $message->chain[0];
-        if (!\in_array($object['type'], $validObjectTypes)) {
-            $this->logger->error('[ChainActivityHandler::doWork] Cannot get the dependencies of the object, its type {t} is not one we can handle. {m]', ['t' => $object['type'], 'm' => $message]);
+        $objectId = $object['id'] ?? null;
+        $context = [
+            'object_id' => LogContext::identifier($objectId),
+            'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
+        ];
+        if (!\in_array($object['type'] ?? null, $validObjectTypes, true)) {
+            $this->logger->error('[ChainActivityHandler::doWork] Unsupported federation dependency type {object_type} for {object_id}', ['object_id' => $context['object_id'] ?? 'unknown object'] + $context);
 
             return;
         }
-        try {
-            $entity = $this->retrieveObject($object['id']);
-        } catch (InstanceBannedException) {
-            $this->logger->info('[ChainActivityHandler::doWork] The instance is banned, url: {url}', ['url' => $object['id']]);
+        if (!\is_string($objectId) || '' === $objectId) {
+            $this->logger->error('[ChainActivityHandler::doWork] Discarded federation dependency with missing or invalid root object ID', $context);
 
             return;
+        }
+        $failure = null;
+        try {
+            $entity = $this->retrieveObject($objectId, $failure);
+        } catch (InstanceBannedException) {
+            $entity = null;
         }
 
         if (!$entity) {
-            $this->logger->error('[ChainActivityHandler::doWork] Could not retrieve all the dependencies of {o}', ['o' => $object['id']]);
+            // Report the deepest failure once for the root activity, even when several parents failed to resolve.
+            $reason = $failure['reason'] ?? 'Dependency could not be resolved';
+            $level = $failure['level'] ?? 'error';
+            $dependencyId = $failure['dependency_id'] ?? null;
+            if (null !== $dependencyId) {
+                $reason .= ' ({dependency_id})';
+            }
+            if (null !== $context['object_id'] && $context['object_id'] !== $dependencyId) {
+                $reason .= ' for {object_id}';
+            }
+            if (isset($failure['exception_type'])) {
+                $reason .= ' ({exception_type})';
+            }
+            $this->logger->log($level, '[ChainActivityHandler::doWork] '.$reason, $context + [
+                'dependency_id' => $dependencyId,
+                'exception_type' => $failure['exception_type'] ?? null,
+            ]);
 
             return;
         }
@@ -99,22 +124,21 @@ class ChainActivityHandler extends MbinMessageHandler
     }
 
     /**
-     * @throws \Exception if there was an unexpected exception
+     * @param array{reason: string, level: string, dependency_id: ?string, exception_type?: class-string}|null $failure
      */
-    private function retrieveObject(string $apUrl): Entry|EntryComment|Post|PostComment|null
+    private function retrieveObject(string $apUrl, ?array &$failure): Entry|EntryComment|Post|PostComment|null
     {
+        $context = ['dependency_id' => LogContext::identifier($apUrl)];
         if ($this->settingsManager->isBannedInstance($apUrl)) {
+            $failure = $context + ['reason' => 'Federation dependency instance is banned', 'level' => 'info'];
+
             throw new InstanceBannedException();
         }
+
         try {
             $object = $this->client->getActivityObject($apUrl);
-            if (!$object) {
-                $this->logger->warning('[ChainActivityHandler::retrieveObject] Got an empty object for {url}', ['url' => $apUrl]);
-
-                return null;
-            }
-            if (!\is_array($object)) {
-                $this->logger->warning("[ChainActivityHandler::retrieveObject] Didn't get an array for {url}. Got '{val}' instead, exiting", ['url' => $apUrl, 'val' => $object]);
+            if (!\is_array($object) || !$object) {
+                $failure = $context + ['reason' => 'Federation dependency is missing or invalid', 'level' => 'error'];
 
                 return null;
             }
@@ -123,45 +147,37 @@ class ChainActivityHandler extends MbinMessageHandler
                 $parentUrl = JsonldUtils::getApId($object['inReplyTo']);
                 $meta = $this->repository->findByObjectId($parentUrl);
                 if (!$meta) {
-                    $this->retrieveObject($parentUrl);
+                    $this->retrieveObject($parentUrl, $failure);
                 }
                 $meta = $this->repository->findByObjectId($parentUrl);
                 if (!$meta) {
-                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Fetching the parent object ({parent}) did not work for {url}, aborting', ['parent' => $parentUrl, 'url' => $apUrl]);
+                    $failure ??= [
+                        'dependency_id' => LogContext::identifier($parentUrl),
+                        'reason' => 'Federation parent dependency is missing',
+                        'level' => 'error',
+                    ];
 
                     return null;
                 }
+                $failure = null;
             }
 
-            switch ($object['type']) {
-                case 'Question':
-                case 'Note':
-                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating note {o}', ['o' => $object]);
-
-                    return $this->note->create($object);
-                case 'Page':
-                case 'Article':
-                case 'Video':
-                    $this->logger->debug('[ChainActivityHandler::retrieveObject] Creating page {o}', ['o' => $object]);
-
-                    return $this->page->create($object);
-                default:
-                    $this->logger->warning('[ChainActivityHandler::retrieveObject] Could not create an object from type {t} on {url}: {o}', ['t' => $object['type'], 'url' => $apUrl, 'o' => $object]);
+            $entity = match ($object['type'] ?? null) {
+                'Question', 'Note' => $this->note->create($object),
+                'Page', 'Article', 'Video' => $this->page->create($object),
+                default => null,
+            };
+            if (null === $entity) {
+                $failure = $context + ['reason' => 'Unsupported federation dependency type', 'level' => 'error'];
             }
-        } catch (UserBannedException) {
-            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is banned, url: {url}', ['url' => $apUrl]);
-        } catch (UserDeletedException) {
-            $this->logger->info('[ChainActivityHandler::retrieveObject] The user is deleted, url: {url}', ['url' => $apUrl]);
-        } catch (TagBannedException) {
-            $this->logger->info('[ChainActivityHandler::retrieveObject] One of the used tags is banned, url: {url}', ['url' => $apUrl]);
-        } catch (InstanceBannedException) {
-            $this->logger->info('[ChainActivityHandler::retrieveObject] The instance is banned, url: {url}', ['url' => $apUrl]);
-        } catch (EntryLockedException) {
-            $this->logger->error('[ChainActivityHandler::retrieveObject] The entry in which this comment should be created, is locked: {url}', ['url' => $apUrl]);
-        } catch (PostLockedException) {
-            $this->logger->error('[ChainActivityHandler::retrieveObject] The post in which this comment should be created, is locked: {url}', ['url' => $apUrl]);
+
+            return $entity;
+        } catch (UserBannedException|UserDeletedException|TagBannedException|EntryLockedException|PostLockedException $e) {
+            $failure = $context + ['reason' => 'Federation dependency rejected by moderation', 'level' => 'info', 'exception_type' => $e::class];
+        } catch (InstanceBannedException $e) {
+            $failure ??= $context + ['reason' => 'Federation dependency instance is banned', 'level' => 'info', 'exception_type' => $e::class];
         } catch (EntityNotFoundException $e) {
-            $this->logger->error('[ChainActivityHandler::retrieveObject] There was an exception while getting {url}: {ex} - {m}. {o}', ['url' => $apUrl, 'ex' => \get_class($e), 'm' => $e->getMessage(), 'o' => $e]);
+            $failure = $context + ['reason' => 'Could not load federation dependency', 'level' => 'error', 'exception_type' => $e::class];
         }
 
         return null;

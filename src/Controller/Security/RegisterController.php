@@ -38,8 +38,9 @@ class RegisterController extends AbstractController
             'antispam_profile' => 'default',
         ]);
         $form->handleRequest($request);
+        $submitted = $form->isSubmitted();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($submitted && $form->isValid()) {
             /** @var UserDto $dto */
             $dto = $form->getData();
             $dto->ip = $this->ipResolver->resolve();
@@ -59,9 +60,13 @@ class RegisterController extends AbstractController
             }
 
             return $this->redirectToRoute('app_login');
-        } elseif ($form->isSubmitted() && !$form->isValid()) {
-            $this->logger->error('Registration form submission was invalid.', [
-                'errors' => $form->getErrors(true, false),
+        }
+
+        if ($submitted) {
+            // Validation details can include submitted values.
+            $errorCount = \count($form->getErrors(true));
+            $this->logger->warning('[RegisterController::__invoke] Registration form failed validation ({error_count} '.(1 === $errorCount ? 'error' : 'errors').')', [
+                'error_count' => $errorCount,
             ]);
         }
 
@@ -70,7 +75,7 @@ class RegisterController extends AbstractController
             [
                 'form' => $form->createView(),
             ],
-            new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
+            new Response(null, $submitted ? 422 : 200)
         );
     }
 }

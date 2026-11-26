@@ -30,6 +30,7 @@ use App\Service\ActivityPub\Note;
 use App\Service\ActivityPub\Page;
 use App\Service\MessageManager;
 use App\Utils\JsonldUtils;
+use App\Utils\LogContext;
 use App\Utils\UrlUtils;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,15 +73,19 @@ class CreateHandler extends MbinMessageHandler
             throw new \LogicException("CreateHandler called, but is wasn\'t a CreateMessage. Type: ".\get_class($message));
         }
         $object = $message->payload;
+        $objectType = $object['type'] ?? null;
         $stickyIt = $message->stickyIt;
-        $this->logger->debug('Got a CreateMessage of type {t}, {m}', ['t' => $message->payload['type'], 'm' => $message->payload]);
+        $this->logger->debug('[CreateHandler::doWork] Handling federation Create for {object_type} {object_id}', [
+            'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
+            'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'with unknown ID',
+        ]);
         $entryTypes = ['Page', 'Article', 'Video'];
         $postTypes = ['Question', 'Note'];
 
         try {
-            if ('ChatMessage' === $object['type']) {
+            if ('ChatMessage' === $objectType) {
                 $this->handlePrivateMessage($object);
-            } elseif (\in_array($object['type'], $postTypes)) {
+            } elseif (\in_array($objectType, $postTypes, true)) {
                 $this->handleChain($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the post
@@ -88,7 +93,7 @@ class CreateHandler extends MbinMessageHandler
                     $this->cache->invalidateTags([$tag]);
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
-            } elseif (\in_array($object['type'], $entryTypes)) {
+            } elseif (\in_array($objectType, $entryTypes, true)) {
                 $this->handlePage($object, $stickyIt, $message->fullCreatePayload);
                 if (method_exists($this->cache, 'invalidateTags')) {
                     // clear markdown renders that are tagged with the id of the entry
@@ -97,9 +102,9 @@ class CreateHandler extends MbinMessageHandler
                     $this->logger->debug('cleared cached items with tag {t}', ['t' => $tag]);
                 }
             } else {
-                $this->logger->warning('received Create activity for unknown type {t} of object {o}; ignoring', [
-                    't' => $object['type'],
-                    'o' => $object['id'] ?? '<no id>',
+                $this->logger->warning('[CreateHandler::doWork] Skipped federation Create for {object_id}: unsupported type {object_type}', [
+                    'object_type' => LogContext::type($object['type'] ?? null) ?? 'unknown',
+                    'object_id' => LogContext::identifier($object['id'] ?? null) ?? 'unknown object',
                 ]);
             }
         } catch (UserBannedException) {
@@ -151,7 +156,10 @@ class CreateHandler extends MbinMessageHandler
                     if (null !== $fullCreatePayload) {
                         $this->activityRepository->createForRemoteActivity($fullCreatePayload, $note);
                     } else {
-                        $this->logger->warning('[CreateHandler::handleChain] Could not create the activity with the full create payload because it was just missing...');
+                        $this->logger->warning('[CreateHandler::handleChain] Remote Create activity missing for object {object_id} in magazine {magazine_id}', [
+                            'object_id' => LogContext::identifier($note->apId) ?? 'with unknown ID',
+                            'magazine_id' => $note->magazine->getId(),
+                        ]);
                     }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all
@@ -178,7 +186,10 @@ class CreateHandler extends MbinMessageHandler
                     if (null !== $createPayload) {
                         $this->activityRepository->createForRemoteActivity($createPayload, $page);
                     } else {
-                        $this->logger->warning('[CreateHandler::handlePage] Could not create the activity with the full create payload because it was just missing...');
+                        $this->logger->warning('[CreateHandler::handlePage] Remote Create activity missing for object {object_id} in magazine {magazine_id}', [
+                            'object_id' => LogContext::identifier($page->apId) ?? 'with unknown ID',
+                            'magazine_id' => $page->magazine->getId(),
+                        ]);
                     }
                 }
                 // local magazine, but remote post. Random magazine is ignored, as it should not be federated at all

@@ -18,6 +18,7 @@ use App\Repository\MagazineRepository;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Service\ProjectInfoService;
+use App\Utils\LogContext;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -113,7 +114,6 @@ class ApHttpClient implements ApHttpClientInterface
      */
     private function getActivityObjectImpl(string $url): ?string
     {
-        $this->logger->debug("[ApHttpClient::getActivityObjectImpl] URL: $url");
         $content = null;
         try {
             $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url));
@@ -137,13 +137,13 @@ class ApHttpClient implements ApHttpClientInterface
 
             // Read also non-OK responses (like 410) by passing 'false'
             $content = $response->getContent(false);
-            $this->logger->debug('[ApHttpClient::getActivityObjectImpl] URL: {url} - content: {content}', ['url' => $url, 'content' => $content]);
+            $this->logger->debug('[ApHttpClient::getActivityObjectImpl] Fetched federation object {object_id} ({response_bytes} bytes)', ['object_id' => LogContext::identifier($url) ?? 'with unknown ID', 'response_bytes' => \strlen($content)]);
             try {
                 $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true, $content));
             } catch (\Throwable) {
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response ?? null, $url, 'ApHttpClient:getActivityObject', $e);
+            $this->logRequestException($response ?? null, $url, 'activity lookup', $e);
         }
 
         return $content;
@@ -220,7 +220,7 @@ class ApHttpClient implements ApHttpClientInterface
             $content = $response->getContent();
             $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, true, $content));
         } catch (\Exception $e) {
-            $this->logRequestException($response, $url, 'ApHttpClient:getWebfingerObject', $e);
+            $this->logRequestException($response, $url, 'WebFinger lookup', $e);
         }
 
         return $content;
@@ -311,7 +311,7 @@ class ApHttpClient implements ApHttpClientInterface
                 $magazine->apTimeoutAt = new \DateTime();
                 $this->magazineRepository->save($magazine, true);
             }
-            $this->logRequestException($response, $apProfileId, 'ApHttpClient:getActorObject', $e);
+            $this->logRequestException($response, $apProfileId, 'actor lookup', $e);
         }
 
         if (404 === $response->getStatusCode()) {
@@ -403,7 +403,7 @@ class ApHttpClient implements ApHttpClientInterface
             } catch (\Throwable) {
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response, $apAddress, 'ApHttpClient:getCollectionObject', $e);
+            $this->logRequestException($response, $apAddress, 'collection lookup', $e);
         }
 
         // When everything goes OK, return the data
@@ -420,36 +420,46 @@ class ApHttpClient implements ApHttpClientInterface
      *
      * @throws InvalidApPostException rethrows the error
      */
-    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e, ?string $requestBody = null): void
+    private function logRequestException(?ResponseInterface $response, string $requestUrl, string $requestType, \Exception $e, ?string $activityId = null): void
     {
+        $exceptionType = $e::class;
+        $status = $e instanceof InvalidApPostException ? $e->responseCode : ($response?->getInfo('http_code') ?: null);
+        // The server can send HTTP 200 headers before the response body times out.
+        $failedHttpStatus = null !== $status && ($status < 200 || $status >= 300) && !($e instanceof TransportExceptionInterface);
         if (null !== $response) {
             try {
                 $content = $response->getContent(false);
-            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $e) {
-                $class = \get_class($e);
-                $content = "there was an exception while getting the content, $class: {$e->getMessage()}";
+            } catch (ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|TransportExceptionInterface $bodyError) {
+                $class = $bodyError::class;
+                $content = "there was an exception while getting the content, $class: {$bodyError->getMessage()}";
             }
         }
 
-        // Often 400, 404 errors just return the full HTML page, so we don't want to log the full content of them
-        // We truncate the content to 200 characters max.
-        $this->logger->error('[ApHttpClient::logRequestException] {type} failed: {address}, ex: {e}: {msg}. Truncated content: {content}. Truncated request body: {body}', [
-            'type' => $requestType,
-            'address' => $requestUrl,
-            'e' => \get_class($e),
-            'msg' => $e->getMessage(),
-            'content' => substr($content ?? 'No content provided', 0, 200),
-            'body' => substr($requestBody ?? 'No body provided', 0, 200),
-        ]);
-        // And only log the full content in debug log mode
-        if (isset($content)) {
-            $this->logger->debug('[ApHttpClient::logRequestException] Full response body content: {content}', [
-                'content' => $content,
-            ]);
+        $context = [
+            'operation' => $requestType,
+            'host' => LogContext::host($requestUrl) ?? 'unknown host',
+            'status' => $status,
+            'exception_type' => $exceptionType,
+        ];
+        if (null !== $activityId) {
+            $context['activity_id'] = $activityId;
+        } elseif (\in_array($requestType, ['activity lookup', 'actor lookup'], true)) {
+            $context['object_id'] = LogContext::identifier($requestUrl);
         }
+        $message = '[ApHttpClient::logRequestException] Federation {operation} failed at {host}';
+        if (isset($context['activity_id'])) {
+            $message .= ' for activity {activity_id}';
+        } elseif (isset($context['object_id'])) {
+            $message .= ' for object {object_id}';
+        }
+        $message .= $failedHttpStatus ? ' (HTTP {status})' : ' ({exception_type})';
+        $this->logger->error($message, $context);
+
+        // Remote error pages can be large and include request details. Enable only for local debugging.
+        // $this->logger->debug('[ApHttpClient::logRequestException] Response body', ['body' => $content ?? null]);
         try {
             $this->dispatcher->dispatch(new CurlRequestFinishedEvent($requestUrl, false, $content ?? null, $e));
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
         }
 
         throw $e; // re-throw the exception
@@ -471,9 +481,9 @@ class ApHttpClient implements ApHttpClientInterface
         $cacheKey = 'ap_'.hash('sha256', $url.':'.$body['id']);
 
         if ($this->cache->hasItem($cacheKey)) {
-            $this->logger->warning('[ApHttpClient::post] Not posting activity with id {id} to {inbox} again, as we already did that sometime in the last 45 minutes', [
-                'id' => $body['id'],
-                'inbox' => $url,
+            $this->logger->debug('[ApHttpClient::post] Skipped duplicate federation delivery to {host}', [
+                'activity_id' => LogContext::identifier($body['id'] ?? null),
+                'host' => LogContext::host($url) ?? 'unknown host',
             ]);
 
             return;
@@ -481,8 +491,12 @@ class ApHttpClient implements ApHttpClientInterface
 
         $jsonBody = json_encode($body ?? []);
 
-        $this->logger->debug("[ApHttpClient::post] URL: $url");
-        $this->logger->debug("[ApHttpClient::post] Body: $jsonBody");
+        $this->logger->debug('[ApHttpClient::post] Sending {activity_type} activity to {host} ({request_bytes} bytes)', [
+            'host' => LogContext::host($url) ?? 'unknown host',
+            'activity_id' => LogContext::identifier($body['id'] ?? null),
+            'activity_type' => LogContext::type($body['type'] ?? null) ?? 'untyped',
+            'request_bytes' => \strlen((string) $jsonBody),
+        ]);
 
         try {
             $this->dispatcher->dispatch(new CurlRequestBeginningEvent($url, 'POST', $jsonBody));
@@ -509,7 +523,7 @@ class ApHttpClient implements ApHttpClientInterface
             } catch (\Throwable) {
             }
         } catch (\Exception $e) {
-            $this->logRequestException($response ?? null, $url, 'ApHttpClient:post', $e, $jsonBody);
+            $this->logRequestException($response ?? null, $url, 'delivery', $e, LogContext::identifier($body['id'] ?? null));
         }
 
         // build cache
@@ -584,11 +598,10 @@ class ApHttpClient implements ApHttpClientInterface
             } catch (\Throwable) {
             }
         } catch (\Exception $e) {
-            $this->logger->warning('[ApHttpClient::generalFetchCached] There was an exception fetching {type} from {url}: {e} - {msg}', [
+            $this->logger->warning('[ApHttpClient::generalFetchCached] Could not fetch cached {type} resource from {host}', [
                 'type' => $fetchType,
-                'url' => $url,
-                'e' => \get_class($e),
-                'msg' => $e->getMessage(),
+                'host' => LogContext::host($url) ?? 'unknown host',
+                'exception_type' => $e::class,
             ]);
             $resp = null;
             $this->dispatcher->dispatch(new CurlRequestFinishedEvent($url, false));

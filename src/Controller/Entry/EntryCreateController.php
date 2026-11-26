@@ -144,20 +144,20 @@ class EntryCreateController extends AbstractController
                 ],
                 new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
             );
-        } catch (TagBannedException $e) {
-            $this->logger->error($e);
+        } catch (TagBannedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread tag is banned');
 
             return $this->showFailure('flash_thread_tag_banned_error', 422, $magazine, $user, $form, $maxBytes);
-        } catch (InstanceBannedException $e) {
-            $this->logger->error($e);
+        } catch (InstanceBannedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread links to a banned instance');
 
             return $this->showFailure('flash_thread_instance_banned', 422, $magazine, $user, $form, $maxBytes);
-        } catch (PostingRestrictedException $e) {
-            $this->logger->error($e);
+        } catch (PostingRestrictedException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread posting is restricted');
 
             return $this->showFailure('flash_posting_restricted_error', 422, $magazine, $user, $form, $maxBytes);
-        } catch (ImageDownloadTooLargeException $e) {
-            $this->logger->error($e);
+        } catch (ImageDownloadTooLargeException) {
+            $this->logger->info('[EntryCreateController::__invoke] Thread image exceeds download size limit');
 
             return $this->showFailure(
                 $this->translator->trans('flash_image_download_too_large_error', ['%bytes%' => $maxBytes]),
@@ -168,7 +168,16 @@ class EntryCreateController extends AbstractController
                 $maxBytes
             );
         } catch (\Exception $e) {
-            $this->logger->error($e);
+            $magazineId = $dto->magazine?->getId();
+            $message = '[EntryCreateController::__invoke] Could not create thread';
+            if (null !== $magazineId) {
+                $message .= ' in magazine {magazine_id}';
+            }
+            $this->logger->error($message.' for user {user_id} ({exception_type})', [
+                'user_id' => $user->getId(),
+                'magazine_id' => $magazineId,
+                'exception_type' => $e::class,
+            ]);
 
             return $this->showFailure('flash_thread_new_error', 422, $magazine, $user, $form, $maxBytes);
         }

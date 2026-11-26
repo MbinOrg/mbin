@@ -24,6 +24,7 @@ use App\Factory\ActivityPub\InstanceFactory;
 use App\Factory\ActivityPub\PersonFactory;
 use App\Factory\ActivityPub\PostCommentNoteFactory;
 use App\Factory\ActivityPub\PostNoteFactory;
+use App\Utils\LogContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -52,7 +53,7 @@ class ActivityJsonBuilder
         $this->logger->debug('activity json: build for {id}', ['id' => $activity->uuid->toString()]);
         if (null !== $activity->activityJson) {
             $json = json_decode($activity->activityJson, true);
-            $this->logger->debug('activity json: {json}', ['json' => json_encode($json, JSON_PRETTY_PRINT)]);
+            $this->logger->debug('[ActivityJsonBuilder::buildActivityJson] Loaded stored {activity_type} activity ({activity_bytes} bytes)', ['activity_type' => LogContext::type($activity->type) ?? 'untyped', 'activity_bytes' => \strlen($activity->activityJson)]);
 
             return $json;
         }
@@ -72,7 +73,7 @@ class ActivityJsonBuilder
             'Lock' => $this->buildLockFromActivity($activity),
             default => new \LogicException(),
         };
-        $this->logger->debug('activity json: {json}', ['json' => json_encode($json, JSON_PRETTY_PRINT)]);
+        $this->logger->debug('[ActivityJsonBuilder::buildActivityJson] Built {activity_type} activity {activity_id}', ['activity_type' => LogContext::type($activity->type) ?? 'untyped', 'activity_id' => LogContext::identifier($json['id'] ?? null) ?? 'with unknown ID']);
 
         if (!$includeContext) {
             unset($json['@context']);

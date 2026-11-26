@@ -11,6 +11,7 @@ use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
+use App\Utils\LogContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Imagine\Gd\Imagine;
 use League\Flysystem\FileAttributes;
@@ -181,6 +182,7 @@ class ImageManager implements ImageManagerInterface
 
         $fh = fopen($tempFile, 'wb');
 
+        $failure = 'download';
         try {
             $response = $this->httpClient->request(
                 'GET',
@@ -199,14 +201,18 @@ class ImageManager implements ImageManagerInterface
 
             fclose($fh);
 
+            $failure = 'validation';
             $this->validate($tempFile);
-            $this->logger->debug('downloaded file from {url}', ['url' => $url]);
+            $this->logger->debug('[ImageManager::download] Downloaded remote image from {host}', ['host' => LogContext::host($url) ?? 'unknown host']);
         } catch (\Exception $e) {
             if ($fh && \is_resource($fh)) {
                 fclose($fh);
             }
             unlink($tempFile);
-            $this->logger->warning("couldn't download file from {url}", ['url' => $url]);
+            $message = 'download' === $failure
+                ? '[ImageManager::download] Could not download remote image from {host} ({exception_type})'
+                : '[ImageManager::download] Remote image from {host} failed validation ({exception_type})';
+            $this->logger->warning($message, ['host' => LogContext::host($url) ?? 'unknown host', 'stage' => $failure, 'exception_type' => $e::class]);
 
             return null;
         }

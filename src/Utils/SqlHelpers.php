@@ -167,7 +167,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserFollows] Could not load cached follows for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -198,7 +198,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserSubscribedMagazines] Could not load cached magazine subscriptions for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -229,7 +229,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserModeratedMagazines] Could not load cached moderated magazines for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -260,7 +260,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserSubscribedDomains] Could not load cached domain subscriptions for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -291,7 +291,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserBlocks] Could not load cached blocked users for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -322,7 +322,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserMagazineBlocks] Could not load cached magazine blocks for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -353,7 +353,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached magazine blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserDomainBlocks] Could not load cached domain blocks for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }
@@ -384,7 +384,7 @@ class SqlHelpers
                 return $this->fetchSingleColumnAsArray($sql, $user);
             });
         } catch (InvalidArgumentException|Exception $exception) {
-            $this->logger->error('There was an error getting the cached instance blocks of user "{u}": {e} - {m}', ['u' => $user->username, 'e' => \get_class($exception), 'm' => $exception->getMessage()]);
+            $this->logger->error('[SqlHelpers::getCachedUserInstanceBlocks] Could not load cached instance blocks for user {user_id} ({exception_type})', ['user_id' => $user->getId(), 'exception_type' => $exception::class]);
 
             return [];
         }

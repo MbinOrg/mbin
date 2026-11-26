@@ -30,6 +30,7 @@ use App\Service\ActivityPub\SignatureValidator;
 use App\Service\ActivityPubManager;
 use App\Service\RemoteInstanceManager;
 use App\Service\SettingsManager;
+use App\Utils\LogContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -69,9 +70,6 @@ class ActivityHandler extends MbinMessageHandler
         $payload = @json_decode($message->payload, true);
 
         if (null === $payload) {
-            $this->logger->warning('[ActivityHandler::doWork] Activity message from was empty or invalid JSON. Truncated content: {content}, ignoring it', [
-                'content' => substr($message->payload ?? 'No payload provided', 0, 200),
-            ]);
             throw new UnrecoverableMessageHandlingException('Activity message from was empty or invalid JSON');
         }
 
@@ -96,8 +94,7 @@ class ActivityHandler extends MbinMessageHandler
             }
         }
 
-        if (null === $payload['id']) {
-            $this->logger->warning('[ActivityHandler::doWork] Activity message has no id field which is required: {json}', ['json' => json_encode($message->payload)]);
+        if (null === ($payload['id'] ?? null)) {
             throw new UnrecoverableMessageHandlingException('Activity message has no id field');
         }
 
@@ -120,9 +117,17 @@ class ActivityHandler extends MbinMessageHandler
             $this->remoteInstanceManager->updateInstance($instance);
         }
 
+        $senderHost = LogContext::host($payload['id']);
         if (isset($payload['payload'])) {
             $payload = $payload['payload'];
         }
+
+        // Incoming activities can contain private messages. Inspect $payload in a local debugger if needed.
+        $logContext = [
+            'activity_type' => LogContext::type($payload['type'] ?? null) ?? 'untyped',
+            'activity_id' => LogContext::identifier($payload['id'] ?? null) ?? 'unknown',
+            'sender_host' => LogContext::host($payload['id'] ?? null) ?? $senderHost ?? 'unknown host',
+        ];
 
         try {
             if (isset($payload['actor']) || isset($payload['attributedTo'])) {
@@ -137,7 +142,7 @@ class ActivityHandler extends MbinMessageHandler
                 $user = $this->activityPubManager->findActorOrCreate($payload['id']);
             }
         } catch (\Exception $e) {
-            $this->logger->error('[ActivityHandler::doWork] Payload: '.json_encode($payload));
+            $this->logger->error('[ActivityHandler::doWork] Could not resolve actor for {activity_type} activity {activity_id} from {sender_host} ({exception_type})', $logContext + ['exception_type' => $e::class]);
 
             return;
         }
@@ -147,7 +152,7 @@ class ActivityHandler extends MbinMessageHandler
         }
 
         if (null === $user) {
-            $this->logger->warning('[ActivityHandler::doWork] Could not find an actor discarding ActivityMessage {m}', ['m' => $message->payload]);
+            $this->logger->warning('[ActivityHandler::doWork] Discarded {activity_type} activity {activity_id} from {sender_host}: no matching actor', $logContext);
 
             return;
         }
@@ -187,7 +192,10 @@ class ActivityHandler extends MbinMessageHandler
             }
         }
 
-        $this->logger->debug('[ActivityHandler::handle] Got activity message of type {type}: {message}', ['type' => $payload['type'], 'message' => json_encode($payload)]);
+        $this->logger->debug('[ActivityHandler::handle] Handling {activity_type} activity {activity_id}', [
+            'activity_type' => LogContext::type($payload['type'] ?? null) ?? 'untyped',
+            'activity_id' => LogContext::identifier($payload['id'] ?? null) ?? 'with unknown ID',
+        ]);
 
         switch ($payload['type']) {
             case 'Create':
