@@ -1,0 +1,7 @@
+m3u8_embed_fixture_master:
+    path: /_dev/m3u8-embed/master.m3u8
+    controller: App\Controller\Dev\M3u8EmbedFixtureController::masterPlaylist
+
+m3u8_embed_fixture_variant:
+    path: /_dev/m3u8-embed/variant.m3u8
+    controller: App\Controller\Dev\M3u8EmbedFixtureController::variantPlaylist
