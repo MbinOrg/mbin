@@ -19,7 +19,7 @@ class VideoManager
         }
 
         $urlExt = UrlUtils::getFileExtension($url);
-        if(!$urlExt) {
+        if (!$urlExt) {
             return false;
         }
 

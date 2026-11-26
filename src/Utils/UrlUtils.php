@@ -75,15 +75,15 @@ class UrlUtils
         if (!$parsed || !isset($parsed['scheme'], $parsed['host'], $parsed['path'])) {
             return null;
         }
-        if($parsed['scheme'] !== 'http' && $parsed['scheme'] !== 'https') {
+        if ('http' !== $parsed['scheme'] && 'https' !== $parsed['scheme']) {
             return null;
         }
 
-        if($parsed['host'] === 'cdn.bsky.app') {
-            //QUIRK Bluesky has a '?' before the extension
+        if ('cdn.bsky.app' === $parsed['host']) {
+            // QUIRK Bluesky has a '?' before the extension
             $path = $parsed['path'].'?'.$parsed['query'];
             $markerIdx = strpos($path, '?.');
-            if($markerIdx) {
+            if ($markerIdx) {
                 return mb_strtolower(substr($path, $markerIdx + 2));
             }
         }

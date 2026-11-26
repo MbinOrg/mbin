@@ -308,24 +308,25 @@ readonly class EmbedService
         return $ret;
     }
 
-    private function checkUrlAllowsEmbedding(string $url): bool {
+    private function checkUrlAllowsEmbedding(string $url): bool
+    {
         try {
             $client = $this->httpClientFactory->getClient(clientOptions: ['max_redirects' => 2]);
             $resp = $client->request('GET', $url);
 
             // check response code; don't fail on server failures or forbidden as just the IP of this instance might be blocked
             $respCode = $resp->getStatusCode();
-            if($respCode !== 200) {
-                return $respCode === 403 || $respCode === 418 || $respCode === 420 || $respCode === 429 || $respCode >= 500;
+            if (200 !== $respCode) {
+                return 403 === $respCode || 418 === $respCode || 420 === $respCode || 429 === $respCode || $respCode >= 500;
             }
 
-            foreach($resp->getHeaders() as $headerName => $headerValue) {
-                if(count($headerValue) === 0) {
+            foreach ($resp->getHeaders() as $headerName => $headerValue) {
+                if (0 === \count($headerValue)) {
                     continue;
                 }
-                if(strcasecmp($headerName, 'X-Frame-Options') === 0) {
+                if (0 === strcasecmp($headerName, 'X-Frame-Options')) {
                     return false;
-                } elseif(strcasecmp($headerName, 'Content-Security-Policy') === 0) {
+                } elseif (0 === strcasecmp($headerName, 'Content-Security-Policy')) {
                     foreach ($headerValue as $csp) {
                         foreach (explode(';', $csp) as $directive) {
                             $directive = trim($directive);

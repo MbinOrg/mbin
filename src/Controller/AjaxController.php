@@ -115,7 +115,7 @@ class AjaxController extends AbstractController
                 $data->url,
                 $text
             );
-        } elseif($data->html !== null || $data->embedUrl !== null || $data->pageAllowsIfameEmbeds) {
+        } elseif (null !== $data->html || null !== $data->embedUrl || $data->pageAllowsIfameEmbeds) {
             $useEmbedUrl = true; // servers might have not configured their CORS correct, so it might be better to not use the URL
 
             if ($host = parse_url($data->url ?? $data->embedUrl ?? $srcUrl, PHP_URL_HOST)) {
@@ -136,7 +136,7 @@ class AjaxController extends AbstractController
             $html = str_replace('\n', '', $frame);
         } else {
             // website seems to not want to be embedded
-            $html = sprintf('<div><!-- nothing to embed for %s --></div>', htmlspecialchars($srcUrl));
+            $html = \sprintf('<div><!-- nothing to embed for %s --></div>', htmlspecialchars($srcUrl));
         }
 
         return new JsonResponse(

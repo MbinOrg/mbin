@@ -58,7 +58,7 @@ class ImageManager implements ImageManagerInterface
     public static function isImageUrl(string $url): bool
     {
         $urlExt = UrlUtils::getFileExtension($url);
-        if(!$urlExt) {
+        if (!$urlExt) {
             return false;
         }
 
