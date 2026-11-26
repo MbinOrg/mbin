@@ -244,6 +244,8 @@ class EntryFrontController extends AbstractController
             $baseData['user'] = $user;
         }
 
+        $this->addContentAuthorsAttr($baseData, $data['results'], false);
+
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
                 'html' => $this->renderView($templatePath.'_list.html.twig', $baseData),

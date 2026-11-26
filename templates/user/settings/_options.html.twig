@@ -28,6 +28,12 @@
             </a>
         </li>
         {% endif %}
+        <li>
+            <a href="{{ path('user_settings_styles') }}"
+               class="{{ html_classes({'active': is_route_name('user_settings_styles')}) }}">
+                {{ 'custom_styles'|trans }}
+            </a>
+        </li>
         {% if app.user.admin is not same as true %}
             <li>
                 <a href="{{ path('user_settings_account_deletion') }}"

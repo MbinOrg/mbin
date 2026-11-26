@@ -23,11 +23,14 @@ class PostCommentFavouriteController extends AbstractController
         PostComment $comment,
         Request $request,
     ): Response {
-        return $this->render('post/comment/favourites.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'post' => $post,
             'comment' => $comment,
             'favourites' => $comment->favourites,
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $post, true);
+
+        return $this->render('post/comment/favourites.html.twig', $twigAttrs);
     }
 }

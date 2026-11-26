@@ -55,14 +55,14 @@ class EntryCommentViewController extends AbstractController
         }
         $criteria = new EntryCommentPageView(1, $security);
 
-        return $this->render(
-            'entry/comment/view.html.twig',
-            [
-                'magazine' => $magazine,
-                'entry' => $entry,
-                'comment' => $comment,
-                'criteria' => $criteria,
-            ]
-        );
+        $twigAttrs = [
+            'magazine' => $magazine,
+            'entry' => $entry,
+            'comment' => $comment,
+            'criteria' => $criteria,
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        return $this->render('entry/comment/view.html.twig', $twigAttrs);
     }
 }

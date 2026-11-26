@@ -509,9 +509,6 @@ class BaseApi extends AbstractController
      */
     protected function serializePost(Post|PostDto $dto, array $tags): PostResponseDto
     {
-        if (null === $dto) {
-            return [];
-        }
         $response = $this->postFactory->createResponseDto($dto, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST:VOTE')) {
@@ -535,8 +532,8 @@ class BaseApi extends AbstractController
         $response = $this->postCommentFactory->createResponseDto($comment, $tags);
 
         if ($this->isGranted('ROLE_OAUTH2_POST_COMMENT:VOTE')) {
-            $response->isFavourited = $comment instanceof PostCommentDto ? $comment->isFavourited : $comment->isFavored($this->getUserOrThrow());
-            $response->userVote = $comment instanceof PostCommentDto ? $comment->userVote : $comment->getUserChoice($this->getUserOrThrow());
+            $response->isFavourited = $comment->isFavourited;
+            $response->userVote = $comment->userVote;
         }
 
         if ($user = $this->getUser()) {

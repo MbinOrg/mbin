@@ -15,6 +15,8 @@ class UpdateTest extends ActivityPubTestCase
     public function testUpdateUser(): void
     {
         $this->user->title = 'Test User';
+        $this->user->customPublicContentCss = '.someclassA {color: red;}';
+        $this->user->customPublicProfileCss = '.someclassB {color: red;}';
         $this->entityManager->persist($this->user);
         $this->entityManager->flush();
 
@@ -25,6 +27,10 @@ class UpdateTest extends ActivityPubTestCase
 
     public function testUpdateMagazine(): void
     {
+        $this->magazine->customCss = '.someclassA {color: red;}';
+        $this->entityManager->persist($this->magazine);
+        $this->entityManager->flush();
+
         $json = $this->activityJsonBuilder->buildActivityJson($this->getUpdateMagazineActivity());
 
         $this->assertMatchesSnapshot($json, new ActivityPubJsonDriver());

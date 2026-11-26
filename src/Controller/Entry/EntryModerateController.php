@@ -36,20 +36,19 @@ class EntryModerateController extends AbstractController
         $form = $this->createForm(LangType::class);
         //        $form->get('lang')->setData(['lang' => $entry->lang]);
 
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse([
-                'html' => $this->renderView('entry/_moderate_panel.html.twig', [
-                    'magazine' => $magazine,
-                    'entry' => $entry,
-                    'form' => $form->createView(),
-                ]),
-            ]);
-        }
-
-        return $this->render('entry/moderate.html.twig', [
+        $twigAttrs = [
             'magazine' => $magazine,
             'entry' => $entry,
             'form' => $form->createView(),
-        ]);
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'html' => $this->renderView('entry/_moderate_panel.html.twig', $twigAttrs),
+            ]);
+        }
+
+        return $this->render('entry/moderate.html.twig', $twigAttrs);
     }
 }

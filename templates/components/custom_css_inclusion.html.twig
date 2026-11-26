@@ -1,0 +1,7 @@
+<link rel="stylesheet" href="{{ path('custom_style', { magazine: this.magazine, profile: (this.hasLocalProfileStyle() ? this.profile.username : null), userNames: this.styleUsersLocal()|join(',') }) }}" >
+{% if this.hasRemoteProfileStyle() %}
+<link rel="stylesheet" href="{{ this.profile.customPublicProfileCss }}" integrity="{{ this.profile.customPublicProfileCssIntegrity }}" crossorigin="anonymous" referrerpolicy="same-origin" >
+{% endif %}
+{% for ref in this.styleUsersRemote() %}
+<link rel="stylesheet" href="{{ ref.url }}" integrity="{{ ref.hash }}" crossorigin="anonymous" referrerpolicy="same-origin" >
+{% endfor %}

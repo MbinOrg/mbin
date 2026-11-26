@@ -8,6 +8,7 @@ use App\Entity\Magazine;
 use App\Markdown\MarkdownConverter;
 use App\Markdown\RenderTarget;
 use App\Service\ActivityPub\ContextsProvider;
+use App\Service\ActivityPubManager;
 use App\Service\ImageManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -101,6 +102,14 @@ class GroupFactory
                 'type' => 'Image',
                 'url' => $this->imageManager->getUrl($magazine->banner),
             ];
+        }
+
+        if ($magazine->customCss) {
+            $group[ActivityPubManager::AP_OBJECT_KEY_MAGAZINE_CSS] = $this->urlGenerator->generate(
+                'custom_style',
+                ['magazine' => $magazine->name, 'includeSiteStyles' => 'false'],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
         }
 
         if (!$includeContext) {

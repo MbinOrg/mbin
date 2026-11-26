@@ -30,7 +30,7 @@
                 'own': showLevel and app.user and comment.isAuthor(app.user),
                 'author': showLevel and comment.isAuthor(comment.entry.user),
                 'show-preview': SHOW_PREVIEW is same as V_TRUE and not comment.isAdult,
-            })}).without('id') }}
+            }) ~ subject_custom_css_marker(comment)}).without('id') }}
                 style="{% if noIndention %}margin-left: 0;{% endif %} {% if attachToTop %}margin-top: -0.5rem;{% endif %}"
                 id="entry-comment-{{ comment.id }}"
                 data-controller="comment subject mentions comment-collapse html-refresh"

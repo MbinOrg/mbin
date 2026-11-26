@@ -8,6 +8,7 @@ use App\Entity\Entry;
 use App\Entity\Magazine;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Utils\ArrayUtils;
 use App\Utils\Polyfills;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -113,5 +114,29 @@ abstract class AbstractController extends BaseAbstractController
                 'sortBy' => $sortBy,
             ]
         );
+    }
+
+    protected function addContentAuthorsAttr(array &$twigData, Entry|Post|iterable $subject, bool $withComments): void
+    {
+        $cssUsers = [];
+
+        if (is_iterable($subject)) {
+            if ($withComments) {
+                throw new \InvalidArgumentException('$withComments can only be used on a single subject');
+            }
+            foreach ($subject as $subj) {
+                $cssUsers[] = $subj->user;
+            }
+        } else {
+            $cssUsers[] = $subject->user;
+
+            if ($withComments) {
+                foreach ($subject->comments as $comment) {
+                    $cssUsers[] = $comment->user;
+                }
+            }
+        }
+
+        $twigData['contentAuthors'] = ArrayUtils::uniqueBy($cssUsers, fn (User $user) => $user->getId());
     }
 }

@@ -104,43 +104,42 @@ class EntrySingleController extends AbstractController
             $dto->body = $this->mentionManager->addHandle([$entry->user->username])[0];
         }
 
-        return $this->render(
-            'entry/single.html.twig',
-            [
-                'user' => $user,
-                'magazine' => $magazine,
-                'comments' => $comments,
-                'entry' => $entry,
-                'criteria' => $criteria,
-                'form' => $this->createForm(EntryCommentType::class, $dto, [
-                    'action' => $this->generateUrl(
-                        'entry_comment_create',
-                        [
-                            'magazine_name' => $entry->magazine->name,
-                            'entry_id' => $entry->getId(),
-                        ]
-                    ),
-                    'parentLanguage' => $entry->lang,
-                ])->createView(),
-            ],
-            $response
-        );
+        $twigAttrs = [
+            'user' => $user,
+            'magazine' => $magazine,
+            'comments' => $comments,
+            'entry' => $entry,
+            'criteria' => $criteria,
+            'form' => $this->createForm(EntryCommentType::class, $dto, [
+                'action' => $this->generateUrl(
+                    'entry_comment_create',
+                    [
+                        'magazine_name' => $entry->magazine->name,
+                        'entry_id' => $entry->getId(),
+                    ]
+                ),
+                'parentLanguage' => $entry->lang,
+            ])->createView(),
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
+        return $this->render('entry/single.html.twig', $twigAttrs, $response);
     }
 
     private function getJsonResponse(PagerfantaInterface $comments, Criteria $criteria, Entry $entry, Magazine $magazine, ?User $user): JsonResponse
     {
+        $twigAttrs = [
+            'user' => $user,
+            'magazine' => $magazine,
+            'comments' => $comments,
+            'entry' => $entry,
+            'criteria' => $criteria,
+        ];
+        $this->addContentAuthorsAttr($twigAttrs, $entry, true);
+
         return new JsonResponse(
             [
-                'html' => $this->renderView(
-                    'entry/comments_json.html.twig',
-                    [
-                        'user' => $user,
-                        'magazine' => $magazine,
-                        'comments' => $comments,
-                        'entry' => $entry,
-                        'criteria' => $criteria,
-                    ]
-                ),
+                'html' => $this->renderView('entry/comments_json.html.twig', $twigAttrs),
             ]
         );
     }

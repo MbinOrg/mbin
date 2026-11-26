@@ -26,13 +26,19 @@ class UserRetrieveApiTest extends WebTestCase
         'commentDefaultSort',
         'featuredMagazines',
         'preferredLanguages',
-        'customCss',
-        'ignoreMagazinesCustomCss',
         'notifyOnUserSignup',
         'directMessageSetting',
         'frontDefaultContent',
         'discoverable',
         'indexable',
+    ];
+    public const USER_STYLES_KEYS = [
+        'customCss',
+        'customPublicContentCss',
+        'customPublicProfileCss',
+        'ignoreUserContentCss',
+        'ignoreUserProfileCss',
+        'ignoreMagazinesCustomCss',
     ];
     public const NUM_USERS = 10;
 
@@ -527,5 +533,47 @@ class UserRetrieveApiTest extends WebTestCase
 
         self::assertIsArray($jsonData);
         self::assertArrayKeysMatch(self::USER_SETTINGS_KEYS, $jsonData);
+    }
+
+    public function testApiCannotGetStylesWithoutScope(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read');
+
+        $this->client->request('GET', '/api/users/styles', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testApiCanGetStyles(): void
+    {
+        self::createOAuth2AuthCodeClient();
+        $testUser = $this->getUserByUsername('JohnDoe');
+
+        $testUser->ignoreMagazinesCustomCss = true;
+        $testUser->ignoreUserContentCss = true;
+        $testUser->ignoreUserProfileCss = true;
+        $testUser->customPublicContentCss = 'content css';
+        $testUser->customPublicProfileCss = 'profile css';
+        $this->entityManager->persist($testUser);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($testUser);
+        $codes = self::getAuthorizationCodeTokenResponse($this->client, scopes: 'read user:profile:read');
+
+        $this->client->request('GET', '/api/users/styles', server: ['HTTP_AUTHORIZATION' => $codes['token_type'].' '.$codes['access_token']]);
+        self::assertResponseIsSuccessful();
+
+        $jsonData = self::getJsonResponse($this->client);
+
+        self::assertIsArray($jsonData);
+        self::assertArrayKeysMatch(self::USER_STYLES_KEYS, $jsonData);
+        self::assertTrue($jsonData['ignoreMagazinesCustomCss']);
+        self::assertTrue($jsonData['ignoreUserContentCss']);
+        self::assertTrue($jsonData['ignoreUserProfileCss']);
+        self::assertSame('content css', $jsonData['customPublicContentCss']);
+        self::assertSame('profile css', $jsonData['customPublicProfileCss']);
     }
 }

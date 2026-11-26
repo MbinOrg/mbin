@@ -37,8 +37,6 @@ class UserSettingsDto implements \JsonSerializable
         public ?array $featuredMagazines = null,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'))]
         public ?array $preferredLanguages = null,
-        public ?string $customCss = null,
-        public ?bool $ignoreMagazinesCustomCss = null,
         public ?bool $notifyOnUserSignup = null,
         #[OA\Property(type: 'string', enum: EDirectMessageSettings::OPTIONS)]
         public ?string $directMessageSetting = null,
@@ -49,6 +47,7 @@ class UserSettingsDto implements \JsonSerializable
     ) {
     }
 
+    #[\Override]
     public function jsonSerialize(): mixed
     {
         return [
@@ -69,8 +68,6 @@ class UserSettingsDto implements \JsonSerializable
             'commentDefaultSort' => $this->commentDefaultSort,
             'featuredMagazines' => $this->featuredMagazines,
             'preferredLanguages' => $this->preferredLanguages,
-            'customCss' => $this->customCss,
-            'ignoreMagazinesCustomCss' => $this->ignoreMagazinesCustomCss,
             'notifyOnUserSignup' => $this->notifyOnUserSignup,
             'directMessageSetting' => $this->directMessageSetting,
             'discoverable' => $this->discoverable,
@@ -96,8 +93,6 @@ class UserSettingsDto implements \JsonSerializable
         $dto->commentDefaultSort = $this->commentDefaultSort ?? $dto->commentDefaultSort;
         $dto->featuredMagazines = $this->featuredMagazines ?? $dto->featuredMagazines;
         $dto->preferredLanguages = $this->preferredLanguages ?? $dto->preferredLanguages;
-        $dto->customCss = $this->customCss ?? $dto->customCss;
-        $dto->ignoreMagazinesCustomCss = $this->ignoreMagazinesCustomCss ?? $dto->ignoreMagazinesCustomCss;
         $dto->directMessageSetting = $this->directMessageSetting ?? $dto->directMessageSetting;
         $dto->frontDefaultContent = $this->frontDefaultContent ?? $dto->frontDefaultContent;
         $dto->discoverable = $this->discoverable ?? $dto->discoverable;

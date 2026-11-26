@@ -56,7 +56,11 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-        <link rel="stylesheet" href="{{ path('custom_style', {magazine: magazine.name|default(null)}) }}">
+        {{ component('custom_css_inclusion', {
+            magazine: magazine.name|default(null),
+            profile: profileUser|default(null),
+            contentUsers: contentAuthors|default(null),
+        }) }}
     {% endblock %}
 
     {% block javascripts %}

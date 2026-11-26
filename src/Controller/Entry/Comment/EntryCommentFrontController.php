@@ -43,6 +43,8 @@ class EntryCommentFrontController extends AbstractController
         $params['comments'] = $this->repository->findByCriteria($criteria);
         $params['criteria'] = $criteria;
 
+        $this->addContentAuthorsAttr($params, $params['comments'], false);
+
         return $this->render(
             'entry/comment/front.html.twig',
             $params
@@ -60,6 +62,8 @@ class EntryCommentFrontController extends AbstractController
 
         $params['comments'] = $this->repository->findByCriteria($criteria);
         $params['criteria'] = $criteria;
+
+        $this->addContentAuthorsAttr($params, $params['comments'], false);
 
         return $this->render(
             'entry/comment/front.html.twig',
@@ -79,6 +83,8 @@ class EntryCommentFrontController extends AbstractController
         $params['comments'] = $this->repository->findByCriteria($criteria);
         $params['criteria'] = $criteria;
 
+        $this->addContentAuthorsAttr($params, $params['comments'], false);
+
         return $this->render(
             'entry/comment/front.html.twig',
             $params
@@ -96,6 +102,8 @@ class EntryCommentFrontController extends AbstractController
 
         $params['comments'] = $this->repository->findByCriteria($criteria);
         $params['criteria'] = $criteria;
+
+        $this->addContentAuthorsAttr($params, $params['comments'], false);
 
         return $this->render(
             'entry/comment/front.html.twig',

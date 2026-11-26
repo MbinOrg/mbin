@@ -195,6 +195,11 @@ user_settings_general:
     path: /settings/general
     methods: [GET, POST]
 
+user_settings_styles:
+    controller: App\Controller\User\Profile\UserStylesController
+    path: /settings/styles
+    methods: [GET, POST]
+
 user_settings_profile:
     controller: App\Controller\User\Profile\UserEditController::profile
     path: /settings/profile

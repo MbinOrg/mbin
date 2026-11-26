@@ -41,6 +41,7 @@ use App\Service\ActivityPub\Wrapper\LikeWrapper;
 use App\Service\ActivityPubManager;
 use App\Service\BadgeManager;
 use App\Service\BookmarkManager;
+use App\Service\CustomCssService;
 use App\Service\DomainManager;
 use App\Service\EntryCommentManager;
 use App\Service\EntryManager;
@@ -58,6 +59,7 @@ use App\Service\ReportManager;
 use App\Service\SettingsManager;
 use App\Service\UserManager;
 use App\Service\VoteManager;
+use App\Tests\Service\SharedMockHttpClient;
 use App\Tests\Service\TestingApHttpClient;
 use App\Tests\Service\TestingImageManager;
 use App\Twig\Runtime\FormattingExtensionRuntime;
@@ -132,6 +134,8 @@ abstract class WebTestCase extends BaseWebTestCase
     protected MarkdownConverter $markdownConverter;
     protected InstanceManager $instanceManager;
 
+    protected CustomCssService $customCssService;
+
     protected MagazineRepository $magazineRepository;
     protected EntryRepository $entryRepository;
     protected EntryCommentRepository $entryCommentRepository;
@@ -162,6 +166,7 @@ abstract class WebTestCase extends BaseWebTestCase
     protected EntryPageFactory $pageFactory;
     protected TestingApHttpClient $testingApHttpClient;
     protected TestingImageManager $imageManager;
+    protected SharedMockHttpClient $mockWwwHttpClient;
 
     protected CreateWrapper $createWrapper;
     protected LikeWrapper $likeWrapper;
@@ -194,6 +199,10 @@ abstract class WebTestCase extends BaseWebTestCase
 
         $this->testingApHttpClient = new TestingApHttpClient();
         self::getContainer()->set(ApHttpClientInterface::class, $this->testingApHttpClient);
+
+        $this->mockWwwHttpClient = new SharedMockHttpClient();
+        $httpClientFactory = new WwwHttpClientFactory($this->mockWwwHttpClient, ['kbin.test' => '127.0.100.1']);
+        self::getContainer()->set(WwwHttpClientFactory::class, $httpClientFactory);
 
         $this->imageManager = new TestingImageManager(
             $this->getContainer()->getParameter('kbin_storage_url'),
@@ -233,6 +242,8 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->activityJsonBuilder = $this->getService(ActivityJsonBuilder::class);
         $this->mentionManager = $this->getService(MentionManager::class);
         $this->security = $this->getService(Security::class);
+
+        $this->customCssService = $this->getService(CustomCssService::class);
 
         $this->magazineRepository = $this->getService(MagazineRepository::class);
         $this->entryRepository = $this->getService(EntryRepository::class);
