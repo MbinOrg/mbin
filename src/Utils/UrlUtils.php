@@ -68,4 +68,26 @@ class UrlUtils
 
         return str_starts_with($absoluteUri, $baseUri);
     }
+
+    public static function getFileExtension(string $url): ?string
+    {
+        $parsed = parse_url($url);
+        if (!$parsed || !isset($parsed['scheme'], $parsed['host'], $parsed['path'])) {
+            return null;
+        }
+        if($parsed['scheme'] !== 'http' && $parsed['scheme'] !== 'https') {
+            return null;
+        }
+
+        if($parsed['host'] === 'cdn.bsky.app') {
+            //QUIRK Bluesky has a '?' before the extension
+            $path = $parsed['path'].'?'.$parsed['query'];
+            $markerIdx = strpos($path, '?.');
+            if($markerIdx) {
+                return mb_strtolower(substr($path, $markerIdx + 2));
+            }
+        }
+
+        return mb_strtolower(pathinfo($parsed['path'], PATHINFO_EXTENSION));
+    }
 }

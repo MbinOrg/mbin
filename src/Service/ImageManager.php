@@ -11,6 +11,7 @@ use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
+use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Imagine\Gd\Imagine;
 use League\Flysystem\FileAttributes;
@@ -56,14 +57,12 @@ class ImageManager implements ImageManagerInterface
 
     public static function isImageUrl(string $url): bool
     {
-        $urlPath = parse_url($url, PHP_URL_PATH);
-        if (!$urlPath) {
+        $urlExt = UrlUtils::getFileExtension($url);
+        if(!$urlExt) {
             return false;
         }
-        $urlExt = mb_strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         $types = array_map(fn ($type) => str_replace('image/', '', $type), self::IMAGE_MIMETYPES);
-
         return \in_array($urlExt, $types);
     }
 
