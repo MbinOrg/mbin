@@ -97,6 +97,7 @@ readonly class EmbedService
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
         $embed->synthetic = true;
+        $embed->pageAllowsIfameEmbeds = false;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, 'Embed for '.$urlEnc);
         return $embed;
@@ -107,6 +108,7 @@ readonly class EmbedService
         $urlEnc = htmlspecialchars($url);
         $embed = new EmbedDto();
         $embed->synthetic = true;
+        $embed->pageAllowsIfameEmbeds = false;
         $embed->url = $url;
         $embed->html = \sprintf('<a href="%s">%s</a>', $urlEnc, $this->translator->trans('malicious_embed'));
         return $embed;
@@ -141,6 +143,7 @@ readonly class EmbedService
         $dto->description = $embed->description;
         $dto->image = null !== $embed->image ? \strval($embed->image) : null;
         $dto->embedUrl = $this->extractEmbedUrl($embed);
+        $dto->pageAllowsIfameEmbeds = $this->checkUrlAllowsEmbedding($url);
 
         if ($dto->embedUrl && !$this->urlAccessChecker->checkNoPrivateNetwork($dto->embedUrl)) {
             return $this->createUnsafeEmbed($dto->embedUrl);
@@ -315,6 +318,46 @@ readonly class EmbedService
         }
 
         return $ret;
+    }
+
+    /**
+     * @psalm-suppress TaintedSSRF
+     */
+    private function checkUrlAllowsEmbedding(string $url): bool
+    {
+        try {
+            $client = $this->httpClientFactory->getClient(clientOptions: ['max_redirects' => 2]);
+            $resp = $client->request('GET', $url);
+
+            // check response code; don't fail on server failures or forbidden as just the IP of this instance might be blocked
+            $respCode = $resp->getStatusCode();
+            if (200 !== $respCode) {
+                return 403 === $respCode || 418 === $respCode || 420 === $respCode || 429 === $respCode || $respCode >= 500;
+            }
+
+            foreach ($resp->getHeaders() as $headerName => $headerValue) {
+                if (0 === \count($headerValue)) {
+                    continue;
+                }
+                if (0 === strcasecmp($headerName, 'X-Frame-Options')) {
+                    return false;
+                } elseif (0 === strcasecmp($headerName, 'Content-Security-Policy')) {
+                    foreach ($headerValue as $csp) {
+                        foreach (explode(';', $csp) as $directive) {
+                            $directive = trim($directive);
+                            if (str_starts_with($directive, 'frame-ancestors')) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        } catch (\Throwable) {
+            // be optimistic
+            return true;
+        }
     }
 
     private function parseXmlToDom(string $src): \DOMDocument

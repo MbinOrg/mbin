@@ -21,6 +21,7 @@ class EmbedDto
     public ?string $html = null;
     public ?int $width = null;
     public ?int $height = null;
+    public bool $pageAllowsIfameEmbeds = true;
 
     public function getType(): string
     {

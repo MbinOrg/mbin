@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Utils\UrlUtils;
+
 class VideoManager
 {
     public const array VIDEO_MIMETYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/ogg'];
@@ -16,11 +18,10 @@ class VideoManager
             return self::isSupportedVideoMimeType(substr($url, 5));
         }
 
-        $urlPath = parse_url($url, PHP_URL_PATH);
-        if (!$urlPath) {
+        $urlExt = UrlUtils::getFileExtension($url);
+        if (!$urlExt) {
             return false;
         }
-        $urlExt = strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         return \in_array($urlExt, self::VIDEO_FILE_EXTENSIONS, false);
     }

@@ -11,6 +11,7 @@ use App\Factory\WwwHttpClientFactory;
 use App\Repository\ImageRepository;
 use App\Twig\Runtime\FormattingExtensionRuntime;
 use App\Utils\GeneralUtil;
+use App\Utils\UrlUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Imagine\Gd\Imagine;
 use League\Flysystem\FileAttributes;
@@ -56,14 +57,12 @@ class ImageManager implements ImageManagerInterface
 
     public static function isImageUrl(string $url): bool
     {
-        $urlPath = parse_url($url, PHP_URL_PATH);
-        if (!$urlPath) {
+        $urlExt = UrlUtils::getFileExtension($url);
+        if (!$urlExt) {
             return false;
         }
-        $urlExt = mb_strtolower(pathinfo($urlPath, PATHINFO_EXTENSION));
 
         $types = array_map(fn ($type) => str_replace('image/', '', $type), self::IMAGE_MIMETYPES);
-
         return \in_array($urlExt, $types);
     }
 
@@ -75,6 +74,7 @@ class ImageManager implements ImageManagerInterface
     /**
      * @throws \Exception if the file could not be found
      */
+    #[\Override]
     public function store(string $source, string $filePath): bool
     {
         $fh = fopen($source, 'rb');
@@ -103,6 +103,7 @@ class ImageManager implements ImageManagerInterface
      *
      * @return bool whether the image was compressed
      */
+    #[\Override]
     public function compressUntilSize(string $filePath, string $extension, int $maxBytes): bool
     {
         if (-1 === (int) $this->imageCompressionQuality || filesize($filePath) <= $maxBytes) {
@@ -117,15 +118,15 @@ class ImageManager implements ImageManagerInterface
         $tempPath = "{$filePath}_temp_compress.$extension";
         $compressed = false;
         $quality = 0.9;
-        if (0.3 <= $this->imageCompressionQuality && 1 > $this->imageCompressionQuality) {
+        if (0.3 <= $this->imageCompressionQuality && 1.0 > $this->imageCompressionQuality) {
             $quality = $this->imageCompressionQuality;
         }
         while ($bytes > $maxBytes && $quality > 0.3) {
-            $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100]);
+            $this->logger->debug('[ImageManager::compressUntilSize] Trying to compress "{path}" with {q}% quality', ['path' => $tempPath, 'q' => $quality * 100.0]);
             $image->save($tempPath, [
-                'jpeg_quality' => $quality * 100, // jpeg max value is 100
+                'jpeg_quality' => $quality * 100.0, // jpeg max value is 100
                 'png_compression_level' => 9, // this is lossless compression, so always use the max
-                'webp_quality' => $quality * 100, // webp quality max is 100
+                'webp_quality' => $quality * 100.0, // webp quality max is 100
             ]);
             $bytes = filesize($tempPath);
             if ($lastBytes === $bytes) {
@@ -142,7 +143,7 @@ class ImageManager implements ImageManagerInterface
                 $copied = true;
                 $this->logger->debug('[ImageManager::compressUntilSize] successfully compressed "{path}" with {q}% quality: {bytesBefore} -> {bytesNow}', [
                     'path' => $filePath,
-                    'q' => ($quality + 0.05) * 100, // re-add the last step, because it is always subtracted in the end if successful
+                    'q' => ($quality + 0.05) * 100.0, // re-add the last step, because it is always subtracted in the end if successful
                     'bytesBefore' => $this->formattingExtensionRuntime->abbreviateNumber($initialBytes).'B',
                     'bytesNow' => $this->formattingExtensionRuntime->abbreviateNumber($bytes).'B',
                 ]);
@@ -171,6 +172,7 @@ class ImageManager implements ImageManagerInterface
         return true;
     }
 
+    #[\Override]
     public function download(string $url): ?string
     {
         $tempFile = @tempnam('/', 'kbin');
@@ -217,6 +219,7 @@ class ImageManager implements ImageManagerInterface
     /**
      * @return array{string, string}
      */
+    #[\Override]
     public function getFilePathAndName(string $file): array
     {
         $name = $this->getFileName($file);
@@ -225,6 +228,7 @@ class ImageManager implements ImageManagerInterface
         return [$path, $name];
     }
 
+    #[\Override]
     public function getFilePath(string $file): string
     {
         $name = $this->getFileName($file);
@@ -242,6 +246,7 @@ class ImageManager implements ImageManagerInterface
         );
     }
 
+    #[\Override]
     public function getFileName(string $file): string
     {
         $hash = hash_file('sha256', $file);
@@ -260,17 +265,20 @@ class ImageManager implements ImageManagerInterface
         return \sprintf('%s.%s', $hash, $ext);
     }
 
+    #[\Override]
     public function remove(string $path): void
     {
         $this->publicUploadsFilesystem->delete($path);
         $this->imagineCacheManager->remove($path);
     }
 
+    #[\Override]
     public function getPath(MbinImage $image): string
     {
         return $this->publicUploadsFilesystem->read($image->filePath);
     }
 
+    #[\Override]
     public function getUrl(?MbinImage $image): ?string
     {
         if (!$image) {
@@ -284,6 +292,7 @@ class ImageManager implements ImageManagerInterface
         return $image->sourceUrl;
     }
 
+    #[\Override]
     public function getMimetype(MbinImage $image): string
     {
         try {
@@ -293,6 +302,7 @@ class ImageManager implements ImageManagerInterface
         }
     }
 
+    #[\Override]
     public function deleteOrphanedFiles(ImageRepository $repository, bool $dryRun, array $ignoredPaths): iterable
     {
         foreach ($this->deleteOrphanedFilesIntern($repository, $dryRun, $ignoredPaths, '/') as $deletedPath) {
@@ -301,7 +311,7 @@ class ImageManager implements ImageManagerInterface
     }
 
     /**
-     * @return iterable<array{path: string, internalPath: string, deleted: bool, successful: bool, fileSize: ?int, exception: ?\Throwable} the deleted files/directories
+     * @return iterable<array{path: string, internalPath: string, deleted: bool, successful: bool, fileSize: ?int, exception: ?\Throwable}> the deleted files/directories
      *
      * @throws FilesystemException
      */
