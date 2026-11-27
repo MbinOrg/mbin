@@ -20,6 +20,7 @@ readonly class SizeLimitingHttpClient implements ClientInterface
         $this->inner = $inner->withOptions(['on_progress' => $this->sizeLimitingProgressListener()]);
     }
 
+    #[\Override]
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $response = $this->inner->sendRequest($request);
