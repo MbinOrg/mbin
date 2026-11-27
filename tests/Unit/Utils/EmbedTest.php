@@ -61,7 +61,7 @@ class EmbedTest extends TestCase
 
         $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/article');
 
-        self::assertSame(1, $requestCount);
+        self::assertSame(2, $requestCount); // 2 as EmbedService::checkUrlAllowsEmbedding() also runs a request
         self::assertSame('Public page', $result->title);
     }
 
@@ -211,6 +211,54 @@ class EmbedTest extends TestCase
         $html = '<iframe src="https://www.youtube.com/embed/abc123" allowfullscreen></iframe>';
 
         self::assertSame($html, $method->invoke($embed, $html));
+    }
+
+    public function testIframeBlockingHeaderDetected(): void
+    {
+        $httpClient = new MockHttpClient(function (): MockResponse {
+            return new MockResponse('<title>Public page</title>', [
+                'response_headers' => [
+                    'X-frame-options' => ['doesnotmatter'],
+                ],
+            ]);
+        });
+
+        $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/article');
+
+        self::assertSame('Public page', $result->title);
+        self::assertFalse($result->pageAllowsIfameEmbeds);
+    }
+
+    public function testIframeBlockingCSPDetected(): void
+    {
+        $httpClient = new MockHttpClient(function (): MockResponse {
+            return new MockResponse('<title>Public page</title>', [
+                'response_headers' => [
+                    'Content-security-policy' => ['a=0; frame-ancestors=doesnotmatter'],
+                ],
+            ]);
+        });
+
+        $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/article');
+
+        self::assertSame('Public page', $result->title);
+        self::assertFalse($result->pageAllowsIfameEmbeds);
+    }
+
+    public function testIframeBlockingCSPPass(): void
+    {
+        $httpClient = new MockHttpClient(function (): MockResponse {
+            return new MockResponse('<title>Public page</title>', [
+                'response_headers' => [
+                    'Content-security-policy' => ['a=0'],
+                ],
+            ]);
+        });
+
+        $result = $this->createEmbed($httpClient)->fetch('https://93.184.216.34/article');
+
+        self::assertSame('Public page', $result->title);
+        self::assertTrue($result->pageAllowsIfameEmbeds);
     }
 
     public function testCleaningEmbedRestoresLibxmlErrorHandling(): void

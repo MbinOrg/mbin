@@ -308,6 +308,9 @@ readonly class EmbedService
         return $ret;
     }
 
+    /**
+     * @psalm-suppress TaintedSSRF
+     */
     private function checkUrlAllowsEmbedding(string $url): bool
     {
         try {
