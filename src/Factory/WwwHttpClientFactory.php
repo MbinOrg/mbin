@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use App\Utils\SizeLimitingHttpClient;
 use Embed\Http\Crawler;
 use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
@@ -14,6 +15,9 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class WwwHttpClientFactory implements ResetInterface
 {
+    // prevent OOM in case a URL points to a large file instead of a webpage
+    private const int EMBED_MAX_BYTES = 10 * 1024 * 1024;
+
     private readonly HttpClientInterface $defaultClient;
     private array $existingClients;
 
@@ -43,8 +47,10 @@ class WwwHttpClientFactory implements ResetInterface
 
     public function getEmbedCrawler(?HttpClientInterface $base = null, ?array $clientOptions = null): Crawler
     {
-        $client = $this->getPsr18Client($base, $clientOptions);
-        return new Crawler($client, $client, $client);
+        $psr18 = $this->getPsr18Client($base, $clientOptions);
+        $client = new SizeLimitingHttpClient($psr18, self::EMBED_MAX_BYTES);
+
+        return new Crawler($client, $psr18, $psr18);
     }
 
     private function buildConfiguredClient(HttpClientInterface $client): HttpClientInterface
