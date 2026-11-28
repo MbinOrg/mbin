@@ -55,6 +55,25 @@ class ChainActivityHandler extends MbinMessageHandler
         $this->workWrapper($message);
     }
 
+    /**
+     * Intentionally not wrapped in a transaction like {@see MbinMessageHandler::workWrapper()}:
+     * retrieveObject() does recursive HTTP requests (the whole inReplyTo chain) and every
+     * object is created with its own flush. Inside one transaction the first
+     * `UPDATE magazine ...` keeps the row lock for the entire chain (minutes), so every other
+     * worker touching that magazine runs into the statement timeout.
+     */
+    public function workWrapper(MessageInterface $message): void
+    {
+        try {
+            $this->doWork($message);
+            if ('test' !== $this->kernel->getEnvironment()) {
+                $this->entityManager->getConnection()->close();
+            }
+        } finally {
+            gc_collect_cycles();
+        }
+    }
+
     public function doWork(MessageInterface $message): void
     {
         if (!($message instanceof ChainActivityMessage)) {
